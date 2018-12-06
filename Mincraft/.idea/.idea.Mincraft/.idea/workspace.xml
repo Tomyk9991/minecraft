@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="548444b7-6046-4b75-8311-c42af3de61bb" name="Default" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="1128375073">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="3" />
+          <entry key="project.open.time.10" value="1" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.open.time.7" value="1" />
+          <entry key="project.opened" value="3" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="cs" value="22" />
+          <entry key="txt" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="C#" value="22" />
+          <entry key="PLAIN_TEXT" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="cs" value="5164" />
+          <entry key="txt" value="10" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="C#" value="5164" />
+          <entry key="PLAIN_TEXT" value="10" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGenerator.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="361">
+              <caret line="26" column="43" lean-forward="true" selection-start-line="26" selection-start-column="43" selection-end-line="26" selection-end-column="43" />
+              <folding>
+                <marker date="1544049658838" expanded="false" signature="6:66" ph="..." />
+                <marker date="1544049658838" expanded="true" signature="111:1689" ph="{...}" />
+                <marker date="1544049658838" expanded="true" signature="500:1289" ph="{...}" />
+                <marker date="1544049658838" expanded="true" signature="618:882" ph="{...}" />
+                <marker date="1544049658838" expanded="true" signature="1054:1283" ph="{...}" />
+                <marker date="1544049658838" expanded="true" signature="1380:1687" ph="{...}" />
+                <marker date="1544049658838" expanded="true" signature="1489:1654" ph="{...}" />
+                <marker date="1544049658838" expanded="true" signature="1545:1644" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkManager.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="18" column="42" selection-start-line="18" selection-start-column="42" selection-end-line="18" selection-end-column="42" />
+              <folding>
+                <marker date="1544047828425" expanded="false" signature="6:52" ph="..." />
+                <marker date="1544047828425" expanded="true" signature="95:3094" ph="{...}" />
+                <marker date="1544047828425" expanded="true" signature="486:834" ph="{...}" />
+                <marker date="1544047828425" expanded="true" signature="684:828" ph="{...}" />
+                <marker date="1544047828425" expanded="true" signature="878:1349" ph="{...}" />
+                <marker date="1544047828425" expanded="true" signature="1428:1631" ph="{...}" />
+                <marker date="1544047828425" expanded="true" signature="1696:1880" ph="{...}" />
+                <marker date="1544047828425" expanded="true" signature="1744:1874" ph="{...}" />
+                <marker date="1544047828425" expanded="true" signature="1957:3092" ph="{...}" />
+                <marker date="1544047828425" expanded="true" signature="2010:2508" ph="{...}" />
+                <marker date="1544047828425" expanded="true" signature="2417:2498" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>.shar</find>
+      <find>instantiate</find>
+      <find>objectToremove</find>
+      <find>af</find>
+      <find>GameObject</find>
+      <find>lerp</find>
+    </findStrings>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/RemoveBlock.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/45B1DFB7-D769-44F5-9F3B-C35EEB888F95/1c/4688153b/JobHandle.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/IMouseUsable.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/45B1DFB7-D769-44F5-9F3B-C35EEB888F95/bf/634340ef/Camera.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/RigidbodyFirstPersonController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/HeadBob.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55448844-34D1-400A-9850-3330ADA26CBD/74/05c64c50/RaycastHit.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionObject.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/MouseLook.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGenerator.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/FirstPersonController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/AddBlock.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Assets/Classes/Block.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/World.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/ThreadedProcess.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Direction.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Chunk.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/MeshBuilder.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Camera/BuildBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Camera/CameraRotation.cs" />
+        <option value="$PROJECT_DIR$/Assets/RemoveBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Editor/BuildBlockEditor.cs" />
+        <option value="$PROJECT_DIR$/Assets/Test.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh/ChunkDictionary.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh/Static Classes/Test.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh/BuildBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh/RemoveBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh/Chunks/IChunk.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh/Static Classes/ModifyMesh.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh/Static Classes/ChunkDictionary.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh/SetUVs.cs" />
+        <option value="$PROJECT_DIR$/Assets/AddBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Static Classes/ChunkDictionary.cs" />
+        <option value="$PROJECT_DIR$/Assets/ChunkManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Chunk.cs" />
+        <option value="$PROJECT_DIR$/Assets/Biom.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Chunks/IChunk.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Playermovement/Camera/CameraRotation.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/SetUVs.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/RemoveBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/ChunkManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/AddBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Chunk.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Static Classes/ModifyMesh.cs" />
+        <option value="$PROJECT_DIR$/Assets/ChunkGenerator.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Playermovement/MovementSettings.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Playermovement/PlayerMovement.cs" />
+        <option value="$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/FirstPersonCharacterGuidelines.txt" />
+        <option value="$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/MouseLook.cs" />
+        <option value="$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/RigidbodyFirstPersonController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/HeadBob.cs" />
+        <option value="$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/FirstPersonController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/IMouseUsable.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/RemoveBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/AddBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionObject.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionJob.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGenerator.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="210" />
+    <option name="width" value="1511" />
+    <option name="height" value="1047" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="UnityExplorer" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="SolutionExplorer">
+        <option name="show-all-files" value="false" />
+      </pane>
+      <pane id="UnityExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="Mincraft" type="483dac07:UnityExplorerNode$Root" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-hidden-items" value="false" />
+      </pane>
+      <pane id="FileSystemExplorer" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
+    <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
+    <property name="SearchEverywhereHistoryKey" value="imouse&#9;null&#9;null&#10;removeblock&#9;null&#9;null&#10;chunk&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/Scripts/Mesh and Chunk/Chunk.cs&#10;mod&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/Scripts/Mesh and Chunk/Static Classes/ModifyMesh.cs&#10;modi&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/Scripts/Mesh and Chunk/Static Classes/ModifyMesh.cs&#10;remove&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/Scripts/Mesh and Chunk/RemoveBlock.cs&#10;setuv&#9;null&#9;null&#10;gener&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/ChunkGenerator.cs&#10;addblock&#9;null&#9;null&#10;ich&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/Scripts/Mesh and Chunk/Chunks/IChunk.cs&#10;ch&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/ChunkManager.cs&#10;dicti&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/Scripts/Mesh/Static Classes/ChunkDictionary.cs&#10;ichunk&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/Scripts/Mesh/Chunks/IChunk.cs&#10;addb&#9;null&#9;null&#10;buildblock&#9;FILE&#9;file://C:/Users/Thomas/Documents/UnityProjects/Mincraft/Assets/Scripts/Mesh/BuildBlock.cs&#10;dic&#9;null&#9;null" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Mincraft.sln" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Attach to Unity Editor.Attach to Unity Editor" />
+      <item itemvalue="Attach to Unity Editor.Attach to Unity Editor &amp; Play" />
+    </list>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="548444b7-6046-4b75-8311-c42af3de61bb" name="Default" comment="" />
+      <created>1538469959673</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1538469959673</updated>
+      <workItem from="1538469969251" duration="4885000" />
+      <workItem from="1538513275304" duration="3778000" />
+      <workItem from="1538669309917" duration="4520000" />
+      <workItem from="1538731538424" duration="7068000" />
+      <workItem from="1538908871486" duration="5246000" />
+      <workItem from="1538922319165" duration="85000" />
+      <workItem from="1538922420444" duration="1834000" />
+      <workItem from="1538924297705" duration="3613000" />
+      <workItem from="1538927927677" duration="10247000" />
+      <workItem from="1538958751642" duration="5770000" />
+      <workItem from="1538992531461" duration="802000" />
+      <workItem from="1539092731002" duration="3192000" />
+      <workItem from="1539106143606" duration="697000" />
+      <workItem from="1539128808034" duration="1251000" />
+      <workItem from="1539171923947" duration="3538000" />
+      <workItem from="1539279078327" duration="2554000" />
+      <workItem from="1539281658507" duration="3469000" />
+      <workItem from="1539339652547" duration="9236000" />
+      <workItem from="1539364323968" duration="11015000" />
+      <workItem from="1539425692281" duration="2375000" />
+      <workItem from="1539435969133" duration="8693000" />
+      <workItem from="1539867261808" duration="3415000" />
+      <workItem from="1540205807075" duration="5718000" />
+      <workItem from="1540308845617" duration="9641000" />
+      <workItem from="1543850747906" duration="2763000" />
+      <workItem from="1543949764771" duration="4685000" />
+      <workItem from="1544043201934" duration="6547000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="126637000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="210" y="0" width="1511" height="1047" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.0" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32939914" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32939914" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3953241" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32939914" />
+      <window_info anchor="bottom" id="NuGet" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Unity" order="9" />
+      <window_info anchor="bottom" id="Database Changes" order="10" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Unit Tests" order="11" />
+      <window_info anchor="bottom" id="Terminal" order="12" weight="0.32939914" />
+      <window_info anchor="bottom" id="Event Log" order="13" side_tool="true" weight="0.32939914" />
+      <window_info anchor="bottom" id="Version Control" order="14" show_stripe_button="false" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Errors In Solution" order="3" />
+      <window_info anchor="right" id="Database" order="4" />
+      <window_info anchor="right" id="Unit Tests Coverage" order="5" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Chunk.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/MeshBuilder.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Camera/BuildBlock.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/RemoveBlock.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Test.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh/ChunkDictionary.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Camera/CameraRotation.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh/Static Classes/Test.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh/BuildBlock.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh/Chunks/IChunk.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh/RemoveBlock.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh/Static Classes/ChunkDictionary.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh/Static Classes/ModifyMesh.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh/SetUVs.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Chunk.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/ChunkManager.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/AddBlock.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Editor/BuildBlockEditor.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Biom.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Chunks/IChunk.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Playermovement/Camera/CameraRotation.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/SetUVs.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Static Classes/ChunkDictionary.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/RemoveBlock.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Chunk.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Static Classes/ModifyMesh.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/AddBlock.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/ChunkManager.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/ChunkGenerator.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Biom.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mesh and Chunk/Chunks/ChunkGenerator.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/PlayerMovement.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/MouseLook.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="4" selection-start-line="4" selection-end-line="109" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/RigidbodyFirstPersonController.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="755">
+          <caret line="262" selection-start-line="262" selection-end-line="262" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/HeadBob.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Playermovement/PlayerMovement.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/FirstPersonCharacterGuidelines.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Playermovement/MovementSettings.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/IMouseUsable.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="6" column="8" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/FirstPersonController.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/RemoveBlock.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="11" column="4" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/AddBlock.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="55" selection-start-line="11" selection-start-column="55" selection-end-line="11" selection-end-column="55" />
+          <folding>
+            <marker date="1543951122940" expanded="true" signature="105:191" ph="{...}" />
+            <marker date="1543951122940" expanded="true" signature="410:489" ph="{...}" />
+            <marker date="1543951122940" expanded="true" signature="583:1196" ph="{...}" />
+            <marker date="1543951122940" expanded="true" signature="645:1190" ph="{...}" />
+            <marker date="1543951122940" expanded="true" signature="796:1180" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55448844-34D1-400A-9850-3330ADA26CBD/74/05c64c50/RaycastHit.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="16" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/45B1DFB7-D769-44F5-9F3B-C35EEB888F95/bf/634340ef/Camera.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="296">
+          <caret line="1421" column="24" selection-start-line="1421" selection-start-column="24" selection-end-line="1421" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/45B1DFB7-D769-44F5-9F3B-C35EEB888F95/1c/4688153b/JobHandle.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="26" column="16" selection-start-line="26" selection-start-column="16" selection-end-line="26" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionJob.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="34" column="5" lean-forward="true" selection-start-line="34" selection-start-column="5" selection-end-line="34" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkManager.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="18" column="42" selection-start-line="18" selection-start-column="42" selection-end-line="18" selection-end-column="42" />
+          <folding>
+            <marker date="1544047828425" expanded="false" signature="6:52" ph="..." />
+            <marker date="1544047828425" expanded="true" signature="95:3094" ph="{...}" />
+            <marker date="1544047828425" expanded="true" signature="486:834" ph="{...}" />
+            <marker date="1544047828425" expanded="true" signature="684:828" ph="{...}" />
+            <marker date="1544047828425" expanded="true" signature="878:1349" ph="{...}" />
+            <marker date="1544047828425" expanded="true" signature="1428:1631" ph="{...}" />
+            <marker date="1544047828425" expanded="true" signature="1696:1880" ph="{...}" />
+            <marker date="1544047828425" expanded="true" signature="1744:1874" ph="{...}" />
+            <marker date="1544047828425" expanded="true" signature="1957:3092" ph="{...}" />
+            <marker date="1544047828425" expanded="true" signature="2010:2508" ph="{...}" />
+            <marker date="1544047828425" expanded="true" signature="2417:2498" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="12" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="12" />
+          <folding>
+            <marker date="1539867804156" expanded="true" signature="17:26" ph="{...}" />
+            <marker date="1539867804156" expanded="true" signature="48:102" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionObject.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="9" column="11" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
+          <folding>
+            <marker date="1544044110431" expanded="false" signature="6:96" ph="..." />
+            <marker date="1544044110431" expanded="true" signature="142:716" ph="{...}" />
+            <marker date="1544044110431" expanded="true" signature="263:359" ph="{...}" />
+            <marker date="1544044110431" expanded="true" signature="386:600" ph="{...}" />
+            <marker date="1544044110431" expanded="true" signature="421:522" ph="{...}" />
+            <marker date="1544044110431" expanded="true" signature="535:594" ph="{...}" />
+            <marker date="1544044110431" expanded="true" signature="640:714" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionManager.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1466">
+          <caret line="88" column="5" selection-start-line="88" selection-start-column="5" selection-end-line="88" selection-end-column="5" />
+          <folding>
+            <marker date="1544047515143" expanded="true" signature="6:43" ph="..." />
+            <marker date="1544047515143" expanded="true" signature="90:2333" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="345:448" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="475:532" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="562:887" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="692:881" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="725:803" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="916:1371" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="966:1365" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="1172:1355" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="1259:1341" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="1403:2323" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="1665:1856" ph="{...}" />
+            <marker date="1544047515143" expanded="true" signature="2007:2235" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGenerator.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="26" column="43" lean-forward="true" selection-start-line="26" selection-start-column="43" selection-end-line="26" selection-end-column="43" />
+          <folding>
+            <marker date="1544049658838" expanded="false" signature="6:66" ph="..." />
+            <marker date="1544049658838" expanded="true" signature="111:1689" ph="{...}" />
+            <marker date="1544049658838" expanded="true" signature="500:1289" ph="{...}" />
+            <marker date="1544049658838" expanded="true" signature="618:882" ph="{...}" />
+            <marker date="1544049658838" expanded="true" signature="1054:1283" ph="{...}" />
+            <marker date="1544049658838" expanded="true" signature="1380:1687" ph="{...}" />
+            <marker date="1544049658838" expanded="true" signature="1489:1654" ph="{...}" />
+            <marker date="1544049658838" expanded="true" signature="1545:1644" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
