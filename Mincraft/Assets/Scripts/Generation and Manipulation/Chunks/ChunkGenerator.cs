@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour
@@ -14,12 +16,14 @@ public class ChunkGenerator : MonoBehaviour
     
     private Biom[] bioms;
     private ChunkManager chunkManager;
+
+    private ChunkSpawner spawner;
     
     private void Start()
     {
         chunkManager = ChunkManager.Instance;
 
-        List<Vector3Int> positions = GenerateHeightMap(size, (x, y) =>
+        List<Vector3Int> positions = GenerateMap(size, (x, y) =>
         {
             float height = (Mathf.PerlinNoise(x * smoothness, y * smoothness * 2) * heightMult +
                             Mathf.PerlinNoise(x * smoothness, y * smoothness * 2) * heightMult) / 2f;
@@ -27,32 +31,40 @@ public class ChunkGenerator : MonoBehaviour
             return Mathf.CeilToInt(height);
         });
 
-        // add for every (x, y, z), y - size.y under the heighest block
-        // 
 
-        for (int i = 0; i < positions.Count; i++)
-        {
-            // How much blocks do I have to add?
-            // ich habe eine Höhe von 9 und will runter auf bis -16
-            // Füge also (9 + 16) - 1 Blöcke ein
-            int temp = positions[i].y - (-size.y) - 1;
-            for (int j = 1; j <= temp; j++)
-                positions.Add(new Vector3Int(positions[i].x, positions[i].y - j, positions[i].z)); 
-        } 
-
-        //Hier kann man möglicherweise optimieren, indem man erst alle instanziert und dann Chunk für Chunk kombiniert
-        //Instanziere bisher nur die oberste Schicht.
         int bound = size.x * size.z;
-        for (int i = 0; i < bound; i++)
+        spawner = new ChunkSpawner();
+        
+        StartCoroutine(StartSpawn(blockPrefab, positions, chunkManager));
+
+//        for (int i = 0; i < bound; i++)
+//        {
+//            GameObject block = Instantiate(blockPrefab, positions[i], Quaternion.identity);
+//            block.name = block.transform.position.ToString();
+//            
+//            chunkManager.AddBlock(block);
+//        }
+        
+        IEnumerator StartSpawn(GameObject prefab, List<Vector3Int> p, ChunkManager manager)
         {
-            GameObject block = Instantiate(blockPrefab, positions[i], Quaternion.identity);
-            block.name = block.transform.position.ToString();
-            
-            chunkManager.AddBlock(block);
+            int index = 0;
+        
+            while (index < p.Count)
+            {
+                GameObject block = Instantiate(prefab, p[index], Quaternion.identity);
+                block.name = block.transform.position.ToString();
+
+                manager.AddBlock(block);
+                index++;
+
+                return null;
+            }
+
+            return null;
         }
     }
 
-    private List<Vector3Int> GenerateHeightMap(Vector3Int size, Func<int, int, int> heightFunc)
+    private List<Vector3Int> GenerateMap(Vector3Int size, Func<int, int, int> heightFunc)
     {
         List<Vector3Int> positions = new List<Vector3Int>();
 
@@ -65,5 +77,13 @@ public class ChunkGenerator : MonoBehaviour
         }
 
         return positions;
+    }
+}
+
+public class ChunkSpawner
+{
+    public ChunkSpawner()
+    {
+        
     }
 }

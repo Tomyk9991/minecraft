@@ -44,23 +44,46 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="-1736179120">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="1" />
+          <entry key="project.open.time.8" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="cs" value="762" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="C#" value="762" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGenerator.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="26" column="43" lean-forward="true" selection-start-line="26" selection-start-column="43" selection-end-line="26" selection-end-column="43" />
+            <state relative-caret-position="289">
+              <caret line="21" column="13" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
               <folding>
-                <marker date="1544049658838" expanded="false" signature="6:66" ph="..." />
-                <marker date="1544049658838" expanded="true" signature="111:1689" ph="{...}" />
-                <marker date="1544049658838" expanded="true" signature="500:1289" ph="{...}" />
-                <marker date="1544049658838" expanded="true" signature="618:882" ph="{...}" />
-                <marker date="1544049658838" expanded="true" signature="1054:1283" ph="{...}" />
-                <marker date="1544049658838" expanded="true" signature="1380:1687" ph="{...}" />
-                <marker date="1544049658838" expanded="true" signature="1489:1654" ph="{...}" />
-                <marker date="1544049658838" expanded="true" signature="1545:1644" ph="{...}" />
+                <marker date="1544103388690" expanded="false" signature="6:145" ph="..." />
+                <marker date="1544103388690" expanded="true" signature="190:2345" ph="{...}" />
+                <marker date="1544103388690" expanded="true" signature="614:1945" ph="{...}" />
+                <marker date="1544103388690" expanded="true" signature="732:996" ph="{...}" />
+                <marker date="1544103388690" expanded="true" signature="1160:1442" ph="/* for (int i = 0; i &lt; bound; i++) ... */" />
+                <marker date="1544103388690" expanded="true" signature="1543:1939" ph="{...}" />
+                <marker date="1544103388690" expanded="true" signature="1625:1903" ph="{...}" />
+                <marker date="1544103388690" expanded="true" signature="2036:2343" ph="{...}" />
+                <marker date="1544103388690" expanded="true" signature="2145:2310" ph="{...}" />
+                <marker date="1544103388690" expanded="true" signature="2201:2300" ph="{...}" />
+                <marker date="1544103388690" expanded="true" signature="2372:2423" ph="{...}" />
+                <marker date="1544103388690" expanded="true" signature="2400:2421" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -69,21 +92,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkManager.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
+            <state relative-caret-position="306">
               <caret line="18" column="42" selection-start-line="18" selection-start-column="42" selection-end-line="18" selection-end-column="42" />
-              <folding>
-                <marker date="1544047828425" expanded="false" signature="6:52" ph="..." />
-                <marker date="1544047828425" expanded="true" signature="95:3094" ph="{...}" />
-                <marker date="1544047828425" expanded="true" signature="486:834" ph="{...}" />
-                <marker date="1544047828425" expanded="true" signature="684:828" ph="{...}" />
-                <marker date="1544047828425" expanded="true" signature="878:1349" ph="{...}" />
-                <marker date="1544047828425" expanded="true" signature="1428:1631" ph="{...}" />
-                <marker date="1544047828425" expanded="true" signature="1696:1880" ph="{...}" />
-                <marker date="1544047828425" expanded="true" signature="1744:1874" ph="{...}" />
-                <marker date="1544047828425" expanded="true" signature="1957:3092" ph="{...}" />
-                <marker date="1544047828425" expanded="true" signature="2010:2508" ph="{...}" />
-                <marker date="1544047828425" expanded="true" signature="2417:2498" ph="{...}" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -101,21 +111,21 @@
     </findStrings>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/RemoveBlock.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/45B1DFB7-D769-44F5-9F3B-C35EEB888F95/1c/4688153b/JobHandle.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/IMouseUsable.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/45B1DFB7-D769-44F5-9F3B-C35EEB888F95/bf/634340ef/Camera.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/RigidbodyFirstPersonController.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/HeadBob.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55448844-34D1-400A-9850-3330ADA26CBD/74/05c64c50/RaycastHit.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionObject.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/MouseLook.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGenerator.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/FirstPersonController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/MouseLook.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/45B1DFB7-D769-44F5-9F3B-C35EEB888F95/bf/634340ef/Camera.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/HeadBob.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/IMouseUsable.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Characters/FirstPersonCharacter/Scripts/RigidbodyFirstPersonController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/AddBlock.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/RemoveBlock.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55448844-34D1-400A-9850-3330ADA26CBD/74/05c64c50/RaycastHit.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionObject.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGenerator.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -187,6 +197,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="FileSystemExplorer" />
       <pane id="SolutionExplorer">
         <option name="show-all-files" value="false" />
       </pane>
@@ -202,7 +213,6 @@
         </subPane>
         <option name="show-hidden-items" value="false" />
       </pane>
-      <pane id="FileSystemExplorer" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -275,11 +285,12 @@
       <workItem from="1543850747906" duration="2763000" />
       <workItem from="1543949764771" duration="4685000" />
       <workItem from="1544043201934" duration="6547000" />
+      <workItem from="1544102509853" duration="886000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="126637000" />
+    <option name="totallyTimeSpent" value="127523000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -294,7 +305,7 @@
     <frame x="210" y="0" width="1511" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.0" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.33494142" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -423,13 +434,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
           <caret line="11" column="55" selection-start-line="11" selection-start-column="55" selection-end-line="11" selection-end-column="55" />
-          <folding>
-            <marker date="1543951122940" expanded="true" signature="105:191" ph="{...}" />
-            <marker date="1543951122940" expanded="true" signature="410:489" ph="{...}" />
-            <marker date="1543951122940" expanded="true" signature="583:1196" ph="{...}" />
-            <marker date="1543951122940" expanded="true" signature="645:1190" ph="{...}" />
-            <marker date="1543951122940" expanded="true" signature="796:1180" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -454,41 +458,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionJob.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="34" column="5" lean-forward="true" selection-start-line="34" selection-start-column="5" selection-end-line="34" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkManager.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="18" column="42" selection-start-line="18" selection-start-column="42" selection-end-line="18" selection-end-column="42" />
-          <folding>
-            <marker date="1544047828425" expanded="false" signature="6:52" ph="..." />
-            <marker date="1544047828425" expanded="true" signature="95:3094" ph="{...}" />
-            <marker date="1544047828425" expanded="true" signature="486:834" ph="{...}" />
-            <marker date="1544047828425" expanded="true" signature="684:828" ph="{...}" />
-            <marker date="1544047828425" expanded="true" signature="878:1349" ph="{...}" />
-            <marker date="1544047828425" expanded="true" signature="1428:1631" ph="{...}" />
-            <marker date="1544047828425" expanded="true" signature="1696:1880" ph="{...}" />
-            <marker date="1544047828425" expanded="true" signature="1744:1874" ph="{...}" />
-            <marker date="1544047828425" expanded="true" signature="1957:3092" ph="{...}" />
-            <marker date="1544047828425" expanded="true" signature="2010:2508" ph="{...}" />
-            <marker date="1544047828425" expanded="true" signature="2417:2498" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionJob.cs" />
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="5" column="12" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="12" />
-          <folding>
-            <marker date="1539867804156" expanded="true" signature="17:26" ph="{...}" />
-            <marker date="1539867804156" expanded="true" signature="48:102" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -496,15 +470,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="9" column="11" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
-          <folding>
-            <marker date="1544044110431" expanded="false" signature="6:96" ph="..." />
-            <marker date="1544044110431" expanded="true" signature="142:716" ph="{...}" />
-            <marker date="1544044110431" expanded="true" signature="263:359" ph="{...}" />
-            <marker date="1544044110431" expanded="true" signature="386:600" ph="{...}" />
-            <marker date="1544044110431" expanded="true" signature="421:522" ph="{...}" />
-            <marker date="1544044110431" expanded="true" signature="535:594" ph="{...}" />
-            <marker date="1544044110431" expanded="true" signature="640:714" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -512,39 +477,34 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1466">
           <caret line="88" column="5" selection-start-line="88" selection-start-column="5" selection-end-line="88" selection-end-column="5" />
-          <folding>
-            <marker date="1544047515143" expanded="true" signature="6:43" ph="..." />
-            <marker date="1544047515143" expanded="true" signature="90:2333" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="345:448" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="475:532" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="562:887" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="692:881" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="725:803" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="916:1371" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="966:1365" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="1172:1355" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="1259:1341" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="1403:2323" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="1665:1856" ph="{...}" />
-            <marker date="1544047515143" expanded="true" signature="2007:2235" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGenerator.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="26" column="43" lean-forward="true" selection-start-line="26" selection-start-column="43" selection-end-line="26" selection-end-column="43" />
+        <state relative-caret-position="289">
+          <caret line="21" column="13" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
           <folding>
-            <marker date="1544049658838" expanded="false" signature="6:66" ph="..." />
-            <marker date="1544049658838" expanded="true" signature="111:1689" ph="{...}" />
-            <marker date="1544049658838" expanded="true" signature="500:1289" ph="{...}" />
-            <marker date="1544049658838" expanded="true" signature="618:882" ph="{...}" />
-            <marker date="1544049658838" expanded="true" signature="1054:1283" ph="{...}" />
-            <marker date="1544049658838" expanded="true" signature="1380:1687" ph="{...}" />
-            <marker date="1544049658838" expanded="true" signature="1489:1654" ph="{...}" />
-            <marker date="1544049658838" expanded="true" signature="1545:1644" ph="{...}" />
+            <marker date="1544103388690" expanded="false" signature="6:145" ph="..." />
+            <marker date="1544103388690" expanded="true" signature="190:2345" ph="{...}" />
+            <marker date="1544103388690" expanded="true" signature="614:1945" ph="{...}" />
+            <marker date="1544103388690" expanded="true" signature="732:996" ph="{...}" />
+            <marker date="1544103388690" expanded="true" signature="1160:1442" ph="/* for (int i = 0; i &lt; bound; i++) ... */" />
+            <marker date="1544103388690" expanded="true" signature="1543:1939" ph="{...}" />
+            <marker date="1544103388690" expanded="true" signature="1625:1903" ph="{...}" />
+            <marker date="1544103388690" expanded="true" signature="2036:2343" ph="{...}" />
+            <marker date="1544103388690" expanded="true" signature="2145:2310" ph="{...}" />
+            <marker date="1544103388690" expanded="true" signature="2201:2300" ph="{...}" />
+            <marker date="1544103388690" expanded="true" signature="2372:2423" ph="{...}" />
+            <marker date="1544103388690" expanded="true" signature="2400:2421" ph="{...}" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkManager.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="42" selection-start-line="18" selection-start-column="42" selection-end-line="18" selection-end-column="42" />
         </state>
       </provider>
     </entry>
