@@ -16,7 +16,6 @@ public class ChunkManager : MonoBehaviour
     
     private void Start()
     {
-        Application.targetFrameRate = 999;
         foreach (Transform children in transform)
             chunks.Add(children.GetComponent<IChunk>());
 

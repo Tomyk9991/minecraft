@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour
@@ -11,79 +10,100 @@ public class ChunkGenerator : MonoBehaviour
     [SerializeField] private float heightMult = 5f;
     
     [Header("Instantiation")]
-    [SerializeField] private GameObject blockPrefab = null;
+    [SerializeField] private GameObject grassPrefab = null;
+    [SerializeField] private GameObject stonePrefab = null;
+    [SerializeField, Range(1, 200)] private int instantiationPerFrame = 20;
     [SerializeField] private Vector3Int size = default;
     
     private Biom[] bioms;
     private ChunkManager chunkManager;
 
-    private ChunkSpawner spawner;
     
     private void Start()
     {
         chunkManager = ChunkManager.Instance;
 
-        List<Vector3Int> positions = GenerateMap(size, (x, y) =>
+        
+        List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
         {
-            float height = (Mathf.PerlinNoise(x * smoothness, y * smoothness * 2) * heightMult +
-                            Mathf.PerlinNoise(x * smoothness, y * smoothness * 2) * heightMult) / 2f;
-
+            float height = (Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult +
+                            Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult) / 2f;
+            
             return Mathf.CeilToInt(height);
         });
 
-
-        int bound = size.x * size.z;
-        spawner = new ChunkSpawner();
+        List<Vector3Int> bottomPositions = GenerateBottomMap(surfacePositions);
         
-        StartCoroutine(StartSpawn(blockPrefab, positions, chunkManager));
-
-//        for (int i = 0; i < bound; i++)
-//        {
-//            GameObject block = Instantiate(blockPrefab, positions[i], Quaternion.identity);
-//            block.name = block.transform.position.ToString();
-//            
-//            chunkManager.AddBlock(block);
-//        }
         
-        IEnumerator StartSpawn(GameObject prefab, List<Vector3Int> p, ChunkManager manager)
+        //Surface
+        StartCoroutine(InstantiateBlocks(grassPrefab, surfacePositions, chunkManager));
+        //Below
+        StartCoroutine(InstantiateBlocks(stonePrefab, bottomPositions, chunkManager));
+    }
+
+
+    private IEnumerator InstantiateBlocks(GameObject prefab, List<Vector3Int> p, ChunkManager manager)
+    {
+        int index = 0;
+        
+        while (index < p.Count)
         {
-            int index = 0;
-        
-            while (index < p.Count)
+            for (int i = 0; i < instantiationPerFrame; i++)
             {
+                if (index == p.Count - 1)
+                    break;
+                
                 GameObject block = Instantiate(prefab, p[index], Quaternion.identity);
                 block.name = block.transform.position.ToString();
-
+    
                 manager.AddBlock(block);
                 index++;
-
-                return null;
             }
 
-            return null;
+            yield return null;
         }
     }
 
-    private List<Vector3Int> GenerateMap(Vector3Int size, Func<int, int, int> heightFunc)
+    private List<Vector3Int> GenerateBottomMap(List<Vector3Int> surfacePositions)
     {
+        List<Vector3Int> list = new List<Vector3Int>();
+        
+        for (int i = 0; i < surfacePositions.Count; i++)
+        {
+            int heightDelta = surfacePositions[i].y - (-size.y);
+
+            for (int j = 1; j < heightDelta; j++)
+            {
+                list.Add(new Vector3Int(surfacePositions[i].x, surfacePositions[i].y - j, surfacePositions[i].z));
+            }
+        }
+
+        return list;
+    }
+    private List<Vector3Int> GenerateHeightMap(Vector3Int size, Func<int, int, int> heightFunc)
+    {
+        bool firstHeightSet = false;
+        int firstHeight = int.MaxValue;
+        
         List<Vector3Int> positions = new List<Vector3Int>();
 
         for (int x = 0; x < size.x; x++)
         {
             for (int z = 0; z <= size.z; z++)
             {
-                positions.Add(new Vector3Int(x, heightFunc(x, z), z));
+                int y = heightFunc(x, z);
+
+                if (!firstHeightSet)
+                {
+                    firstHeightSet = true;
+                    firstHeight = y;
+                }
+                
+                positions.Add(new Vector3Int(x, y - firstHeight, z));
             }
         }
-
-        return positions;
-    }
-}
-
-public class ChunkSpawner
-{
-    public ChunkSpawner()
-    {
         
+        
+        return positions;
     }
 }
