@@ -306,7 +306,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseButtonIndex: 1
   blocks:
-  - {fileID: 5232190851170520901, guid: 3a214988ce11b5147aa68010ec103249, type: 3}
+  - {fileID: 5232190851170520901, guid: f967e6cd1380376459daac4f7b823ef2, type: 3}
 --- !u!114 &697684164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,7 +334,7 @@ GameObject:
   - component: {fileID: 12474086}
   - component: {fileID: 1727572143}
   m_Layer: 0
-  m_Name: FirstPersonCharacter
+  m_Name: CamerHead
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -424,9 +424,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf39efd9979f16942b82001ab4719cb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rayAmount: 1500
+  rayAmount: 2000
   rayDistance: 300
-  stayTime: 5
+  stayTime: 2
   rPoints: []
 --- !u!1 &772451301
 GameObject:

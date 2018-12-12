@@ -17,7 +17,7 @@ public class BlockPool : SingletonBehaviour<BlockPool>
         for (int i = 0; i < blockThreshold; i++)
         {
             GameObject g = Instantiate(blockPrefab, Vector3.up * 256, Quaternion.identity, transform);
-//            g.GetComponent<MeshRenderer>().enabled = false;
+            g.GetComponent<MeshRenderer>().enabled = false;
 
             this.gameObjectPool.Enqueue(g);
         }

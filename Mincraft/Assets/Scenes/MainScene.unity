@@ -437,7 +437,7 @@ MonoBehaviour:
   grassPrefab: {fileID: 5232190851170520901, guid: f967e6cd1380376459daac4f7b823ef2, type: 3}
   stonePrefab: {fileID: 5232190851170520901, guid: c9a7cbf4b03cbf84fbeac30515ecf336, type: 3}
   instantiationPerFrame: 20
-  desiredFrameTarget: 2000
+  splitInFrames: 2000
   size: {x: 16, y: 16, z: 16}
 --- !u!1001 &845648047
 PrefabInstance:
@@ -610,26 +610,6 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 100002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_Name
-      value: CamerHead
-      objectReference: {fileID: 0}
-    - target: {fileID: 1727572143, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: rayAmount
-      value: 2000
-      objectReference: {fileID: 0}
-    - target: {fileID: 1727572143, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: stayTime
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1727572143, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_GravityMultiplier
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}

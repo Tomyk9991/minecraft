@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
@@ -37,16 +38,17 @@ public class ChunkGenerator : MonoBehaviour
             
             return Mathf.CeilToInt(height);
         });
-
-        List<Vector3Int> bottomPositions = GenerateBottomMap(surfacePositions);
         
         
         //Surface
         StartCoroutine(InstantiateBlocks(grassPrefab, surfacePositions, chunkManager));
-        //Below
-        // Trying to write a block object pool
-        //StartCoroutine(ReactivateBlocks(bottomPositions, chunkManager));
+        var gameObjects = SetPositions(surfacePositions);
+        ReactivateBlocks(gameObjects, chunkManager);
+    }
 
+    private List<GameObject> SetPositions(List<Vector3Int> surfacePositions)
+    {
+        List<Vector3Int> bottomPositions = GenerateBottomMap(surfacePositions);
         Transform[] transforms = new Transform[bottomPositions.Count];
         for (int i = 0; i < transforms.Length; i++)
             transforms[i] = pool.GameObjectPool.Dequeue().transform;
@@ -65,25 +67,18 @@ public class ChunkGenerator : MonoBehaviour
         
         array.Dispose();
         accessArray.Dispose();
+
+        return transforms.Select(t => t.gameObject).ToList();
     }
 
-    private IEnumerator ReactivateBlocks(List<Vector3Int> p, ChunkManager manager)
+    private void ReactivateBlocks(List<GameObject> gameObjects, ChunkManager manager)
     {
-        List<List<Vector3Int>> subLists = p.Split(splitInFrames);
-
-        for (int i = 0; i < subLists.Count; i++)
+        for (int i = 0; i < gameObjects.Count; i++)
         {
-            for (int j = 0; j < subLists[i].Count; j++)
-            {
-                GameObject block = pool.GameObjectPool.Dequeue();
-                block.name = block.transform.position.ToString();
-                block.transform.position = subLists[i][j];
-                block.GetComponent<MeshRenderer>().enabled = true;
-
-                manager.AddBlock(block);
-            }
-
-            yield return null;
+            gameObjects[i].name = gameObjects[i].transform.position.ToString();
+            //gameObjects[i].GetComponent<MeshRenderer>().enabled = true;
+    
+            manager.AddBlock(gameObjects[i]);
         }
     }
 
