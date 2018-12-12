@@ -391,7 +391,8 @@ MonoBehaviour:
   heightMult: 12.5
   grassPrefab: {fileID: 5232190851170520901, guid: f967e6cd1380376459daac4f7b823ef2, type: 3}
   stonePrefab: {fileID: 5232190851170520901, guid: c9a7cbf4b03cbf84fbeac30515ecf336, type: 3}
-  instantiationPerFrame: 10
+  instantiationPerFrame: 20
+  desiredFrameTarget: 2000
   size: {x: 16, y: 16, z: 16}
 --- !u!1001 &845648047
 PrefabInstance:

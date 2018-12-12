@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour
@@ -13,6 +15,8 @@ public class ChunkGenerator : MonoBehaviour
     [SerializeField] private GameObject grassPrefab = null;
     [SerializeField] private GameObject stonePrefab = null;
     [SerializeField, Range(1, 200)] private int instantiationPerFrame = 20;
+    [SerializeField, Tooltip("In wie vielen Frames sollen alle Blöcke instanziert werden")] 
+    private int desiredFrameTarget = 200;
     [SerializeField] private Vector3Int size = default;
     
     private Biom[] bioms;
@@ -22,11 +26,10 @@ public class ChunkGenerator : MonoBehaviour
     private void Start()
     {
         chunkManager = ChunkManager.Instance;
-
         
         List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
         {
-            float height = (Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult +
+            float height = (Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult + 
                             Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult) / 2f;
             
             return Mathf.CeilToInt(height);
@@ -38,20 +41,41 @@ public class ChunkGenerator : MonoBehaviour
         //Surface
         StartCoroutine(InstantiateBlocks(grassPrefab, surfacePositions, chunkManager));
         //Below
-        StartCoroutine(InstantiateBlocks(stonePrefab, bottomPositions, chunkManager));
+        StartCoroutine(InstantiateBlocks(stonePrefab, bottomPositions, chunkManager, true));
     }
 
-
-    private IEnumerator InstantiateBlocks(GameObject prefab, List<Vector3Int> p, ChunkManager manager)
+    private IEnumerator InstantiateBlocks(GameObject prefab, List<Vector3Int> p, ChunkManager manager, bool subdivide = false)
     {
-        int index = 0;
+        if (subdivide)
+        {
+            int subListCounter = 0;
+            var subLists = p.Split(desiredFrameTarget);
+
+            for (int i = 0; i < subLists.Count; i++)
+            {
+                for (int j = 0; j < subLists[i].Count; j++)
+                {
+                    GameObject block = Instantiate(prefab, subLists[i][j], Quaternion.identity);
+                    block.name = block.transform.position.ToString();
+
+                    manager.AddBlock(block);
+                }
+
+                yield return null;
+            }
+            
+            // breaks the function to stop
+            yield break;
+        }
         
+        int index = 0;
         while (index < p.Count)
         {
             for (int i = 0; i < instantiationPerFrame; i++)
             {
                 if (index == p.Count - 1)
                     break;
+                
                 
                 GameObject block = Instantiate(prefab, p[index], Quaternion.identity);
                 block.name = block.transform.position.ToString();
