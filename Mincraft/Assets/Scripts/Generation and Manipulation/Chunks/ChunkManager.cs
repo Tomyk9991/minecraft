@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ChunkManager : MonoBehaviour
+public class ChunkManager : SingletonBehaviour<ChunkManager>
 {
     public static Vector3Int GetMaxSize => ChunkManager.Instance.maxSize;
     
@@ -9,10 +9,6 @@ public class ChunkManager : MonoBehaviour
     [SerializeField] private Vector3Int maxSize;
     
     public List<IChunk> chunks = new List<IChunk>();
-    
-    public static ChunkManager Instance { get; private set; }
-
-    private void Awake() => Instance = this;
     
     private void Start()
     {

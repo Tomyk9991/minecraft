@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Threading.Tasks;
+using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Jobs;
 
 public class ChunkGenerator : MonoBehaviour
 {
@@ -15,16 +17,17 @@ public class ChunkGenerator : MonoBehaviour
     [SerializeField] private GameObject grassPrefab = null;
     [SerializeField] private GameObject stonePrefab = null;
     [SerializeField, Range(1, 200)] private int instantiationPerFrame = 20;
-    [SerializeField, Tooltip("In wie vielen Frames sollen alle Blöcke instanziert werden")] 
-    private int desiredFrameTarget = 200;
+    [SerializeField] private int splitInFrames = 2000;
     [SerializeField] private Vector3Int size = default;
     
     private Biom[] bioms;
     private ChunkManager chunkManager;
+    private BlockPool pool;
 
     
     private void Start()
     {
+        pool = BlockPool.Instance;
         chunkManager = ChunkManager.Instance;
         
         List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
@@ -41,33 +44,51 @@ public class ChunkGenerator : MonoBehaviour
         //Surface
         StartCoroutine(InstantiateBlocks(grassPrefab, surfacePositions, chunkManager));
         //Below
-        StartCoroutine(InstantiateBlocks(stonePrefab, bottomPositions, chunkManager, true));
+        // Trying to write a block object pool
+        //StartCoroutine(ReactivateBlocks(bottomPositions, chunkManager));
+
+        Transform[] transforms = new Transform[bottomPositions.Count];
+        for (int i = 0; i < transforms.Length; i++)
+            transforms[i] = pool.GameObjectPool.Dequeue().transform;
+        
+        
+        NativeArray<Vector3Int> array = new NativeArray<Vector3Int>(bottomPositions.ToArray(), Allocator.TempJob);
+        TransformAccessArray accessArray = new TransformAccessArray(transforms);
+        
+        EnableJob job = new EnableJob()
+        {
+            targets = array
+        };
+
+        var handle = job.Schedule(accessArray);
+        handle.Complete();
+        
+        array.Dispose();
+        accessArray.Dispose();
+    }
+
+    private IEnumerator ReactivateBlocks(List<Vector3Int> p, ChunkManager manager)
+    {
+        List<List<Vector3Int>> subLists = p.Split(splitInFrames);
+
+        for (int i = 0; i < subLists.Count; i++)
+        {
+            for (int j = 0; j < subLists[i].Count; j++)
+            {
+                GameObject block = pool.GameObjectPool.Dequeue();
+                block.name = block.transform.position.ToString();
+                block.transform.position = subLists[i][j];
+                block.GetComponent<MeshRenderer>().enabled = true;
+
+                manager.AddBlock(block);
+            }
+
+            yield return null;
+        }
     }
 
     private IEnumerator InstantiateBlocks(GameObject prefab, List<Vector3Int> p, ChunkManager manager, bool subdivide = false)
-    {
-        if (subdivide)
-        {
-            int subListCounter = 0;
-            var subLists = p.Split(desiredFrameTarget);
-
-            for (int i = 0; i < subLists.Count; i++)
-            {
-                for (int j = 0; j < subLists[i].Count; j++)
-                {
-                    GameObject block = Instantiate(prefab, subLists[i][j], Quaternion.identity);
-                    block.name = block.transform.position.ToString();
-
-                    manager.AddBlock(block);
-                }
-
-                yield return null;
-            }
-            
-            // breaks the function to stop
-            yield break;
-        }
-        
+    {   
         int index = 0;
         while (index < p.Count)
         {
@@ -104,6 +125,7 @@ public class ChunkGenerator : MonoBehaviour
 
         return list;
     }
+    
     private List<Vector3Int> GenerateHeightMap(Vector3Int size, Func<int, int, int> heightFunc)
     {
         bool firstHeightSet = false;
@@ -129,5 +151,15 @@ public class ChunkGenerator : MonoBehaviour
         
         
         return positions;
+    }
+}
+
+public struct EnableJob : IJobParallelForTransform
+{
+    public NativeArray<Vector3Int> targets;
+    
+    public void Execute(int index, TransformAccess transform)
+    {
+        transform.position = targets[index];
     }
 }
