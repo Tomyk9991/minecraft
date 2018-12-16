@@ -430,7 +430,7 @@ MonoBehaviour:
   heightMult: 12.5
   surface: 0
   bottom: 1
-  size: {x: 16, y: 5, z: 16}
+  size: {x: 16, y: 16, z: 16}
 --- !u!1001 &845648047
 PrefabInstance:
   m_ObjectHideFlags: 0

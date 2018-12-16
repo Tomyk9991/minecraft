@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
+using System.Threading.Tasks;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 public static class ModifyMesh
 {
     private static Vector2[] uvs = null;
-    
-//    public static void RemoveBlockFromMesh(Transform currentChunk, Transform objectToRemove)
-//    {
-//        GameObject.DestroyImmediate(objectToRemove.gameObject);
-//        CombineForAll(currentChunk.gameObject, remove: true);
-//    }
-//    
+
     public static void RemoveBlockFromMesh(Transform currentChunk, Block objectToRemove)
     {
         currentChunk.GetComponent<IChunk>().RemoveBlock(objectToRemove);
@@ -34,7 +29,7 @@ public static class ModifyMesh
         Vector3 p0 = vertices[triangles[hitTri * 3 + 0]];
         Vector3 p1 = vertices[triangles[hitTri * 3 + 1]];
         Vector3 p2 = vertices[triangles[hitTri * 3 + 2]];
-                
+
         float edge1 = Vector3.Distance(p0, p1);
         float edge2 = Vector3.Distance(p0, p2);
         float edge3 = Vector3.Distance(p1, p2);
@@ -71,7 +66,7 @@ public static class ModifyMesh
 
         return blockPos;
     }
-    
+
     public static void CombineForAll(GameObject currentChunk, bool remove = false)
     {
         Vector3 pos = currentChunk.transform.position;
@@ -79,7 +74,7 @@ public static class ModifyMesh
         IChunk chunk = currentChunk.GetComponent<IChunk>();
         currentChunk.transform.position = Vector3.zero;
         currentChunk.SetActive(false);
-        
+
         if (uvs == null)
             uvs = SetUVs.GetStandardUVs();
 
@@ -93,10 +88,11 @@ public static class ModifyMesh
             combine[i].mesh = blocks[i].Mesh;
             combine[i].transform = Matrix4x4.TRS(blocks[i].Position, Quaternion.identity, Vector3.one);
         }
-        
-        MeshFilter refMesh = currentChunk.GetComponent<MeshFilter>();
-        refMesh.mesh = new Mesh();
 
+        MeshFilter refMesh = currentChunk.GetComponent<MeshFilter>();
+
+
+        refMesh.mesh = new Mesh();
         refMesh.mesh.CombineMeshes(combine, true);
 
         List<Vector2> newMeshUVs = new List<Vector2>();
@@ -111,7 +107,6 @@ public static class ModifyMesh
             float vmin = tilePerc * suv.TileY;
             float vmax = tilePerc * (suv.TileY + 1);
 
-
             for (int j = 0; j < 24; j++)
             {
                 float x = Mathf.Approximately(uvs[j].x, 0f) ? umin : umax;
@@ -122,9 +117,7 @@ public static class ModifyMesh
         }
 
         refMesh.mesh.uv = newMeshUVs.ToArray();
-        
-        
-        
+
         refMesh.mesh.RecalculateBounds();
         refMesh.mesh.RecalculateNormals();
 
@@ -137,11 +130,11 @@ public static class ModifyMesh
     {
         Vector3 pos = currentChunk.transform.position;
         currentChunk.transform.position = Vector3.zero;
-        
+
         MeshFilter meshFilter = currentChunk.GetComponent<MeshFilter>();
         CombineInstance[] combine = new CombineInstance[2];
-        
-        
+
+
         currentChunk.GetComponents<MeshCollider>().ToList().ForEach(GameObject.Destroy);
 
         Vector2[] oldMeshUVs = currentChunk.GetComponent<MeshFilter>().mesh.uv;
@@ -150,21 +143,20 @@ public static class ModifyMesh
         combine[0].mesh = meshFilter.sharedMesh;
         combine[0].transform = meshFilter.transform.localToWorldMatrix;
         meshFilter.gameObject.SetActive(false);
-        
+
         combine[1].mesh = blockToAdd.Mesh; // TODO: Hier möglicherweise zu mesh wechseln
         Matrix4x4 m = Matrix4x4.TRS(blockToAdd.Position, Quaternion.identity, Vector3.one);
         combine[1].transform = m;
-        
-        
-        
+
+
         MeshFilter refMesh = currentChunk.GetComponent<MeshFilter>();
         refMesh.mesh = new Mesh();
-        
+
         refMesh.mesh.CombineMeshes(combine, true);
-        
+
         //make new UV array
         Vector2[] newMeshUVs = new Vector2[oldMeshUVs.Length + 24];
-        
+
 //        //copy over all UVs
         for (int j = 0; j < oldMeshUVs.Length; j++)
             newMeshUVs[j] = oldMeshUVs[j];
@@ -190,7 +182,7 @@ public static class ModifyMesh
         }
 
         refMesh.mesh.uv = newMeshUVs;
-        
+
         refMesh.mesh.RecalculateBounds();
         refMesh.mesh.RecalculateNormals();
 
@@ -199,3 +191,4 @@ public static class ModifyMesh
         currentChunk.gameObject.SetActive(true);
     }
 }
+

@@ -43,18 +43,5 @@ public class AddBlock : MonoBehaviour, IMouseUsable
                 chunkManager.AddBlock(block);
             }
         }
-
-        if (Input.GetMouseButtonDown(2)) // Middle mousebutton
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
-            {
-                Vector3 centeredCubePosition = ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal);
-                Block block = new Block(Vector3Int.FloorToInt(centeredCubePosition));
-                
-                chunkManager.AddBlock(block);
-            }
-        }
     }
 }

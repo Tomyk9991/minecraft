@@ -30,6 +30,7 @@
                 <e p="RemoveBlock.cs" t="Include" />
                 <e p="SetUVs.cs" t="Include" />
                 <e p="Utilities" t="Include">
+                  <e p="BlockUV.cs" t="Include" />
                   <e p="IMouseUsable.cs" t="Include" />
                 </e>
                 <e p="UVSetter.cs" t="Include" />

@@ -11,7 +11,8 @@ public class SetUVs : MonoBehaviour
     [Range(0, 15)]
     public float tileY = 1;
 
-    private static Vector2[] uvs;
+    private static Vector2[] uvs = null;
+    private static bool hasCalculatedUVs = false;
 
     private static Vector3[] vertices = null;
     private static int[] triangles = null;
@@ -41,10 +42,17 @@ public class SetUVs : MonoBehaviour
 
     public static Vector2[] GetStandardUVs()
     {
-        GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        Vector2[] uvs = temp.GetComponent<MeshFilter>().mesh.uv;
-        GameObject.Destroy(temp);
+        if (!hasCalculatedUVs)
+        {
+            GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            uvs = temp.GetComponent<MeshFilter>().mesh.uv;
+            Destroy(temp);
+            hasCalculatedUVs = true;
+            return uvs;
+        }
+
         return uvs;
+
     }
 
     public static (Vector3[] vertices, int[] triangles) GetStandardMeshFilter()

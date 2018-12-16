@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 public class ChunkManager : SingletonBehaviour<ChunkManager>
@@ -90,5 +92,4 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
 
         return (go.GetComponent<IChunk>(), go, true);
     }
-
 }
