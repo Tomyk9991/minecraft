@@ -13,6 +13,9 @@ public class SetUVs : MonoBehaviour
 
     private static Vector2[] uvs;
 
+    private static Vector3[] vertices = null;
+    private static int[] triangles = null;
+
     private void Start()
     {
         float tilePerc = 1f / pixelSize;
@@ -42,5 +45,20 @@ public class SetUVs : MonoBehaviour
         Vector2[] uvs = temp.GetComponent<MeshFilter>().mesh.uv;
         GameObject.Destroy(temp);
         return uvs;
+    }
+
+    public static (Vector3[] vertices, int[] triangles) GetStandardMeshFilter()
+    {
+        if (vertices != null && triangles != null)
+        {
+            return (vertices, triangles);
+        }
+        
+        GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        vertices = temp.GetComponent<MeshFilter>().mesh.vertices;
+        triangles = temp.GetComponent<MeshFilter>().mesh.triangles;
+        Destroy(temp);
+
+        return (vertices, triangles);
     }
 }

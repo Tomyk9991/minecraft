@@ -9,9 +9,15 @@ public static class ModifyMesh
 {
     private static Vector2[] uvs = null;
     
-    public static void RemoveBlockFromMesh(Transform currentChunk, Transform objectToRemove)
+//    public static void RemoveBlockFromMesh(Transform currentChunk, Transform objectToRemove)
+//    {
+//        GameObject.DestroyImmediate(objectToRemove.gameObject);
+//        CombineForAll(currentChunk.gameObject, remove: true);
+//    }
+//    
+    public static void RemoveBlockFromMesh(Transform currentChunk, Block objectToRemove)
     {
-        GameObject.DestroyImmediate(objectToRemove.gameObject);
+        currentChunk.GetComponent<IChunk>().RemoveBlock(objectToRemove);
         CombineForAll(currentChunk.gameObject, remove: true);
     }
 
@@ -70,48 +76,40 @@ public static class ModifyMesh
     {
         Vector3 pos = currentChunk.transform.position;
 
+        IChunk chunk = currentChunk.GetComponent<IChunk>();
         currentChunk.transform.position = Vector3.zero;
         currentChunk.SetActive(false);
         
         if (uvs == null)
             uvs = SetUVs.GetStandardUVs();
 
-        MeshFilter[] temp = currentChunk.GetComponentsInChildren<MeshFilter>(remove);
-        MeshFilter[] meshFilters = new MeshFilter[temp.Length - 1];
-
-        for (int i = 1; i < temp.Length; i++)
-        {
-            meshFilters[i - 1] = temp[i];
-        }
-
-        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+        Block[] blocks = chunk.GetBlocks();
+        CombineInstance[] combine = new CombineInstance[blocks.Length];
 
         currentChunk.GetComponents<MeshCollider>().ToList().ForEach(GameObject.Destroy);
 
-        for (int i = 0; i < meshFilters.Length; i++)
+        for (int i = 0; i < blocks.Length; i++)
         {
-            combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-            meshFilters[i].gameObject.SetActive(false);
+            combine[i].mesh = blocks[i].Mesh;
+            combine[i].transform = Matrix4x4.TRS(blocks[i].Position, Quaternion.identity, Vector3.one);
         }
         
         MeshFilter refMesh = currentChunk.GetComponent<MeshFilter>();
         refMesh.mesh = new Mesh();
 
-        //Hier wieder auf true
         refMesh.mesh.CombineMeshes(combine, true);
 
         List<Vector2> newMeshUVs = new List<Vector2>();
-        
-        for (int i = 0; i < meshFilters.Length; i++)
+
+        for (int i = 0; i < blocks.Length; i++)
         {
             //add new UVs based on individual block settings
-            SetUVs suv = meshFilters[i].GetComponent<SetUVs>();
-            float tilePerc = 1 / suv.pixelSize;
-            float umin = tilePerc * suv.tileX;
-            float umax = tilePerc * (suv.tileX + 1);
-            float vmin = tilePerc * suv.tileY;
-            float vmax = tilePerc * (suv.tileY + 1);
+            UVSetter suv = blocks[i].UVSetter;
+            float tilePerc = 1 / UVSetter.pixelSize;
+            float umin = tilePerc * suv.TileX;
+            float umax = tilePerc * (suv.TileX + 1);
+            float vmin = tilePerc * suv.TileY;
+            float vmax = tilePerc * (suv.TileY + 1);
 
 
             for (int j = 0; j < 24; j++)
@@ -134,30 +132,30 @@ public static class ModifyMesh
         currentChunk.AddComponent<MeshCollider>();
         currentChunk.gameObject.SetActive(true);
     }
-    
-    public static void Combine(GameObject blockToAdd, GameObject currentChunk)
+
+    public static void Combine(Block blockToAdd, GameObject currentChunk)
     {
         Vector3 pos = currentChunk.transform.position;
         currentChunk.transform.position = Vector3.zero;
         
-        
-        //Konstante Laufzeit - Immer O(2), da meshFilters immer das vorherige Mesh + ein neues Mesh nimmt
-        MeshFilter[] meshFilters = currentChunk.GetComponentsInChildren<MeshFilter>();
-
-        
-        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+        MeshFilter meshFilter = currentChunk.GetComponent<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[2];
         
         
         currentChunk.GetComponents<MeshCollider>().ToList().ForEach(GameObject.Destroy);
 
         Vector2[] oldMeshUVs = currentChunk.GetComponent<MeshFilter>().mesh.uv;
+
+
+        combine[0].mesh = meshFilter.sharedMesh;
+        combine[0].transform = meshFilter.transform.localToWorldMatrix;
+        meshFilter.gameObject.SetActive(false);
         
-        for (int i = 0; i < meshFilters.Length; i++)
-        {
-            combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-            meshFilters[i].gameObject.SetActive(false);
-        }
+        combine[1].mesh = blockToAdd.Mesh; // TODO: Hier möglicherweise zu mesh wechseln
+        Matrix4x4 m = Matrix4x4.TRS(blockToAdd.Position, Quaternion.identity, Vector3.one);
+        combine[1].transform = m;
+        
+        
         
         MeshFilter refMesh = currentChunk.GetComponent<MeshFilter>();
         refMesh.mesh = new Mesh();
@@ -171,13 +169,12 @@ public static class ModifyMesh
         for (int j = 0; j < oldMeshUVs.Length; j++)
             newMeshUVs[j] = oldMeshUVs[j];
 
-        //add new UVs based on individual block settings
-        SetUVs suv = blockToAdd.GetComponent<SetUVs>();
-        float tilePerc = 1 / suv.pixelSize;
-        float umin = tilePerc * suv.tileX;
-        float umax = tilePerc * (suv.tileX + 1);
-        float vmin = tilePerc * suv.tileY;
-        float vmax = tilePerc * (suv.tileY + 1);
+        UVSetter suv = blockToAdd.UVSetter;
+        float tilePerc = 1 / UVSetter.pixelSize;
+        float umin = tilePerc * suv.TileX;
+        float umax = tilePerc * (suv.TileX + 1);
+        float vmin = tilePerc * suv.TileY;
+        float vmax = tilePerc * (suv.TileY + 1);
 
         if (uvs == null)
             uvs = SetUVs.GetStandardUVs();

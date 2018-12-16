@@ -2,6 +2,12 @@
 
 public class AddBlock : MonoBehaviour, IMouseUsable
 {
+    public float RaycastHitable
+    {
+        get => raycastHitable;
+        set => raycastHitable = value;
+    }
+
     public int MouseButtonIndex
     {
         get => mouseButtonIndex;
@@ -9,6 +15,8 @@ public class AddBlock : MonoBehaviour, IMouseUsable
     }
     
     [SerializeField] private int mouseButtonIndex = 1;
+    [SerializeField] private float raycastHitable = 1000f;
+    
     [SerializeField] private GameObject[] blocks = null;
     private GameObject newBlock;
     private ChunkManager chunkManager;
@@ -30,12 +38,23 @@ public class AddBlock : MonoBehaviour, IMouseUsable
             if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
                 Vector3 centeredCubePosition = ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal);
-                GameObject block = Instantiate(newBlock, centeredCubePosition, Quaternion.identity, hit.transform);
-                block.name = block.transform.position.ToString();
+                Block block = new Block(Vector3Int.FloorToInt(centeredCubePosition));
+                
+                chunkManager.AddBlock(block);
+            }
+        }
+
+        if (Input.GetMouseButtonDown(2)) // Middle mousebutton
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
+            {
+                Vector3 centeredCubePosition = ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal);
+                Block block = new Block(Vector3Int.FloorToInt(centeredCubePosition));
                 
                 chunkManager.AddBlock(block);
             }
         }
     }
-
 }

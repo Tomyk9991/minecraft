@@ -5,14 +5,10 @@ using UnityEngine;
 
 public static class ChunkDictionary
 {
-    private static Dictionary<Vector3, Transform> dictionary = new Dictionary<Vector3, Transform>();
+    private static Dictionary<Vector3Int, Vector3Int> dictionary = new Dictionary<Vector3Int, Vector3Int>();
 
-    public static void Add(Vector3 key, Transform value)
-    {
-        dictionary.Add(key, value);
-    }
-
-    public static void Remove(Vector3 key) => dictionary.Remove(key);
-    public static Transform GetValue(Vector3 key) => dictionary[key];
+    public static void Add(Vector3Int key, Vector3Int value) => dictionary.Add(key, value);
+    public static void Remove(Vector3Int key) => dictionary.Remove(key);
+    public static Vector3Int GetValue(Vector3Int key) => dictionary[key];
     public static void Clear() => dictionary.Clear();
 }

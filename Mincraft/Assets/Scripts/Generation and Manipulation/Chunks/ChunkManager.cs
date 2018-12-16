@@ -22,50 +22,53 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         }
     }
 
-    public void AddBlock(GameObject block)
+    public void AddBlock(Block block)
     {
-        Vector3 centeredCubePosition = block.transform.position;
-        ChunkDictionary.Add(centeredCubePosition, block.transform);
-
-        (GameObject parent, bool hasCreatedNewChunk) = GenerateOrGetChunkGameObject(centeredCubePosition);
+        Vector3 centeredCubePosition = block.Position;
+        ChunkDictionary.Add(block.Position, block.Position);
         
-        block.transform.parent = parent.transform;
+        (IChunk chunk, GameObject parent, bool hasCreatedNewChunk) = GenerateOrGetChunkGameObject(centeredCubePosition);
+        chunk.AddBlock(block);
+
 
         if (!hasCreatedNewChunk)
             ModifyMesh.Combine(block, parent);
         else
             ModifyMesh.CombineForAll(parent);
-        
-        
     }
 
-    public void RemoveBlock(GameObject currentChunk, Transform blockToRemove)
+    public void RemoveBlock(GameObject currentChunk, Block block)
     {
-        ChunkDictionary.Remove(blockToRemove.position);
-        ModifyMesh.RemoveBlockFromMesh(currentChunk.transform, blockToRemove);
-        DeleteChunkIfNotNeeded(currentChunk.transform);
+        ChunkDictionary.Remove(block.Position);
+        //Ich entferne erst den Block auf dem Chunk
+        IChunk chunk = currentChunk.GetComponent<IChunk>();
+        chunk.RemoveBlock(block);
+        // Und erstelle anschließend mit den restlichen Blöcken den Chunk
+        ModifyMesh.RemoveBlockFromMesh(currentChunk.transform, block);
+
+        DeleteChunkIfNotNeeded(chunk);
     }
 
-    private void DeleteChunkIfNotNeeded(Transform currentChunk)
+    private void DeleteChunkIfNotNeeded(IChunk currentChunk)
     {
-        if (currentChunk.childCount == 0)
+        if (currentChunk.BlockCount() == 0)
         {
-            chunks.Remove(currentChunk.GetComponent<IChunk>());
-            Destroy(currentChunk.gameObject);
+            chunks.Remove(currentChunk);
+            Destroy(currentChunk.CurrentGO);
         }
     }
 
-    private (GameObject, bool) GenerateOrGetChunkGameObject(Vector3 target)
+    private (IChunk, GameObject, bool) GenerateOrGetChunkGameObject(Vector3 target)
     {
         for (int i = 0; i < chunks.Count; i++)
         {
             (Vector3Int lowerBound, Vector3Int higherBound) = chunks[i].GetChunkBounds();
             
             if ((target.x >= lowerBound.x && target.x <= higherBound.x) &&
-                (target.y >= lowerBound.y && target.y <= higherBound.y) &&
-                (target.z >= lowerBound.z && target.z <= higherBound.z))   // Dann liegt es dazwischen und muss dementsprechend in diesen Chunk
+                (target.y >= lowerBound.y && target.y <= higherBound.y) &&// Dann liegt es dazwischen und muss 
+                (target.z >= lowerBound.z && target.z <= higherBound.z))// dementsprechend in diesen Chunk
             {
-                return (chunks[i].CurrentGO, false);
+                return (chunks[i], chunks[i].CurrentGO, false);
             }
         }
 
@@ -76,12 +79,16 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         Vector3Int chunkPos = new Vector3Int(x, y, z);
         
         GameObject go = Instantiate(chunkPrefab, transform);
-        go.transform.position = chunkPos;
-        go.name = "Chunk " + go.transform.position.ToString();
-        go.GetComponent<IChunk>().CurrentGO = go;
+        Chunk chunk = (Chunk) go.GetComponent<IChunk>();
+        
+        chunk.CurrentGO = go;
+        chunk.ChunkOffset = chunkPos;
+        
+        go.name = "Chunk " + chunk.ChunkOffset.ToString();
+        
         chunks.Add(go.GetComponent<IChunk>());
 
-        
-        return (go, true);
+        return (go.GetComponent<IChunk>(), go, true);
     }
+
 }

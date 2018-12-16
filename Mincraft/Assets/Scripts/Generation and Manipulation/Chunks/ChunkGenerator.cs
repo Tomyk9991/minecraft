@@ -15,10 +15,8 @@ public class ChunkGenerator : MonoBehaviour
     [SerializeField] private float heightMult = 5f;
     
     [Header("Instantiation")]
-    [SerializeField] private GameObject grassPrefab = null;
-    [SerializeField] private GameObject stonePrefab = null;
-    [SerializeField, Range(1, 200)] private int instantiationPerFrame = 20;
-    [SerializeField] private int splitInFrames = 2000;
+    [SerializeField] private BlockUV surface = default;
+    [SerializeField] private BlockUV bottom = default;
     [SerializeField] private Vector3Int size = default;
     
     private Biom[] bioms;
@@ -30,7 +28,7 @@ public class ChunkGenerator : MonoBehaviour
     {
         pool = BlockPool.Instance;
         chunkManager = ChunkManager.Instance;
-        
+
         List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
         {
             float height = (Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult + 
@@ -38,71 +36,51 @@ public class ChunkGenerator : MonoBehaviour
             
             return Mathf.CeilToInt(height);
         });
-        
-        
-        //Surface
-        StartCoroutine(InstantiateBlocks(grassPrefab, surfacePositions, chunkManager));
-        var gameObjects = SetPositions(surfacePositions);
-        ReactivateBlocks(gameObjects, chunkManager);
-    }
 
-    private List<GameObject> SetPositions(List<Vector3Int> surfacePositions)
-    {
-        List<Vector3Int> bottomPositions = GenerateBottomMap(surfacePositions);
-        Transform[] transforms = new Transform[bottomPositions.Count];
-        for (int i = 0; i < transforms.Length; i++)
-            transforms[i] = pool.GameObjectPool.Dequeue().transform;
-        
-        
-        NativeArray<Vector3Int> array = new NativeArray<Vector3Int>(bottomPositions.ToArray(), Allocator.TempJob);
-        TransformAccessArray accessArray = new TransformAccessArray(transforms);
-        
-        EnableJob job = new EnableJob()
+        foreach (Vector3Int surfacePosition in surfacePositions)
         {
-            targets = array
-        };
+            Block block = new Block(surfacePosition);
+            block.UVSetter.SetBlockUV(surface);
+            chunkManager.AddBlock(block);
+        }
 
-        var handle = job.Schedule(accessArray);
-        handle.Complete();
+        // Optimierungsbedarf
+        // Entweder erst Blöcke alle in den Chunk einfügen, dann einmal, aber viel combinen
+        // und / oder Multithreading!!!! MÖGLICH DURCH BLOCK
         
-        array.Dispose();
-        accessArray.Dispose();
-
-        return transforms.Select(t => t.gameObject).ToList();
-    }
-
-    private void ReactivateBlocks(List<GameObject> gameObjects, ChunkManager manager)
-    {
-        for (int i = 0; i < gameObjects.Count; i++)
+        List<Vector3Int> rofl = GenerateBottomMap(surfacePositions);
+        foreach (Vector3Int bottomPosition in rofl)
         {
-            gameObjects[i].name = gameObjects[i].transform.position.ToString();
-            //gameObjects[i].GetComponent<MeshRenderer>().enabled = true;
-    
-            manager.AddBlock(gameObjects[i]);
+            Block block = new Block(bottomPosition);
+            block.UVSetter.SetBlockUV(bottom);
+            chunkManager.AddBlock(block);
         }
     }
 
-    private IEnumerator InstantiateBlocks(GameObject prefab, List<Vector3Int> p, ChunkManager manager, bool subdivide = false)
-    {   
-        int index = 0;
-        while (index < p.Count)
-        {
-            for (int i = 0; i < instantiationPerFrame; i++)
-            {
-                if (index == p.Count - 1)
-                    break;
-                
-                
-                GameObject block = Instantiate(prefab, p[index], Quaternion.identity);
-                block.name = block.transform.position.ToString();
-    
-                manager.AddBlock(block);
-                index++;
-            }
-
-            yield return null;
-        }
-    }
+//    private List<GameObject> SetPositions(List<Vector3Int> surfacePositions)
+//    {
+//        List<Vector3Int> bottomPositions = GenerateBottomMap(surfacePositions);
+//        Transform[] transforms = new Transform[bottomPositions.Count];
+//        for (int i = 0; i < transforms.Length; i++)
+//            transforms[i] = pool.GameObjectPool.Dequeue().transform;
+//        
+//        
+//        NativeArray<Vector3Int> array = new NativeArray<Vector3Int>(bottomPositions.ToArray(), Allocator.TempJob);
+//        TransformAccessArray accessArray = new TransformAccessArray(transforms);
+//        
+//        EnableJob job = new EnableJob()
+//        {
+//            targets = array
+//        };
+//
+//        var handle = job.Schedule(accessArray);
+//        handle.Complete();
+//        
+//        array.Dispose();
+//        accessArray.Dispose();
+//
+//        return transforms.Select(t => t.gameObject).ToList();
+//    }
 
     private List<Vector3Int> GenerateBottomMap(List<Vector3Int> surfacePositions)
     {

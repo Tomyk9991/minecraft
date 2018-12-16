@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface IMouseUsable
+﻿public interface IMouseUsable
 {
+    float RaycastHitable { get; set; }
     int MouseButtonIndex { get; set; }
 }

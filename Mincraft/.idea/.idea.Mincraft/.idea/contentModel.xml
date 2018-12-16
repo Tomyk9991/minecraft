@@ -26,11 +26,13 @@
             <e p="Mesh" t="Include">
               <e p="Blockmanipulation" t="Include">
                 <e p="AddBlock.cs" t="Include" />
+                <e p="Block.cs" t="Include" />
                 <e p="RemoveBlock.cs" t="Include" />
                 <e p="SetUVs.cs" t="Include" />
                 <e p="Utilities" t="Include">
                   <e p="IMouseUsable.cs" t="Include" />
                 </e>
+                <e p="UVSetter.cs" t="Include" />
               </e>
               <e p="Static Classes" t="Include">
                 <e p="ChunkDictionary.cs" t="Include" />
