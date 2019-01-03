@@ -16,18 +16,16 @@ public class AddBlock : MonoBehaviour, IMouseUsable
     
     [SerializeField] private int mouseButtonIndex = 1;
     [SerializeField] private float raycastHitable = 1000f;
+    [SerializeField] private BlockUV blockUV = BlockUV.Dirt;
     
-    [SerializeField] private GameObject[] blocks = null;
-    private GameObject newBlock;
     private ChunkManager chunkManager;
     
     private void Start()
     {
         chunkManager = ChunkManager.Instance;
-        SetBlock(0);
     }
 
-    private void SetBlock(int index) => newBlock = blocks[index];
+    public void SetBlock(BlockUV uv) => blockUV = uv;
 
     private void Update()
     {
@@ -37,27 +35,29 @@ public class AddBlock : MonoBehaviour, IMouseUsable
 
             if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
-                Vector3 centeredCubePosition = ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal);
-                Block block = new Block(Vector3Int.FloorToInt(centeredCubePosition));
+                Vector3Int centerCube = Vector3Int.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal));
+                Block block = new Block(centerCube);
+                block.UVSetter.SetBlockUV(blockUV);
                 
                 (IChunk chunk, GameObject parent) = chunkManager.AddBlock(block);
 
                 var data = ModifyMesh.Combine(chunk);
+                ModifyMesh.RedrawMeshFilter(parent, data);
+
+                var bounds = chunk.GetChunkBounds();
+                var tuple = ChunkManager.IsBoundBlock(bounds, centerCube);
                 
-                var refMesh = parent.GetComponent<MeshFilter>();
-        
-                refMesh.mesh = new Mesh()
+                if (tuple.Result)
                 {
-                    indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
-                    vertices = data.Vertices.ToArray(),
-                    triangles = data.Triangles.ToArray(),
-                    uv = data.UVs.ToArray()
-                };
-        
-                refMesh.mesh.RecalculateNormals();
-                
-                Destroy(parent.GetComponent<MeshCollider>());
-                parent.AddComponent<MeshCollider>();
+                    for (int i = 0; i < tuple.Directions.Length; i++)
+                    {
+                        Vector3Int pos = tuple.Directions[i] + chunk.ChunkOffset;
+                        IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
+
+                        MeshData nData = ModifyMesh.Combine(neigbourChunk);
+                        ModifyMesh.RedrawMeshFilter(neigbourChunk.CurrentGO, nData);
+                    }
+                }
             }
         }
     }

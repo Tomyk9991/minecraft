@@ -10,24 +10,17 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
     
     [SerializeField] private GameObject chunkPrefab = null;
     [SerializeField] private Vector3Int maxSize;
-    
+
     public List<IChunk> chunks = new List<IChunk>();
-    
-    private void Start()
-    {
-        foreach (Transform children in transform)
-            chunks.Add(children.GetComponent<IChunk>());
 
-        foreach (IChunk chunk in chunks)
-        {
-            chunk.CurrentGO.name += " " + chunk.CurrentGO.transform.position.ToString();
-            chunk.GenerateChunk();
-        }
-    }
-
+    /// <summary>
+    /// Adds the block to the chunk AND DOES NOT REDRAW
+    /// </summary>
+    /// <param name="block"></param>
+    /// <returns></returns>
     public (IChunk, GameObject) AddBlock(Block block)
     {
-        ChunkDictionary.Add(block.Position, block.Position);
+        BlockDictionary.Add(block.Position, block.Position);
         
         (IChunk chunk, GameObject parent, bool hasCreatedNewChunk) = GenerateOrGetChunkGameObject(block.Position);
         chunk.AddBlock(block);
@@ -35,28 +28,20 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         return (chunk, parent);
     }
 
+    /// <summary>
+    /// Removes the block from the chunk AND REDRAWS
+    /// </summary>
+    /// <param name="currentChunk"></param>
+    /// <param name="block"></param>
     public void RemoveBlock(GameObject currentChunk, Block block)
     {
-        ChunkDictionary.Remove(block.Position);
+        BlockDictionary.Remove(block.Position);
         
         IChunk chunk = currentChunk.GetComponent<IChunk>();
         chunk.RemoveBlock(block);
         
         MeshData data = ModifyMesh.Combine(chunk);
-        var refMesh = currentChunk.GetComponent<MeshFilter>();
-        
-        refMesh.mesh = new Mesh()
-        {
-            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
-            vertices = data.Vertices.ToArray(),
-            triangles = data.Triangles.ToArray(),
-            uv = data.UVs.ToArray()
-        };
-        
-        refMesh.mesh.RecalculateNormals();
-        
-        Destroy(currentChunk.GetComponent<MeshCollider>());
-        currentChunk.AddComponent<MeshCollider>();
+        ModifyMesh.RedrawMeshFilter(currentChunk, data);
         
         DeleteChunkIfNotNeeded(chunk);
     }
@@ -66,6 +51,7 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         if (currentChunk.BlockCount() == 0)
         {
             chunks.Remove(currentChunk);
+            ChunkDictionary.Remove(currentChunk.ChunkOffset);
             Destroy(currentChunk.CurrentGO);
         }
     }
@@ -91,7 +77,7 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         Vector3Int chunkPos = new Vector3Int(x, y, z);
         
         GameObject go = Instantiate(chunkPrefab, transform);
-        Chunk chunk = (Chunk) go.GetComponent<IChunk>();
+        IChunk chunk = go.GetComponent<IChunk>();
         
         chunk.CurrentGO = go;
         chunk.ChunkOffset = chunkPos;
@@ -99,7 +85,55 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         go.name = "Chunk " + chunk.ChunkOffset.ToString();
         
         chunks.Add(go.GetComponent<IChunk>());
+        ChunkDictionary.Add(chunk.ChunkOffset, chunk);
 
-        return (go.GetComponent<IChunk>(), go, true);
+        return (chunk, go, true);
+    }
+    
+    public static (Vector3Int[] Directions, bool Result) IsBoundBlock((Vector3Int lowerBound, Vector3Int higherBound) tuple, Vector3Int pos)
+    {
+        Vector3Int chunkSize = GetMaxSize;
+        List<Vector3Int> directions = new List<Vector3Int>();
+        bool result = false;
+        
+        
+        if (pos.x == tuple.lowerBound.x || pos.x - 1 == tuple.lowerBound.x)
+        {
+            directions.Add(new Vector3Int(-chunkSize.x, 0, 0));
+            result = true;
+        }
+
+        if (pos.y == tuple.lowerBound.y || pos.y - 1 == tuple.lowerBound.y)
+        {
+            directions.Add(new Vector3Int(0, -chunkSize.y, 0));
+            result = true;
+        }
+
+        if (pos.z == tuple.lowerBound.z || pos.z - 1 == tuple.lowerBound.z)
+        {
+            directions.Add(new Vector3Int(0, 0, -chunkSize.z));
+            result = true;
+        }
+        
+        if (pos.x == tuple.higherBound.x || pos.x + 1 == tuple.higherBound.x)
+        {
+            directions.Add(new Vector3Int(chunkSize.x, 0, 0));
+            result = true;
+        }
+
+        if (pos.y == tuple.higherBound.y || pos.y + 1 == tuple.higherBound.y)
+        {
+            directions.Add(new Vector3Int(0, chunkSize.y, 0));
+            result = true;
+        }
+        
+        if (pos.z == tuple.higherBound.z || pos.z + 1 == tuple.higherBound.z)
+        {
+            directions.Add(new Vector3Int(0, 0, chunkSize.z));
+            result = true;
+        }
+
+
+        return (directions.ToArray(), result);
     }
 }

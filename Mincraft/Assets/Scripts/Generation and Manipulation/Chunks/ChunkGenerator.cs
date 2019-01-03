@@ -41,7 +41,10 @@ public class ChunkGenerator : MonoBehaviour
         
         for (int i = 0; i < bla.Count; i++)
         {
+            //Make this multithreaded
             MeshData data = ModifyMesh.Combine(bla[i].chunk);
+            //--
+            
             var refMesh = bla[i].parent.GetComponent<MeshFilter>();
 
             refMesh.mesh = new Mesh

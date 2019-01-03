@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
+using UnityStandardAssets.Utility;
 
 public static class ModifyMesh
 {
@@ -72,25 +73,33 @@ public static class ModifyMesh
         List<int> masterTri = MeshData.BoxTriangles;
         List<Vector3> masterVert = MeshData.BoxVertices;
 
+        int counter = 0;
+
+        List<int> indices = new List<int>();
         for (int i = 0; i < blocks.Count; i++)
         {
-            List<Vector3> vertsInBlock = new List<Vector3>();
-            List<int> triInBlock = new List<int>();
-
-            for (int j = 0; j < masterTri.Count; j++)
+            if (blocks[i].Neighbours.Any(state => state == false))
             {
-                int triangleOffset = (i * 24);
-                triInBlock.Add(masterTri[j] + triangleOffset);
+                indices.Add(i);
+                List<Vector3> vertsInBlock = new List<Vector3>();
+                List<int> triInBlock = new List<int>();
+    
+                for (int j = 0; j < masterTri.Count; j++)
+                {
+                    int triangleOffset = (counter * 24);
+                    triInBlock.Add(masterTri[j] + triangleOffset);
+                }
+    
+                triangles.AddRange(triInBlock);
+    
+                for (int j = 0; j < masterVert.Count; j++)
+                {
+                    vertsInBlock.Add(masterVert[j] + blocks[i].Position);
+                }
+    
+                vertices.AddRange(vertsInBlock);
+                counter++;
             }
-
-            triangles.AddRange(triInBlock);
-
-            for (int j = 0; j < masterVert.Count; j++)
-            {
-                vertsInBlock.Add(masterVert[j] + blocks[i].Position);
-            }
-
-            vertices.AddRange(vertsInBlock);
         }
 
         if (uvs == null)
@@ -98,10 +107,10 @@ public static class ModifyMesh
         
         List<Vector2> newMeshUVs = new List<Vector2>();
 
-        for (int i = 0; i < blocks.Count; i++)
+        for (int i = 0; i < indices.Count; i++)
         {
             //add new UVs based on individual block settings
-            UVSetter suv = blocks[i].UVSetter;
+            UVSetter suv = blocks[indices[i]].UVSetter;
             float tilePerc = 1 / UVSetter.pixelSize;
             float umin = tilePerc * suv.TileX;
             float umax = tilePerc * (suv.TileX + 1);
@@ -118,6 +127,24 @@ public static class ModifyMesh
         }
 
         return new MeshData(vertices, triangles, newMeshUVs);
+    }
+
+    public static void RedrawMeshFilter(GameObject g, MeshData data)
+    {
+        var refMesh = g.GetComponent<MeshFilter>();
+
+        refMesh.mesh = new Mesh()
+        {
+            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
+            vertices = data.Vertices.ToArray(),
+            triangles = data.Triangles.ToArray(),
+            uv = data.UVs.ToArray()
+        };
+        
+        refMesh.mesh.RecalculateNormals();
+
+        GameObject.Destroy(g.GetComponent<MeshCollider>());
+        g.AddComponent<MeshCollider>();
     }
 }
 

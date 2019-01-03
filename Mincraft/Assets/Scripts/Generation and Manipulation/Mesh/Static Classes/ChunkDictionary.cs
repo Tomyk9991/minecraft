@@ -1,14 +1,22 @@
-﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
-public static class ChunkDictionary
+public class ChunkDictionary
 {
-    private static Dictionary<Vector3Int, Vector3Int> dictionary = new Dictionary<Vector3Int, Vector3Int>();
+    private static Dictionary<Vector3Int, IChunk> dictionary = new Dictionary<Vector3Int, IChunk>();
 
-    public static void Add(Vector3Int key, Vector3Int value) => dictionary.Add(key, value);
+    public static void Add(Vector3Int key, IChunk value) => dictionary.Add(key, value);
     public static void Remove(Vector3Int key) => dictionary.Remove(key);
-    public static Vector3Int GetValue(Vector3Int key) => dictionary[key];
+
+    public static IChunk GetValue(Vector3Int key)
+    {
+        IChunk value;
+        if (dictionary.TryGetValue(key, out value))
+        {
+            return value;
+        }
+
+        return null;
+    }
     public static void Clear() => dictionary.Clear();
 }

@@ -10,8 +10,8 @@ public class Chunk : MonoBehaviour, IChunk
 {
     [SerializeField] private bool drawChunkGizmos = true;
     public GameObject CurrentGO { get; set; }
+    public Vector3Int ChunkOffset { get; set; }
 
-    [HideInInspector] public Vector3Int ChunkOffset = Vector3Int.zero;
     public Vector3Int lowerBound, higherBound;
     
     private bool boundsCalculated = false;
@@ -51,7 +51,7 @@ public class Chunk : MonoBehaviour, IChunk
     }
     
     public List<Block> GetBlocks() => blocks;
-    public (Vector3Int, Vector3Int) GetChunkBounds()
+    public (Vector3Int lowerBound, Vector3Int higherBound) GetChunkBounds()
     {
         if (!boundsCalculated)
             GetChunkBoundsCalc();

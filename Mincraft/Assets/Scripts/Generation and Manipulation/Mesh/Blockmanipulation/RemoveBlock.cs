@@ -1,9 +1,13 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Experimental.Rendering;
 
 public class RemoveBlock : MonoBehaviour, IMouseUsable
 {
+    private Vector3Int chunkSize;
     public float RaycastHitable
     {
         get => raycastHitable;
@@ -24,8 +28,9 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
     private void Start()
     {
         this.chunkManager = ChunkManager.Instance;
+        chunkSize = ChunkManager.GetMaxSize;
     }
-    
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(mouseButtonIndex))
@@ -37,11 +42,27 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
                 int[] triangles = hit.transform.GetComponent<MeshFilter>().mesh.triangles;
                 Vector3[] vertices = hit.transform.GetComponent<MeshFilter>().mesh.vertices;
                 IChunk chunk = hit.transform.GetComponent<IChunk>();
-                
-                Vector3 centerCube = ModifyMesh.CenteredClickPosition(triangles, vertices, hit.normal, hit.triangleIndex) + hit.transform.position;
-                Vector3Int obj = ChunkDictionary.GetValue(Vector3Int.FloorToInt(centerCube));
 
-                chunkManager.RemoveBlock(hit.transform.gameObject, chunk.GetBlock(obj));
+                Vector3Int centerCube = Vector3Int.FloorToInt(
+                    ModifyMesh.CenteredClickPosition(triangles, vertices, hit.normal, hit.triangleIndex) +
+                    hit.transform.position);
+
+                chunkManager.RemoveBlock(hit.transform.gameObject, chunk.GetBlock(centerCube));
+
+                var bounds = chunk.GetChunkBounds();
+                var tuple = ChunkManager.IsBoundBlock(bounds, centerCube);
+
+                if (tuple.Result)
+                {
+                    for (int i = 0; i < tuple.Directions.Length; i++)
+                    {
+                        Vector3Int pos = tuple.Directions[i] + chunk.ChunkOffset;
+                        IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
+
+                        MeshData data = ModifyMesh.Combine(neigbourChunk);
+                        ModifyMesh.RedrawMeshFilter(neigbourChunk.CurrentGO, data);
+                    }
+                }
             }
         }
     }

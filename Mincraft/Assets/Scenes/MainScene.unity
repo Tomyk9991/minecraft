@@ -447,8 +447,8 @@ MonoBehaviour:
   smoothness: 0.03
   heightMult: 12.5
   surface: 0
-  bottom: 2
-  size: {x: 64, y: 16, z: 64}
+  bottom: 3
+  size: {x: 32, y: 16, z: 32}
 --- !u!1001 &845648047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -673,7 +673,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1727572143, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}

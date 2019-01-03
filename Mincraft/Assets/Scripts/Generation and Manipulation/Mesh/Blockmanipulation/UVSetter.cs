@@ -8,9 +8,6 @@ public class UVSetter
     private float tileX = 0f;
     private float tileY = 0f;
 
-    private static bool hasCalculatedUVs = false;
-    private static Vector2[] uvs = null;
-
     public float TileX
     {
         get => tileX;
@@ -45,6 +42,10 @@ public class UVSetter
             case BlockUV.Dirt:
                 this.TileX = 2;
                 this.TileY = 15;
+                break;
+            case BlockUV.Destruction1:
+                this.TileX = 0;
+                this.TileY = 0;
                 break;
         }
     }
