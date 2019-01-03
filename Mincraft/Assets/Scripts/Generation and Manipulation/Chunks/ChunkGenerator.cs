@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Jobs;
 
 public class ChunkGenerator : MonoBehaviour
 {
@@ -18,12 +16,9 @@ public class ChunkGenerator : MonoBehaviour
     
     private Biom[] bioms;
     private ChunkManager chunkManager;
-    private BlockPool pool;
-
     
     private void Start()
     {
-        pool = BlockPool.Instance;
         chunkManager = ChunkManager.Instance;
 
         List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
@@ -33,31 +28,43 @@ public class ChunkGenerator : MonoBehaviour
             
             return Mathf.CeilToInt(height);
         });
-        
-        System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-        watch.Start();
 
-        foreach (Vector3Int surfacePosition in surfacePositions)
-        {
-            Block block = new Block(surfacePosition);
-            block.UVSetter.SetBlockUV(surface);
-            chunkManager.AddBlock(block);
-        }
+        List<Vector3Int> bottom = GenerateBottomMap(surfacePositions);
 
-        // Optimierungsbedarf
-        // Entweder erst Blöcke alle in den Chunk einfügen, dann einmal, aber viel combinen
-        // und / oder Multithreading!!!! MÖGLICH DURCH BLOCK
+        List<Block> blocks = surfacePositions
+            .Concat(bottom)
+            .Select(pos => new Block(pos))
+            .ToList();
         
-        List<Vector3Int> rofl = GenerateBottomMap(surfacePositions);
-        List<Block> temp2 = new List<Block>();
-        foreach (Vector3Int bottomPosition in rofl)
+        System.Diagnostics.Stopwatch wa = new System.Diagnostics.Stopwatch();
+        wa.Start();
+
+        HashSet<(IChunk, GameObject)> parents = new HashSet<(IChunk, GameObject)>();
+        
+        for (int i = 0; i < blocks.Count; i++)
+            parents.Add(chunkManager.AddBlock(blocks[i]));
+
+
+        List<(IChunk chunk, GameObject parent)> bla = parents.ToList();
+        
+        for (int i = 0; i < bla.Count; i++)
         {
-            Block block = new Block(bottomPosition);
-            block.UVSetter.SetBlockUV(bottom);
-            chunkManager.AddBlock(block);
+            MeshData data = ModifyMesh.Combine(bla[i].chunk);
+            var refMesh = bla[i].parent.GetComponent<MeshFilter>();
+
+            refMesh.mesh = new Mesh
+            {
+                indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
+                vertices = data.Vertices.ToArray(),
+                triangles = data.Triangles.ToArray()
+            };
+            
+            refMesh.mesh.RecalculateNormals();
+            bla[i].parent.AddComponent<MeshCollider>();
         }
-        watch.Stop();
-        Debug.Log(watch.ElapsedMilliseconds);
+        
+        wa.Stop();
+        Debug.Log(wa.ElapsedMilliseconds + "ms");
     }
 
     private List<Vector3Int> GenerateBottomMap(List<Vector3Int> surfacePositions)
@@ -104,3 +111,4 @@ public class ChunkGenerator : MonoBehaviour
         return positions;
     }
 }
+

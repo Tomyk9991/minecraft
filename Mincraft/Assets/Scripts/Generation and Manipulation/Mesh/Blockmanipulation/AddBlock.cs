@@ -40,7 +40,23 @@ public class AddBlock : MonoBehaviour, IMouseUsable
                 Vector3 centeredCubePosition = ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal);
                 Block block = new Block(Vector3Int.FloorToInt(centeredCubePosition));
                 
-                chunkManager.AddBlock(block);
+                (IChunk chunk, GameObject parent) = chunkManager.AddBlock(block);
+
+                var data = ModifyMesh.Combine(chunk);
+                
+                var refMesh = parent.GetComponent<MeshFilter>();
+        
+                refMesh.mesh = new Mesh()
+                {
+                    indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
+                    vertices = data.Vertices.ToArray(),
+                    triangles = data.Triangles.ToArray()
+                };
+        
+                refMesh.mesh.RecalculateNormals();
+                
+                Destroy(parent.GetComponent<MeshCollider>());
+                parent.AddComponent<MeshCollider>();
             }
         }
     }

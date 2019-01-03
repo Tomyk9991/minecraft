@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public interface IChunk
 {
@@ -10,7 +11,7 @@ public interface IChunk
     
     int BlockCount();
     Block GetBlock(Vector3Int position);
-    Block[] GetBlocks();
+    List<Block> GetBlocks();
     
     (Vector3Int, Vector3Int) GetChunkBounds();
 }

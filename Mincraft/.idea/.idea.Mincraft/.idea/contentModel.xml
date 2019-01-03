@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Thomas\.Rider2018.2\config\extensions" t="IncludeRecursive" />
-    <e p="C:\Users\Thomas\.Rider2018.2\config\scratches" t="IncludeRecursive" />
-    <e p="C:\Users\Thomas\.Rider2018.2\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Thomas\.Rider2018.2\system\resharper-host\local\Transient\ReSharperHost\v182\SolutionCaches\_Mincraft.-1030172140.00" t="ExcludeRecursive" />
-    <e p="C:\Users\Thomas\Documents\UnityProjectsGitHub\minecraft\Mincraft" t="IncludeRecursive">
+    <e p="C:\Users\Thomas\.Rider2018.3\config\extensions" t="IncludeRecursive" />
+    <e p="C:\Users\Thomas\.Rider2018.3\config\scratches" t="IncludeRecursive" />
+    <e p="C:\Users\Thomas\.Rider2018.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Thomas\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_Mincraft.500973634.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Thomas\Desktop\minecraft\Mincraft" t="IncludeRecursive">
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
@@ -13,9 +13,6 @@
           <e p="Generation and Manipulation" t="Include">
             <e p="Bioms" t="Include">
               <e p="Biom.cs" t="Include" />
-            </e>
-            <e p="BlockPool" t="Include">
-              <e p="BlockPool.cs" t="Include" />
             </e>
             <e p="Chunks" t="Include">
               <e p="Chunk.cs" t="Include" />
@@ -27,6 +24,7 @@
               <e p="Blockmanipulation" t="Include">
                 <e p="AddBlock.cs" t="Include" />
                 <e p="Block.cs" t="Include" />
+                <e p="MeshData.cs" t="Include" />
                 <e p="RemoveBlock.cs" t="Include" />
                 <e p="SetUVs.cs" t="Include" />
                 <e p="Utilities" t="Include">

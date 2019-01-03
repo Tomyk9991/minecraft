@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -24,19 +25,14 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         }
     }
 
-    public void AddBlock(Block block)
+    public (IChunk, GameObject) AddBlock(Block block)
     {
-        Vector3 centeredCubePosition = block.Position;
         ChunkDictionary.Add(block.Position, block.Position);
         
-        (IChunk chunk, GameObject parent, bool hasCreatedNewChunk) = GenerateOrGetChunkGameObject(centeredCubePosition);
+        (IChunk chunk, GameObject parent, bool hasCreatedNewChunk) = GenerateOrGetChunkGameObject(block.Position);
         chunk.AddBlock(block);
 
-
-        if (!hasCreatedNewChunk)
-            ModifyMesh.Combine(block, parent);
-        else
-            ModifyMesh.CombineForAll(parent);
+        return (chunk, parent);
     }
 
     public void RemoveBlock(GameObject currentChunk, Block block)
@@ -46,8 +42,22 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         IChunk chunk = currentChunk.GetComponent<IChunk>();
         chunk.RemoveBlock(block);
         // Und erstelle anschließend mit den restlichen Blöcken den Chunk
-        ModifyMesh.RemoveBlockFromMesh(currentChunk.transform, block);
+        MeshData data = ModifyMesh.Combine(chunk);
 
+        var refMesh = currentChunk.GetComponent<MeshFilter>();
+        
+        refMesh.mesh = new Mesh()
+        {
+            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
+            vertices = data.Vertices.ToArray(),
+            triangles = data.Triangles.ToArray()
+        };
+        
+        refMesh.mesh.RecalculateNormals();
+        
+        Destroy(currentChunk.GetComponent<MeshCollider>());
+        currentChunk.AddComponent<MeshCollider>();
+        
         DeleteChunkIfNotNeeded(chunk);
     }
 

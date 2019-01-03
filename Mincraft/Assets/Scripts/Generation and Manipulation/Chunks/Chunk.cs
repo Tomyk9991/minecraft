@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,22 +16,29 @@ public class Chunk : MonoBehaviour, IChunk
     
     private bool boundsCalculated = false;
     private List<Block> blocks;
-
+    
     #region Interface implementation
 
     public void AddBlock(Block block)
     {
         if (blocks == null)
             blocks = new List<Block>();
-        
+
         blocks.Add(block);
     }
-    
-    public void RemoveBlock(Block block) => blocks.Remove(block);
+
+    public void RemoveBlock(Block block)
+    {
+        blocks.Remove(block);
+    }
     
     public int BlockCount() => blocks.Count;
 
-    public void GenerateChunk() => ModifyMesh.CombineForAll(transform.gameObject);
+    public void GenerateChunk()
+    {
+        ModifyMesh.Combine(this);
+//        ModifyMesh.CombineForAll(transform.gameObject);
+    }
     
     public Block GetBlock(Vector3Int position)
     {
@@ -41,7 +51,7 @@ public class Chunk : MonoBehaviour, IChunk
         throw new Exception("Block can't be found");
     }
     
-    public Block[] GetBlocks() => blocks.ToArray();
+    public List<Block> GetBlocks() => blocks;
     public (Vector3Int, Vector3Int) GetChunkBounds()
     {
         if (!boundsCalculated)
@@ -51,9 +61,7 @@ public class Chunk : MonoBehaviour, IChunk
     }
     
     #endregion
-
     
-
     private void GetChunkBoundsCalc()
     {
         boundsCalculated = true;
@@ -75,7 +83,7 @@ public class Chunk : MonoBehaviour, IChunk
     {
         #if UNITY_EDITOR
         if (UnityEditor.EditorApplication.isPlaying && drawChunkGizmos)
-            Gizmos.DrawWireCube(transform.position, ChunkManager.GetMaxSize);
+            Gizmos.DrawWireCube(ChunkOffset, ChunkManager.GetMaxSize);
         #endif
     }
 }
