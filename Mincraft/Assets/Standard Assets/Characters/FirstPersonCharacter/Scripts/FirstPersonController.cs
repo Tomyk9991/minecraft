@@ -107,7 +107,7 @@ using Random = UnityEngine.Random;
             
             RotateView();
             // the jump state needs to read here to make sure it is not missed
-            if (!m_Jump)
+            if (!m_Jump && m_CharacterController.isGrounded)
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }

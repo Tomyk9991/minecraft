@@ -31,7 +31,7 @@ public class ChunkGenerator : MonoBehaviour
         for (int i = 0; i < blocks.Count; i++)
         {
             if (i > surfacePositionsCount)
-                blocks[i].UVSetter.SetBlockUV(BlockUV.Stone);
+                blocks[i].UVSetter.SetBlockUV(bottom);
             
             parents.Add(chunkManager.AddBlock(blocks[i]));
         }
@@ -116,12 +116,15 @@ public class ChunkGenerator : MonoBehaviour
 
         List<Vector3Int> bottom = GenerateBottomMap(surfacePositions);
 
-        List<Block> blocks = surfacePositions
+        return (surfacePositions.Count, surfacePositions
             .Concat(bottom)
-            .Select(pos => new Block(pos))
-            .ToList();
-
-        return (surfacePositions.Count, blocks);
+            .Select(pos =>
+            {
+                Block b = new Block(pos);
+                b.UVSetter.SetBlockUV(surface);
+                return b;
+            })
+            .ToList());
     }
 }
 

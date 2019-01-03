@@ -5,6 +5,10 @@ public class MeshData
 {
     private static List<Vector3> boxVertices = new List<Vector3>();
     private static List<int> boxTriangles = new List<int>();
+    
+    private static Vector2[] uvs;
+    private static bool hasCalculatedUVs = false;
+    
     public List<Vector3> Vertices { get; set; }
     public List<int> Triangles { get; set; }
     public List<Vector2> UVs { get; set; }
@@ -76,6 +80,48 @@ public class MeshData
             }
 
             return boxTriangles;
+        }
+    }
+    
+    public static Vector2[] BoxUVs
+    {
+        get
+        {            
+            if (!hasCalculatedUVs)
+            {
+                hasCalculatedUVs = true;
+    
+                uvs = new[]
+                {
+                    new Vector2(0.0f, 0.0f),
+                    new Vector2(1.0f, 0.0f),
+                    new Vector2(0.0f, 1.0f),
+                    new Vector2(1.0f, 1.0f),
+                    new Vector2(0.0f, 1.0f),
+                    new Vector2(1.0f, 1.0f),
+                    new Vector2(0.0f, 1.0f),
+                    new Vector2(1.0f, 1.0f),
+                    new Vector2(0.0f, 0.0f),
+                    new Vector2(1.0f, 0.0f),
+                    new Vector2(0.0f, 0.0f),
+                    new Vector2(1.0f, 0.0f),
+                    new Vector2(0.0f, 0.0f),
+                    new Vector2(0.0f, 1.0f),
+                    new Vector2(1.0f, 1.0f),
+                    new Vector2(1.0f, 0.0f),
+                    new Vector2(0.0f, 0.0f),
+                    new Vector2(0.0f, 1.0f),
+                    new Vector2(1.0f, 1.0f),
+                    new Vector2(1.0f, 0.0f),
+                    new Vector2(0.0f, 0.0f),
+                    new Vector2(0.0f, 1.0f),
+                    new Vector2(1.0f, 1.0f),
+                    new Vector2(1.0f, 0.0f),
+                };
+                return uvs;
+            }
+    
+            return uvs;
         }
     }
 
