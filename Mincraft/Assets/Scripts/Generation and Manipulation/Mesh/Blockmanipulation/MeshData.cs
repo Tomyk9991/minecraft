@@ -7,6 +7,7 @@ public class MeshData
     private static List<int> boxTriangles = new List<int>();
     public List<Vector3> Vertices { get; set; }
     public List<int> Triangles { get; set; }
+    public List<Vector2> UVs { get; set; }
 
     public static List<Vector3> BoxVertices
     {
@@ -78,9 +79,10 @@ public class MeshData
         }
     }
 
-    public MeshData(List<Vector3> vertices, List<int> triangles)
+    public MeshData(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)
     {
         Vertices = vertices;
         Triangles = triangles;
+        UVs = uvs;
     }
 }

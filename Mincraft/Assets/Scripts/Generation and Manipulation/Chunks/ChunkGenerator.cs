@@ -18,31 +18,23 @@ public class ChunkGenerator : MonoBehaviour
     private ChunkManager chunkManager;
     
     private void Start()
-    {
+    {   
         chunkManager = ChunkManager.Instance;
 
-        List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
-        {
-            float height = (Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult + 
-                            Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult) / 2f;
-            
-            return Mathf.CeilToInt(height);
-        });
+        (int surfacePositionsCount, List<Block> blocks) = GetBlocks();
 
-        List<Vector3Int> bottom = GenerateBottomMap(surfacePositions);
-
-        List<Block> blocks = surfacePositions
-            .Concat(bottom)
-            .Select(pos => new Block(pos))
-            .ToList();
-        
         System.Diagnostics.Stopwatch wa = new System.Diagnostics.Stopwatch();
         wa.Start();
 
         HashSet<(IChunk, GameObject)> parents = new HashSet<(IChunk, GameObject)>();
-        
+
         for (int i = 0; i < blocks.Count; i++)
+        {
+            if (i > surfacePositionsCount)
+                blocks[i].UVSetter.SetBlockUV(BlockUV.Stone);
+            
             parents.Add(chunkManager.AddBlock(blocks[i]));
+        }
 
 
         List<(IChunk chunk, GameObject parent)> bla = parents.ToList();
@@ -56,7 +48,8 @@ public class ChunkGenerator : MonoBehaviour
             {
                 indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
                 vertices = data.Vertices.ToArray(),
-                triangles = data.Triangles.ToArray()
+                triangles = data.Triangles.ToArray(),
+                uv = data.UVs.ToArray()
             };
             
             refMesh.mesh.RecalculateNormals();
@@ -109,6 +102,26 @@ public class ChunkGenerator : MonoBehaviour
         
         
         return positions;
+    }
+    
+    (int surfaceCount, List<Block>) GetBlocks()
+    {
+        List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
+        {
+            float height = (Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult +
+                            Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult) / 2f;
+
+            return Mathf.CeilToInt(height);
+        });
+
+        List<Vector3Int> bottom = GenerateBottomMap(surfacePositions);
+
+        List<Block> blocks = surfacePositions
+            .Concat(bottom)
+            .Select(pos => new Block(pos))
+            .ToList();
+
+        return (surfacePositions.Count, blocks);
     }
 }
 

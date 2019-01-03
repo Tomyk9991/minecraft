@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ChunkManager : SingletonBehaviour<ChunkManager>
 {
-    public static Vector3Int GetMaxSize => ChunkManager.Instance.maxSize;
+    public static Vector3Int GetMaxSize => Instance.maxSize;
     
     [SerializeField] private GameObject chunkPrefab = null;
     [SerializeField] private Vector3Int maxSize;
@@ -38,19 +38,19 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
     public void RemoveBlock(GameObject currentChunk, Block block)
     {
         ChunkDictionary.Remove(block.Position);
-        //Ich entferne erst den Block auf dem Chunk
+        
         IChunk chunk = currentChunk.GetComponent<IChunk>();
         chunk.RemoveBlock(block);
-        // Und erstelle anschließend mit den restlichen Blöcken den Chunk
+        
         MeshData data = ModifyMesh.Combine(chunk);
-
         var refMesh = currentChunk.GetComponent<MeshFilter>();
         
         refMesh.mesh = new Mesh()
         {
             indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
             vertices = data.Vertices.ToArray(),
-            triangles = data.Triangles.ToArray()
+            triangles = data.Triangles.ToArray(),
+            uv = data.UVs.ToArray()
         };
         
         refMesh.mesh.RecalculateNormals();

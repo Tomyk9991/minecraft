@@ -50,7 +50,8 @@ public class AddBlock : MonoBehaviour, IMouseUsable
                 {
                     indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
                     vertices = data.Vertices.ToArray(),
-                    triangles = data.Triangles.ToArray()
+                    triangles = data.Triangles.ToArray(),
+                    uv = data.UVs.ToArray()
                 };
         
                 refMesh.mesh.RecalculateNormals();

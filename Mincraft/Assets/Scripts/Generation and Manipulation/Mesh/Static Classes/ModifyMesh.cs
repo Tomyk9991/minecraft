@@ -11,14 +11,6 @@ using UnityEngine;
 public static class ModifyMesh
 {
     private static Vector2[] uvs = null;
-
-    public static void RemoveBlockFromMesh(Transform currentChunk, Block objectToRemove)
-    {
-        IChunk chunk = currentChunk.GetComponent<IChunk>();
-        chunk.RemoveBlock(objectToRemove);
-        Combine(chunk);
-    }
-
     public static Vector3 CenteredClickPosition(int[] triangles, Vector3[] vertices, Vector3 normal, int triangleIndex)
     {
         (Vector3 shared1, Vector3 shared2) = GetHypotenuse(triangles, vertices, triangleIndex);
@@ -95,14 +87,37 @@ public static class ModifyMesh
 
             for (int j = 0; j < masterVert.Count; j++)
             {
-                Vector3 pos = blocks[i].Position;
                 vertsInBlock.Add(masterVert[j] + blocks[i].Position);
             }
 
             vertices.AddRange(vertsInBlock);
         }
+        
+        if (uvs == null)
+            uvs = SetUVs.GetStandardUVs();
+        
+        List<Vector2> newMeshUVs = new List<Vector2>();
 
-        return new MeshData(vertices, triangles);
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            //add new UVs based on individual block settings
+            UVSetter suv = blocks[i].UVSetter;
+            float tilePerc = 1 / UVSetter.pixelSize;
+            float umin = tilePerc * suv.TileX;
+            float umax = tilePerc * (suv.TileX + 1);
+            float vmin = tilePerc * suv.TileY;
+            float vmax = tilePerc * (suv.TileY + 1);
+
+            for (int j = 0; j < 24; j++)
+            {
+                float x = Mathf.Approximately(uvs[j].x, 0f) ? umin : umax;
+                float y = Mathf.Approximately(uvs[j].y, 0f) ? vmin : vmax;
+
+                newMeshUVs.Add(new Vector2(x, y));
+            }
+        }
+
+        return new MeshData(vertices, triangles, newMeshUVs);
     }
 
 //    public static void CombineForAll(GameObject currentChunk, bool remove = false)

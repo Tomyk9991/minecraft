@@ -37,7 +37,6 @@ public class Chunk : MonoBehaviour, IChunk
     public void GenerateChunk()
     {
         ModifyMesh.Combine(this);
-//        ModifyMesh.CombineForAll(transform.gameObject);
     }
     
     public Block GetBlock(Vector3Int position)

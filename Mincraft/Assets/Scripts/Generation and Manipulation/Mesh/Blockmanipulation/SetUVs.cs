@@ -14,9 +14,6 @@ public class SetUVs : MonoBehaviour
     private static Vector2[] uvs = null;
     private static bool hasCalculatedUVs = false;
 
-    private static Vector3[] vertices = null;
-    private static int[] triangles = null;
-
     private void Start()
     {
         float tilePerc = 1f / pixelSize;

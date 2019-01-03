@@ -138,7 +138,7 @@ public class GreedyMesh
             }
         }
 
-        MeshData data = new MeshData(vertices, elements);
+        MeshData data = new MeshData(vertices, elements, null);
 
         return data;
     }
