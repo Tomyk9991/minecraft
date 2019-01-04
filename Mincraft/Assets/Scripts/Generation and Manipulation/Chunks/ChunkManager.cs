@@ -21,7 +21,6 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
     public (IChunk, GameObject) AddBlock(Block block)
     {
         BlockDictionary.Add(block.Position, block.Position);
-        
         (IChunk chunk, GameObject parent, bool hasCreatedNewChunk) = GenerateOrGetChunkGameObject(block.Position);
         chunk.AddBlock(block);
 

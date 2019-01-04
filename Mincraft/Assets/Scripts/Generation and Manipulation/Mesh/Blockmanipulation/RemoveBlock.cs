@@ -59,8 +59,11 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
                         Vector3Int pos = tuple.Directions[i] + chunk.ChunkOffset;
                         IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
 
-                        MeshData data = ModifyMesh.Combine(neigbourChunk);
-                        ModifyMesh.RedrawMeshFilter(neigbourChunk.CurrentGO, data);
+                        if (neigbourChunk != null)
+                        {
+                            MeshData data = ModifyMesh.Combine(neigbourChunk);
+                            ModifyMesh.RedrawMeshFilter(neigbourChunk.CurrentGO, data);
+                        }
                     }
                 }
             }

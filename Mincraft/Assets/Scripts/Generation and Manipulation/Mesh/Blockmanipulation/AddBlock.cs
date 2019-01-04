@@ -36,9 +36,11 @@ public class AddBlock : MonoBehaviour, IMouseUsable
             if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
                 Vector3Int centerCube = Vector3Int.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal));
-                Block block = new Block(centerCube);
-                block.UVSetter.SetBlockUV(blockUV);
-                
+                Block block = new Block(centerCube)
+                {
+                    ID = (int) blockUV
+                };
+
                 (IChunk chunk, GameObject parent) = chunkManager.AddBlock(block);
 
                 var data = ModifyMesh.Combine(chunk);

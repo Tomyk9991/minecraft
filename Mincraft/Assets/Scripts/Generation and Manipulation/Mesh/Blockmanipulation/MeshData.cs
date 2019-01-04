@@ -21,31 +21,38 @@ public class MeshData
             {
                 boxVertices = new List<Vector3>()
                 {
+                    
+                    //Vorne
                     new Vector3(0.5f, -0.5f, 0.5f),
                     new Vector3(-0.5f, -0.5f, 0.5f),
                     new Vector3(0.5f, 0.5f, 0.5f),
                     new Vector3(-0.5f, 0.5f, 0.5f),
 
+                    //Hinten
                     new Vector3(0.5f, 0.5f, -0.5f),
                     new Vector3(-0.5f, 0.5f, -0.5f),
                     new Vector3(0.5f, -0.5f, -0.5f),
                     new Vector3(-0.5f, -0.5f, -0.5f),
 
+                    //Oben
                     new Vector3(0.5f, 0.5f, 0.5f),
                     new Vector3(-0.5f, 0.5f, 0.5f),
                     new Vector3(0.5f, 0.5f, -0.5f),
                     new Vector3(-0.5f, 0.5f, -0.5f),
 
+                    //Unten
                     new Vector3(0.5f, -0.5f, -0.5f),
                     new Vector3(0.5f, -0.5f, 0.5f),
                     new Vector3(-0.5f, -0.5f, 0.5f),
                     new Vector3(-0.5f, -0.5f, -0.5f),
 
+                    //Links
                     new Vector3(-0.5f, -0.5f, 0.5f),
                     new Vector3(-0.5f, 0.5f, 0.5f),
                     new Vector3(-0.5f, 0.5f, -0.5f),
                     new Vector3(-0.5f, -0.5f, -0.5f),
 
+                    //Rechts
                     new Vector3(0.5f, -0.5f, -0.5f),
                     new Vector3(0.5f, 0.5f, -0.5f),
                     new Vector3(0.5f, 0.5f, 0.5f),
@@ -64,16 +71,22 @@ public class MeshData
             {
                 boxTriangles = new List<int>()
                 {
+                    //Vorne
                     0, 2, 3,
                     0, 3, 1,
+                    //Hinten
                     8, 4, 5,
                     8, 5, 9,
+                    //Oben
                     10, 6, 7,
                     10, 7, 11,
+                    //Unten
                     12, 13, 14,
                     12, 14, 15,
+                    //Links
                     16, 17, 18,
                     16, 18, 19,
+                    //rechts
                     20, 21, 22,
                     20, 22, 23
                 };
@@ -93,26 +106,32 @@ public class MeshData
     
                 uvs = new[]
                 {
+                    //Vorne
                     new Vector2(0.0f, 0.0f),
                     new Vector2(1.0f, 0.0f),
                     new Vector2(0.0f, 1.0f),
                     new Vector2(1.0f, 1.0f),
+                    //Hinten
                     new Vector2(0.0f, 1.0f),
                     new Vector2(1.0f, 1.0f),
                     new Vector2(0.0f, 1.0f),
                     new Vector2(1.0f, 1.0f),
+                    //Oben
                     new Vector2(0.0f, 0.0f),
                     new Vector2(1.0f, 0.0f),
                     new Vector2(0.0f, 0.0f),
                     new Vector2(1.0f, 0.0f),
-                    new Vector2(0.0f, 0.0f),
-                    new Vector2(0.0f, 1.0f),
-                    new Vector2(1.0f, 1.0f),
-                    new Vector2(1.0f, 0.0f),
+                    //Unten
                     new Vector2(0.0f, 0.0f),
                     new Vector2(0.0f, 1.0f),
                     new Vector2(1.0f, 1.0f),
                     new Vector2(1.0f, 0.0f),
+                    //Links
+                    new Vector2(0.0f, 0.0f),
+                    new Vector2(0.0f, 1.0f),
+                    new Vector2(1.0f, 1.0f),
+                    new Vector2(1.0f, 0.0f),
+                    //Rechts
                     new Vector2(0.0f, 0.0f),
                     new Vector2(0.0f, 1.0f),
                     new Vector2(1.0f, 1.0f),

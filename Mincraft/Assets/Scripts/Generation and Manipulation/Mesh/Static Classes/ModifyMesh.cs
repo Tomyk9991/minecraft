@@ -11,7 +11,12 @@ using UnityStandardAssets.Utility;
 
 public static class ModifyMesh
 {
-    private static Vector2[] uvs = null;
+	private static Vector3[] directions = {Vector3.forward, Vector3.zero, Vector3.up, Vector3.zero, Vector3.zero, Vector3.right};
+	private static Vector3[] offset1 = {Vector3.right, Vector3.right, Vector3.right, Vector3.right, Vector3.forward, Vector3.forward};
+	private static Vector3[] offset2 = {Vector3.up, Vector3.up, Vector3.forward, Vector3.forward, Vector3.up, Vector3.up};
+	private static int[] tri1 = {1, 0, 2, 1, 2, 3};
+	private static int[] tri2 = { 0, 1, 2, 2, 1, 3 };
+	private static int[] tris = { 1, 0, 0, 1, 1, 0 };
     public static Vector3 CenteredClickPosition(int[] triangles, Vector3[] vertices, Vector3 normal, int triangleIndex)
     {
         (Vector3 shared1, Vector3 shared2) = GetHypotenuse(triangles, vertices, triangleIndex);
@@ -56,77 +61,54 @@ public static class ModifyMesh
     {
         Vector3 blockPos = hitPoint + hitNormal / 2.0f;
 
-        blockPos.x = (float) Math.Round(blockPos.x, MidpointRounding.AwayFromZero);
-        blockPos.y = (float) Math.Round(blockPos.y, MidpointRounding.AwayFromZero);
-        blockPos.z = (float) Math.Round(blockPos.z, MidpointRounding.AwayFromZero);
+        blockPos.x = Mathf.FloorToInt(blockPos.x);
+        blockPos.y = Mathf.FloorToInt(blockPos.y);
+        blockPos.z = Mathf.FloorToInt(blockPos.z);
 
         return blockPos;
     }
     
     public static MeshData Combine(IChunk chunk)
     {
-        List<Block> blocks = chunk.GetBlocks();
-        
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
+	    List<Block> blocks = chunk.GetBlocks();
+		List<Vector3> vertices = new List<Vector3>();
+		List<int> triangles = new List<int>();
+		List<Vector2> uvs = new List<Vector2>();
+		
+		UVData[] currentUVData = null;
+   
+		for (int i = 0; i < blocks.Count; i++)
+		{
+			if (blocks[i].Neighbours.Any(state => state == false))
+			{
+				currentUVData = UVDictionary.GetValue((BlockUV) blocks[i].ID);
+				
+				for (int j = 0; j < blocks[i].Neighbours.Length; j++)
+				{
+					if (blocks[i].Neighbours[j] == false)
+					{
+						int vc = vertices.Count;
+						vertices.Add(directions[j] + blocks[i].Position);
+						vertices.Add(directions[j] + offset1[j] + blocks[i].Position);
+						vertices.Add(directions[j] + offset2[j] + blocks[i].Position);
+						vertices.Add(directions[j] + offset1[j] + offset2[j] + blocks[i].Position);
 
-        List<int> masterTri = MeshData.BoxTriangles;
-        List<Vector3> masterVert = MeshData.BoxVertices;
+						for (int k = 0; k < 6; k++)
+						{
+							triangles.Add(vc + (tris[j] == 0 ? tri1[k] : tri2[k]));
+						}
 
-        int counter = 0;
-
-        List<int> indices = new List<int>();
-        for (int i = 0; i < blocks.Count; i++)
-        {
-            if (blocks[i].Neighbours.Any(state => state == false))
-            {
-                indices.Add(i);
-                List<Vector3> vertsInBlock = new List<Vector3>();
-                List<int> triInBlock = new List<int>();
-    
-                for (int j = 0; j < masterTri.Count; j++)
-                {
-                    int triangleOffset = (counter * 24);
-                    triInBlock.Add(masterTri[j] + triangleOffset);
-                }
-    
-                triangles.AddRange(triInBlock);
-    
-                for (int j = 0; j < masterVert.Count; j++)
-                {
-                    vertsInBlock.Add(masterVert[j] + blocks[i].Position);
-                }
-    
-                vertices.AddRange(vertsInBlock);
-                counter++;
-            }
-        }
-
-        if (uvs == null)
-            uvs = MeshData.BoxUVs;
-        
-        List<Vector2> newMeshUVs = new List<Vector2>();
-
-        for (int i = 0; i < indices.Count; i++)
-        {
-            //add new UVs based on individual block settings
-            UVSetter suv = blocks[indices[i]].UVSetter;
-            float tilePerc = 1 / UVSetter.pixelSize;
-            float umin = tilePerc * suv.TileX;
-            float umax = tilePerc * (suv.TileX + 1);
-            float vmin = tilePerc * suv.TileY;
-            float vmax = tilePerc * (suv.TileY + 1);
-
-            for (int j = 0; j < 24; j++)
-            {
-                float x = Mathf.Approximately(uvs[j].x, 0f) ? umin : umax;
-                float y = Mathf.Approximately(uvs[j].y, 0f) ? vmin : vmax;
-
-                newMeshUVs.Add(new Vector2(x, y));
-            }
-        }
-
-        return new MeshData(vertices, triangles, newMeshUVs);
+						uvs.Add(new Vector2(currentUVData[j].TileX, currentUVData[j].TileY));
+						uvs.Add(new Vector2(currentUVData[j].TileX + currentUVData[j].SizeX, currentUVData[j].TileY));
+						uvs.Add(new Vector2(currentUVData[j].TileX, currentUVData[j].TileY + currentUVData[j].SizeY));
+						uvs.Add(new Vector2(currentUVData[j].TileX + currentUVData[j].SizeX,currentUVData[j].TileY + currentUVData[j].SizeY));
+					}
+				}
+			}
+		}
+       
+       
+       		return new MeshData(vertices, triangles, uvs);
     }
 
     public static void RedrawMeshFilter(GameObject g, MeshData data)
@@ -143,8 +125,6 @@ public static class ModifyMesh
         
         refMesh.mesh.RecalculateNormals();
 
-        GameObject.Destroy(g.GetComponent<MeshCollider>());
-        g.AddComponent<MeshCollider>();
+        g.GetComponent<MeshCollider>().sharedMesh = refMesh.mesh;
     }
 }
-

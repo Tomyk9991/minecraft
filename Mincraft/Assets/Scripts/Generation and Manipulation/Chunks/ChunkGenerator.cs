@@ -18,10 +18,11 @@ public class ChunkGenerator : MonoBehaviour
     private ChunkManager chunkManager;
     
     private void Start()
-    {   
+    {
+        
         chunkManager = ChunkManager.Instance;
 
-        (int surfacePositionsCount, List<Block> blocks) = GetBlocks();
+        List<Block> blocks = GetBlocks();
 
         System.Diagnostics.Stopwatch wa = new System.Diagnostics.Stopwatch();
         wa.Start();
@@ -30,10 +31,8 @@ public class ChunkGenerator : MonoBehaviour
 
         for (int i = 0; i < blocks.Count; i++)
         {
-            if (i > surfacePositionsCount)
-                blocks[i].UVSetter.SetBlockUV(bottom);
-            
             parents.Add(chunkManager.AddBlock(blocks[i]));
+            blocks[i].ID = blocks[i].Neighbours[2] == false ? (int) BlockUV.Grass : (int) BlockUV.Dirt;
         }
 
 
@@ -82,9 +81,6 @@ public class ChunkGenerator : MonoBehaviour
     
     private List<Vector3Int> GenerateHeightMap(Vector3Int size, Func<int, int, int> heightFunc)
     {
-        bool firstHeightSet = false;
-        int firstHeight = int.MaxValue;
-        
         List<Vector3Int> positions = new List<Vector3Int>();
 
         for (int x = 0; x < size.x; x++)
@@ -92,14 +88,8 @@ public class ChunkGenerator : MonoBehaviour
             for (int z = 0; z <= size.z; z++)
             {
                 int y = heightFunc(x, z);
-
-                if (!firstHeightSet)
-                {
-                    firstHeightSet = true;
-                    firstHeight = y;
-                }
                 
-                positions.Add(new Vector3Int(x, y - firstHeight, z));
+                positions.Add(new Vector3Int(x, y , z));
             }
         }
         
@@ -107,7 +97,7 @@ public class ChunkGenerator : MonoBehaviour
         return positions;
     }
     
-    (int surfaceCount, List<Block>) GetBlocks()
+    private List<Block> GetBlocks()
     {
         List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
         {
@@ -119,15 +109,10 @@ public class ChunkGenerator : MonoBehaviour
 
         List<Vector3Int> bottom = GenerateBottomMap(surfacePositions);
 
-        return (surfacePositions.Count, surfacePositions
+        return surfacePositions
             .Concat(bottom)
-            .Select(pos =>
-            {
-                Block b = new Block(pos);
-                b.UVSetter.SetBlockUV(surface);
-                return b;
-            })
-            .ToList());
+            .Select(pos => new Block(pos))
+            .ToList();
     }
 }
 

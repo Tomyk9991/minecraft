@@ -26,7 +26,6 @@
                 <e p="Block.cs" t="Include" />
                 <e p="MeshData.cs" t="Include" />
                 <e p="RemoveBlock.cs" t="Include" />
-                <e p="SetUVs.cs" t="Include" />
                 <e p="Utilities" t="Include">
                   <e p="BlockUV.cs" t="Include" />
                   <e p="GreedyMesh.cs" t="Include" />
@@ -35,6 +34,7 @@
                 <e p="UVSetter.cs" t="Include" />
               </e>
               <e p="Static Classes" t="Include">
+                <e p="BlockDictionary.cs" t="Include" />
                 <e p="ChunkDictionary.cs" t="Include" />
                 <e p="ModifyMesh.cs" t="Include" />
                 <e p="NewModifyMesh.cs" t="Include" />
