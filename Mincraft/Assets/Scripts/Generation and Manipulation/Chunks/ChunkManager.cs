@@ -10,21 +10,26 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
     
     [SerializeField] private GameObject chunkPrefab = null;
     [SerializeField] private Vector3Int maxSize;
+    [SerializeField] private int fullChunkGenerationBatches = 1;
 
     public List<IChunk> chunks = new List<IChunk>();
+
+    private List<IChunk> notAssignedChunksToGO = new List<IChunk>();
+    private int chunksToBuild = 0;
+    private object sync = new object();
 
     /// <summary>
     /// Adds the block to the chunk AND DOES NOT REDRAW
     /// </summary>
     /// <param name="block"></param>
     /// <returns></returns>
-    public (IChunk, GameObject) AddBlock(Block block)
+    public IChunk AddBlock(Block block)
     {
         BlockDictionary.Add(block.Position, block.Position);
-        (IChunk chunk, GameObject parent, bool hasCreatedNewChunk) = GenerateOrGetChunkGameObject(block.Position);
+        IChunk chunk = GenerateOrGetChunkGameObject(block.Position);
         chunk.AddBlock(block);
 
-        return (chunk, parent);
+        return chunk;
     }
 
     /// <summary>
@@ -38,7 +43,7 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         
         IChunk chunk = currentChunk.GetComponent<IChunk>();
         chunk.RemoveBlock(block);
-        
+
         MeshData data = ModifyMesh.Combine(chunk);
         ModifyMesh.RedrawMeshFilter(currentChunk, data);
         
@@ -55,7 +60,7 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         }
     }
 
-    private (IChunk, GameObject, bool) GenerateOrGetChunkGameObject(Vector3 target)
+    private IChunk GenerateOrGetChunkGameObject(Vector3 target)
     {
         for (int i = 0; i < chunks.Count; i++)
         {
@@ -65,7 +70,7 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
                 (target.y >= lowerBound.y && target.y <= higherBound.y) &&// Dann liegt es dazwischen und muss 
                 (target.z >= lowerBound.z && target.z <= higherBound.z))// dementsprechend in diesen Chunk
             {
-                return (chunks[i], chunks[i].CurrentGO, false);
+                return chunks[i];
             }
         }
 
@@ -74,19 +79,55 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         int z = Mathf.RoundToInt(target.z / maxSize.z) * maxSize.z;
         
         Vector3Int chunkPos = new Vector3Int(x, y, z);
-        
-        GameObject go = Instantiate(chunkPrefab, transform);
-        IChunk chunk = go.GetComponent<IChunk>();
-        
-        chunk.CurrentGO = go;
-        chunk.ChunkOffset = chunkPos;
-        
-        go.name = "Chunk " + chunk.ChunkOffset.ToString();
-        
-        chunks.Add(go.GetComponent<IChunk>());
-        ChunkDictionary.Add(chunk.ChunkOffset, chunk);
 
-        return (chunk, go, true);
+        lock (sync)
+        {
+            chunksToBuild++;
+            var chunk = new Chunk() { ChunkOffset = chunkPos};
+            notAssignedChunksToGO.Add(chunk);
+            return chunk;
+        }
+
+
+//        GameObject go = Instantiate(chunkPrefab);
+//        IChunk chunk = go.GetComponent<IChunk>();
+//        
+//        chunk.CurrentGO = go;
+//        chunk.ChunkOffset = chunkPos;
+//        
+//        go.name = "Chunk " + chunk.ChunkOffset.ToString();
+//        
+//        chunks.Add(go.GetComponent<IChunk>());
+//        ChunkDictionary.Add(chunk.ChunkOffset, chunk);
+//        return chunk;
+    }
+
+    private void Update()
+    {
+        //Hier problem
+        if (chunksToBuild > 0)
+        {
+            for (int i = 0; i < fullChunkGenerationBatches; i++)
+            {
+                lock (sync)
+                {
+                    IChunk chunk = notAssignedChunksToGO[0];
+                    GameObject go = Instantiate(chunkPrefab);
+
+                    go.name = "Chunk " + chunk.ChunkOffset.ToString();
+
+                    chunks.Add(chunk);
+
+                    ChunkDictionary.Add(chunk.ChunkOffset, chunk);
+                    ChunkGameObjectDictionary.Add(chunk, go);
+
+                    notAssignedChunksToGO.RemoveAt(0);
+                    chunksToBuild--;
+                    if (chunksToBuild <= 0)
+                        break;
+                }
+            }
+        }
     }
     
     public static (Vector3Int[] Directions, bool Result) IsBoundBlock((Vector3Int lowerBound, Vector3Int higherBound) tuple, Vector3Int pos)

@@ -41,10 +41,10 @@ public class AddBlock : MonoBehaviour, IMouseUsable
                     ID = (int) blockUV
                 };
 
-                (IChunk chunk, GameObject parent) = chunkManager.AddBlock(block);
+                IChunk chunk = chunkManager.AddBlock(block);
 
                 var data = ModifyMesh.Combine(chunk);
-                ModifyMesh.RedrawMeshFilter(parent, data);
+                ModifyMesh.RedrawMeshFilter(chunk.CurrentGO, data);
 
                 var bounds = chunk.GetChunkBounds();
                 var tuple = ChunkManager.IsBoundBlock(bounds, centerCube);
@@ -56,8 +56,11 @@ public class AddBlock : MonoBehaviour, IMouseUsable
                         Vector3Int pos = tuple.Directions[i] + chunk.ChunkOffset;
                         IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
 
-                        MeshData nData = ModifyMesh.Combine(neigbourChunk);
-                        ModifyMesh.RedrawMeshFilter(neigbourChunk.CurrentGO, nData);
+                        if (neigbourChunk != null)
+                        {
+                            MeshData nData = ModifyMesh.Combine(neigbourChunk);
+                            ModifyMesh.RedrawMeshFilter(neigbourChunk.CurrentGO, nData);
+                        }
                     }
                 }
             }

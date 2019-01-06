@@ -1,6 +1,10 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using Amib.Threading;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour
@@ -16,50 +20,100 @@ public class ChunkGenerator : MonoBehaviour
     
     private Biom[] bioms;
     private ChunkManager chunkManager;
-    
-    private void Start()
+    private IWorkItemResult[] wir;
+    private List<IChunk> chunks;
+
+
+    private void Start() //Multithreaded
+    {
+        chunkManager = ChunkManager.Instance;
+        SmartThreadPool pool = new SmartThreadPool();
+        List<Block> blocks = GetBlocks();
+        IWorkItemResult<List<IChunk>> chunkResults = pool.QueueWorkItem(DoWork, blocks);
+
+
+        List<IChunk> DoWork(List<Block> block)
+        {
+            return GetChunks(block);
+        }
+
+        chunks = chunkResults.Result;
+
+        Invoke(nameof(test), 1f);
+    }
+
+    //Smart Threading 
+    private void test()
+    {
+        Debug.Log("jetzt multithreading");
+        SmartThreadPool smartThreadPool = new SmartThreadPool();
+        System.Diagnostics.Stopwatch wa = System.Diagnostics.Stopwatch.StartNew();
+        wir = new IWorkItemResult[chunks.Count];
+        
+        for (int i = 0; i < chunks.Count; i++)
+        {
+            wir[i] = smartThreadPool.QueueWorkItem(new WorkItemCallback(DoSomeWork), chunks[i]);
+        }
+
+        object DoSomeWork(object chunk)
+        {
+            return ModifyMesh.Combine((IChunk) chunk);
+        }
+
+        SmartThreadPool.WaitAll(wir);
+        smartThreadPool.Shutdown();
+
+//        for (int i = 0; i < chunks.Count; i++)
+//        {
+//            ModifyMesh.RedrawMeshFilter(chunks[i].CurrentGO, (MeshData) wir[i].Result);
+//        }
+        
+        wa.Stop();
+        Debug.Log(wa.ElapsedMilliseconds + "ms in total");
+    }
+
+        //Single Threaded
+//    private void test()
+//    {
+//        Debug.Log("jetzt singlethreaded");
+//        System.Diagnostics.Stopwatch wa = System.Diagnostics.Stopwatch.StartNew();
+//        
+//        for (int i = 0; i < chunkParents.Count; i++)
+//        {
+//            ModifyMesh.Combine(chunkParents[i]);
+//        }
+//        
+//        wa.Stop();
+//        Debug.Log(wa.ElapsedMilliseconds + "ms in total");
+//    }
+
+
+    private List<IChunk> GetChunks(List<Block> blocks)
     {
         
-        chunkManager = ChunkManager.Instance;
+        // Alles sehr langsam
+        HashSet<IChunk> parents = new HashSet<IChunk>();
 
-        List<Block> blocks = GetBlocks();
-
-        System.Diagnostics.Stopwatch wa = new System.Diagnostics.Stopwatch();
-        wa.Start();
-
-        HashSet<(IChunk, GameObject)> parents = new HashSet<(IChunk, GameObject)>();
+        System.Diagnostics.Stopwatch wa = System.Diagnostics.Stopwatch.StartNew();
+        
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            IChunk chunk = chunkManager.AddBlock(blocks[i]);
+            parents.Add(chunk);
+        }
 
         for (int i = 0; i < blocks.Count; i++)
         {
-            parents.Add(chunkManager.AddBlock(blocks[i]));
-            blocks[i].ID = blocks[i].Neighbours[2] == false ? (int) BlockUV.Grass : (int) BlockUV.Dirt;
-        }
-
-
-        List<(IChunk chunk, GameObject parent)> bla = parents.ToList();
-        
-        for (int i = 0; i < bla.Count; i++)
-        {
-            //Make this multithreaded
-            MeshData data = ModifyMesh.Combine(bla[i].chunk);
-            //--
-            
-            var refMesh = bla[i].parent.GetComponent<MeshFilter>();
-
-            refMesh.mesh = new Mesh
-            {
-                indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
-                vertices = data.Vertices.ToArray(),
-                triangles = data.Triangles.ToArray(),
-                uv = data.UVs.ToArray()
-            };
-            
-            refMesh.mesh.RecalculateNormals();
-            bla[i].parent.AddComponent<MeshCollider>();
+            Block b = blocks[i];
+            b.ID = blocks[i].GetNeigbourAt(2) == false ? (int) surface : (int) bottom;
+            blocks[i] = b;
         }
         
         wa.Stop();
-        Debug.Log(wa.ElapsedMilliseconds + "ms");
+        Debug.Log(wa.ElapsedMilliseconds + "ms in GetChunksAndParentTuples");
+
+
+        return parents.ToList();
     }
 
     private List<Vector3Int> GenerateBottomMap(List<Vector3Int> surfacePositions)
@@ -79,7 +133,7 @@ public class ChunkGenerator : MonoBehaviour
         return list;
     }
     
-    private List<Vector3Int> GenerateHeightMap(Vector3Int size, Func<int, int, int> heightFunc)
+    private List<Vector3Int> GenerateHeightMap(Vector3Int size, System.Func<int, int, int> heightFunc)
     {
         List<Vector3Int> positions = new List<Vector3Int>();
 
@@ -96,23 +150,22 @@ public class ChunkGenerator : MonoBehaviour
         
         return positions;
     }
-    
+
     private List<Block> GetBlocks()
     {
         List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
         {
             float height = (Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult +
                             Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult) / 2f;
-
+    
             return Mathf.CeilToInt(height);
         });
-
+    
         List<Vector3Int> bottom = GenerateBottomMap(surfacePositions);
-
+    
         return surfacePositions
             .Concat(bottom)
             .Select(pos => new Block(pos))
             .ToList();
     }
 }
-

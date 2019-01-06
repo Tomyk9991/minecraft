@@ -6,7 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
 
-public class Chunk : MonoBehaviour, IChunk
+public class Chunk : IChunk
 {
     [SerializeField] private bool drawChunkGizmos = true;
     public GameObject CurrentGO { get; set; }
@@ -36,7 +36,7 @@ public class Chunk : MonoBehaviour, IChunk
 
     public void GenerateChunk()
     {
-        ModifyMesh.Combine(this);
+//        ModifyMesh.CombineAsync(this);
     }
     
     public Block GetBlock(Vector3Int position)
