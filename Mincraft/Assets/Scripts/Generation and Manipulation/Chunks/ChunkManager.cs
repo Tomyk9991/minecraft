@@ -8,15 +8,17 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
 {
     public static Vector3Int GetMaxSize => Instance.maxSize;
     
-    [SerializeField] private GameObject chunkPrefab = null;
     [SerializeField] private Vector3Int maxSize;
-    [SerializeField] private int fullChunkGenerationBatches = 1;
-
+    
+    [HideInInspector]
     public List<IChunk> chunks = new List<IChunk>();
 
-    private List<IChunk> notAssignedChunksToGO = new List<IChunk>();
-    private int chunksToBuild = 0;
-    private object sync = new object();
+    private ChunkGameObjectPool chunkGOPool;
+
+    private void Start()
+    {
+        chunkGOPool = ChunkGameObjectPool.Instance;
+    }
 
     /// <summary>
     /// Adds the block to the chunk AND DOES NOT REDRAW
@@ -80,54 +82,10 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         
         Vector3Int chunkPos = new Vector3Int(x, y, z);
 
-        lock (sync)
-        {
-            chunksToBuild++;
-            var chunk = new Chunk() { ChunkOffset = chunkPos};
-            notAssignedChunksToGO.Add(chunk);
-            return chunk;
-        }
-
-
-//        GameObject go = Instantiate(chunkPrefab);
-//        IChunk chunk = go.GetComponent<IChunk>();
-//        
-//        chunk.CurrentGO = go;
-//        chunk.ChunkOffset = chunkPos;
-//        
-//        go.name = "Chunk " + chunk.ChunkOffset.ToString();
-//        
-//        chunks.Add(go.GetComponent<IChunk>());
-//        ChunkDictionary.Add(chunk.ChunkOffset, chunk);
-//        return chunk;
-    }
-
-    private void Update()
-    {
-        //Hier problem
-        if (chunksToBuild > 0)
-        {
-            for (int i = 0; i < fullChunkGenerationBatches; i++)
-            {
-                lock (sync)
-                {
-                    IChunk chunk = notAssignedChunksToGO[0];
-                    GameObject go = Instantiate(chunkPrefab);
-
-                    go.name = "Chunk " + chunk.ChunkOffset.ToString();
-
-                    chunks.Add(chunk);
-
-                    ChunkDictionary.Add(chunk.ChunkOffset, chunk);
-                    ChunkGameObjectDictionary.Add(chunk, go);
-
-                    notAssignedChunksToGO.RemoveAt(0);
-                    chunksToBuild--;
-                    if (chunksToBuild <= 0)
-                        break;
-                }
-            }
-        }
+        var chunk = new Chunk {ChunkOffset = chunkPos, CurrentGO = chunkGOPool.GetNextUnusedChunk(),};
+        
+        chunks.Add(chunk);
+        return chunk;
     }
     
     public static (Vector3Int[] Directions, bool Result) IsBoundBlock((Vector3Int lowerBound, Vector3Int higherBound) tuple, Vector3Int pos)

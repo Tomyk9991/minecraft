@@ -6,12 +6,15 @@ public struct MeshData
     public List<Vector3> Vertices { get; set; }
     public List<int> Triangles { get; set; }
     public List<Vector2> UVs { get; set; }
+
+    public GameObject GameObject { get; private set; }
     
 
-    public MeshData(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)
+    public MeshData(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs, GameObject go)
     {
         Vertices = vertices;
         Triangles = triangles;
         UVs = uvs;
+        GameObject = go;
     }
 }

@@ -396,6 +396,7 @@ GameObject:
   - component: {fileID: 787175595}
   - component: {fileID: 787175596}
   - component: {fileID: 787175597}
+  - component: {fileID: 787175598}
   m_Layer: 0
   m_Name: Chunks
   m_TagString: Untagged
@@ -429,10 +430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3194412ba98446e409181c28ff017847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkPrefab: {fileID: 4515187503092839614, guid: 1603ecc1a251c814d8f5fccd2cd90fa3,
-    type: 3}
   maxSize: {x: 16, y: 16, z: 16}
-  fullChunkGenerationBatches: 10
 --- !u!114 &787175597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,7 +447,22 @@ MonoBehaviour:
   heightMult: 12.5
   surface: 0
   bottom: 1
-  size: {x: 32, y: 16, z: 32}
+  size: {x: 128, y: 16, z: 128}
+--- !u!114 &787175598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787175594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8b061d7cc7c7d7469acb45f4df69dd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chunkPrefab: {fileID: 4515187503092839614, guid: 1603ecc1a251c814d8f5fccd2cd90fa3,
+    type: 3}
+  chunksToInstantiate: 210
 --- !u!1001 &845648047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -654,7 +667,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_IsWalking

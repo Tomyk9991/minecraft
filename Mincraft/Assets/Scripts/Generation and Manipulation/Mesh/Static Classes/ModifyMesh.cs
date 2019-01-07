@@ -67,57 +67,6 @@ public static class ModifyMesh
 
         return blockPos;
     }
-    
-//    public static async Task CombineAsync(IChunk chunk)
-//    {
-//	    var taskData = await Task.Run(() =>
-//	    {
-//			List<Block> blocks = chunk.GetBlocks();
-//			List<Vector3> vertices = new List<Vector3>();
-//			List<int> triangles = new List<int>();
-//			List<Vector2> uvs = new List<Vector2>();
-//			
-//			UVData[] currentUVData = null;
-//	   
-//			for (int i = 0; i < blocks.Count; i++)
-//			{
-//				blocks[i].RecalculateNeighbours();
-//				if (blocks[i].Neighbours.Any(state => state == false))
-//				{
-//					currentUVData = UVDictionary.GetValue((BlockUV) blocks[i].ID);
-//					
-//					for (int j = 0; j < blocks[i].Neighbours.Length; j++)
-//					{
-//						if (blocks[i].Neighbours[j] == false)
-//						{
-//							int vc = vertices.Count;
-//							vertices.Add(directions[j] + blocks[i].Position);
-//							vertices.Add(directions[j] + offset1[j] + blocks[i].Position);
-//							vertices.Add(directions[j] + offset2[j] + blocks[i].Position);
-//							vertices.Add(directions[j] + offset1[j] + offset2[j] + blocks[i].Position);
-//	
-//							for (int k = 0; k < 6; k++)
-//							{
-//								triangles.Add(vc + (tris[j] == 0 ? tri1[k] : tri2[k]));
-//							}
-//	
-//							uvs.Add(new Vector2(currentUVData[j].TileX, currentUVData[j].TileY));
-//							uvs.Add(new Vector2(currentUVData[j].TileX + currentUVData[j].SizeX, currentUVData[j].TileY));
-//							uvs.Add(new Vector2(currentUVData[j].TileX, currentUVData[j].TileY + currentUVData[j].SizeY));
-//							uvs.Add(new Vector2(currentUVData[j].TileX + currentUVData[j].SizeX,currentUVData[j].TileY + currentUVData[j].SizeY));
-//						}
-//					}
-//				}
-//			}
-//		   
-//		   
-//			return new MeshData(vertices, triangles, uvs);
-//	    });
-//	    
-//	    RedrawMeshFilter(chunk.CurrentGO, taskData);
-//
-//	    //return taskData;
-//    }
 
     public static MeshData Combine(IChunk chunk)
     {
@@ -129,6 +78,7 @@ public static class ModifyMesh
 	    for (int i = 0; i < blocks.Count; i++)
 	    {
 		    blocks[i].RecalculateNeighbours();
+		    
 		    if (blocks[i].Neighbours.Any(state => state == false))
 		    {
 			    var currentUVData = UVDictionary.GetValue((BlockUV) blocks[i].ID);
@@ -158,7 +108,7 @@ public static class ModifyMesh
 	    }
 		   
 		   
-	    return new MeshData(vertices, triangles, uvs);
+	    return new MeshData(vertices, triangles, uvs, null);
     }
 
     public static void RedrawMeshFilter(GameObject g, MeshData data)

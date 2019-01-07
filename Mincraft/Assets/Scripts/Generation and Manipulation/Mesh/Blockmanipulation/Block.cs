@@ -5,7 +5,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public struct Block
+public class Block
 {
     public Vector3Int Position;
     public int ID { get; set; }
@@ -19,7 +19,7 @@ public struct Block
     {
         ID = 0;
         this.Position = position;
-        neighbours = null;
+        this.neighbours = null;
     }
 
     //Recalculates this index
@@ -30,7 +30,7 @@ public struct Block
 
     public void RecalculateNeighbours()
     {
-        neighbours = new[]
+        neighbours = new bool[]
         {
             //Forward
             BlockDictionary.GetValue(this.Position + directions[0]).result,
