@@ -19,18 +19,30 @@ public class ChunkDictionary
         return null;
     }
     public static void Clear() => dictionary.Clear();
+    
+    public static List<IChunk> GetChunks()
+    {
+        var temp = new List<IChunk>();
+        
+        foreach (var chunk in dictionary.Values)
+        {
+            temp.Add(chunk);
+        }
+
+        return temp;
+    } 
 }
 
 public class ChunkGameObjectDictionary
 {
-    private static Dictionary<IChunk, GameObject> dictionary = new Dictionary<IChunk, GameObject>();
+    private static Dictionary<GameObject, IChunk> dictionary = new Dictionary<GameObject, IChunk>();
 
-    public static void Add(IChunk key, GameObject value) => dictionary.Add(key, value);
-    public static void Remove(IChunk key) => dictionary.Remove(key);
+    public static void Add(GameObject key, IChunk value) => dictionary.Add(key, value);
+    public static void Remove(GameObject key) => dictionary.Remove(key);
 
-    public static GameObject GetValue(IChunk key)
+    public static IChunk GetValue(GameObject key)
     {
-        GameObject value;
+        IChunk value;
         if (dictionary.TryGetValue(key, out value))
         {
             return value;
@@ -39,4 +51,16 @@ public class ChunkGameObjectDictionary
         return null;
     }
     public static void Clear() => dictionary.Clear();
+
+    public static List<IChunk> GetChunks()
+    {
+        var temp = new List<IChunk>();
+        
+        foreach (var chunk in dictionary.Values)
+        {
+            temp.Add(chunk);
+        }
+
+        return temp;
+    }
 }

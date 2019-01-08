@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -21,44 +23,69 @@ public class ChunkGenerator : MonoBehaviour
     private List<IChunk> chunks;
 
     private ConcurrentQueue<MeshData> meshDatas;
+    private MeshModifier modifier;
 
+    private System.Diagnostics.Stopwatch wa;
+
+
+    private int drawCounter = 0;
+    private bool doneMeshing = false;
 
     private void Start() //Multithreaded
     {
         chunkManager = ChunkManager.Instance;
         
-        MeshModifier modifier = new MeshModifier();
+        modifier = new MeshModifier();
         meshDatas = new ConcurrentQueue<MeshData>();
 
-        modifier.MeshAvailable += (s, data) 
-            => meshDatas.Enqueue(data);
+        modifier.MeshAvailable += (s, data) =>
+        {
+            meshDatas.Enqueue(data);
+        };
         
         //Gets the Chunks with multithreaded Power
-        System.Diagnostics.Stopwatch wa = System.Diagnostics.Stopwatch.StartNew();
+        wa = new System.Diagnostics.Stopwatch();
+        wa.Start();
         
         var chunkTask = GetChunks(GetBlocks());
         chunkTask.Wait();
         chunks = chunkTask.Result;
         
         wa.Stop();
-        Debug.Log(wa.ElapsedMilliseconds + "ms in GetChunks");
         
+        Debug.Log(wa.ElapsedMilliseconds + "ms in this::GetChunks()");
         Debug.Log("Active Chunks: " + chunks.Count);
         
+        wa.Reset();
+        wa.Start();
         
         for (int i = 0; i < chunks.Count; i++)
         {
+            chunks[i].CurrentGO.name = chunks[i].ChunkOffset.ToString();
+            ChunkGameObjectDictionary.Add(chunks[i].CurrentGO, chunks[i]);
             modifier.Combine(chunks[i]);
         }
     }
 
     private void Update()
     {
-        if (meshDatas.Count != 0)
+        //Vielleicht unabhängig von Update lösen? Ein EventListner im Mainthread vielleicht?
+        //Event im ConcurrentQueue für den Mainthread?
+        if (!doneMeshing && meshDatas.Count != 0)
         {
             while (meshDatas.TryDequeue(out var data))
             {
                 ModifyMesh.RedrawMeshFilter(data.GameObject, data);
+
+                if (chunks.Count == ++drawCounter)
+                {
+                    doneMeshing = true;
+                    modifier.MeshAvailable -= (s, d) => { };
+                    modifier = null;
+
+                    wa.Stop();
+                    Debug.Log(wa.ElapsedMilliseconds + "ms in ModifyMesh::RedrawMeshFilter() and Combine");
+                }
             }
         }
     }
@@ -74,7 +101,7 @@ public class ChunkGenerator : MonoBehaviour
                 blocks[i].ID = blocks[i].GetNeigbourAt(2) == false ? (int) surface : (int) bottom;
             }
 
-            return chunkManager.chunks;
+            return ChunkDictionary.GetChunks();
         });
     }
 

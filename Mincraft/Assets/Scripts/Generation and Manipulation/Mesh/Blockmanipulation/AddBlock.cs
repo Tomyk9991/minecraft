@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Concurrent;
+using UnityEngine;
 
 public class AddBlock : MonoBehaviour, IMouseUsable
 {
@@ -19,10 +20,15 @@ public class AddBlock : MonoBehaviour, IMouseUsable
     [SerializeField] private BlockUV blockUV = BlockUV.Dirt;
     
     private ChunkManager chunkManager;
+    private MeshModifier modifier;
+    private ConcurrentQueue<MeshData> meshDatas;
     
     private void Start()
     {
         chunkManager = ChunkManager.Instance;
+        modifier = new MeshModifier();
+        meshDatas = new ConcurrentQueue<MeshData>();
+        modifier.MeshAvailable += (s, data) => meshDatas.Enqueue(data);
     }
 
     public void SetBlock(BlockUV uv) => blockUV = uv;
@@ -43,12 +49,14 @@ public class AddBlock : MonoBehaviour, IMouseUsable
 
                 IChunk chunk = chunkManager.AddBlock(block);
 
+                //Synchronous mesh modification and recalculation
                 var data = ModifyMesh.Combine(chunk);
                 ModifyMesh.RedrawMeshFilter(chunk.CurrentGO, data);
 
                 var bounds = chunk.GetChunkBounds();
-                var tuple = ChunkManager.IsBoundBlock(bounds, centerCube);
+                var tuple = chunkManager.IsBoundBlock(bounds, centerCube);
                 
+                // Asynchronous mesh modification and recalculation 
                 if (tuple.Result)
                 {
                     for (int i = 0; i < tuple.Directions.Length; i++)
@@ -58,12 +66,24 @@ public class AddBlock : MonoBehaviour, IMouseUsable
 
                         if (neigbourChunk != null)
                         {
-                            MeshData nData = ModifyMesh.Combine(neigbourChunk);
-                            ModifyMesh.RedrawMeshFilter(neigbourChunk.CurrentGO, nData);
+                            modifier.Combine(neigbourChunk);
+//                            MeshData nData = ModifyMesh.Combine(neigbourChunk);
                         }
                     }
                 }
             }
         }
+
+        #region ThreadingCheck
+
+        if (meshDatas.Count > 0)
+        {
+            while (meshDatas.TryDequeue(out var data))
+            {
+                ModifyMesh.RedrawMeshFilter(data.GameObject, data);
+            }
+        }
+
+        #endregion
     }
 }

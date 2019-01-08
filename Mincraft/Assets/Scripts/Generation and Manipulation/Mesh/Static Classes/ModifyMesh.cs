@@ -108,7 +108,7 @@ public static class ModifyMesh
 	    }
 		   
 		   
-	    return new MeshData(vertices, triangles, uvs, null);
+	    return new MeshData(vertices, triangles, uvs);
     }
 
     public static void RedrawMeshFilter(GameObject g, MeshData data)

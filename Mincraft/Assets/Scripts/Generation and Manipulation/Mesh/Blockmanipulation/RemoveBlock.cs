@@ -27,7 +27,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
 
     private void Start()
     {
-        this.chunkManager = ChunkManager.Instance;
+        chunkManager = ChunkManager.Instance;
         chunkSize = ChunkManager.GetMaxSize;
     }
 
@@ -41,16 +41,19 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
             {
                 int[] triangles = hit.transform.GetComponent<MeshFilter>().mesh.triangles;
                 Vector3[] vertices = hit.transform.GetComponent<MeshFilter>().mesh.vertices;
-                IChunk chunk = hit.transform.GetComponent<IChunk>();
+                
+                IChunk chunk = ChunkGameObjectDictionary.GetValue(hit.transform.gameObject);
 
                 Vector3Int centerCube = Vector3Int.FloorToInt(
                     ModifyMesh.CenteredClickPosition(triangles, vertices, hit.normal, hit.triangleIndex) +
                     hit.transform.position);
 
-                chunkManager.RemoveBlock(hit.transform.gameObject, chunk.GetBlock(centerCube));
+                Debug.Log(chunkManager == null ? "null" : "nicht null");
+                
+                chunkManager.RemoveBlock(chunk, chunk.GetBlock(centerCube));
 
                 var bounds = chunk.GetChunkBounds();
-                var tuple = ChunkManager.IsBoundBlock(bounds, centerCube);
+                var tuple = chunkManager.IsBoundBlock(bounds, centerCube);
 
                 if (tuple.Result)
                 {

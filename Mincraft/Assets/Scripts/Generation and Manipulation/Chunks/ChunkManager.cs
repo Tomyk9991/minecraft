@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
@@ -10,14 +11,16 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
     
     [SerializeField] private Vector3Int maxSize;
     
-    [HideInInspector]
-    public List<IChunk> chunks = new List<IChunk>();
 
     private ChunkGameObjectPool chunkGOPool;
+    private ConcurrentQueue<MeshData> meshDatas;
+    private MeshModifier modifier;
 
     private void Start()
     {
         chunkGOPool = ChunkGameObjectPool.Instance;
+        meshDatas = new ConcurrentQueue<MeshData>();
+        modifier = new MeshModifier();
     }
 
     /// <summary>
@@ -37,33 +40,42 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
     /// <summary>
     /// Removes the block from the chunk AND REDRAWS
     /// </summary>
-    /// <param name="currentChunk"></param>
+    /// <param name="chunk"></param>
     /// <param name="block"></param>
-    public void RemoveBlock(GameObject currentChunk, Block block)
+    public void RemoveBlock(IChunk chunk, Block block)
     {
         BlockDictionary.Remove(block.Position);
         
-        IChunk chunk = currentChunk.GetComponent<IChunk>();
         chunk.RemoveBlock(block);
 
-        MeshData data = ModifyMesh.Combine(chunk);
-        ModifyMesh.RedrawMeshFilter(currentChunk, data);
+        modifier.Combine(chunk);
+        modifier.MeshAvailable += (sender, data) => meshDatas.Enqueue(data);
         
         DeleteChunkIfNotNeeded(chunk);
+    }
+
+    private void Update()
+    {
+        while (meshDatas.TryDequeue(out var data))
+        {
+            ModifyMesh.RedrawMeshFilter(data.GameObject, data);
+        }
     }
 
     private void DeleteChunkIfNotNeeded(IChunk currentChunk)
     {
         if (currentChunk.BlockCount() == 0)
         {
-            chunks.Remove(currentChunk);
             ChunkDictionary.Remove(currentChunk.ChunkOffset);
+            ChunkGameObjectDictionary.Remove(currentChunk.CurrentGO);
             Destroy(currentChunk.CurrentGO);
         }
     }
 
     private IChunk GenerateOrGetChunkGameObject(Vector3 target)
     {
+        List<IChunk> chunks = ChunkDictionary.GetChunks();
+        
         for (int i = 0; i < chunks.Count; i++)
         {
             (Vector3Int lowerBound, Vector3Int higherBound) = chunks[i].GetChunkBounds();
@@ -82,13 +94,13 @@ public class ChunkManager : SingletonBehaviour<ChunkManager>
         
         Vector3Int chunkPos = new Vector3Int(x, y, z);
 
-        var chunk = new Chunk {ChunkOffset = chunkPos, CurrentGO = chunkGOPool.GetNextUnusedChunk(),};
+        var chunk = new Chunk {ChunkOffset = chunkPos, CurrentGO = chunkGOPool.GetNextUnusedChunk()};
         
-        chunks.Add(chunk);
+        ChunkDictionary.Add(chunkPos, chunk);
         return chunk;
     }
     
-    public static (Vector3Int[] Directions, bool Result) IsBoundBlock((Vector3Int lowerBound, Vector3Int higherBound) tuple, Vector3Int pos)
+    public (Vector3Int[] Directions, bool Result) IsBoundBlock((Vector3Int lowerBound, Vector3Int higherBound) tuple, Vector3Int pos)
     {
         Vector3Int chunkSize = GetMaxSize;
         List<Vector3Int> directions = new List<Vector3Int>();
