@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ChunkDictionary
-{
+{    
     private static Dictionary<Vector3Int, IChunk> dictionary = new Dictionary<Vector3Int, IChunk>();
 
     public static void Add(Vector3Int key, IChunk value) => dictionary.Add(key, value);
@@ -30,7 +30,7 @@ public class ChunkDictionary
         }
 
         return temp;
-    } 
+    }
 }
 
 public class ChunkGameObjectDictionary

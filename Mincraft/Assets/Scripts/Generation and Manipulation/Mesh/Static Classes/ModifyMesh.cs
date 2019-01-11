@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Unity.Collections;
-using Unity.Jobs;
 using UnityEngine;
-using UnityStandardAssets.Utility;
+using Debug = UnityEngine.Debug;
 
 public static class ModifyMesh
 {
@@ -69,23 +64,30 @@ public static class ModifyMesh
     }
 
     public static MeshData Combine(IChunk chunk)
-    {
-	    List<Block> blocks = chunk.GetBlocks();
+    {   
+	    Block[] blocks = chunk.GetBlocks();
 	    List<Vector3> vertices = new List<Vector3>();
 	    List<int> triangles = new List<int>();
 	    List<Vector2> uvs = new List<Vector2>();
 
-	    for (int i = 0; i < blocks.Count; i++)
+	    bool[] neigbours = new bool[6];
+
+	    for (int i = 0; i < blocks.Length; i++)
 	    {
-		    blocks[i].RecalculateNeighbours();
+		    if (blocks[i] == null)
+		    {
+			    continue;
+		    }
+		    neigbours = chunk.BoolNeigbours(blocks[i].Position);
 		    
-		    if (blocks[i].Neighbours.Any(state => state == false))
+		    
+		    if (neigbours.Any(state => state == false))
 		    {
 			    var currentUVData = UVDictionary.GetValue((BlockUV) blocks[i].ID);
 
-			    for (int j = 0; j < blocks[i].Neighbours.Length; j++)
+			    for (int j = 0; j < neigbours.Length; j++)
 			    {
-				    if (blocks[i].Neighbours[j] == false)
+				    if (neigbours[j] == false)
 				    {
 					    int vc = vertices.Count;
 					    vertices.Add(directions[j] + blocks[i].Position);
@@ -106,24 +108,7 @@ public static class ModifyMesh
 			    }
 		    }
 	    }
-		   
-		   
-	    return new MeshData(vertices, triangles, uvs);
-    }
-
-    public static void RedrawMeshFilter(GameObject g, MeshData data)
-    {
-        var refMesh = g.GetComponent<MeshFilter>();
-
-        refMesh.mesh = new Mesh()
-        {
-            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32,
-            vertices = data.Vertices.ToArray(),
-            triangles = data.Triangles.ToArray(),
-            uv = data.UVs.ToArray()
-        };
-        
-        refMesh.mesh.RecalculateNormals();
-        g.GetComponent<MeshCollider>().sharedMesh = refMesh.mesh;
+	    
+	    return new MeshData(vertices, triangles, uvs, chunk.CurrentGO);
     }
 }

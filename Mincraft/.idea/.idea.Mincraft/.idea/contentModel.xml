@@ -20,6 +20,7 @@
               <e p="ChunkGenerator.cs" t="Include" />
               <e p="ChunkManager.cs" t="Include" />
               <e p="IChunk.cs" t="Include" />
+              <e p="Int3.cs" t="Include" />
             </e>
             <e p="Mesh" t="Include">
               <e p="Blockmanipulation" t="Include">
@@ -36,7 +37,6 @@
                 <e p="UVData.cs" t="Include" />
               </e>
               <e p="Static Classes" t="Include">
-                <e p="BlockDictionary.cs" t="Include" />
                 <e p="ChunkDictionary.cs" t="Include" />
                 <e p="ModifyMesh.cs" t="Include" />
                 <e p="NewModifyMesh.cs" t="Include" />

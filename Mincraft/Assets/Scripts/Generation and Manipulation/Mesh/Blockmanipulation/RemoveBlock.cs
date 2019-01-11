@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using UnityEngine;
-using UnityEditor;
-using UnityEngine.Experimental.Rendering;
+using Debug = UnityEngine.Debug;
 
 public class RemoveBlock : MonoBehaviour, IMouseUsable
 {
-    private Vector3Int chunkSize;
+    private int chunkSize;
     public float RaycastHitable
     {
         get => raycastHitable;
@@ -22,50 +20,58 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
     
     [SerializeField] private float raycastHitable = 1000f;
     [SerializeField] private int mouseButtonIndex = 0;
+
+    private Camera cameraRef;
     
     private ChunkManager chunkManager;
+    private MeshModifier modifier;
+    private ConcurrentQueue<MeshData> meshDatas;
+    private (Vector3Int lowerBound, Vector3Int higherBound) tuple;
+
+    private Vector3Int latest;
 
     private void Start()
     {
+        cameraRef = Camera.main;
         chunkManager = ChunkManager.Instance;
+        modifier = new MeshModifier();
+        meshDatas = new ConcurrentQueue<MeshData>();
         chunkSize = ChunkManager.GetMaxSize;
+        modifier.MeshAvailable += (s, data) => meshDatas.Enqueue(data);
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(mouseButtonIndex))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
+            Ray ray = cameraRef.ScreenPointToRay(Input.mousePosition);
+            
             if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable))
             {
-                int[] triangles = hit.transform.GetComponent<MeshFilter>().mesh.triangles;
-                Vector3[] vertices = hit.transform.GetComponent<MeshFilter>().mesh.vertices;
-                
+                //GET BLOCK POSITION
+                Vector3Int centerCube = Vector3Int.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal);
+                //GET CHUNK TO OPERATE IN
                 IChunk chunk = ChunkGameObjectDictionary.GetValue(hit.transform.gameObject);
+                chunk.RemoveBlock(centerCube);
 
-                Vector3Int centerCube = Vector3Int.FloorToInt(
-                    ModifyMesh.CenteredClickPosition(triangles, vertices, hit.normal, hit.triangleIndex) +
-                    hit.transform.position);
-
-                Debug.Log(chunkManager == null ? "null" : "nicht null");
+                MeshData data = ModifyMesh.Combine(chunk);
+                modifier.RedrawMeshFilter(data.GameObject, data);
                 
-                chunkManager.RemoveBlock(chunk, chunk.GetBlock(centerCube));
-
                 var bounds = chunk.GetChunkBounds();
+                this.tuple = bounds;
                 var tuple = chunkManager.IsBoundBlock(bounds, centerCube);
-
+                
                 if (tuple.Result)
                 {
                     for (int i = 0; i < tuple.Directions.Length; i++)
                     {
-                        Vector3Int pos = tuple.Directions[i] + chunk.ChunkOffset;
+                        Vector3Int pos = tuple.Directions[i] + chunk.Position;
                         IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
 
                         if (neigbourChunk != null)
                         {
-                            MeshData data = ModifyMesh.Combine(neigbourChunk);
-                            ModifyMesh.RedrawMeshFilter(neigbourChunk.CurrentGO, data);
+                            MeshData data1 = ModifyMesh.Combine(neigbourChunk);
+                            modifier.RedrawMeshFilter(data1.GameObject, data1);
                         }
                     }
                 }

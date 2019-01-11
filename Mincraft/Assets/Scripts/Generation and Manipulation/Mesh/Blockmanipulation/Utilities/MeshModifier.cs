@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class MeshModifier
 {
@@ -19,44 +20,24 @@ public class MeshModifier
     {
         return Task.Run(() =>
         {
-            List<Block> blocks = chunk.GetBlocks();
-            List<Vector3> vertices = new List<Vector3>();
-            List<int> triangles = new List<int>();
-            List<Vector2> uvs = new List<Vector2>();
-
-            for (int i = 0; i < blocks.Count; i++)
-            {
-                blocks[i].RecalculateNeighbours();
-		
-                if (blocks[i].Neighbours.Any(state => state == false))
-                {
-                    var currentUVData = UVDictionary.GetValue((BlockUV) blocks[i].ID);
-
-                    for (int j = 0; j < blocks[i].Neighbours.Length; j++)
-                    {
-                        if (blocks[i].Neighbours[j] == false)
-                        {
-                            int vc = vertices.Count;
-                            vertices.Add(directions[j] + blocks[i].Position);
-                            vertices.Add(directions[j] + offset1[j] + blocks[i].Position);
-                            vertices.Add(directions[j] + offset2[j] + blocks[i].Position);
-                            vertices.Add(directions[j] + offset1[j] + offset2[j] + blocks[i].Position);
-
-                            for (int k = 0; k < 6; k++)
-                            {
-                                triangles.Add(vc + (tris[j] == 0 ? tri1[k] : tri2[k]));
-                            }
-
-                            uvs.Add(new Vector2(currentUVData[j].TileX, currentUVData[j].TileY));
-                            uvs.Add(new Vector2(currentUVData[j].TileX + currentUVData[j].SizeX, currentUVData[j].TileY));
-                            uvs.Add(new Vector2(currentUVData[j].TileX, currentUVData[j].TileY + currentUVData[j].SizeY));
-                            uvs.Add(new Vector2(currentUVData[j].TileX + currentUVData[j].SizeX,currentUVData[j].TileY + currentUVData[j].SizeY));
-                        }
-                    }
-                }
-            }
-            MeshAvailable?.Invoke(this, new MeshData(vertices, triangles, uvs, chunk.CurrentGO));
+            MeshData data = ModifyMesh.Combine(chunk);
+            MeshAvailable?.Invoke(this, data);
         });
-//        return new MeshData(vertices, triangles, uvs);
+    }
+
+    public void RedrawMeshFilter(GameObject g, MeshData data)
+    {
+        var refMesh = g.GetComponent<MeshFilter>();
+        refMesh.mesh = new Mesh()
+        {
+            indexFormat = IndexFormat.UInt32,
+            vertices = data.Vertices.ToArray(),
+            triangles = data.Triangles.ToArray(),
+            uv = data.UVs.ToArray()
+        };
+
+        
+        refMesh.mesh.RecalculateNormals();
+        g.GetComponent<MeshCollider>().sharedMesh = refMesh.mesh;
     }
 }

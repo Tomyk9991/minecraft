@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using UnityEngine;
+using UnityEngine.iOS;
 using UnityEngine.Networking;
 
 public class ChunkGenerator : MonoBehaviour
@@ -24,8 +27,8 @@ public class ChunkGenerator : MonoBehaviour
 
     private ConcurrentQueue<MeshData> meshDatas;
     private MeshModifier modifier;
-
-    private System.Diagnostics.Stopwatch wa;
+    private ChunkGameObjectPool goPool;
+    private int chunkSize = 0;
 
 
     private int drawCounter = 0;
@@ -33,7 +36,9 @@ public class ChunkGenerator : MonoBehaviour
 
     private void Start() //Multithreaded
     {
+        chunkSize = ChunkManager.GetMaxSize;
         chunkManager = ChunkManager.Instance;
+        goPool = ChunkGameObjectPool.Instance;
         
         modifier = new MeshModifier();
         meshDatas = new ConcurrentQueue<MeshData>();
@@ -42,119 +47,162 @@ public class ChunkGenerator : MonoBehaviour
         {
             meshDatas.Enqueue(data);
         };
-        
-        //Gets the Chunks with multithreaded Power
-        wa = new System.Diagnostics.Stopwatch();
-        wa.Start();
-        
-        var chunkTask = GetChunks(GetBlocks());
-        chunkTask.Wait();
-        chunks = chunkTask.Result;
-        
-        wa.Stop();
-        
-        Debug.Log(wa.ElapsedMilliseconds + "ms in this::GetChunks()");
-        Debug.Log("Active Chunks: " + chunks.Count);
-        
-        wa.Reset();
-        wa.Start();
+
+        if (size.x % chunkSize != 0 || size.y % chunkSize != 0 || size.z % chunkSize != 0)
+        {
+            throw new Exception("Diggah, WeltSize nicht teilbar durch ChunkSize");
+        }
+
+        var task = GenerateChunks();
+        task.Wait();
+        chunks = task.Result;
         
         for (int i = 0; i < chunks.Count; i++)
         {
-            chunks[i].CurrentGO.name = chunks[i].ChunkOffset.ToString();
-            ChunkGameObjectDictionary.Add(chunks[i].CurrentGO, chunks[i]);
+            chunks[i].CalculateNeigbours();
+            chunks[i].CurrentGO.name = chunks[i].Position.ToString();
             modifier.Combine(chunks[i]);
         }
     }
 
     private void Update()
     {
-        //Vielleicht unabhängig von Update lösen? Ein EventListner im Mainthread vielleicht?
-        //Event im ConcurrentQueue für den Mainthread?
         if (!doneMeshing && meshDatas.Count != 0)
         {
             while (meshDatas.TryDequeue(out var data))
             {
-                ModifyMesh.RedrawMeshFilter(data.GameObject, data);
+                modifier.RedrawMeshFilter(data.GameObject, data);
 
                 if (chunks.Count == ++drawCounter)
                 {
                     doneMeshing = true;
-                    modifier.MeshAvailable -= (s, d) => { };
-                    modifier = null;
-
-                    wa.Stop();
-                    Debug.Log(wa.ElapsedMilliseconds + "ms in ModifyMesh::RedrawMeshFilter() and Combine");
                 }
             }
         }
     }
 
-    //Wesentlich schneller, als alte Methode mit checken, ob Chunk schon vorhanden und dann einfügen + zurückgeben
-    private Task<List<IChunk>> GetChunks(List<Block> blocks)
+    private Task<List<IChunk>> GenerateChunks()
     {
+        var list = new List<IChunk>();
         return Task.Run(() =>
         {
-            for (int i = 0; i < blocks.Count; i++)
+            int counter = 0;
+            for (int y = 0; y > -size.y; y -= chunkSize)
             {
-                chunkManager.AddBlock(blocks[i]);
-                blocks[i].ID = blocks[i].GetNeigbourAt(2) == false ? (int) surface : (int) bottom;
+                for (int x = 0; x < size.x; x += chunkSize)
+                {
+                    for (int z = 0; z < size.z; z += chunkSize)
+                    {
+                        if (counter < (size.x / chunkSize) * (size.z / chunkSize))
+                        {
+                            IChunk chunk = new Chunk();
+                            chunk.Position = new Vector3Int(x, y, z);
+                            chunk.CurrentGO = goPool.GetNextUnusedChunk();
+                            GenerateBlocks(chunk);
+                            list.Add(chunk);
+                            ChunkDictionary.Add(chunk.Position, chunk);
+                            ChunkGameObjectDictionary.Add(chunk.CurrentGO, chunk);
+                        }
+                        else
+                        {
+                            IChunk chunk = new Chunk();
+                            chunk.Position = new Vector3Int(x, y, z);
+                            chunk.CurrentGO = goPool.GetNextUnusedChunk();
+                            GenerateBox(chunk);
+                            list.Add(chunk);
+                            ChunkDictionary.Add(chunk.Position, chunk);
+                            ChunkGameObjectDictionary.Add(chunk.CurrentGO, chunk);
+                        }
+
+                        counter++;
+                    }
+                }
             }
 
-            return ChunkDictionary.GetChunks();
+            return list;
         });
     }
 
-    private List<Vector3Int> GenerateBottomMap(List<Vector3Int> surfacePositions)
+    private List<Block> GenerateBottomMap(List<Block> surfacePositions)
     {
-        List<Vector3Int> list = new List<Vector3Int>();
+        List<Block> list = new List<Block>();
         
         for (int i = 0; i < surfacePositions.Count; i++)
         {
-            int heightDelta = surfacePositions[i].y - (-size.y);
-
-            for (int j = 1; j < heightDelta; j++)
+            for (int j = surfacePositions[i].Position.y - 1; j >= 0; j--)
             {
-                list.Add(new Vector3Int(surfacePositions[i].x, surfacePositions[i].y - j, surfacePositions[i].z));
+                list.Add(new Block(new Vector3Int(surfacePositions[i].Position.x, j, surfacePositions[i].Position.z))
+                {
+                    ID = (int) bottom
+                });
             }
         }
 
         return list;
     }
     
-    private List<Vector3Int> GenerateHeightMap(Vector3Int size, System.Func<int, int, int> heightFunc)
+    private List<Block> GenerateHeightMap(int size, Vector3Int offset, Func<int, int, int> heightFunc)
     {
-        List<Vector3Int> positions = new List<Vector3Int>();
+        List<Block> blocks = new List<Block>();
 
-        for (int x = 0; x < size.x; x++)
+        for (int x = 0; x < size; x++)
         {
-            for (int z = 0; z <= size.z; z++)
+            for (int z = 0; z < size; z++)
             {
-                int y = heightFunc(x, z);
+                int y = heightFunc(x + offset.x, z + offset.z);
+
+                y = Mathf.Clamp(y, 0, chunkSize - 1);
                 
-                positions.Add(new Vector3Int(x, y , z));
+                blocks.Add(new Block(new Vector3Int(x, y, z))
+                {
+                    ID = (int) surface
+                });
             }
         }
         
-        
-        return positions;
+        return blocks;
     }
 
-    private List<Block> GetBlocks()
+    private void GenerateBlocks(IChunk chunk)
     {
-        List<Vector3Int> surfacePositions = GenerateHeightMap(size, (x, z) =>
+        List<Block> surfacePositions = GenerateHeightMap(chunkSize, chunk.Position, (x, z) =>
         {
             float height = (Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult +
                             Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult) / 2f;
     
             return Mathf.CeilToInt(height);
         });
-    
-        List<Vector3Int> bottom = GenerateBottomMap(surfacePositions);
-    
-        return surfacePositions
-            .Concat(bottom)
-            .Select(pos => new Block(pos))
-            .ToList();
+
+        List<Block> bottom = GenerateBottomMap(surfacePositions);
+
+        foreach (Block b in surfacePositions.Concat(bottom))
+        {
+            b.Position += chunk.Position;
+            chunk.AddBlock(b);
+        }
+    }
+
+    private void GenerateBox(IChunk chunk)
+    {
+        List<Block> blocks = new List<Block>();
+        
+        for (int x = 0; x < chunkSize; x++)
+        {
+            for (int y = 0; y < chunkSize; y++)
+            {
+                for (int z = 0; z < chunkSize; z++)
+                {
+                    blocks.Add(new Block(new Vector3Int(x, y, z))
+                    {
+                        ID = (int) bottom
+                    });
+                }
+            }
+        }
+        foreach (Block b in blocks)
+        {
+            b.Position += chunk.Position;
+            chunk.AddBlock(b);
+        }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
 {
     [Header("Chunk GameObject instantiation settings")]
     [SerializeField] private GameObject chunkPrefab = null;
-    [Range(1, 500)]
+    [Range(1, 10000)]
     [SerializeField] private int chunksToInstantiate = 210;
 
     private ConcurrentQueue<GameObject> gameObjectChunks;
