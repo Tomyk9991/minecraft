@@ -10,8 +10,11 @@ using UnityEngine;
 using UnityEngine.iOS;
 using UnityEngine.Networking;
 
-public class ChunkGenerator : MonoBehaviour
+public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
 {
+    public static int GetMaxSize => Instance.chunkSize;
+    [SerializeField] private int chunkSize = 0;
+    
     [Header("Perlin Noise")]
     [SerializeField] private float smoothness = 0.03f;
     [SerializeField] private float heightMult = 5f;
@@ -21,14 +24,11 @@ public class ChunkGenerator : MonoBehaviour
     [SerializeField] private BlockUV bottom = default;
     [SerializeField] private Vector3Int size = default;
     
-    private Biom[] bioms;
-    private ChunkManager chunkManager;
     private List<IChunk> chunks;
 
     private ConcurrentQueue<MeshData> meshDatas;
     private MeshModifier modifier;
     private ChunkGameObjectPool goPool;
-    private int chunkSize = 0;
 
 
     private int drawCounter = 0;
@@ -36,8 +36,6 @@ public class ChunkGenerator : MonoBehaviour
 
     private void Start() //Multithreaded
     {
-        chunkSize = ChunkManager.GetMaxSize;
-        chunkManager = ChunkManager.Instance;
         goPool = ChunkGameObjectPool.Instance;
         
         modifier = new MeshModifier();
@@ -177,8 +175,11 @@ public class ChunkGenerator : MonoBehaviour
 
         foreach (Block b in surfacePositions.Concat(bottom))
         {
-            b.Position += chunk.Position;
-            chunk.AddBlock(b);
+            Block temp = new Block(b.Position + chunk.Position)
+            {
+                ID = b.ID
+            };
+            chunk.AddBlock(temp);
         }
     }
 
@@ -201,8 +202,11 @@ public class ChunkGenerator : MonoBehaviour
         }
         foreach (Block b in blocks)
         {
-            b.Position += chunk.Position;
-            chunk.AddBlock(b);
+            Block temp = new Block(b.Position + chunk.Position)
+            {
+                ID = b.ID
+            };
+            chunk.AddBlock(temp);
         }
     }
 }

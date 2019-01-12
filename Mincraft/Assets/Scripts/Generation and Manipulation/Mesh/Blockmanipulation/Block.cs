@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.Collections;
-using Unity.Mathematics;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Block
 {
     public Vector3Int Position;
     public int ID { get; set; }
 
+
     public Block(Vector3Int position)
     {
-        ID = 0;
+        ID = -1;
         this.Position = position;
     }
 

@@ -74,7 +74,7 @@ public static class ModifyMesh
 
 	    for (int i = 0; i < blocks.Length; i++)
 	    {
-		    if (blocks[i] == null)
+		    if (blocks[i] == default)
 		    {
 			    continue;
 		    }

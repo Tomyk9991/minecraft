@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -23,7 +24,6 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
 
     private Camera cameraRef;
     
-    private ChunkManager chunkManager;
     private MeshModifier modifier;
     private ConcurrentQueue<MeshData> meshDatas;
     private (Vector3Int lowerBound, Vector3Int higherBound) tuple;
@@ -33,10 +33,9 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
     private void Start()
     {
         cameraRef = Camera.main;
-        chunkManager = ChunkManager.Instance;
         modifier = new MeshModifier();
         meshDatas = new ConcurrentQueue<MeshData>();
-        chunkSize = ChunkManager.GetMaxSize;
+        chunkSize = ChunkGenerator.GetMaxSize;
         modifier.MeshAvailable += (s, data) => meshDatas.Enqueue(data);
     }
 
@@ -59,7 +58,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
                 
                 var bounds = chunk.GetChunkBounds();
                 this.tuple = bounds;
-                var tuple = chunkManager.IsBoundBlock(bounds, centerCube);
+                var tuple = IsBoundBlock(bounds, centerCube);
                 
                 if (tuple.Result)
                 {
@@ -77,5 +76,52 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
                 }
             }
         }
+    }
+    
+    private (Vector3Int[] Directions, bool Result) IsBoundBlock((Vector3Int lowerBound, Vector3Int higherBound) tuple, Vector3Int pos)
+    {
+        List<Vector3Int> directions = new List<Vector3Int>();
+        int maxSize = ChunkGenerator.GetMaxSize;
+        bool result = false;
+        
+        
+        if (pos.x == tuple.lowerBound.x || pos.x - 1 == tuple.lowerBound.x)
+        {
+            directions.Add(new Vector3Int(-maxSize, 0, 0));
+            result = true;
+        }
+
+        if (pos.y == tuple.lowerBound.y || pos.y - 1 == tuple.lowerBound.y)
+        {
+            directions.Add(new Vector3Int(0, -maxSize, 0));
+            result = true;
+        }
+
+        if (pos.z == tuple.lowerBound.z || pos.z - 1 == tuple.lowerBound.z)
+        {
+            directions.Add(new Vector3Int(0, 0, -maxSize));
+            result = true;
+        }
+        
+        if (pos.x == tuple.higherBound.x || pos.x + 1 == tuple.higherBound.x)
+        {
+            directions.Add(new Vector3Int(maxSize, 0, 0));
+            result = true;
+        }
+
+        if (pos.y == tuple.higherBound.y || pos.y + 1 == tuple.higherBound.y)
+        {
+            directions.Add(new Vector3Int(0, maxSize, 0));
+            result = true;
+        }
+        
+        if (pos.z == tuple.higherBound.z || pos.z + 1 == tuple.higherBound.z)
+        {
+            directions.Add(new Vector3Int(0, 0, maxSize));
+            result = true;
+        }
+
+
+        return (directions.ToArray(), result);
     }
 }

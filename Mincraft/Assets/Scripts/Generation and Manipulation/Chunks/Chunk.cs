@@ -34,7 +34,7 @@ public class Chunk : IChunk
 
     public Chunk()
     {
-        chunkSize = ChunkManager.GetMaxSize;
+        chunkSize = ChunkGenerator.GetMaxSize;
         blocks = new Block[chunkSize * chunkSize * chunkSize];
         chunkNeigbours = new IChunk[6];
     }
@@ -221,7 +221,7 @@ public class Chunk : IChunk
     private void GetChunkBoundsCalc()
     {
         boundsCalculated = true;
-        int maxSize = ChunkManager.GetMaxSize;
+        int maxSize = ChunkGenerator.GetMaxSize;
         int half = maxSize / 2;
 
         lowerBound = new Vector3Int(Mathf.FloorToInt(Position.x),
