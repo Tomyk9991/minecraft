@@ -21,8 +21,6 @@ public class AddBlock : MonoBehaviour, IMouseUsable
     [SerializeField] private float raycastHitable = 1000f;
     [SerializeField] private BlockUV blockUV = BlockUV.Dirt;
     
-    private (Vector3Int lowerBound, Vector3Int higherBound) tuple;
-    
     private Camera cameraRef;
     
     private MeshModifier modifier;
@@ -46,7 +44,7 @@ public class AddBlock : MonoBehaviour, IMouseUsable
 
             if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
             {
-                Vector3Int centerCube = Vector3Int.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal));
+                Int3 centerCube = Int3.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal));
                 Block block = new Block(centerCube)
                 {
                     ID = (int) blockUV
@@ -70,7 +68,6 @@ public class AddBlock : MonoBehaviour, IMouseUsable
                 modifier.RedrawMeshFilter(temp.CurrentGO, data);
 
                 var bounds = temp.GetChunkBounds();
-                this.tuple = bounds;
                 var tuple = IsBoundBlock(bounds, centerCube);
                 
                 // Asynchronous mesh modification and recalculation 
@@ -78,7 +75,7 @@ public class AddBlock : MonoBehaviour, IMouseUsable
                 {
                     for (int i = 0; i < tuple.Directions.Length; i++)
                     {
-                        Vector3Int pos = tuple.Directions[i] + temp.Position;
+                        Int3 pos = tuple.Directions[i] + temp.Position;
                         IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
 
                         if (neigbourChunk != null)
@@ -99,47 +96,47 @@ public class AddBlock : MonoBehaviour, IMouseUsable
         }
     }
     
-    public (Vector3Int[] Directions, bool Result) IsBoundBlock((Vector3Int lowerBound, Vector3Int higherBound) tuple, Vector3Int pos)
+    public (Int3[] Directions, bool Result) IsBoundBlock((Int3 lowerBound, Int3 higherBound) tuple, Int3 pos)
     {
-        List<Vector3Int> directions = new List<Vector3Int>();
+        List<Int3> directions = new List<Int3>();
         bool result = false;
 
         int maxSize = ChunkGenerator.GetMaxSize;
         
         
-        if (pos.x == tuple.lowerBound.x || pos.x - 1 == tuple.lowerBound.x)
+        if (pos.X == tuple.lowerBound.X || pos.X - 1 == tuple.lowerBound.X)
         {
-            directions.Add(new Vector3Int(-maxSize, 0, 0));
+            directions.Add(new Int3(-maxSize, 0, 0));
             result = true;
         }
 
-        if (pos.y == tuple.lowerBound.y || pos.y - 1 == tuple.lowerBound.y)
+        if (pos.Y == tuple.lowerBound.Y || pos.Y - 1 == tuple.lowerBound.Y)
         {
-            directions.Add(new Vector3Int(0, -maxSize, 0));
+            directions.Add(new Int3(0, -maxSize, 0));
             result = true;
         }
 
-        if (pos.z == tuple.lowerBound.z || pos.z - 1 == tuple.lowerBound.z)
+        if (pos.Z == tuple.lowerBound.Z || pos.Z - 1 == tuple.lowerBound.Z)
         {
-            directions.Add(new Vector3Int(0, 0, -maxSize));
+            directions.Add(new Int3(0, 0, -maxSize));
             result = true;
         }
         
-        if (pos.x == tuple.higherBound.x || pos.x + 1 == tuple.higherBound.x)
+        if (pos.X == tuple.higherBound.X || pos.X + 1 == tuple.higherBound.X)
         {
-            directions.Add(new Vector3Int(maxSize, 0, 0));
+            directions.Add(new Int3(maxSize, 0, 0));
             result = true;
         }
 
-        if (pos.y == tuple.higherBound.y || pos.y + 1 == tuple.higherBound.y)
+        if (pos.Y == tuple.higherBound.Y || pos.Y + 1 == tuple.higherBound.Y)
         {
-            directions.Add(new Vector3Int(0, maxSize, 0));
+            directions.Add(new Int3(0, maxSize, 0));
             result = true;
         }
         
-        if (pos.z == tuple.higherBound.z || pos.z + 1 == tuple.higherBound.z)
+        if (pos.Z == tuple.higherBound.Z || pos.Z + 1 == tuple.higherBound.Z)
         {
-            directions.Add(new Vector3Int(0, 0, maxSize));
+            directions.Add(new Int3(0, 0, maxSize));
             result = true;
         }
 

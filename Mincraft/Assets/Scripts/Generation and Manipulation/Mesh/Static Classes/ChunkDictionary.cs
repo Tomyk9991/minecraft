@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class ChunkDictionary
 {    
-    private static Dictionary<Vector3Int, IChunk> dictionary = new Dictionary<Vector3Int, IChunk>();
+    private static Dictionary<Int3, IChunk> dictionary = new Dictionary<Int3, IChunk>();
 
-    public static void Add(Vector3Int key, IChunk value) => dictionary.Add(key, value);
-    public static void Remove(Vector3Int key) => dictionary.Remove(key);
+    public static void Add(Int3 key, IChunk value) => dictionary.Add(key, value);
+    public static void Remove(Int3 key) => dictionary.Remove(key);
 
-    public static IChunk GetValue(Vector3Int key)
+    public static IChunk GetValue(Int3 key)
     {
         IChunk value;
         if (dictionary.TryGetValue(key, out value))

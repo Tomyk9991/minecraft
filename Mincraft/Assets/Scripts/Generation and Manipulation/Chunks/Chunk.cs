@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Chunk : IChunk
 {
     public GameObject CurrentGO { get; set; }
-    public Vector3Int Position { get; set; }
+    public Int3 Position { get; set; }
 
-    public Vector3Int lowerBound, higherBound;
+    public Int3 lowerBound, higherBound;
     
     private bool boundsCalculated = false;
     private Block[] blocks;
@@ -20,14 +13,14 @@ public class Chunk : IChunk
 
     private IChunk[] chunkNeigbours;
     
-    private static Vector3Int[] directions = 
+    private static Int3[] directions = 
     {
-        new Vector3Int(0, 0, 1),
-        new Vector3Int(0, 0, -1),
-        Vector3Int.up,
-        Vector3Int.down,
-        Vector3Int.left,
-        Vector3Int.right
+        Int3.Forward,
+        Int3.Back,
+        Int3.Up,
+        Int3.Down,
+        Int3.Left,
+        Int3.Right
     };
     
     #region Interface implementation
@@ -41,21 +34,21 @@ public class Chunk : IChunk
 
     public void AddBlock(Block block)
     {
-        Vector3Int local = GetLocalPosition(block.Position);
+        Int3 local = GetLocalPosition(block.Position);
         int index = GetFlattenIndex(local);
         blocks[index] = block;
     }
 
     public IChunk TryAddBlock(Block block, Vector3 normal)
     {
-        Vector3Int local = GetLocalPosition(block.Position);
+        Int3 local = GetLocalPosition(block.Position);
         int index = GetFlattenIndex(local);
 
         if (index >= chunkSize * chunkSize * chunkSize || index < 0)
         {
             for (int i = 0; i < directions.Length; i++)
             {
-                if (directions[i] == normal)
+                if (directions[i] == Int3.ToInt3(normal))
                     return chunkNeigbours[i];
             }
 
@@ -66,7 +59,7 @@ public class Chunk : IChunk
         return this;
     }
 
-    public void RemoveBlock(Vector3Int blockPos)
+    public void RemoveBlock(Int3 blockPos)
     {
         int index = GetFlattenIndex(GetLocalPosition(blockPos));
         blocks[index] = null;
@@ -78,7 +71,7 @@ public class Chunk : IChunk
     {
     }
     
-    public Block GetBlock(Vector3Int position)
+    public Block GetBlock(Int3 position)
     {
         int index = GetFlattenIndex(GetLocalPosition(position));
         return blocks[index];
@@ -86,7 +79,7 @@ public class Chunk : IChunk
     
     public Block[] GetBlocks() => blocks;
     
-    public (Vector3Int lowerBound, Vector3Int higherBound) GetChunkBounds()
+    public (Int3 lowerBound, Int3 higherBound) GetChunkBounds()
     {
         if (!boundsCalculated)
             GetChunkBoundsCalc();
@@ -108,14 +101,14 @@ public class Chunk : IChunk
     /// <param name="index"></param>
     /// <param name="blockPos">Rufe Block mit globaler Position auf</param>
     /// <returns></returns>
-    public bool GetNeigbourAt(int index, Vector3Int blockPos)
+    public bool GetNeigbourAt(int index, Int3 blockPos)
     {
-        Vector3Int local = GetLocalPosition(blockPos);
+        Int3 local = GetLocalPosition(blockPos);
         switch (index)
         {
             case 0:
             {
-                if ((local + directions[0]).z < chunkSize)
+                if ((local + directions[0]).Z < chunkSize)
                 {
                     return blocks[GetFlattenIndex(local + directions[0])] != null;
                 }
@@ -123,13 +116,13 @@ public class Chunk : IChunk
                 {
                     if (chunkNeigbours[0] != null)
                     {
-                        return chunkNeigbours[0].GetBlock(new Vector3Int(blockPos.x, blockPos.y, chunkNeigbours[0].Position.z)) != null;
+                        return chunkNeigbours[0].GetBlock(new Int3(blockPos.X, blockPos.Y, chunkNeigbours[0].Position.Z)) != null;
                     }
                 }
                 break;
             }
             case 1:
-                if ((local + directions[1]).z >= 0)
+                if ((local + directions[1]).Z >= 0)
                 {
                     return blocks[GetFlattenIndex(local + directions[1])] != null;
                 }
@@ -137,12 +130,12 @@ public class Chunk : IChunk
                 {
                     if (chunkNeigbours[1] != null)
                     {
-                        return chunkNeigbours[1].GetBlock(new Vector3Int(blockPos.x, blockPos.y, chunkNeigbours[1].Position.z + chunkSize - 1)) != null;
+                        return chunkNeigbours[1].GetBlock(new Int3(blockPos.X, blockPos.Y, chunkNeigbours[1].Position.Z + chunkSize - 1)) != null;
                     }
                 }
                 break;
             case 2:
-                if ((local + directions[2]).y < chunkSize)
+                if ((local + directions[2]).Y < chunkSize)
                 {
                     return blocks[GetFlattenIndex(local + directions[2])] != null;
                 }
@@ -150,12 +143,12 @@ public class Chunk : IChunk
                 {
                     if (chunkNeigbours[2] != null)
                     {
-                        return chunkNeigbours[2].GetBlock(new Vector3Int(blockPos.x, chunkNeigbours[2].Position.y, blockPos.z)) != null;
+                        return chunkNeigbours[2].GetBlock(new Int3(blockPos.X, chunkNeigbours[2].Position.Y, blockPos.Z)) != null;
                     }
                 }
                 break;
             case 3:
-                if ((local + directions[3]).y >= 0)
+                if ((local + directions[3]).Y >= 0)
                 {
                     return blocks[GetFlattenIndex(local + directions[3])] != null;
                 }
@@ -163,12 +156,12 @@ public class Chunk : IChunk
                 {
                     if (chunkNeigbours[3] != null)
                     {
-                        return chunkNeigbours[3].GetBlock(new Vector3Int(blockPos.x, chunkNeigbours[3].Position.y + chunkSize - 1, blockPos.z)) != null;
+                        return chunkNeigbours[3].GetBlock(new Int3(blockPos.X, chunkNeigbours[3].Position.Y + chunkSize - 1, blockPos.Z)) != null;
                     }
                 }
                 break;
             case 4:
-                if ((local + directions[4]).x >= 0)
+                if ((local + directions[4]).X >= 0)
                 {
                     return blocks[GetFlattenIndex(local + directions[4])] != null;
                 }
@@ -176,12 +169,12 @@ public class Chunk : IChunk
                 {
                     if (chunkNeigbours[4] != null)
                     {
-                        return chunkNeigbours[4].GetBlock(new Vector3Int(chunkNeigbours[4].Position.x + chunkSize - 1, blockPos.y, blockPos.z)) != null;
+                        return chunkNeigbours[4].GetBlock(new Int3(chunkNeigbours[4].Position.X + chunkSize - 1, blockPos.Y, blockPos.Z)) != null;
                     }
                 }
                 break;
             case 5:
-                if ((local + directions[5]).x < chunkSize)
+                if ((local + directions[5]).X < chunkSize)
                 {
                     return blocks[GetFlattenIndex(local + directions[5])] != null;
                 }
@@ -189,7 +182,7 @@ public class Chunk : IChunk
                 {
                     if (chunkNeigbours[5] != null)
                     {
-                        return chunkNeigbours[5].GetBlock(new Vector3Int(chunkNeigbours[5].Position.x, blockPos.y, blockPos.z)) != null;
+                        return chunkNeigbours[5].GetBlock(new Int3(chunkNeigbours[5].Position.X, blockPos.Y, blockPos.Z)) != null;
                     }
                 }
                 break;
@@ -205,7 +198,7 @@ public class Chunk : IChunk
     /// </summary>
     /// <param name="blockPos">Rufe Block mit globaler Position auf</param>
     /// <returns></returns>
-    public bool[] BoolNeigbours(Vector3Int blockPos)
+    public bool[] BoolNeigbours(Int3 blockPos)
     {
         return new []
         {
@@ -224,20 +217,20 @@ public class Chunk : IChunk
         int maxSize = ChunkGenerator.GetMaxSize;
         int half = maxSize / 2;
 
-        lowerBound = new Vector3Int(Mathf.FloorToInt(Position.x),
-            Mathf.FloorToInt(Position.y),
-            Mathf.FloorToInt(Position.z));
+        lowerBound = new Int3(Mathf.FloorToInt(Position.X),
+            Mathf.FloorToInt(Position.Y),
+            Mathf.FloorToInt(Position.Z));
 
-        higherBound = new Vector3Int(Mathf.FloorToInt(Position.x + maxSize),
-            Mathf.FloorToInt(Position.y + maxSize),
-            Mathf.FloorToInt(Position.z + maxSize));
+        higherBound = new Int3(Mathf.FloorToInt(Position.X + maxSize),
+            Mathf.FloorToInt(Position.Y + maxSize),
+            Mathf.FloorToInt(Position.Z + maxSize));
     }
 
-    private int GetFlattenIndex(Vector3Int localPosition)
-        => localPosition.x + chunkSize * (localPosition.y + chunkSize * localPosition.z);
+    private int GetFlattenIndex(Int3 localPosition)
+        => localPosition.X + chunkSize * (localPosition.Y + chunkSize * localPosition.Z);
 
     //TODO Kann sein, dass die Origin des Chunks nicht unten Links, sondern
     //in der Mitte ist
-    private Vector3Int GetLocalPosition(Vector3Int globalPosition)
+    private Int3 GetLocalPosition(Int3 globalPosition)
         => globalPosition - this.Position;
 }

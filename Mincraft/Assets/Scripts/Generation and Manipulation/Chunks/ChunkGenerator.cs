@@ -1,19 +1,14 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using UnityEngine;
-using UnityEngine.iOS;
-using UnityEngine.Networking;
 
 public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
 {
-    public static int GetMaxSize => Instance.chunkSize;
-    [SerializeField] private int chunkSize = 0;
+    public static int GetMaxSize => (int) Instance.chunkSize;
+    [SerializeField] private uint chunkSize = 0;
     
     [Header("Perlin Noise")]
     [SerializeField] private float smoothness = 0.03f;
@@ -22,7 +17,7 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
     [Header("Instantiation")]
     [SerializeField] private BlockUV surface = default;
     [SerializeField] private BlockUV bottom = default;
-    [SerializeField] private Vector3Int size = default;
+    [SerializeField] private Int3 size = default;
     
     private List<IChunk> chunks;
 
@@ -33,6 +28,8 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
 
     private int drawCounter = 0;
     private bool doneMeshing = false;
+
+    private void OnValidate() => PlayerPrefs.SetInt(nameof(chunkSize), (int)chunkSize);
 
     private void Start() //Multithreaded
     {
@@ -46,7 +43,7 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
             meshDatas.Enqueue(data);
         };
 
-        if (size.x % chunkSize != 0 || size.y % chunkSize != 0 || size.z % chunkSize != 0)
+        if (size.X % chunkSize != 0 || size.Y % chunkSize != 0 || size.Z % chunkSize != 0)
         {
             throw new Exception("Diggah, WeltSize nicht teilbar durch ChunkSize");
         }
@@ -85,16 +82,16 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
         return Task.Run(() =>
         {
             int counter = 0;
-            for (int y = 0; y > -size.y; y -= chunkSize)
+            for (int y = 0; y > -size.Y; y -= (int)chunkSize)
             {
-                for (int x = 0; x < size.x; x += chunkSize)
+                for (int x = 0; x < size.X; x += (int)chunkSize)
                 {
-                    for (int z = 0; z < size.z; z += chunkSize)
+                    for (int z = 0; z < size.Z; z += (int)chunkSize)
                     {
-                        if (counter < (size.x / chunkSize) * (size.z / chunkSize))
+                        if (counter < (size.X / chunkSize) * (size.Z / chunkSize))
                         {
                             IChunk chunk = new Chunk();
-                            chunk.Position = new Vector3Int(x, y, z);
+                            chunk.Position = new Int3(x, y, z);
                             chunk.CurrentGO = goPool.GetNextUnusedChunk();
                             GenerateBlocks(chunk);
                             list.Add(chunk);
@@ -104,7 +101,7 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
                         else
                         {
                             IChunk chunk = new Chunk();
-                            chunk.Position = new Vector3Int(x, y, z);
+                            chunk.Position = new Int3(x, y, z);
                             chunk.CurrentGO = goPool.GetNextUnusedChunk();
                             GenerateBox(chunk);
                             list.Add(chunk);
@@ -127,9 +124,9 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
         
         for (int i = 0; i < surfacePositions.Count; i++)
         {
-            for (int j = surfacePositions[i].Position.y - 1; j >= 0; j--)
+            for (int j = surfacePositions[i].Position.Y - 1; j >= 0; j--)
             {
-                list.Add(new Block(new Vector3Int(surfacePositions[i].Position.x, j, surfacePositions[i].Position.z))
+                list.Add(new Block(new Int3(surfacePositions[i].Position.X, j, surfacePositions[i].Position.Z))
                 {
                     ID = (int) bottom
                 });
@@ -139,7 +136,7 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
         return list;
     }
     
-    private List<Block> GenerateHeightMap(int size, Vector3Int offset, Func<int, int, int> heightFunc)
+    private List<Block> GenerateHeightMap(int size, Int3 offset, Func<int, int, int> heightFunc)
     {
         List<Block> blocks = new List<Block>();
 
@@ -147,11 +144,11 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
         {
             for (int z = 0; z < size; z++)
             {
-                int y = heightFunc(x + offset.x, z + offset.z);
+                int y = heightFunc(x + offset.X, z + offset.Z);
 
-                y = Mathf.Clamp(y, 0, chunkSize - 1);
+                y = Mathf.Clamp(y, 0, (int)chunkSize - 1);
                 
-                blocks.Add(new Block(new Vector3Int(x, y, z))
+                blocks.Add(new Block(new Int3(x, y, z))
                 {
                     ID = (int) surface
                 });
@@ -163,7 +160,7 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
 
     private void GenerateBlocks(IChunk chunk)
     {
-        List<Block> surfacePositions = GenerateHeightMap(chunkSize, chunk.Position, (x, z) =>
+        List<Block> surfacePositions = GenerateHeightMap((int)chunkSize, chunk.Position, (x, z) =>
         {
             float height = (Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult +
                             Mathf.PerlinNoise(x * smoothness, z * smoothness * 2) * heightMult) / 2f;
@@ -193,7 +190,7 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
             {
                 for (int z = 0; z < chunkSize; z++)
                 {
-                    blocks.Add(new Block(new Vector3Int(x, y, z))
+                    blocks.Add(new Block(new Int3(x, y, z))
                     {
                         ID = (int) bottom
                     });

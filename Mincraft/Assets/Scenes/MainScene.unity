@@ -434,7 +434,10 @@ MonoBehaviour:
   heightMult: 12.5
   surface: 0
   bottom: 2
-  size: {x: 128, y: 16, z: 128}
+  size:
+    X: 32
+    Y: 16
+    Z: 128
 --- !u!114 &787175598
 MonoBehaviour:
   m_ObjectHideFlags: 0
