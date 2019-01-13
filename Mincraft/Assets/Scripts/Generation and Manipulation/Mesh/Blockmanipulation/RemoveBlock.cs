@@ -1,12 +1,12 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
-public class RemoveBlock : MonoBehaviour, IMouseUsable
+public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
 {
-    private int chunkSize;
+    public ChunkGameObjectPool GoPool { get; set; }
+    
     public float RaycastHitable
     {
         get => raycastHitable;
@@ -30,9 +30,9 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
     private void Start()
     {
         cameraRef = Camera.main;
+        GoPool = ChunkGameObjectPool.Instance;
         modifier = new MeshModifier();
         meshDatas = new ConcurrentQueue<MeshData>();
-        chunkSize = ChunkGenerator.GetMaxSize;
         modifier.MeshAvailable += (s, data) => meshDatas.Enqueue(data);
     }
 
@@ -44,9 +44,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
             
             if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable))
             {
-                //GET BLOCK POSITION
                 Int3 centerCube = Int3.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal);
-                //GET CHUNK TO OPERATE IN
                 IChunk chunk = ChunkGameObjectDictionary.GetValue(hit.transform.gameObject);
                 chunk.RemoveBlock(centerCube);
 
@@ -56,7 +54,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
                 var bounds = chunk.GetChunkBounds();
                 var tuple = IsBoundBlock(bounds, centerCube);
                 
-                if (tuple.Result)
+                if (tuple.HasDirections)
                 {
                     for (int i = 0; i < tuple.Directions.Length; i++)
                     {
@@ -70,11 +68,44 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
                         }
                     }
                 }
+
+                if (CheckIfNeedsToBeRemoved(chunk))
+                {
+                    RemoveChunk(chunk);
+
+                    if (tuple.HasDirections)
+                    {
+                        for (int i = 0; i < tuple.Directions.Length; i++)
+                        {
+                            Int3 pos = tuple.Directions[i] + chunk.Position;
+                            IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
+
+                            neigbourChunk?.CalculateNeigbours();
+                        }
+                    }
+                }
             }
         }
     }
-    
-    private (Int3[] Directions, bool Result) IsBoundBlock((Int3 lowerBound, Int3 higherBound) tuple, Int3 pos)
+
+
+    public bool CheckIfNeedsToBeRemoved(IChunk chunk)
+        => chunk.GetBlocks().All(b => b == null);
+
+    public void RemoveChunk(IChunk chunk)
+    {
+        GameObject goToAddToPoolAgain = chunk.CurrentGO;
+        
+        ChunkGameObjectDictionary.Remove(goToAddToPoolAgain);
+        ChunkDictionary.Remove(chunk.Position);
+        
+        //Füge GameObject dem Pool wieder hinzu
+        GoPool.SetGameObject(goToAddToPoolAgain);
+
+        chunk.CalculateNeigbours();
+    }
+
+    private (Int3[] Directions, bool HasDirections) IsBoundBlock((Int3 lowerBound, Int3 higherBound) tuple, Int3 pos)
     {
         List<Int3> directions = new List<Int3>();
         int maxSize = ChunkGenerator.GetMaxSize;
@@ -120,4 +151,6 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable
 
         return (directions.ToArray(), result);
     }
+
+        
 }

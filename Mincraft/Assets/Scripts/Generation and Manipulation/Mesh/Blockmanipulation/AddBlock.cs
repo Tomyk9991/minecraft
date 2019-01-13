@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AddBlock : MonoBehaviour, IMouseUsable
+public class AddBlock : MonoBehaviour, IMouseUsable, ICreateChunk
 {
+    public ChunkGameObjectPool GoPool { get; set; }
     public float RaycastHitable
     {
         get => raycastHitable;
@@ -20,6 +20,8 @@ public class AddBlock : MonoBehaviour, IMouseUsable
     [SerializeField] private int mouseButtonIndex = 1;
     [SerializeField] private float raycastHitable = 1000f;
     [SerializeField] private BlockUV blockUV = BlockUV.Dirt;
+
+    private int chunkSize;
     
     private Camera cameraRef;
     
@@ -28,6 +30,8 @@ public class AddBlock : MonoBehaviour, IMouseUsable
     
     private void Start()
     {
+        chunkSize = ChunkGenerator.GetMaxSize;
+        GoPool = ChunkGameObjectPool.Instance;
         cameraRef = Camera.main;
         modifier = new MeshModifier();
         meshDatas = new ConcurrentQueue<MeshData>();
@@ -50,32 +54,39 @@ public class AddBlock : MonoBehaviour, IMouseUsable
                     ID = (int) blockUV
                 };
 
-                IChunk temp = ChunkGameObjectDictionary.GetValue(hit.transform.gameObject);
-                IChunk chunk = temp.TryAddBlock(block, hit.normal);
+                IChunk chunkOnClicked = ChunkGameObjectDictionary.GetValue(hit.transform.gameObject);
+                IChunk chunk = chunkOnClicked.TryAddBlock(block, hit.normal);
 
-                if (chunk != temp)
+
+                if (chunk == null) // Es gab bisher noch nicht so einen Nachbarn
+                {
+                    Int3 posNewChunk = chunkOnClicked.Position + Int3.ToInt3(hit.normal * chunkSize);
+                    chunk = GenerateChunk(posNewChunk);
+                    
+                    chunk.CalculateNeigbours();
+                    chunkOnClicked.CalculateNeigbours();
+                }
+
+                if (chunk != chunkOnClicked)
                 {
                     chunk.TryAddBlock(block, hit.normal);
                     var data1 = ModifyMesh.Combine(chunk);
                     modifier.RedrawMeshFilter(chunk.CurrentGO, data1);
                 }
 
-                if (chunk == null)
-                    throw new Exception("Kein Nachbar. Erstelle neuen Chunk genau dort. Also hier.");
-
                 //Synchronous mesh modification and recalculation
-                var data = ModifyMesh.Combine(temp);
-                modifier.RedrawMeshFilter(temp.CurrentGO, data);
+                var data = ModifyMesh.Combine(chunkOnClicked);
+                modifier.RedrawMeshFilter(chunkOnClicked.CurrentGO, data);
 
-                var bounds = temp.GetChunkBounds();
+                var bounds = chunkOnClicked.GetChunkBounds();
                 var tuple = IsBoundBlock(bounds, centerCube);
                 
                 // Asynchronous mesh modification and recalculation 
-                if (tuple.Result)
+                if (tuple.HasDirections)
                 {
                     for (int i = 0; i < tuple.Directions.Length; i++)
                     {
-                        Int3 pos = tuple.Directions[i] + temp.Position;
+                        Int3 pos = tuple.Directions[i] + chunkOnClicked.Position;
                         IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
 
                         if (neigbourChunk != null)
@@ -95,8 +106,24 @@ public class AddBlock : MonoBehaviour, IMouseUsable
             }
         }
     }
-    
-    public (Int3[] Directions, bool Result) IsBoundBlock((Int3 lowerBound, Int3 higherBound) tuple, Int3 pos)
+
+    public IChunk GenerateChunk(Int3 pos)
+    {
+        Chunk chunk = new Chunk
+        {
+            Position = pos,
+            CurrentGO = GoPool.GetNextUnusedChunk(),
+        };
+        chunk.CurrentGO.name = chunk.Position.ToString();
+        chunk.CurrentGO.SetActive(true);
+        
+        ChunkDictionary.Add(chunk.Position, chunk);
+        ChunkGameObjectDictionary.Add(chunk.CurrentGO, chunk);
+
+        return chunk;
+    }
+
+    public (Int3[] Directions, bool HasDirections) IsBoundBlock((Int3 lowerBound, Int3 higherBound) tuple, Int3 pos)
     {
         List<Int3> directions = new List<Int3>();
         bool result = false;
@@ -141,6 +168,6 @@ public class AddBlock : MonoBehaviour, IMouseUsable
         }
 
 
-        return (directions.ToArray(), result);
+        return (directions.ToArray(), result: result);
     }
 }

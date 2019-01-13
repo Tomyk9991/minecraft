@@ -5,10 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
+public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>, ICreateChunk
 {
     public static int GetMaxSize => (int) Instance.chunkSize;
+    public ChunkGameObjectPool GoPool { get; set; }
+    
     [SerializeField] private uint chunkSize = 0;
+    
     
     [Header("Perlin Noise")]
     [SerializeField] private float smoothness = 0.03f;
@@ -19,11 +22,13 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
     [SerializeField] private BlockUV bottom = default;
     [SerializeField] private Int3 size = default;
     
+    [Header("Drawing Chunk")]
+    public bool drawChunk = true;
+    
     private List<IChunk> chunks;
 
     private ConcurrentQueue<MeshData> meshDatas;
     private MeshModifier modifier;
-    private ChunkGameObjectPool goPool;
 
 
     private int drawCounter = 0;
@@ -31,9 +36,9 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
 
     private void OnValidate() => PlayerPrefs.SetInt(nameof(chunkSize), (int)chunkSize);
 
-    private void Start() //Multithreaded
+    private void Start()
     {
-        goPool = ChunkGameObjectPool.Instance;
+        GoPool = ChunkGameObjectPool.Instance;
         
         modifier = new MeshModifier();
         meshDatas = new ConcurrentQueue<MeshData>();
@@ -48,13 +53,17 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
             throw new Exception("Diggah, WeltSize nicht teilbar durch ChunkSize");
         }
 
+        System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
         var task = GenerateChunks();
         task.Wait();
         chunks = task.Result;
+        watch.Stop();
+        Debug.Log(watch.ElapsedMilliseconds + "ms for generating Chunks");
         
         for (int i = 0; i < chunks.Count; i++)
         {
             chunks[i].CalculateNeigbours();
+            chunks[i].CurrentGO.SetActive(true);
             chunks[i].CurrentGO.name = chunks[i].Position.ToString();
             modifier.Combine(chunks[i]);
         }
@@ -90,23 +99,15 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
                     {
                         if (counter < (size.X / chunkSize) * (size.Z / chunkSize))
                         {
-                            IChunk chunk = new Chunk();
-                            chunk.Position = new Int3(x, y, z);
-                            chunk.CurrentGO = goPool.GetNextUnusedChunk();
-                            GenerateBlocks(chunk);
+                            IChunk chunk = GenerateChunk(new Int3(x, y, z));
                             list.Add(chunk);
-                            ChunkDictionary.Add(chunk.Position, chunk);
-                            ChunkGameObjectDictionary.Add(chunk.CurrentGO, chunk);
+                            GenerateBlocks(chunk);
                         }
                         else
                         {
-                            IChunk chunk = new Chunk();
-                            chunk.Position = new Int3(x, y, z);
-                            chunk.CurrentGO = goPool.GetNextUnusedChunk();
-                            GenerateBox(chunk);
+                            IChunk chunk = GenerateChunk(new Int3(x, y, z));
                             list.Add(chunk);
-                            ChunkDictionary.Add(chunk.Position, chunk);
-                            ChunkGameObjectDictionary.Add(chunk.CurrentGO, chunk);
+                            GenerateBox(chunk);
                         }
 
                         counter++;
@@ -118,6 +119,17 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
         });
     }
 
+    public IChunk GenerateChunk(Int3 pos)
+    {
+        IChunk chunk = new Chunk();
+        chunk.Position = pos;
+        chunk.CurrentGO = GoPool.GetNextUnusedChunk();
+        ChunkDictionary.Add(chunk.Position, chunk);
+        ChunkGameObjectDictionary.Add(chunk.CurrentGO, chunk);
+
+        return chunk;
+    }
+    
     private List<Block> GenerateBottomMap(List<Block> surfacePositions)
     {
         List<Block> list = new List<Block>();
@@ -206,4 +218,5 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>
             chunk.AddBlock(temp);
         }
     }
+
 }

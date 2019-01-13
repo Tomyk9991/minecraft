@@ -435,9 +435,10 @@ MonoBehaviour:
   surface: 0
   bottom: 2
   size:
-    X: 32
+    X: 128
     Y: 16
     Z: 128
+  drawChunk: 1
 --- !u!114 &787175598
 MonoBehaviour:
   m_ObjectHideFlags: 0

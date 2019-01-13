@@ -6,10 +6,14 @@
     <e p="C:\Users\Thomas\.Rider2018.3\system\extResources" t="IncludeRecursive" />
     <e p="C:\Users\Thomas\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_Mincraft.-1030172140.00" t="ExcludeRecursive" />
     <e p="C:\Users\Thomas\Documents\UnityProjectsGitHub\minecraft\Mincraft" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
-        <e p="ChunkGameObjectPool.cs" t="Include" />
+        <e p="ChunkGizmosDrawer.cs" t="Include" />
+        <e p="Editor" t="Include">
+          <e p="Int3Drawer.cs" t="Include" />
+        </e>
         <e p="Scripts" t="Include">
           <e p="Generation and Manipulation" t="Include">
             <e p="Bioms" t="Include">
@@ -17,10 +21,11 @@
             </e>
             <e p="Chunks" t="Include">
               <e p="Chunk.cs" t="Include" />
+              <e p="ChunkGameObjectPool.cs" t="Include" />
               <e p="ChunkGenerator.cs" t="Include" />
-              <e p="ChunkManager.cs" t="Include" />
               <e p="IChunk.cs" t="Include" />
-              <e p="Int3.cs" t="Include" />
+              <e p="ICreateChunk.cs" t="Include" />
+              <e p="IRemoveChunk.cs" t="Include" />
             </e>
             <e p="Mesh" t="Include">
               <e p="Blockmanipulation" t="Include">
@@ -39,7 +44,6 @@
               <e p="Static Classes" t="Include">
                 <e p="ChunkDictionary.cs" t="Include" />
                 <e p="ModifyMesh.cs" t="Include" />
-                <e p="NewModifyMesh.cs" t="Include" />
                 <e p="UVDictionary.cs" t="Include" />
               </e>
             </e>
@@ -53,6 +57,7 @@
           </e>
           <e p="Utilities" t="Include">
             <e p="Extensions.cs" t="Include" />
+            <e p="Int3.cs" t="Include" />
             <e p="SingletonBehaviour.cs" t="Include" />
           </e>
         </e>

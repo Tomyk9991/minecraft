@@ -10,6 +10,8 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     [Range(1, 10000)]
     [SerializeField] private int chunksToInstantiate = 210;
 
+    private const string name = "Unused chunk";
+
     private ConcurrentQueue<GameObject> gameObjectChunks;
     
     private void Start()
@@ -26,17 +28,23 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     {
         if (gameObjectChunks.TryDequeue(out var go))
             return go;
-        else
-        {
-            throw new Exception("Not enough pool objects");
-        }
+        
+        throw new Exception("Not enough pool objects");
     }
 
     private void InstantiateBlock()
     {
         GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-        g.name = "Unused chunk";
+        g.name = name;
+        g.SetActive(false);
         gameObjectChunks.Enqueue(g);
+    }
+
+    public void SetGameObject(GameObject go)
+    {
+        go.name = name;
+        go.SetActive(false);
+        gameObjectChunks.Enqueue(go);
     }
 }
 

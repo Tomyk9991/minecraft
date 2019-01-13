@@ -42,9 +42,8 @@ public class Chunk : IChunk
     public IChunk TryAddBlock(Block block, Vector3 normal)
     {
         Int3 local = GetLocalPosition(block.Position);
-        int index = GetFlattenIndex(local);
 
-        if (index >= chunkSize * chunkSize * chunkSize || index < 0)
+        if (local.AnyAttribute(a => a > chunkSize - 1 || a < 0))
         {
             for (int i = 0; i < directions.Length; i++)
             {
@@ -54,9 +53,27 @@ public class Chunk : IChunk
 
             return null;
         }
-
+        
         AddBlock(block);
         return this;
+//        Int3 local = GetLocalPosition(block.Position);
+//        int index = GetFlattenIndex(local);
+//        
+//        if (index >= chunkSize * chunkSize * chunkSize || index < 0)
+//        {
+//            for (int i = 0; i < directions.Length; i++)
+//            {
+//                if (directions[i] == Int3.ToInt3(normal))
+//                {
+//                    return chunkNeigbours[i];
+//                }
+//            }
+//            
+//            return null;
+//        }
+//
+//        AddBlock(block);
+//        return this;
     }
 
     public void RemoveBlock(Int3 blockPos)

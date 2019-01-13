@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [System.Serializable]
@@ -66,4 +67,7 @@ public struct Int3
 
     public override string ToString()
         => $"({this.X}, {this.Y}, {this.Z})";
+
+    public bool AnyAttribute(Predicate<int> predicate)
+        => predicate(this.X) || predicate(this.Y) || predicate(this.Z);
 }
