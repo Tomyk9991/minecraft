@@ -172,24 +172,24 @@ namespace UnityStandardAssets.Utility
                 CachePositionsAndDistances();
                 Length = distances[distances.Length - 1];
 
-                Gizmos.color = selected ? Color.yellow : new Color(1, 1, 0, 0.5f);
+                UnityEngine.Gizmos.color = selected ? Color.yellow : new Color(1, 1, 0, 0.5f);
                 Vector3 prev = Waypoints[0].position;
                 if (smoothRoute)
                 {
                     for (float dist = 0; dist < Length; dist += Length/editorVisualisationSubsteps)
                     {
                         Vector3 next = GetRoutePosition(dist + 1);
-                        Gizmos.DrawLine(prev, next);
+                        UnityEngine.Gizmos.DrawLine(prev, next);
                         prev = next;
                     }
-                    Gizmos.DrawLine(prev, Waypoints[0].position);
+                    UnityEngine.Gizmos.DrawLine(prev, Waypoints[0].position);
                 }
                 else
                 {
                     for (int n = 0; n < Waypoints.Length; ++n)
                     {
                         Vector3 next = Waypoints[(n + 1)%Waypoints.Length].position;
-                        Gizmos.DrawLine(prev, next);
+                        UnityEngine.Gizmos.DrawLine(prev, next);
                         prev = next;
                     }
                 }

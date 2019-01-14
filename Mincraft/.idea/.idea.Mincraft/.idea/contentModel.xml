@@ -10,7 +10,6 @@
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
-        <e p="ChunkGizmosDrawer.cs" t="Include" />
         <e p="Editor" t="Include">
           <e p="Int3Drawer.cs" t="Include" />
         </e>
@@ -23,16 +22,15 @@
               <e p="Chunk.cs" t="Include" />
               <e p="ChunkGameObjectPool.cs" t="Include" />
               <e p="ChunkGenerator.cs" t="Include" />
+              <e p="ChunkGizmosDrawer.cs" t="Include" />
               <e p="IChunk.cs" t="Include" />
               <e p="ICreateChunk.cs" t="Include" />
               <e p="IRemoveChunk.cs" t="Include" />
             </e>
             <e p="Mesh" t="Include">
               <e p="Blockmanipulation" t="Include">
-                <e p="AddBlock.cs" t="Include" />
                 <e p="Block.cs" t="Include" />
                 <e p="MeshData.cs" t="Include" />
-                <e p="RemoveBlock.cs" t="Include" />
                 <e p="Utilities" t="Include">
                   <e p="BlockUV.cs" t="Include" />
                   <e p="GreedyMesh.cs" t="Include" />
@@ -54,6 +52,11 @@
           <e p="Occlusion" t="Include">
             <e p="OcclusionManager.cs" t="Include" />
             <e p="OcclusionObject.cs" t="Include" />
+          </e>
+          <e p="Player" t="Include">
+            <e p="AddBlock.cs" t="Include" />
+            <e p="RemoveBlock.cs" t="Include" />
+            <e p="SelectedBlockVisualizer.cs" t="Include" />
           </e>
           <e p="Utilities" t="Include">
             <e p="Extensions.cs" t="Include" />
@@ -122,7 +125,26 @@
       <e p="Library" t="ExcludeRecursive" />
       <e p="Mincraft.sln" t="IncludeFlat" />
       <e p="obj" t="ExcludeRecursive" />
-      <e p="packages" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive">
+        <e p="Popcron.Gizmos" t="Include">
+          <e p="Runtime" t="Include">
+            <e p="Constants.cs" t="Include" />
+            <e p="Drawer.cs" t="Include" />
+            <e p="Drawers" t="Include">
+              <e p="CubeDrawer.cs" t="Include" />
+              <e p="LineDrawer.cs" t="Include" />
+              <e p="PolygonDrawer.cs" t="Include" />
+              <e p="SquareDrawer.cs" t="Include" />
+            </e>
+            <e p="DrawInfo.cs" t="Include" />
+            <e p="Element.cs" t="Include" />
+            <e p="Gizmos.cs" t="Include" />
+            <e p="GizmosInstance.cs" t="Include" />
+            <e p="Popcron.Gizmos.Runtime.asmdef" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Popcron.Gizmos.Runtime.csproj" t="IncludeRecursive" />
       <e p="Temp" t="ExcludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
       </e>

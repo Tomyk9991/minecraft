@@ -9,7 +9,7 @@ public class ChunkGizmosDrawer : MonoBehaviour
     
     private void OnDrawGizmosSelected()
     {   
-        if (!Application.isPlaying || !ChunkGenerator.Instance.drawChunk || gameObject.name == "Unused chunk") 
+        if (!Application.isPlaying || !ChunkGenerator.Instance.drawChunk || gameObject.name == "Unused chunk" || !GetComponent<MeshRenderer>().enabled) 
             return;
         
         if (position == default || size == default)
@@ -19,6 +19,5 @@ public class ChunkGizmosDrawer : MonoBehaviour
         }
         
         Gizmos.DrawWireCube(position + size / 2, size);
-        
     }
 }

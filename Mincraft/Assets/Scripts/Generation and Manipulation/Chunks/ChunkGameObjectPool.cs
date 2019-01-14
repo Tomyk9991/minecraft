@@ -10,7 +10,7 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     [Range(1, 10000)]
     [SerializeField] private int chunksToInstantiate = 210;
 
-    private const string name = "Unused chunk";
+    private const string unusedName = "Unused chunk";
 
     private ConcurrentQueue<GameObject> gameObjectChunks;
     
@@ -35,14 +35,14 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     private void InstantiateBlock()
     {
         GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-        g.name = name;
+        g.name = unusedName;
         g.SetActive(false);
         gameObjectChunks.Enqueue(g);
     }
 
     public void SetGameObject(GameObject go)
     {
-        go.name = name;
+        go.name = unusedName;
         go.SetActive(false);
         gameObjectChunks.Enqueue(go);
     }

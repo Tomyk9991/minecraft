@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+
 
 namespace UnityStandardAssets.Utility
 {
@@ -141,11 +141,11 @@ namespace UnityStandardAssets.Utility
         {
             if (Application.isPlaying)
             {
-                Gizmos.color = Color.green;
-                Gizmos.DrawLine(transform.position, target.position);
-                Gizmos.DrawWireSphere(circuit.GetRoutePosition(progressDistance), 1);
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawLine(target.position, target.position + target.forward);
+                UnityEngine.Gizmos.color = Color.green;
+                UnityEngine.Gizmos.DrawLine(transform.position, target.position);
+                UnityEngine.Gizmos.DrawWireSphere(circuit.GetRoutePosition(progressDistance), 1);
+                UnityEngine.Gizmos.color = Color.yellow;
+                UnityEngine.Gizmos.DrawLine(target.position, target.position + target.forward);
             }
         }
     }

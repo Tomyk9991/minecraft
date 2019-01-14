@@ -46,7 +46,7 @@ public class AddBlock : MonoBehaviour, IMouseUsable, ICreateChunk
         {
             Ray ray = cameraRef.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f))
+            if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable))
             {
                 Int3 centerCube = Int3.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal));
                 Block block = new Block(centerCube)
@@ -168,6 +168,6 @@ public class AddBlock : MonoBehaviour, IMouseUsable, ICreateChunk
         }
 
 
-        return (directions.ToArray(), result: result);
+        return (directions.ToArray(),  result);
     }
 }
