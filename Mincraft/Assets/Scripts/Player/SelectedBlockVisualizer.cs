@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SelectedBlockVisualizer : MonoBehaviour
 {
@@ -27,16 +24,10 @@ public class SelectedBlockVisualizer : MonoBehaviour
         {
             Vector3 blockPos = ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;
             transform.position = blockPos + Vector3.one / 2;
-            transform.rotation = Quaternion.identity;
         }
-    }
-    
-    private Vector3 gizmosPos;
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
+        else
         {
-            Gizmos.DrawWireCube(gizmosPos + Vector3.one / 2, Vector3.one);
+            transform.position = default;
         }
     }
 }

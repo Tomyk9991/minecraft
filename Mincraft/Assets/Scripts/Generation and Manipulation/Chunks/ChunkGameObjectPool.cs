@@ -28,7 +28,7 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     {
         if (gameObjectChunks.TryDequeue(out var go))
             return go;
-        
+
         throw new Exception("Not enough pool objects");
     }
 

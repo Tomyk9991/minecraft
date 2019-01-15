@@ -125,26 +125,7 @@
       <e p="Library" t="ExcludeRecursive" />
       <e p="Mincraft.sln" t="IncludeFlat" />
       <e p="obj" t="ExcludeRecursive" />
-      <e p="packages" t="ExcludeRecursive">
-        <e p="Popcron.Gizmos" t="Include">
-          <e p="Runtime" t="Include">
-            <e p="Constants.cs" t="Include" />
-            <e p="Drawer.cs" t="Include" />
-            <e p="Drawers" t="Include">
-              <e p="CubeDrawer.cs" t="Include" />
-              <e p="LineDrawer.cs" t="Include" />
-              <e p="PolygonDrawer.cs" t="Include" />
-              <e p="SquareDrawer.cs" t="Include" />
-            </e>
-            <e p="DrawInfo.cs" t="Include" />
-            <e p="Element.cs" t="Include" />
-            <e p="Gizmos.cs" t="Include" />
-            <e p="GizmosInstance.cs" t="Include" />
-            <e p="Popcron.Gizmos.Runtime.asmdef" t="Include" />
-          </e>
-        </e>
-      </e>
-      <e p="Popcron.Gizmos.Runtime.csproj" t="IncludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
       <e p="Temp" t="ExcludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
       </e>
