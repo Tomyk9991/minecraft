@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
 {
@@ -9,6 +8,7 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     [SerializeField] private GameObject chunkPrefab = null;
     [Range(1, 10000)]
     [SerializeField] private int chunksToInstantiate = 210;
+    [SerializeField, ShowOnly] private int currentlyUsedObjs;
 
     private const string unusedName = "Unused chunk";
 
@@ -27,24 +27,26 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     public GameObject GetNextUnusedChunk()
     {
         if (gameObjectChunks.TryDequeue(out var go))
+        {
+            currentlyUsedObjs++;
             return go;
+        }
 
-        throw new Exception("Not enough pool objects");
+        throw new Exception("Not enough pool objects. TODO: Instantiate new GameObjects, if a bool is checked");
     }
 
     private void InstantiateBlock()
     {
         GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-        g.name = unusedName;
-        g.SetActive(false);
-        gameObjectChunks.Enqueue(g);
+        SetGameObjectInactive(g);
     }
 
-    public void SetGameObject(GameObject go)
+    public void SetGameObjectInactive(GameObject go)
     {
         go.name = unusedName;
         go.SetActive(false);
         gameObjectChunks.Enqueue(go);
+
     }
 }
 

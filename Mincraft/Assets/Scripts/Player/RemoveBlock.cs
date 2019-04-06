@@ -100,7 +100,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
         ChunkDictionary.Remove(chunk.Position);
         
         //Füge GameObject dem Pool wieder hinzu
-        GoPool.SetGameObject(goToAddToPoolAgain);
+        GoPool.SetGameObjectInactive(goToAddToPoolAgain);
 
         chunk.CalculateNeigbours();
     }

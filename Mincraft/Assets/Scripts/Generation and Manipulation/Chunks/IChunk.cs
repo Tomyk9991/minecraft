@@ -7,6 +7,7 @@ public interface IChunk
     Int3 Position { get; set; }
     
     void AddBlock(Block block);
+    void AddBlocks(Block[] blocks);
     IChunk TryAddBlock(Block block, Vector3 normal);
     void RemoveBlock(Int3 block);
     void GenerateChunk();

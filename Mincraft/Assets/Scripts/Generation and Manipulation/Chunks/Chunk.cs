@@ -39,6 +39,14 @@ public class Chunk : IChunk
         blocks[index] = block;
     }
 
+    public void AddBlocks(Block[] blocks)
+    {
+        foreach (var block in blocks)
+        {
+            AddBlock(block);
+        }
+    }
+
     public IChunk TryAddBlock(Block block, Vector3 normal)
     {
         Int3 local = GetLocalPosition(block.Position);

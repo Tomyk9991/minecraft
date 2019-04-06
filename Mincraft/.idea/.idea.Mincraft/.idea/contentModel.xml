@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Thomas\.Rider2018.3\config\extensions" t="IncludeRecursive" />
-    <e p="C:\Users\Thomas\.Rider2018.3\config\scratches" t="IncludeRecursive" />
-    <e p="C:\Users\Thomas\.Rider2018.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Thomas\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_Mincraft.-1030172140.00" t="ExcludeRecursive" />
-    <e p="C:\Users\Thomas\Documents\UnityProjectsGitHub\minecraft\Mincraft" t="IncludeRecursive">
+    <e p="C:\Users\thoma\.Rider2018.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\thoma\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_Mincraft.470111848.00" t="ExcludeRecursive" />
+    <e p="C:\Users\thoma\Documents\UnityProjectGithubRepo\minecraft\Mincraft" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
