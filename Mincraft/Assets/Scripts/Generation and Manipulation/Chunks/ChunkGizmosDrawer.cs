@@ -17,7 +17,8 @@ public class ChunkGizmosDrawer : MonoBehaviour
             position = ChunkGameObjectDictionary.GetValue(this.gameObject).Position.ToVector3();
             size = Vector3.one * ChunkGenerator.GetMaxSize;
         }
-        
+
+        Gizmos.color = Color.white;
         Gizmos.DrawWireCube(position + size / 2, size);
     }
 }

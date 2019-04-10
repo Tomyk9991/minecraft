@@ -10,7 +10,7 @@ public interface IChunk
     void AddBlocks(Block[] blocks);
     IChunk TryAddBlock(Block block, Vector3 normal);
     void RemoveBlock(Int3 block);
-    void GenerateChunk();
+    void GenerateBlocks();
 
     bool[] BoolNeigbours(Int3 blockPos);
     bool GetNeigbourAt(int index, Int3 blockPos);

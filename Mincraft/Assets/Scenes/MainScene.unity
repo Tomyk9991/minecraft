@@ -593,6 +593,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &763589107 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 5e9e851c0e142814dac026a256ba2ac0,
+    type: 3}
+  m_PrefabInstance: {fileID: 961088014}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &787175594
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,6 +609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 787175595}
   - component: {fileID: 787175597}
+  - component: {fileID: 787175596}
   - component: {fileID: 787175598}
   m_Layer: 0
   m_Name: Chunks
@@ -625,6 +632,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &787175596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787175594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41e048f7d897b4648aeee018fd3af2b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generator: {fileID: 787175597}
+  player: {fileID: 763589107}
+  maxDistance: 8
+  periodNewRedraw: 1
+  amountDrawChunksPerFrame: 5
+  drawLatestPlayerPosition: 1
 --- !u!114 &787175597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,16 +663,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkSize: 16
-  smoothness: 0.03
-  heightMult: 12.5
   seed: -1
-  surface: 0
-  bottom: 2
-  size:
+  smoothness: 20
+  steepness: 10
+  drawDistance:
     X: 128
     Y: 16
     Z: 128
-  drawChunk: 0
+  drawChunk: 1
 --- !u!114 &787175598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -969,6 +992,14 @@ PrefabInstance:
       propertyPath: m_CustomSkybox
       value: 
       objectReference: {fileID: 2100000, guid: 2bd8959f5fbd3644aa33af1a155fc147, type: 2}
+    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
+      propertyPath: m_GravityMultiplier
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
 --- !u!1 &1344046747

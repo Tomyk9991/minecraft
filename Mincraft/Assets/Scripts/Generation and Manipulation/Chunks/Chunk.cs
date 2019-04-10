@@ -12,6 +12,10 @@ public class Chunk : IChunk
     private static int chunkSize;
 
     private IChunk[] chunkNeigbours;
+
+    //Simplex noise
+    private float smoothness = 0;
+    private float steepness = 0;
     
     private static Int3[] directions = 
     {
@@ -28,6 +32,10 @@ public class Chunk : IChunk
     public Chunk()
     {
         chunkSize = ChunkGenerator.GetMaxSize;
+        smoothness = ChunkGenerator.SimplexNoiseSettings.Smoothness;
+        steepness = ChunkGenerator.SimplexNoiseSettings.Steepness;
+
+        
         blocks = new Block[chunkSize * chunkSize * chunkSize];
         chunkNeigbours = new IChunk[6];
     }
@@ -74,8 +82,30 @@ public class Chunk : IChunk
     
     public int BlockCount() => blocks.Length;
 
-    public void GenerateChunk()
+    public void GenerateBlocks() // TODO: Make this based on biom. Maybe virtual or pass in IBiom?
     {
+        for (int x = 0; x < chunkSize; x++)
+        {
+            float noiseX = (float)x / smoothness;
+            for (int y = 0; y < chunkSize; y++)
+            {
+                float noiseY = (float)y / smoothness;
+                for (int z = 0; z < chunkSize; z++)
+                {
+                    float noiseZ = (float)z / smoothness;
+                    float result = SimplexNoise.Generate(noiseX + this.Position.X - chunkSize, noiseY + this.Position.Y - chunkSize, noiseZ + this.Position.Z - chunkSize);
+
+                    result += (10f - (float)y) / steepness;
+
+                    if (result > 0.2f) //Block or not block
+                    {
+                        Block b = new Block(new Int3(x + this.Position.X, y + this.Position.Y, z + this.Position.Z));
+                        b.SetID((int)BlockUV.Stone);
+                        this.AddBlock(b);
+                    }
+                }
+            }
+        }
     }
     
     public Block GetBlock(Int3 position)

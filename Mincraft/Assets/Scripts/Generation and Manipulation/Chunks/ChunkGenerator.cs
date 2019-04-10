@@ -7,32 +7,33 @@ using UnityEngine;
 public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>, ICreateChunk
 {
     public static int GetMaxSize => (int) Instance.chunkSize;
+    public static SimplexNoiseSettings SimplexNoiseSettings => Instance.simplexNoiseSettings;
     public ChunkGameObjectPool GoPool { get; set; }
 
     [Header("Chunksettings")]
     [SerializeField] private uint chunkSize = 0;
-    
-    
-    [Header("Perlin Noise")]
-    [SerializeField] private float smoothness = 0.03f;
-    [SerializeField] private float heightMult = 5f;
-    [SerializeField] private int seed = -1;
-    
-    [Header("Instantiation")]
-    [SerializeField] private BlockUV surface = default;
-    [SerializeField] private BlockUV bottom = default;
-    [SerializeField] private Int3 size = default;
-    
-    [Header("Drawing Chunk")]
-    public bool drawChunk = true;
-    
-    private List<IChunk> chunks;
+    [SerializeField] private int seed = -1; //TODO Insert seed in noise
 
-    private ConcurrentQueue<MeshData> meshDatas;
+    [Header("Noisesettings")] //Remake this to make is depend on the biom, you're currently at
+    [SerializeField] public float smoothness = 40;
+    [SerializeField] public float steepness = 2;
+    private SimplexNoiseSettings simplexNoiseSettings;
+
+    [Header("Instantiation")]
+    //[SerializeField] private BlockUV surface = default;
+    //[SerializeField] private BlockUV bottom = default;
+    [SerializeField] public Int3 drawDistance = default;
+
+    [Header("Draw chunkbounds with Gizmos")]
+    public bool drawChunk;
+    
+    
+    private List<IChunk> currentlyActiveChunks;
+
+    private ConcurrentQueue<MeshData> meshDatasQueue;
     private MeshModifier modifier;
 
-    private Int3 latestPlayerPosition;
-    private Int3 originPoint;
+    private Int3 latestPlayerPosition = default;
 
     private Task<List<IChunk>> generatingTask;
     private int drawCounter = 0;
@@ -42,20 +43,21 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>, ICreateChunk
 
     private void Start()
     {
+        simplexNoiseSettings = new SimplexNoiseSettings(smoothness, steepness);
         if (seed == -1)
             seed = UnityEngine.Random.Range(0,10000);
             
         GoPool = ChunkGameObjectPool.Instance;
         
         modifier = new MeshModifier();
-        meshDatas = new ConcurrentQueue<MeshData>();
+        meshDatasQueue = new ConcurrentQueue<MeshData>();
 
-        modifier.MeshAvailable += (s, data) =>
+        modifier.MeshAvailable += (sender, data) =>
         {
-            meshDatas.Enqueue(data);
+            meshDatasQueue.Enqueue(data);
         };
 
-        if (size.X % chunkSize != 0 || size.Y % chunkSize != 0 || size.Z % chunkSize != 0)
+        if (drawDistance.X % chunkSize != 0 || drawDistance.Y % chunkSize != 0 || drawDistance.Z % chunkSize != 0)
         {
             throw new Exception("Diggah, WeltSize nicht teilbar durch ChunkSize");
         }
@@ -64,34 +66,23 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>, ICreateChunk
         
         generatingTask = GenerateChunks();
         generatingTask.Wait();
-        chunks = generatingTask.Result;
+        currentlyActiveChunks = generatingTask.Result;
         
         watch.Stop();
-        Debug.Log($"{watch.ElapsedMilliseconds} ms for generating {chunks.Count} Chunks");
+        Debug.Log($"{watch.ElapsedMilliseconds} ms for generating {currentlyActiveChunks.Count} Chunks");
         
-        for (int i = 0; i < chunks.Count; i++)
+        for (int i = 0; i < currentlyActiveChunks.Count; i++)
         {
-            chunks[i].CalculateNeigbours();
-            chunks[i].CurrentGO.SetActive(true);
-            chunks[i].CurrentGO.name = chunks[i].Position.ToString();
-            modifier.Combine(chunks[i]);
+            currentlyActiveChunks[i].CalculateNeigbours();
+            currentlyActiveChunks[i].CurrentGO.SetActive(true);
+            currentlyActiveChunks[i].CurrentGO.name = currentlyActiveChunks[i].Position.ToString();
+            modifier.Combine(currentlyActiveChunks[i]);
         }
     }
 
     private void Update()
     {
-        if (!doneMeshing && meshDatas.Count != 0)
-        {
-            while (meshDatas.TryDequeue(out var data))
-            {
-                modifier.RedrawMeshFilter(data.GameObject, data);
-
-                if (chunks.Count == ++drawCounter)
-                {
-                    doneMeshing = true;
-                }
-            }
-        }
+        DrawExistingChunks();
     }
 
     private Task<List<IChunk>> GenerateChunks()
@@ -99,15 +90,20 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>, ICreateChunk
         var list = new List<IChunk>();
         return Task.Run(() =>
         {
-            for (int y = 0; y > -size.Y; y -= (int) chunkSize)
+            int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, (int)chunkSize);
+            int yStart = MathHelper.ClosestMultiple(0, (int)chunkSize);
+            int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, (int)chunkSize);
+
+            for (int x = xStart - drawDistance.X; x < drawDistance.X; x += (int)chunkSize) //Klappt bei XStart - size.X, weil sich der Spieler auf der Position (0, y, z) befindet
             {
-                for (int x = -size.X / 2 + latestPlayerPosition.X; x < size.X / 2 + latestPlayerPosition.X; x += (int) chunkSize)
+                // Minus to calculate chunks downwards, not upwards
+                for (int y = yStart; y > -drawDistance.Y; y -= (int)chunkSize)
                 {
-                    for (int z = -size.Z / 2 + latestPlayerPosition.Z; z < size.Z / 2 + latestPlayerPosition.Z; z += (int) chunkSize)
+                    for (int z = zStart - drawDistance.Z; z < drawDistance.Z; z += (int)chunkSize)
                     {
                         IChunk chunk = GenerateChunk(new Int3(x, y, z));
                         list.Add(chunk);
-                        GenerateBlocks(chunk);
+                        chunk.GenerateBlocks();
                     }
                 }
             }
@@ -116,40 +112,32 @@ public class ChunkGenerator : SingletonBehaviour<ChunkGenerator>, ICreateChunk
         });
     }
 
-    public void GenerateBlocks(IChunk chunk)
+    public IChunk GenerateChunk(Int3 pos)
     {
-        float divisior = chunkSize;
-        for (int x = 0; x < chunkSize; x++)
+        IChunk chunk = new Chunk
         {
-            float noiseX = (float) x / divisior;
-            for (int y = 0; y < chunkSize; y++)
+            Position = pos,
+            CurrentGO = GoPool.GetNextUnusedChunk()
+        };
+
+        ChunkDictionary.Add(chunk.Position, chunk);
+        ChunkGameObjectDictionary.Add(chunk.CurrentGO, chunk);
+        return chunk;
+    }
+
+    private void DrawExistingChunks()
+    {
+        if (!doneMeshing && meshDatasQueue.Count != 0)
+        {
+            while (meshDatasQueue.TryDequeue(out var data))
             {
-                float noiseY = (float) y / divisior;
-                for (int z = 0; z < chunkSize; z++)
+                modifier.RedrawMeshFilter(data.GameObject, data);
+
+                if (currentlyActiveChunks.Count == ++drawCounter)
                 {
-                    float noiseZ = (float) z / divisior;
-                    float result = SimplexNoise.Generate(noiseX + chunk.Position.X - chunkSize, noiseY + chunk.Position.Y + chunkSize, noiseZ + chunk.Position.Z + chunkSize);
-
-                    result += (10f - (float) y) / 10;
-
-                    if (result > 0.2f)
-                    {
-                        Block b = new Block(new Int3(x + chunk.Position.X, y + chunk.Position.Y, z + chunk.Position.Z));
-                        b.SetID((int) BlockUV.Stone);
-                        chunk.AddBlock(b);
-                    }
+                    doneMeshing = true;
                 }
             }
         }
-    }
-    public IChunk GenerateChunk(Int3 pos)
-    {
-        IChunk chunk = new Chunk();
-        chunk.Position = pos;
-        chunk.CurrentGO = GoPool.GetNextUnusedChunk();
-        ChunkDictionary.Add(chunk.Position, chunk);
-        ChunkGameObjectDictionary.Add(chunk.CurrentGO, chunk);
-
-        return chunk;
     }
 }

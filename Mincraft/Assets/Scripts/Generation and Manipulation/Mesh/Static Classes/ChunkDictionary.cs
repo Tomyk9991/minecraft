@@ -8,19 +8,10 @@ public class ChunkDictionary
     public static void Add(Int3 key, IChunk value) => dictionary.Add(key, value);
     public static void Remove(Int3 key) => dictionary.Remove(key);
 
-    public static IChunk GetValue(Int3 key)
-    {
-        IChunk value;
-        if (dictionary.TryGetValue(key, out value))
-        {
-            return value;
-        }
-
-        return null;
-    }
+    public static IChunk GetValue(Int3 key) => dictionary.TryGetValue(key, out IChunk value) ? value : null;
     public static void Clear() => dictionary.Clear();
     
-    public static List<IChunk> GetChunks()
+    public static List<IChunk> GetActiveChunks()
     {
         var temp = new List<IChunk>();
         
