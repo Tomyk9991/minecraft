@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class ChunkUpdater : MonoBehaviour, ICreateChunk
 {
@@ -31,13 +31,14 @@ public class ChunkUpdater : MonoBehaviour, ICreateChunk
     private float currentDistance = 0;
     private float ellapsedTime = 0;
 
-    private List<IChunk> newChunks;
+    Queue<Task<List<IChunk>>> tasks = null;
+
     private MeshModifier modifier;
     private ConcurrentQueue<MeshData> meshDatasQueue;
 
     private void Start()
     {
-        newChunks = new List<IChunk>();
+        tasks = new Queue<Task<List<IChunk>>>();
         modifier = new MeshModifier();
         meshDatasQueue = new ConcurrentQueue<MeshData>();
 
@@ -67,14 +68,45 @@ public class ChunkUpdater : MonoBehaviour, ICreateChunk
             if (currentDistance > maxDistance)
             {
                 //Divide and conquer
-                RecalculateChunks();
+                tasks.Enqueue(RecalculateChunks());
 
                 currentDistance = 0;
                 latestPlayerPosition = player.transform.position.ToInt3();
             }
         }
 
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            var task = tasks.Peek();
+
+            if (task != null && task.IsCompleted)
+            {
+                var resultTask = tasks.Dequeue();
+                RenderCall(resultTask);
+            }
+        }
+
+
         CheckForNewChunksToDraw();
+    }
+
+    private void RenderCall(Task<List<IChunk>> t)
+    {
+        //Ab hier wieder synchron auf Mainthread
+        var newChunks = t.Result;
+
+        foreach (IChunk activeChunk in ChunkDictionary.GetActiveChunks())
+            activeChunk.CalculateNeigbours();
+
+        IChunk[] cs = newChunks.ToArray();
+        for (int i = 0; i < newChunks.Count; i++)
+        {
+            cs[i].CurrentGO.SetActive(true);
+            cs[i].CurrentGO.name = "New " + cs[i].Position.ToString();
+            modifier.Combine(cs[i]);
+        }
+
+        Debug.Log($"{newChunks.Count} new Chunks generated");
     }
 
     private void CheckForNewChunksToDraw()
@@ -93,7 +125,7 @@ public class ChunkUpdater : MonoBehaviour, ICreateChunk
         }
     }
 
-    private void RecalculateChunks()
+    private Task<List<IChunk>> RecalculateChunks()
     {
         // 1) Iteriere durch alle Chunkpositionen in der Umgebung des Spielers
         // 2) Prüfe, ob die Chunkpositionen bereits gezeichnet sind
@@ -106,51 +138,46 @@ public class ChunkUpdater : MonoBehaviour, ICreateChunk
 
 
         // 1)
-
-        int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
-        int yStart = MathHelper.ClosestMultiple(0, chunkSize); // Fix height
-        int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
-
-
-
-        int counter = 0;
-
-        for (int x = xStart - size.X * 2; x < xStart + size.X * 2; x += chunkSize)
+        Task<List<IChunk>> t = Task.Run(() =>
         {
-            for (int y = yStart; y > -size.Y; y -= chunkSize) // Minus to calculate chunks downwards, not upwards
-            {
-                for (int z = zStart - size.Z * 2; z < zStart + size.Z * 2; z += chunkSize)
-                {
-                    // 2)
-                    Int3 chunkPos = new Int3(x, y, z);
-                    if (ChunkDictionary.GetValue(chunkPos) == null)
-                    {
-                        // 2.a.1)
-                        IChunk chunk = GenerateChunk(chunkPos);
-                        newChunks.Add(chunk);
-                        chunk.GenerateBlocks();
-                    }
+            int counter = 0;
+            List<IChunk> newChunks = new List<IChunk>();
 
-                    counter++;
+            int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
+            int yStart = MathHelper.ClosestMultiple(0, chunkSize); // Fix height
+            int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
+
+
+            for (int x = xStart - size.X; x < xStart + size.X; x += chunkSize)
+            {
+                for (int y = yStart; y > -size.Y; y -= chunkSize) // Minus to calculate chunks downwards, not upwards
+                {
+                    for (int z = zStart - size.Z; z < zStart + size.Z; z += chunkSize)
+                    {
+                        // 2)
+                        Int3 chunkPos = new Int3(x, y, z);
+                        if (ChunkDictionary.GetValue(chunkPos) == null)
+                        {
+                            // 2.a.1)
+                            IChunk chunk = GenerateChunk(chunkPos);
+                            newChunks.Add(chunk);
+
+                            //Versuche, wenn sofern Fehler auftreten, nur chunk.GenerateBlocks() asynchron auf Task laufen zu lassen.
+                            //Rest synchron
+                            chunk.GenerateBlocks();
+                        }
+
+                        counter++;
+                    }
                 }
             }
-        }
+            Debug.Log($"Checked {counter} chunks");
 
-        Debug.Log($"Checked {counter} chunks");
+            return newChunks;
+        });
 
-        foreach (IChunk activeChunk in ChunkDictionary.GetActiveChunks())
-            activeChunk.CalculateNeigbours();
 
-        for (int i = 0; i < newChunks.Count; i++)
-        {
-            newChunks[i].CurrentGO.SetActive(true);
-            newChunks[i].CurrentGO.name = "New " + newChunks[i].Position.ToString();
-            modifier.Combine(newChunks[i]);
-        }
-
-        Debug.Log($"{newChunks.Count} new Chunks generated");
-
-        newChunks.Clear();
+        return t;
     }
 
 

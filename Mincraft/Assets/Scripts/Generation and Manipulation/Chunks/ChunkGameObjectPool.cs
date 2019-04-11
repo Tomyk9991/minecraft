@@ -24,6 +24,10 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     }
 
 
+    /// <summary>
+    /// Gets the next unused GameObject in Pool. (Can be used in different threads)
+    /// </summary>
+    /// <returns></returns>
     public GameObject GetNextUnusedChunk()
     {
         if (gameObjectChunks.TryDequeue(out var go))

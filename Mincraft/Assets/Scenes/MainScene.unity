@@ -648,7 +648,7 @@ MonoBehaviour:
   player: {fileID: 763589107}
   maxDistance: 8
   periodNewRedraw: 1
-  amountDrawChunksPerFrame: 5
+  amountDrawChunksPerFrame: 2
   drawLatestPlayerPosition: 1
 --- !u!114 &787175597
 MonoBehaviour:
@@ -664,8 +664,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkSize: 16
   seed: -1
-  smoothness: 20
-  steepness: 10
+  smoothness: 1
+  steepness: 1
   drawDistance:
     X: 128
     Y: 16
