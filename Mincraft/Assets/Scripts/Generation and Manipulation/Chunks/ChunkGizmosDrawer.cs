@@ -1,21 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ChunkGizmosDrawer : MonoBehaviour
 {
     private Vector3 position;
     private Vector3 size;
-    
+
     private void OnDrawGizmosSelected()
-    {   
-        if (!Application.isPlaying || !ChunkGenerator.Instance.drawChunk || gameObject.name == "Unused chunk" || !GetComponent<MeshRenderer>().enabled) 
+    {
+        if (!Application.isPlaying || !ChunkSettings.Instance.drawGizmosChunks || gameObject.name == "Unused chunk" || !GetComponent<MeshRenderer>().enabled)
             return;
-        
+
         if (position == default || size == default)
         {
-            position = ChunkGameObjectDictionary.GetValue(this.gameObject).Position.ToVector3();
-            size = Vector3.one * ChunkGenerator.GetMaxSize;
+            position = this.transform.position;
+            size = Vector3.one * ChunkSettings.GetMaxSize;
         }
 
         Gizmos.color = Color.white;

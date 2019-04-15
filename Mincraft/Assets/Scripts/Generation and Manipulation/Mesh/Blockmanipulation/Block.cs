@@ -1,7 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 
-public class Block
+public struct Block
 {
     public Int3 Position;
     public int ID { get; set; }
@@ -16,5 +16,13 @@ public class Block
     public void SetID(int id)
     {
         this.ID = id;
+    }
+
+    public static Block Empty()
+    {
+        return new Block(new Int3(0, 0, 0))
+        {
+            ID = -1
+        };
     }
 }

@@ -1,6 +1,5 @@
 ﻿/// <summary>
 /// Implementation of the Perlin simplex noise, an improved Perlin noise algorithm.
-/// 
 /// </summary>
 public class SimplexNoise
 {

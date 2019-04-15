@@ -8,21 +8,29 @@ using Random = UnityEngine.Random;
     [RequireComponent(typeof(AudioSource))]
     public class FirstPersonController : MonoBehaviour
     {
+        [Header("General information")]
         [SerializeField] private bool m_IsWalking;
+        [Header("Movement settings")]
         [SerializeField] private float m_WalkSpeed;
         [SerializeField] private float m_RunSpeed;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private float m_JumpSpeed;
         [SerializeField] private float m_StickToGroundForce;
+        [Header("Gravity")]
         [SerializeField] private float m_GravityMultiplier;
+        [Header("Mouse")]
         [SerializeField] private MouseLook m_MouseLook;
+        [SerializeField] private bool canMoveMouse = true;
+        [Header("FOV")]
         [SerializeField] private bool m_UseFovKick;
         [SerializeField] private FOVKick m_FovKick = new FOVKick();
+        [Header("Head Bob")]
         [SerializeField] private bool m_UseHeadBob;
         [SerializeField] private CurveControlledBob m_HeadBob = new CurveControlledBob();
         [SerializeField] private LerpControlledBob m_JumpBob = new LerpControlledBob();
         [SerializeField] private float m_StepInterval;
 
+        [Header("Sound")]
         [SerializeField]
         private AudioClip[] m_FootstepSounds; // an array of footstep sounds that will be randomly selected from.
 
@@ -244,7 +252,10 @@ using Random = UnityEngine.Random;
 
         private void RotateView()
         {
-            m_MouseLook.LookRotation(transform, m_Camera.transform);
+            if (canMoveMouse)
+            {
+                m_MouseLook.LookRotation(transform, m_Camera.transform);
+            }
         }
 
 

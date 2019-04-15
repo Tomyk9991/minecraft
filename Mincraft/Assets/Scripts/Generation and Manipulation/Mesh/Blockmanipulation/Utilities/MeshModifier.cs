@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -14,7 +15,7 @@ public class MeshModifier
 
     public event EventHandler<MeshData> MeshAvailable;
     
-    public Task Combine(IChunk chunk)
+    public Task Combine(Chunk chunk)
     {
         return Task.Run(() =>
         {
@@ -37,5 +38,31 @@ public class MeshModifier
         
         refMesh.mesh.RecalculateNormals();
         g.GetComponent<MeshCollider>().sharedMesh = refMesh.mesh;
+    }
+
+    public void SetMesh(GameObject g, MeshData meshData, MeshData colliderData)
+    {
+        var refMesh = g.GetComponent<MeshFilter>();
+        refMesh.mesh = new Mesh()
+        {
+            indexFormat = IndexFormat.UInt32,
+            vertices = meshData.Vertices.ToArray(),
+            triangles = meshData.Triangles.ToArray(),
+            uv = meshData.UVs.ToArray()
+        };
+
+
+        refMesh.mesh.RecalculateNormals();
+
+        g.GetComponent<MeshCollider>().sharedMesh = null;
+
+
+        Mesh colliderMesh = new Mesh();
+        colliderMesh.indexFormat = IndexFormat.UInt32;
+        colliderMesh.vertices = colliderData.Vertices.ToArray();
+        colliderMesh.triangles = colliderData.Triangles.ToArray();
+
+
+        g.GetComponent<MeshCollider>().sharedMesh = colliderMesh;
     }
 }

@@ -1,19 +1,33 @@
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class ChunkDictionary
-{    
-    private static Dictionary<Int3, IChunk> dictionary = new Dictionary<Int3, IChunk>();
+{
+    private static ConcurrentDictionary<Int3, Chunk> dictionary = new ConcurrentDictionary<Int3, Chunk>();
 
-    public static void Add(Int3 key, IChunk value) => dictionary.Add(key, value);
-    public static void Remove(Int3 key) => dictionary.Remove(key);
+    public static void Add(Int3 key, Chunk value)
+    {
+        if (!dictionary.TryAdd(key, value))
+        {
+            throw new Exception($"Added an item {key}, that already exists");
+        }
 
-    public static IChunk GetValue(Int3 key) => dictionary.TryGetValue(key, out IChunk value) ? value : null;
+    }
+
+    public static void Remove(Int3 key)
+    {
+        if (!dictionary.TryRemove(key, out var value))
+            throw new Exception($"Removing an item {key}, that does not exist");
+    }
+
+    public static Chunk GetValue(Int3 key) => dictionary.TryGetValue(key, out Chunk value) ? value : null;
+
     public static void Clear() => dictionary.Clear();
     
-    public static List<IChunk> GetActiveChunks()
-    {
-        var temp = new List<IChunk>();
+    public static List<Chunk> GetActiveChunks()
+    {        
+        var temp = new List<Chunk>();
         
         foreach (var chunk in dictionary.Values)
         {
@@ -24,34 +38,11 @@ public class ChunkDictionary
     }
 }
 
-public class ChunkGameObjectDictionary
+public static class HashSetPositionChecker
 {
-    private static Dictionary<GameObject, IChunk> dictionary = new Dictionary<GameObject, IChunk>();
+    private static HashSet<Int3> hashSet = new HashSet<Int3>();
 
-    public static void Add(GameObject key, IChunk value) => dictionary.Add(key, value);
-    public static void Remove(GameObject key) => dictionary.Remove(key);
-
-    public static IChunk GetValue(GameObject key)
-    {
-        IChunk value;
-        if (dictionary.TryGetValue(key, out value))
-        {
-            return value;
-        }
-
-        return null;
-    }
-    public static void Clear() => dictionary.Clear();
-
-    public static List<IChunk> GetChunks()
-    {
-        var temp = new List<IChunk>();
-        
-        foreach (var chunk in dictionary.Values)
-        {
-            temp.Add(chunk);
-        }
-
-        return temp;
-    }
+    public static void Add(Int3 item) => hashSet.Add(item);
+    public static bool Contains(Int3 item) => hashSet.Contains(item);
+    public static void Remove(Int3 item) => hashSet.Remove(item);
 }

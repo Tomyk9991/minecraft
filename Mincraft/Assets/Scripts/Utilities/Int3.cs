@@ -16,14 +16,22 @@ public struct Int3
     }
 
     public static Int3 operator +(Int3 target1, Int3 target2)
-        => new Int3(target1.X + target2.X,
-                    target1.Y + target2.Y,
-                    target1.Z + target2.Z);
-    
+    {
+        target1.X += target2.X;
+        target1.Y += target2.Y;
+        target1.Z += target2.Z;
+
+        return target1;
+    }
+
     public static Int3 operator -(Int3 target1, Int3 target2)
-        => new Int3(target1.X - target2.X,
-                    target1.Y - target2.Y,
-                    target1.Z - target2.Z);
+    {
+        target1.X -= target2.X;
+        target1.Y -= target2.Y;
+        target1.Z -= target2.Z;
+
+        return target1;
+    }
 
     public static bool operator ==(Int3 target1, Int3 target2)
         => target1.X == target2.X && 
@@ -31,7 +39,13 @@ public struct Int3
            target1.Z == target2.Z;
 
     public static Int3 operator *(Int3 target, int scale)
-        => new Int3(target.X * scale, target.Y * scale, target.Z * scale);
+    {
+        target.X *= scale;
+        target.Y *= scale;
+        target.Z *= scale;
+
+        return target;
+    }
 
     public static bool operator !=(Int3 target1, Int3 target2)
         => !(target1 == target2);
@@ -53,7 +67,7 @@ public struct Int3
         => new Int3(Mathf.FloorToInt(target.x), Mathf.FloorToInt(target.y), Mathf.FloorToInt(target.z));
 
     public Vector3 ToVector3()
-        => new Vector3(this.X, this.Y, this.Z);
+        => new Vector3Int(this.X, this.Y, this.Z);
 
     public override bool Equals(object obj)
     {
@@ -68,6 +82,20 @@ public struct Int3
     public override string ToString()
         => $"({this.X}, {this.Y}, {this.Z})";
 
-    public bool AnyAttribute(Predicate<int> predicate)
-        => predicate(this.X) || predicate(this.Y) || predicate(this.Z);
+    public bool AnyAttribute(Predicate<int> predicate, out int value)
+    {
+        value = -1;
+        bool xResult = predicate(this.X); // wenn wahr, dann true z.b 16 > 15? true
+        bool yResult = predicate(this.Y);
+        bool zResult = predicate(this.Z);
+
+        if (xResult)
+            value = 0;
+        else if (yResult)
+            value = 1;
+        else if (zResult)
+            value = 2;
+
+        return (xResult || yResult || zResult);
+    }
 }

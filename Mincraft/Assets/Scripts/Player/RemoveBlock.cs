@@ -6,6 +6,7 @@ using UnityEngine;
 public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
 {
     public ChunkGameObjectPool GoPool { get; set; }
+    private int chunkSize;
     
     public float RaycastHitable
     {
@@ -30,9 +31,12 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
     private void Start()
     {
         cameraRef = Camera.main;
+        chunkSize = ChunkSettings.GetMaxSize;
+
         GoPool = ChunkGameObjectPool.Instance;
         modifier = new MeshModifier();
         meshDatas = new ConcurrentQueue<MeshData>();
+
         modifier.MeshAvailable += (s, data) => meshDatas.Enqueue(data);
     }
 
@@ -44,22 +48,25 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
             
             if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable))
             {
-                Int3 centerCube = Int3.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal);
-                IChunk chunk = ChunkGameObjectDictionary.GetValue(hit.transform.gameObject);
-                chunk.RemoveBlock(centerCube);
+                Int3 globalCenterCubePosition = Int3.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal);
+
+
+                Chunk chunk = ChunkDictionary.GetValue(hit.transform.position.ToInt3());
+
+                chunk.RemoveBlockAsGlobal(globalCenterCubePosition);
 
                 MeshData data = ModifyMesh.Combine(chunk);
                 modifier.RedrawMeshFilter(data.GameObject, data);
                 
                 var bounds = chunk.GetChunkBounds();
-                var tuple = IsBoundBlock(bounds, centerCube);
+                var tuple = IsBoundBlock(bounds, globalCenterCubePosition);
                 
                 if (tuple.HasDirections)
                 {
                     for (int i = 0; i < tuple.Directions.Length; i++)
                     {
                         Int3 pos = tuple.Directions[i] + chunk.Position;
-                        IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
+                        Chunk neigbourChunk = ChunkDictionary.GetValue(pos);
 
                         if (neigbourChunk != null)
                         {
@@ -78,7 +85,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
                         for (int i = 0; i < tuple.Directions.Length; i++)
                         {
                             Int3 pos = tuple.Directions[i] + chunk.Position;
-                            IChunk neigbourChunk = ChunkDictionary.GetValue(pos);
+                            Chunk neigbourChunk = ChunkDictionary.GetValue(pos);
 
                             neigbourChunk?.CalculateNeigbours();
                         }
@@ -89,18 +96,18 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
     }
 
 
-    public bool CheckIfNeedsToBeRemoved(IChunk chunk)
-        => chunk.GetBlocks().All(b => b == null);
+    public bool CheckIfNeedsToBeRemoved(Chunk chunk)
+        => chunk.GetBlocks().All(b => b.ID == -1);
 
-    public void RemoveChunk(IChunk chunk)
+    public void RemoveChunk(Chunk chunk)
     {
         GameObject goToAddToPoolAgain = chunk.CurrentGO;
         
-        ChunkGameObjectDictionary.Remove(goToAddToPoolAgain);
         ChunkDictionary.Remove(chunk.Position);
+        HashSetPositionChecker.Remove(chunk.Position);
         
         //Füge GameObject dem Pool wieder hinzu
-        GoPool.SetGameObjectInactive(goToAddToPoolAgain);
+        GoPool.SetGameObjectToUnsed(goToAddToPoolAgain);
 
         chunk.CalculateNeigbours();
     }
@@ -108,7 +115,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
     private (Int3[] Directions, bool HasDirections) IsBoundBlock((Int3 lowerBound, Int3 higherBound) tuple, Int3 pos)
     {
         List<Int3> directions = new List<Int3>();
-        int maxSize = ChunkGenerator.GetMaxSize;
+        int maxSize = ChunkSettings.GetMaxSize;
         bool result = false;
         
         

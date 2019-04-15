@@ -626,7 +626,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 787175594}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 66.3, y: 0, z: 49.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -646,10 +646,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   generator: {fileID: 787175597}
   player: {fileID: 763589107}
-  maxDistance: 8
-  periodNewRedraw: 1
-  amountDrawChunksPerFrame: 2
-  drawLatestPlayerPosition: 1
+  maxDistance: 10
+  amountDrawChunksPerFrame: 5
+  drawLatestPlayerPosition: 0
 --- !u!114 &787175597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -662,15 +661,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d169759481ee997419e90acaccf981f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drawGizmosChunks: 0
   chunkSize: 16
   seed: -1
-  smoothness: 1
-  steepness: 1
+  maxYHeight: 0
+  dictionarySize: 0
+  smoothness: 0.1
+  steepness: 5
   drawDistance:
-    X: 128
+    X: 16
     Y: 16
-    Z: 128
-  drawChunk: 1
+    Z: 16
 --- !u!114 &787175598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -685,7 +686,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 4515187503092839614, guid: 1603ecc1a251c814d8f5fccd2cd90fa3,
     type: 3}
-  chunksToInstantiate: 5000
   currentlyUsedObjs: 0
 --- !u!1001 &845648047
 PrefabInstance:
@@ -942,7 +942,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 21.43
+      value: 32.7
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -994,11 +994,19 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 2bd8959f5fbd3644aa33af1a155fc147, type: 2}
     - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_GravityMultiplier
-      value: 3
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
+      propertyPath: canMoveMouse
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5400000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: m_IsKinematic
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1685943025, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}

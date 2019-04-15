@@ -106,6 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f307aedc4d79c1e40a921a4ed0fe3e79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chunkNeigbourPositions: []
 --- !u!114 &5834300258596323135
 MonoBehaviour:
   m_ObjectHideFlags: 0

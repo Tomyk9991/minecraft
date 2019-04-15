@@ -15,16 +15,19 @@ public static class ModifyMesh
 
     public static Vector3 CenteredClickPositionOutSide(Vector3 hitPoint, Vector3 hitNormal)
     {
+        //Hier wird global berechnet.
         Vector3 blockPos = hitPoint + hitNormal / 2.0f;
 
         blockPos.x = Mathf.FloorToInt(blockPos.x);
         blockPos.y = Mathf.FloorToInt(blockPos.y);
         blockPos.z = Mathf.FloorToInt(blockPos.z);
 
+        //Benötigt aber lokale Berechnung
+
         return blockPos;
     }
 
-    public static MeshData Combine(IChunk chunk)
+    public static MeshData Combine(Chunk chunk)
     {   
 	    Block[] blocks = chunk.GetBlocks();
 	    List<Vector3> vertices = new List<Vector3>();
@@ -35,7 +38,7 @@ public static class ModifyMesh
 
 	    for (int i = 0; i < blocks.Length; i++)
 	    {
-		    if (blocks[i] == null)
+		    if (blocks[i].ID == -1)
 		    {
 			    continue;
 		    }

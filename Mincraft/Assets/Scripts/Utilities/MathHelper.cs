@@ -15,6 +15,7 @@ public static class MathHelper
             n = Math.Abs(n);
             isNegative = true;
         }
+
         if (x > n)
             return isNegative ? -x : x;
         n = n + x / 2;
