@@ -13,15 +13,15 @@ public class ChunkJobManager : IDisposable
     private Thread[] threads;
 
 
-    //private static Int3[] directions =
-    //{
-    //    Int3.Forward, // 0
-    //    Int3.Back, // 1
-    //    Int3.Up, // 2
-    //    Int3.Down, // 3
-    //    Int3.Left, // 4
-    //    Int3.Right // 5
-    //};
+    private static Int3[] directions =
+    {
+        Int3.Forward, // 0
+        Int3.Back, // 1
+        Int3.Up, // 2
+        Int3.Down, // 3
+        Int3.Left, // 4
+        Int3.Right // 5
+    };
 
 
     private int chunkSize;
@@ -51,8 +51,7 @@ public class ChunkJobManager : IDisposable
         {
             if (JobsCount == 0)
             {
-                //TODO Thread Sleep is needed?
-                Thread.Sleep(1);
+                Thread.Sleep(10); //Needed, because CPU is overloaded in over case
                 continue;
             }
             else if(JobsCount > 0)
@@ -66,24 +65,7 @@ public class ChunkJobManager : IDisposable
                     if (!job.HasBlocks) // Chunk gets build new
                     {
                         ChunkDictionary.Add(job.Chunk.Position, job.Chunk);
-
-                        //for (int i = 0; i < directions.Length; i++)
-                        //{
-                        //    if (job.Chunk.GetNeighbours()[i] == null) // Wenn an dieser Stelle noch kein Nachbar existiert, dann prüfe, ob jetzt einer existiert
-                        //    {
-                        //        Chunk nc = ChunkDictionary.GetValue(job.Chunk.Position + directions[i] * chunkSize);
-                        //        if (job.Chunk.Position == new Int3(0, 0, 0) && i == 4)
-                        //        {
-                        //            Debug.Log("(0, 0, 0) hat auf der linken Seite noch einen Platz frei");
-                        //            job.Chunk.SetNeighbour(nc, i);
-                        //        }
-                        //        if (nc != null)
-                        //        {
-                        //            //job.Chunk.SetNeighbour(nc, i);
-                        //        }
-                        //    }
-                        //}
-
+                        job.Chunk.CalculateNeigbours(); //TODO vielleicht gehts doch nicht. Bedenke das nochmal richtig
                         job.Chunk.GenerateBlocks();
                     }
                     else

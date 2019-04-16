@@ -686,6 +686,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 4515187503092839614, guid: 1603ecc1a251c814d8f5fccd2cd90fa3,
     type: 3}
+  chunksToInstantiate: 15
   currentlyUsedObjs: 0
 --- !u!1001 &845648047
 PrefabInstance:
@@ -1229,6 +1230,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1579627208}
   - component: {fileID: 1579627207}
+  - component: {fileID: 1579627209}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -1262,6 +1264,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1579627209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1579627206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a10a3b7c4cb121b42a9d8d76ded1c4a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  relativePath: C:/Users/thoma/Documents/MinecraftCloneWorlds
 --- !u!1 &1694309423
 GameObject:
   m_ObjectHideFlags: 0

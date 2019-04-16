@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-public class Chunk
+public class Chunk : Context<Chunk>
 {
     public GameObject CurrentGO { get; set; }
     public Int3 Position { get; set; }
 
-    public Int3 lowerBound, higherBound;
+    private Int3 lowerBound, higherBound;
     
     private bool boundsCalculated = false;
     private Block[] blocks;
@@ -47,6 +47,32 @@ public class Chunk
     {
         int index = GetFlattenIndex(block.Position.X, block.Position.Y, block.Position.Z);
         blocks[index] = block;
+    }
+    public void AddBlocks(Block[] blocks)
+    {
+        for (int i = 0; i < blocks.Length; i++)
+        {
+            AddBlock(blocks[i]);
+        }
+    }
+
+    public override object Data()
+    {
+        return new ChunkSerializeHelper()
+        {
+            ChunkPosition = this.Position,
+            localBlocks = this.blocks
+            //Later here we will continue with biom settings
+        };
+    }
+
+    public override Chunk Caster(object data)
+    {
+        var helper = (ChunkSerializeHelper) data;
+        this.Position = helper.ChunkPosition;
+        this.blocks = helper.localBlocks;
+
+        return this;
     }
 
     public Chunk TryAddBlockFromGlobal(Block block)
@@ -319,15 +345,15 @@ public class Chunk
         return Position.ToString();
     }
 
-    //public void SetNeighbour(Chunk neighbour, int neighbourIndex)
-    //{
-    //    this.chunkNeigbours[neighbourIndex] = neighbour;
+    public void SetNeighbour(Chunk neighbour, int neighbourIndex)
+    {
+        this.chunkNeigbours[neighbourIndex] = neighbour;
 
-    //    if (neighbour != null)
-    //    {
-    //        neighbour.chunkNeigbours[GetOppositeIndex(neighbourIndex)] = this;
-    //    }
-    //}
+        if (neighbour != null)
+        {
+            neighbour.chunkNeigbours[GetOppositeIndex(neighbourIndex)] = this;
+        }
+    }
 
     private int GetOppositeIndex(int index)
     {
@@ -341,10 +367,5 @@ public class Chunk
         {
             return index--;
         }
-    }
-
-    public Chunk[] GetNeighbours()
-    {
-        return chunkNeigbours;
     }
 }

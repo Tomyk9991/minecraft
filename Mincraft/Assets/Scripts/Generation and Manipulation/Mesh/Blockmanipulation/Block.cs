@@ -1,10 +1,8 @@
-﻿using Unity.Mathematics;
-using UnityEngine;
-
+﻿[System.Serializable]
 public struct Block
 {
     public Int3 Position;
-    public int ID { get; set; }
+    public int ID { get; set; } // For UV-Setting
 
 
     public Block(Int3 position)

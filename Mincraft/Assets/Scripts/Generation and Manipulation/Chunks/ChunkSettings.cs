@@ -10,7 +10,7 @@ public class ChunkSettings : SingletonBehaviour<ChunkSettings>
 
     [Header("Chunksettings")]
     [SerializeField] private uint chunkSize = 0;
-    [SerializeField] private int seed = -1; //TODO Insert seed in noise
+    [SerializeField] private int seed = -1;
     [SerializeField] private int maxYHeight = 256;
     [SerializeField, ShowOnly] private int dictionarySize;
 

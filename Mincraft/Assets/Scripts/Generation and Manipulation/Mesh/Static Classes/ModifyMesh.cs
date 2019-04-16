@@ -47,7 +47,7 @@ public static class ModifyMesh
 		    
 		    if (neigbours.Any(state => state == false))
 		    {
-			    var currentUVData = UVDictionary.GetValue((BlockUV) blocks[i].ID);
+			    UVData[] currentUVData = UVDictionary.GetValue((BlockUV) blocks[i].ID);
 
 			    for (int j = 0; j < neigbours.Length; j++)
 			    {

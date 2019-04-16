@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Concurrent;
 using UnityEngine;
 
@@ -6,39 +7,43 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
 {
     [Header("Chunk GameObject instantiation settings")]
     [SerializeField] private GameObject chunkPrefab = null;
-    //[Range(1, 10000)]
-    //[SerializeField] private int chunksToInstantiate = 210;
+    [Range(1, 10000)]
+    [SerializeField] private int chunksToInstantiate = 210;
     [SerializeField, ShowOnly] private int currentlyUsedObjs;
 
     private const string unusedName = "Unused chunk";
 
     private ConcurrentQueue<GameObject> gameObjectChunks;
 
-    private ConcurrentQueue<GameObject> objectsToRelease;
-    
-    //TODO make gameobject pool
+    private Queue<GameObject> objectsToRelease;
     private void Start()
     {
-        objectsToRelease = new ConcurrentQueue<GameObject>();
+        objectsToRelease = new Queue<GameObject>();
         gameObjectChunks = new ConcurrentQueue<GameObject>();
-        //for (int i = 0; i < chunksToInstantiate; i++)
-        //{
-        //    InstantiateBlock();
-        //}
+        for (int i = 0; i < chunksToInstantiate; i++)
+        {
+            InstantiateBlock();
+        }
     }
 
     private void Update()
     {
-        //while (!objectsToRelease.IsEmpty && objectsToRelease.TryDequeue(out GameObject go))
-        //{
-        //    go.name = unusedName;
+        for (int i = 0; i < objectsToRelease.Count && i < 5; i++)
+        {
+            GameObject go = objectsToRelease.Dequeue();
 
-        //    go.GetComponent<MeshFilter>().mesh = null;
-        //    go.GetComponent<MeshCollider>().sharedMesh = null;
-        //    go.SetActive(false);
+            if (go != null)
+            {
+                go.name = unusedName;
+                
+                go.GetComponent<MeshFilter>().mesh = null;
+                go.GetComponent<MeshCollider>().sharedMesh = null;
+                go.SetActive(false);
 
-        //    gameObjectChunks.Enqueue(go);
-        //}
+                gameObjectChunks.Enqueue(go);
+            }
+
+        }
     }
 
 
@@ -48,16 +53,14 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     /// <returns></returns>
     public GameObject GetNextUnusedChunk()
     {
-        //GameObject go;
-        //if (gameObjectChunks.TryDequeue(out go) && go != null)
-        //{
-        //    currentlyUsedObjs++;
-        //    return go;
-        //}
+        GameObject go;
+        if (gameObjectChunks.TryDequeue(out go))
+        {
+            currentlyUsedObjs++;
+            return go;
+        }
 
         return Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-
-        throw new Exception("Not enough pool objects. TODO: Instantiate new GameObjects, if a bool is checked");
     }
 
     private void InstantiateBlock()

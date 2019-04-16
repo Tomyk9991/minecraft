@@ -30,6 +30,7 @@ using Random = UnityEngine.Random;
         [SerializeField] private LerpControlledBob m_JumpBob = new LerpControlledBob();
         [SerializeField] private float m_StepInterval;
 
+
         [Header("Sound")]
         [SerializeField]
         private AudioClip[] m_FootstepSounds; // an array of footstep sounds that will be randomly selected from.
@@ -50,6 +51,7 @@ using Random = UnityEngine.Random;
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
+        private bool useGravity = false;
 
         // Use this for initialization
         private void Start()
@@ -134,7 +136,31 @@ using Random = UnityEngine.Random;
             }
 
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
+
+            ControlInput();
         }
+
+        private void ControlInput()
+        {
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                m_MoveDir.y = 0;
+                useGravity = !useGravity;
+                m_GravityMultiplier = useGravity ? 3 : 0;
+            }
+
+            if (!useGravity)
+            {
+            if (Input.GetKey(KeyCode.Space))
+            {
+                transform.Translate(Vector3.up * Time.deltaTime * 15);
+            }
+            else if (Input.GetKey(KeyCode.LeftControl))
+            {
+                transform.Translate(Vector3.down * Time.deltaTime * 15);
+            }
+        }
+    }
 
 
         private void PlayLandingSound()

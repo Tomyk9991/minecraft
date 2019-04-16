@@ -1,7 +1,4 @@
-﻿using System.Collections.Concurrent;
-using UnityEngine;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using UnityEngine;
 
 public class ChunkUpdater : MonoBehaviour
 {
@@ -20,7 +17,7 @@ public class ChunkUpdater : MonoBehaviour
 
     private Int3 drawDistance;
     private int chunkSize;
-    private int maxyHeight;
+    private int maxYHeight;
 
     private Int3 latestPlayerPosition;
 
@@ -40,7 +37,7 @@ public class ChunkUpdater : MonoBehaviour
         drawDistance = generator.drawDistance;
 
         chunkSize = ChunkSettings.GetMaxSize;
-        maxyHeight = ChunkSettings.MaxYHeight;
+        maxYHeight = ChunkSettings.MaxYHeight;
 
         GoPool = ChunkGameObjectPool.Instance;
 
@@ -102,14 +99,14 @@ public class ChunkUpdater : MonoBehaviour
 
 
         int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
-        int yStart = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize); // Fix height
+        int yStart = MathHelper.ClosestMultiple(0, chunkSize); // Fix height
         int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
 
 
         for (int x = xStart - drawDistance.X; x < xStart + drawDistance.X; x += chunkSize)
         {
-            //TODO make it a variable
-            for (int y = maxyHeight; y > -drawDistance.Y; y -= chunkSize) // Minus to calculate chunks downwards, not upwards
+            //Vielleicht yStart?
+            for (int y = maxYHeight; y > -drawDistance.Y; y -= chunkSize) // Minus to calculate chunks downwards, not upwards
             {
                 for (int z = zStart - drawDistance.Z; z < zStart + drawDistance.Z; z += chunkSize)
                 {
@@ -127,6 +124,7 @@ public class ChunkUpdater : MonoBehaviour
         }
 
 
+        //Kann eigentlich asynchron laufen
         var list = ChunkDictionary.GetActiveChunks();
 
         for (int i = 0; i < list.Count; i++)
@@ -141,7 +139,6 @@ public class ChunkUpdater : MonoBehaviour
                 HashSetPositionChecker.Remove(currentChunk.Position);
             }
         }
-        //Debug.Log($"Checked {counter} chunks");
     }
 
     private void OnDrawGizmos()
