@@ -152,6 +152,6 @@ public class ChunkUpdater : MonoBehaviour
 
     private void OnDestroy()
     {
-        chunkJobManager.Dispose();
+        chunkJobManager?.Dispose();
     }
 }

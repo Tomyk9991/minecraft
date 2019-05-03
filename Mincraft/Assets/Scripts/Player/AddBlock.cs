@@ -1,8 +1,6 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class AddBlock : MonoBehaviour, IMouseUsable
+public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
 {
     public ChunkGameObjectPool GoPool { get; set; }
     public float RaycastHitable
@@ -27,6 +25,12 @@ public class AddBlock : MonoBehaviour, IMouseUsable
 
     private ChunkJobManager chunkJobManager;
     private MeshModifier modifier;
+
+    public bool Enabled
+    {
+        get => this.enabled;
+        set => this.enabled = value;
+    }
 
     private void Start()
     {

@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 
-public class SelectedBlockVisualizer : MonoBehaviour
+public class SelectedBlockVisualizer : MonoBehaviour, IConsoleToggle
 {
     public float RaycastHitable
     {
         get => raycastHitable;
         set => raycastHitable = value;
     }
-    
+    public bool Enabled
+    {
+        get => this.enabled;
+        set => this.enabled = value;
+    }
+
     [SerializeField] private float raycastHitable = 1000f;
     
     private Camera cameraRef;

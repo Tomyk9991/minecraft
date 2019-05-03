@@ -1,24 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using TMPro;
 using UnityEngine;
 
 public class ContextIO<T> where T : Context<T>, new()
 {
+    public int WorldIndex { get; private set; }
     private string path;
-    //Als Kontext kann man z. B. Chunks betrachten
-    //Als Kontext kann man auch den Serializer und Deserializer betrachten, denn der wird immer of type T zurückgeben
-
     public ContextIO(string path, int worldIndex)
     {
         this.path = path;
+        this.WorldIndex = worldIndex;
     }
 
-    public void SaveContext(T obj)
+    public void SaveContext(T obj, string fileName)
     {
         object data = obj.Data();
+        string directoryPath = path + "/World" + WorldIndex + "/";
+        string newCombinedPath = directoryPath + fileName + FileEnding(obj);
 
-        string newCombinedPath = Path.Combine(path + "/chunk0.chk");
+        if (!Directory.Exists(directoryPath))
+            Directory.CreateDirectory(directoryPath);
 
         using (FileStream fs = new FileStream(newCombinedPath, FileMode.Create))
         {
@@ -40,9 +45,30 @@ public class ContextIO<T> where T : Context<T>, new()
 
     public T LoadContext()
     {
-        string newCombinedPath = Path.Combine(path + "/chunk0.chk");
+        Debug.Log(path);
+        string directoryPath = path + "/World" + WorldIndex + "/";
 
-        using (FileStream fs = new FileStream(newCombinedPath, FileMode.Open))
+        if (!Directory.Exists(directoryPath))
+        {
+            Debug.LogError("Pfad / Welt wurde nicht gefunden");
+            Debug.Log(directoryPath);
+            return null;
+        }
+
+        string[] files = Directory.GetFiles(directoryPath, "*" + FileEnding(new T()), SearchOption.TopDirectoryOnly);
+
+        Debug.Log("Noise Settings");
+        for (int i = 0; i < files.Length; i++)
+        {
+            Debug.Log(files[i]);
+        }
+
+        return LoadContext(files[0]);
+    }
+
+    private T LoadContext(string path)
+    {
+        using (FileStream fs = new FileStream(path, FileMode.Open))
         {
             try
             {
@@ -63,30 +89,34 @@ public class ContextIO<T> where T : Context<T>, new()
 
         return null;
     }
-}
-public class Context<T>
-{
-    private int ChunkCounter = 0;
 
-    /// <summary>
-    /// Returns null in case of not overwriting
-    /// </summary>
-    /// <returns></returns>
-    public virtual object Data()
+    public List<T> LoadContexts()
     {
-        return null;
+        string directoryPath = path + "/World" + WorldIndex + "/";
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Debug.LogError("Pfad / Welt wurde nicht gefunden");
+            return null;
+        }
+
+
+        string[] files = Directory.GetFiles(directoryPath, "*" + FileEnding(new T()), SearchOption.TopDirectoryOnly);
+
+        return files.Select(LoadContext).ToList();
     }
 
-    public virtual T Caster(object data)
+    private string FileEnding(T obj)
     {
-        return default(T);
+        switch (obj)
+        {
+            case Chunk _:
+                return ".chk"; //CH un K
+            case SimplexNoiseSettings _:
+                return ".nsttngs"; //N oise S e TT i NGS
+            default:
+                Debug.LogError("Something went wrong with casting");
+                return "";
+        }
     }
 }
-[System.Serializable]
-public class ChunkSerializeHelper
-{
-    public Int3 ChunkPosition;
-    public Block[] localBlocks;
-}
-
-

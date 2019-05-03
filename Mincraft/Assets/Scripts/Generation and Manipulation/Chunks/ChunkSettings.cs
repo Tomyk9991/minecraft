@@ -24,12 +24,13 @@ public class ChunkSettings : SingletonBehaviour<ChunkSettings>
     //[SerializeField] private BlockUV bottom = default;
     [SerializeField] public Int3 drawDistance = default;
 
+
     private void OnValidate() => PlayerPrefs.SetInt(nameof(chunkSize), (int)chunkSize);
 
     private void Start()
     {
         if (seed == -1)
-            seed = UnityEngine.Random.Range(-100_000,100_000);
+            seed = UnityEngine.Random.Range(-100_000, 100_000);
 
         simplexNoiseSettings = new SimplexNoiseSettings(smoothness, steepness, seed);
 
@@ -37,6 +38,11 @@ public class ChunkSettings : SingletonBehaviour<ChunkSettings>
         {
             throw new Exception("Diggah, WeltSize nicht teilbar durch ChunkSize");
         }
+    }
+
+    public void SetNoiseSettings(SimplexNoiseSettings settings)
+    {
+        this.simplexNoiseSettings = settings;
     }
 
     private void Update()

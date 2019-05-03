@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
+public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk, IConsoleToggle
 {
     public ChunkGameObjectPool GoPool { get; set; }
     private int chunkSize;
@@ -19,7 +19,13 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
         get => mouseButtonIndex;
         set => mouseButtonIndex = value;
     }
-    
+
+    public bool Enabled
+    {
+        get => this.enabled;
+        set => this.enabled = value;
+    }
+
     [SerializeField] private float raycastHitable = 1000f;
     [SerializeField] private int mouseButtonIndex = 0;
 
@@ -94,7 +100,6 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk
             }
         }
     }
-
 
     public bool CheckIfNeedsToBeRemoved(Chunk chunk)
         => chunk.GetBlocks().All(b => b.ID == -1);

@@ -19,6 +19,7 @@ public class Chunk : Context<Chunk>
     private int seed = -1;
 
 
+
     private static Int3[] directions = 
     {
         Int3.Forward, // 0
@@ -48,14 +49,8 @@ public class Chunk : Context<Chunk>
         int index = GetFlattenIndex(block.Position.X, block.Position.Y, block.Position.Z);
         blocks[index] = block;
     }
-    public void AddBlocks(Block[] blocks)
-    {
-        for (int i = 0; i < blocks.Length; i++)
-        {
-            AddBlock(blocks[i]);
-        }
-    }
 
+    #region Context
     public override object Data()
     {
         return new ChunkSerializeHelper()
@@ -73,7 +68,8 @@ public class Chunk : Context<Chunk>
         this.blocks = helper.localBlocks;
 
         return this;
-    }
+    }    
+    #endregion
 
     public Chunk TryAddBlockFromGlobal(Block block)
     {
