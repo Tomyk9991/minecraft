@@ -27,46 +27,46 @@ public class ChunkUpdater : MonoBehaviour
 
     private MeshModifier modifier;
 
-    private void Start()
-    {
-        modifier = new MeshModifier();
-        chunkJobManager = new ChunkJobManager();
-        chunkJobManager.Start();
+    //private void Start()
+    //{
+    //    modifier = new MeshModifier();
+    //    chunkJobManager = new ChunkJobManager();
+    //    chunkJobManager.Start();
 
-        latestPlayerPosition = player.transform.position.ToInt3();
-        drawDistance = generator.drawDistance;
+    //    latestPlayerPosition = player.transform.position.ToInt3();
+    //    drawDistance = generator.drawDistance;
 
-        chunkSize = ChunkSettings.GetMaxSize;
-        maxYHeight = ChunkSettings.MaxYHeight;
+    //    chunkSize = ChunkSettings.GetMaxSize;
+    //    maxYHeight = ChunkSettings.MaxYHeight;
 
-        GoPool = ChunkGameObjectPool.Instance;
+    //    GoPool = ChunkGameObjectPool.Instance;
 
-        RecalculateChunks();
-    }
+    //    RecalculateChunks();
+    //}
 
-    private void Update()
-    {
-        currentDistance = Vector3.Distance(player.transform.position, latestPlayerPosition.ToVector3());
+    //private void Update()
+    //{
+    //    currentDistance = Vector3.Distance(player.transform.position, latestPlayerPosition.ToVector3());
 
-        if (currentDistance > maxDistance)
-        {
-            //Divide and conquer
-            RecalculateChunks();
+    //    if (currentDistance > maxDistance)
+    //    {
+    //        //Divide and conquer
+    //        RecalculateChunks();
 
-            currentDistance = 0;
-            latestPlayerPosition = player.transform.position.ToInt3();
-        }
+    //        currentDistance = 0;
+    //        latestPlayerPosition = player.transform.position.ToInt3();
+    //    }
 
-        for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < amountDrawChunksPerFrame; i++)
-        {
-            ChunkJob task = chunkJobManager.DequeueFinishedJobs();
+    //    for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < amountDrawChunksPerFrame; i++)
+    //    {
+    //        ChunkJob task = chunkJobManager.DequeueFinishedJobs();
 
-            if (task != null && task.Completed)
-            {
-                RenderCall(task);
-            }
-        }
-    }
+    //        if (task != null && task.Completed)
+    //        {
+    //            RenderCall(task);
+    //        }
+    //    }
+    //}
 
     private void RenderCall(ChunkJob t)
     {

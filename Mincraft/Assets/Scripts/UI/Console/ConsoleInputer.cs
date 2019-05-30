@@ -36,6 +36,12 @@ public class ConsoleInputer : SingletonBehaviour<ConsoleInputer>
             dictionary.Add(methods[i].GetCustomAttribute<ConsoleMethodAttribute>().stringName.ToLower(), methods[i]);
         }
 
+        //Welche Consolenmethoden wurden erkannt?
+        //foreach (KeyValuePair<string, MethodInfo> entry in dictionary)
+        //{
+        //    Debug.Log(entry.Key);
+        //}
+
         disableOnConsoleAppear = FindObjectsOfType<MonoBehaviour>().OfType<IConsoleToggle>().ToArray();
 
         var s = new TMP_InputField.SubmitEvent();
@@ -54,7 +60,7 @@ public class ConsoleInputer : SingletonBehaviour<ConsoleInputer>
 
                 if (substrings.Length - 1 != parameters.Length)
                 {
-                    consoleOutput.text += message + " has not been found\n";
+                    consoleOutput.text += message + " Parameters not correct\n";
                     inputfield.text = "";
                     return;
                 }

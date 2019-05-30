@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class Context<T>
+public abstract class Context<T>
 {
     /// <summary>
     /// Returns null in case of not overwriting

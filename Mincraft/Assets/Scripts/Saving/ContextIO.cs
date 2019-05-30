@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using TMPro;
 using UnityEngine;
 
 public class ContextIO<T> where T : Context<T>, new()
@@ -57,7 +56,6 @@ public class ContextIO<T> where T : Context<T>, new()
 
         string[] files = Directory.GetFiles(directoryPath, "*" + FileEnding(new T()), SearchOption.TopDirectoryOnly);
 
-        Debug.Log("Noise Settings");
         for (int i = 0; i < files.Length; i++)
         {
             Debug.Log(files[i]);
@@ -118,5 +116,21 @@ public class ContextIO<T> where T : Context<T>, new()
                 Debug.LogError("Something went wrong with casting");
                 return "";
         }
+    }
+}
+
+public class ContextIO
+{
+    public static void CreateDirectory(int index, string path = @"C:/Users/thoma/Documents/MinecraftCloneWorlds")
+    {
+        string fullPath = path + "/World" + index + "/";
+        if (!Directory.Exists(fullPath))
+        {
+            Directory.CreateDirectory(path + "/World" + index + "/");
+            Debug.Log("Path created");
+            return;
+        }
+
+        Debug.Log("Path already existed");
     }
 }
