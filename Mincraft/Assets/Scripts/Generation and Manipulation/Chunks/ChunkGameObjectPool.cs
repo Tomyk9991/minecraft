@@ -35,7 +35,7 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
             if (go != null)
             {
                 go.name = unusedName;
-                
+
                 go.GetComponent<MeshFilter>().mesh = null;
                 go.GetComponent<MeshCollider>().sharedMesh = null;
                 go.SetActive(false);
@@ -71,6 +71,7 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
 
     public void SetGameObjectToUnsed(GameObject go)
     {
+        currentlyUsedObjs--;
         objectsToRelease.Enqueue(go);
     }
 
@@ -81,6 +82,3 @@ public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
         gameObjectChunks.Enqueue(go);
     }
 }
-
-
-

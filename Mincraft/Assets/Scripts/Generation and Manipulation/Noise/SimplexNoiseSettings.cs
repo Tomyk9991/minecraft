@@ -30,7 +30,7 @@ public class SimplexNoiseSettings : Context<SimplexNoiseSettings>
         var helper = (SimplexNoiseSettingsSerializeHelper) data;
         this.Seed = helper.Seed;
         this.Smoothness = helper.Smoothness;
-        this.Steepness = Steepness;
+        this.Steepness = helper.Steepness;
 
         return this;
     }

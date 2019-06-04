@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Threading;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class ChunkJobManager : IDisposable
     public bool Running { get; set; }
 
     private Thread[] threads;
+    private ContextIO<Chunk> chunkLoader;
 
 
     private static Int3[] directions =
@@ -34,6 +36,8 @@ public class ChunkJobManager : IDisposable
         chunkSize = ChunkSettings.GetMaxSize;
         Jobs = new ConcurrentQueue<ChunkJob>();
         FinishedJobs = new ConcurrentQueue<ChunkJob>();
+        chunkLoader = new ContextIO<Chunk>(ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName + "/");
+        GameManager.AbsolutePath = ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName;
 
         threads = new Thread[SystemInfo.processorCount - 2];
 
@@ -51,7 +55,8 @@ public class ChunkJobManager : IDisposable
         {
             if (JobsCount == 0)
             {
-                Thread.Sleep(10); //Needed, because CPU is overloaded in over case
+                //TODO wieder auf 10ms stellen
+                Thread.Sleep(50); //Needed, because CPU is overloaded in over case
                 continue;
             }
             else if(JobsCount > 0)
@@ -65,8 +70,18 @@ public class ChunkJobManager : IDisposable
                     if (!job.HasBlocks) // Chunk gets build new
                     {
                         ChunkDictionary.Add(job.Chunk.Position, job.Chunk);
-                        job.Chunk.CalculateNeigbours(); //TODO vielleicht gehts doch nicht. Bedenke das nochmal richtig
-                        job.Chunk.GenerateBlocks();
+                        job.Chunk.CalculateNeigbours();
+
+                        string path = chunkLoader.Path + job.Chunk.Position.ToString() + chunkLoader.FileEnding<Chunk>();
+
+                        if (File.Exists(path))
+                        {
+                            job.Chunk.LoadChunk(chunkLoader.LoadContext(path));
+                        }
+                        else
+                        {
+                            job.Chunk.GenerateBlocks();
+                        }
                     }
                     else
                     {
@@ -75,6 +90,7 @@ public class ChunkJobManager : IDisposable
 
                     //if "if" not executed, than chunk already existed
 
+                    //TODO füge MeshCollider wieder hinzu
                     GreedyMesh mesh = new GreedyMesh();
                     job.MeshData = ModifyMesh.Combine(job.Chunk);
                     job.ColliderData = mesh.ReduceMesh(job.Chunk);

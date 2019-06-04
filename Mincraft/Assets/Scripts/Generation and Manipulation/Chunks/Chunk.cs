@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
 
 public class Chunk : Context<Chunk>
 {
+    //TODO, wenn der Chunk sich durch Simulation (z.B. Gras ist gewachsen) verändert, soll ebenfalls gespeichert werden
     public GameObject CurrentGO { get; set; }
     public Int3 Position { get; set; }
 
@@ -17,8 +19,6 @@ public class Chunk : Context<Chunk>
     private float smoothness = 0;
     private float steepness = 0;
     private int seed = -1;
-
-
 
     private static Int3[] directions = 
     {
@@ -141,17 +141,23 @@ public class Chunk : Context<Chunk>
         {
             for (int y = 0; y < chunkSize; y++)
             {
-                float yResult = y + this.Position.Y;
                 for (int z = 0; z < chunkSize; z++)
                 {
-                    float result = SimplexNoise.Generate((x + this.Position.X + seed) * smoothness, (yResult + seed) * smoothness, (z + this.Position.Z + seed) * smoothness);
+                    float height = OctavePerlin((x + this.Position.X + seed) * smoothness, (z + this.Position.Z + seed) * smoothness, 8, 0.5f) * steepness;
 
-                    result *= steepness;
+                    //Debug.Log(height);
 
-                    if (result > 0f) //Block or not block
+
+                    if (y + this.Position.Y < height - 1)
                     {
                         Block b = new Block(new Int3(x, y, z));
-                        b.SetID((int)BlockUV.Stone);
+                        b.SetID((int)BlockUV.Dirt);
+                        this.AddBlock(b);
+                    }
+                    else if (y + this.Position.Y < height)
+                    {
+                        Block b = new Block(new Int3(x,y, z));
+                        b.SetID((int) BlockUV.Grass);
                         this.AddBlock(b);
                     }
                     else
@@ -162,6 +168,25 @@ public class Chunk : Context<Chunk>
                 }
             }
         }
+    }
+
+    private float OctavePerlin(float x, float y, int octaves, float persistence)
+    {
+        float total = 0;
+        float frequency = 1;
+        float amplitude = 1;
+        float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
+        for (int i = 0; i < octaves; i++)
+        {
+            total += Mathf.PerlinNoise(x * frequency, y * frequency) * amplitude;
+
+            maxValue += amplitude;
+
+            amplitude *= persistence;
+            frequency *= 2;
+        }
+
+        return total / maxValue;
     }
 
     public Block GetBlock(int x, int y, int z)
@@ -195,11 +220,8 @@ public class Chunk : Context<Chunk>
 
     public void ReleaseGameObject()
     {
-        ChunkGameObjectPool.Instance.SetGameObjectToUnsed(CurrentGO);
-        GameObject g = CurrentGO;
-        CurrentGO = null;
-
-        UnityEngine.Object.Destroy(g);
+        ChunkGameObjectPool.Instance.SetGameObjectToUnsed(this.CurrentGO);
+        this.CurrentGO = null;
     }
 
     /// <summary>
@@ -363,5 +385,16 @@ public class Chunk : Context<Chunk>
         {
             return index--;
         }
+    }
+
+    public void LoadChunk(Chunk chunk)
+    {
+        this.Position = chunk.Position;
+        this.blocks = chunk.blocks;
+    }
+
+    public void SaveChunk()
+    {
+        GameManager.Instance.SavingJob.AddToSavingQueue(this);
     }
 }

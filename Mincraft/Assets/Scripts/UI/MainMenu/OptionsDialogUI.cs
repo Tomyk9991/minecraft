@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class OptionsDialogUI : MonoBehaviour
 {
-    [SerializeField] private Button backButton;
-    [SerializeField] private RectTransform[] transforms;
+    [SerializeField] private Button backButton = null;
+    [SerializeField] private RectTransform[] transforms = null;
 
     private void Start()
     {

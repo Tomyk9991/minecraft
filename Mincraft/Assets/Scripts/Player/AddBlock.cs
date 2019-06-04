@@ -26,6 +26,8 @@ public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
     private ChunkJobManager chunkJobManager;
     private MeshModifier modifier;
 
+    private GameManager gameManager;
+
     public bool Enabled
     {
         get => this.enabled;
@@ -37,6 +39,7 @@ public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
         chunkSize = ChunkSettings.GetMaxSize;
         GoPool = ChunkGameObjectPool.Instance;
         cameraRef = Camera.main;
+        gameManager = GameManager.Instance;
 
         chunkJobManager = new ChunkJobManager();
         modifier = new MeshModifier();
@@ -68,6 +71,7 @@ public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
                 if (chunk != null)
                 {
                     chunkJobManager.Add(new ChunkJob(chunk));
+                    chunk.SaveChunk();
                 }
             }
         }

@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class SelectedBlockVisualizer : MonoBehaviour, IConsoleToggle
 {
+    [SerializeField] private GameObject[] gameObjects = null;
+    [SerializeField] private LayerMask layerMask = 0;
     public float RaycastHitable
     {
         get => raycastHitable;
@@ -25,14 +28,18 @@ public class SelectedBlockVisualizer : MonoBehaviour, IConsoleToggle
     private void Update()
     {
         Ray ray = cameraRef.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable))
+        if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable, layerMask))
         {
+            for (int i = 0; i < gameObjects.Length; i++)
+                gameObjects[i].SetActive(true);
+
             Vector3 blockPos = ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;
             transform.position = blockPos + Vector3.one / 2;
         }
         else
         {
-            transform.position = default;
+            for (int i = 0; i < gameObjects.Length; i++)
+                gameObjects[i].SetActive(false);
         }
     }
 }

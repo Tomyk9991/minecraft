@@ -43,7 +43,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk, IConsoleTo
         modifier = new MeshModifier();
         meshDatas = new ConcurrentQueue<MeshData>();
 
-        modifier.MeshAvailable += (s, data) => meshDatas.Enqueue(data);
+        //modifier.MeshAvailable += (s, data) => meshDatas.Enqueue(data);
     }
 
     private void Update()
@@ -60,6 +60,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk, IConsoleTo
                 Chunk chunk = ChunkDictionary.GetValue(hit.transform.position.ToInt3());
 
                 chunk.RemoveBlockAsGlobal(globalCenterCubePosition);
+                chunk.SaveChunk();
 
                 MeshData data = ModifyMesh.Combine(chunk);
                 modifier.RedrawMeshFilter(data.GameObject, data);
@@ -81,40 +82,8 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk, IConsoleTo
                         }
                     }
                 }
-
-                if (CheckIfNeedsToBeRemoved(chunk))
-                {
-                    RemoveChunk(chunk);
-
-                    if (tuple.HasDirections)
-                    {
-                        for (int i = 0; i < tuple.Directions.Length; i++)
-                        {
-                            Int3 pos = tuple.Directions[i] + chunk.Position;
-                            Chunk neigbourChunk = ChunkDictionary.GetValue(pos);
-
-                            neigbourChunk?.CalculateNeigbours();
-                        }
-                    }
-                }
             }
         }
-    }
-
-    public bool CheckIfNeedsToBeRemoved(Chunk chunk)
-        => chunk.GetBlocks().All(b => b.ID == -1);
-
-    public void RemoveChunk(Chunk chunk)
-    {
-        GameObject goToAddToPoolAgain = chunk.CurrentGO;
-        
-        ChunkDictionary.Remove(chunk.Position);
-        HashSetPositionChecker.Remove(chunk.Position);
-        
-        //Füge GameObject dem Pool wieder hinzu
-        GoPool.SetGameObjectToUnsed(goToAddToPoolAgain);
-
-        chunk.CalculateNeigbours();
     }
 
     private (Int3[] Directions, bool HasDirections) IsBoundBlock((Int3 lowerBound, Int3 higherBound) tuple, Int3 pos)

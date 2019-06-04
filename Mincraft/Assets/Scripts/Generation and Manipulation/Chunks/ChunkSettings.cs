@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class ChunkSettings : SingletonBehaviour<ChunkSettings>
@@ -19,6 +20,8 @@ public class ChunkSettings : SingletonBehaviour<ChunkSettings>
     [SerializeField] public float steepness = 2;
     private SimplexNoiseSettings simplexNoiseSettings;
 
+    private ContextIO<SimplexNoiseSettings> noiseIO;
+
     [Header("Instantiation")]
     //[SerializeField] private BlockUV surface = default;
     //[SerializeField] private BlockUV bottom = default;
@@ -29,24 +32,49 @@ public class ChunkSettings : SingletonBehaviour<ChunkSettings>
 
     private void Start()
     {
-        if (seed == -1)
-            seed = UnityEngine.Random.Range(-100_000, 100_000);
-
-        simplexNoiseSettings = new SimplexNoiseSettings(smoothness, steepness, seed);
-
-        if (drawDistance.X % chunkSize != 0 || drawDistance.Y % chunkSize != 0 || drawDistance.Z % chunkSize != 0)
+        if (GameManager.CurrentWorldName == "")
         {
-            throw new Exception("Diggah, WeltSize nicht teilbar durch ChunkSize");
+            noiseIO = new ContextIO<SimplexNoiseSettings>(ContextIO.DefaultPath);
         }
-    }
+        else
+        {
+            noiseIO = new ContextIO<SimplexNoiseSettings>(ContextIO.DefaultPath + GameManager.CurrentWorldName + "/");
+        }
+        SimplexNoiseSettings settings = noiseIO.LoadContext();
 
-    public void SetNoiseSettings(SimplexNoiseSettings settings)
-    {
-        this.simplexNoiseSettings = settings;
+
+        if (settings == null)
+        {
+            if (seed == -1)
+                seed = UnityEngine.Random.Range(-100_000, 100_000);
+
+            simplexNoiseSettings = new SimplexNoiseSettings(smoothness, steepness, seed);
+
+            if (drawDistance.X % chunkSize != 0 || drawDistance.Y % chunkSize != 0 || drawDistance.Z % chunkSize != 0)
+            {
+                throw new Exception("Diggah, WeltSize nicht teilbar durch ChunkSize");
+            }
+        }
+        else
+        {
+            simplexNoiseSettings = settings;
+            seed = settings.Seed;
+            steepness = settings.Steepness;
+            smoothness = settings.Smoothness;
+        }
     }
 
     private void Update()
     {
         dictionarySize = ChunkDictionary.GetActiveChunks().Count;
+    }
+
+    private void OnDestroy()
+    {
+        if (noiseIO.Path != ContextIO.DefaultPath)
+        {
+            Debug.Log("Wird gespeichert");
+            noiseIO.SaveContext(simplexNoiseSettings, "HardcodedShit");
+        }
     }
 }

@@ -3,15 +3,17 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayDialogUI : MonoBehaviour
 {
+    //TODO, wenn später Welten einen eigenen Namen haben können, achte darauf, dass die Namen verschieden sind
     [Header("Button")]
-    [SerializeField] private Button backButton;
-    [SerializeField] private Button loadButton;
-    [SerializeField] private Button createNewWorldButton;
-    [SerializeField] private Button deleteButton;
+    [SerializeField] private Button backButton = null;
+    [SerializeField] private Button loadButton = null;
+    [SerializeField] private Button createNewWorldButton = null;
+    [SerializeField] private Button deleteButton = null;
 
     [Header("Dropdown")]
     [SerializeField] private TMP_Dropdown dropdown = null;
@@ -22,11 +24,21 @@ public class PlayDialogUI : MonoBehaviour
     private readonly string PATH = @"C:/Users/thoma/Documents/MinecraftCloneWorlds";
     private int highestIndex = 0;
 
+    List<string> directoryNames = new List<string>();
+
     private void Start()
     {
         //Dropdown
         RefreshDropdown();
         dropdown.captionText.text = dropdown.value != -1 ? dropdown.options[dropdown.value].text : "";
+        dropdown.onValueChanged.AddListener((value) =>
+        {
+            if (value != -1)
+            {
+                loadButton.interactable = true;
+                deleteButton.interactable = true;
+            }
+        });
 
         if (dropdown.value == -1)
         {
@@ -70,6 +82,19 @@ public class PlayDialogUI : MonoBehaviour
 
             RefreshDropdown();
         });
+
+        loadButton.onClick.AddListener(() =>
+        {
+            for (int i = 0; i < directoryNames.Count; i++)
+            {
+                if (dropdown.options[dropdown.value].text == directoryNames[i])
+                {
+                    GameManager.CurrentWorldName = directoryNames[i];
+                    break;
+                }
+            }  
+            SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
+        });
     }
     public void SetChildsVisibility(bool state)
     {
@@ -86,8 +111,7 @@ public class PlayDialogUI : MonoBehaviour
 
     private List<TMP_Dropdown.OptionData> GetOptionData()
     {
-        List<string> directoryNames = new List<string>();
-
+        directoryNames.Clear();
         if (!Directory.Exists(PATH))
             Directory.CreateDirectory(PATH);
 

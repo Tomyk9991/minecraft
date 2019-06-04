@@ -13,17 +13,8 @@ public class MeshModifier
     private static int[] tri2 = { 0, 1, 2, 2, 1, 3 };
     private static int[] tris = { 1, 0, 0, 1, 1, 0 };
 
-    public event EventHandler<MeshData> MeshAvailable;
+    public event EventHandler<MeshData> MeshAvailable = null;
     
-    public Task Combine(Chunk chunk)
-    {
-        return Task.Run(() =>
-        {
-            MeshData data = ModifyMesh.Combine(chunk);
-            MeshAvailable?.Invoke(this, data);
-        });
-    }
-
     public void RedrawMeshFilter(GameObject g, MeshData data)
     {
         var refMesh = g.GetComponent<MeshFilter>();
@@ -54,6 +45,7 @@ public class MeshModifier
 
         refMesh.mesh.RecalculateNormals();
 
+        //TODO füge MeshCollider wieder ein
         g.GetComponent<MeshCollider>().sharedMesh = null;
 
 
@@ -61,7 +53,6 @@ public class MeshModifier
         colliderMesh.indexFormat = IndexFormat.UInt32;
         colliderMesh.vertices = colliderData.Vertices.ToArray();
         colliderMesh.triangles = colliderData.Triangles.ToArray();
-
 
         g.GetComponent<MeshCollider>().sharedMesh = colliderMesh;
     }

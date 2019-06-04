@@ -71,6 +71,9 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
         m_Jumping = false;
         m_AudioSource = GetComponent<AudioSource>();
         m_MouseLook.Init(transform, m_Camera.transform);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
 
@@ -159,11 +162,11 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                transform.Translate(Vector3.up * Time.deltaTime * 15);
+                transform.Translate(Vector3.up * Time.deltaTime * 50);
             }
             else if (Input.GetKey(KeyCode.LeftControl))
             {
-                transform.Translate(Vector3.down * Time.deltaTime * 15);
+                transform.Translate(Vector3.down * Time.deltaTime * 50);
             }
         }
     }
