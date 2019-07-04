@@ -38,7 +38,7 @@ public static class ModifyMesh
 
 	    for (int i = 0; i < blocks.Length; i++)
 	    {
-		    if (blocks[i].ID == -1)
+		    if (blocks[i].ID == -1) // Transparent
 		    {
 			    continue;
 		    }

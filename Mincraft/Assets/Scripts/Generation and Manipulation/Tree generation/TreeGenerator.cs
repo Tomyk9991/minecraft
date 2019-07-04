@@ -55,7 +55,6 @@ public class TreeGenerator : MonoBehaviour
 
                     if (!HashSetPositionChecker.Contains(chunkPos)) //Wenn man innerhalb der neuen Position einen Chunk braucht
                     {
-
                         //Wird in ChunkJob zum Hash hinzugefügt
                         ChunkJob job = new ChunkJob(chunkPos);
                         chunkJobManager.Add(job);

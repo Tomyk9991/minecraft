@@ -51,6 +51,15 @@ public static class UVDictionary
             new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Left
             new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f)  //Right
         });
+        dictionary.Add(BlockUV.Cactus, new[]
+        {
+            new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Forward
+            new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Back
+            new UVData(5f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Up
+            new UVData(5f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Down
+            new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Left
+            new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f)  //Right
+        });
     }
 
     public static void Clear()
@@ -65,6 +74,6 @@ public static class UVDictionary
             return result;
         }
 
-        return null;
+        return notFoundData;
     }
 }

@@ -160,10 +160,14 @@ public class Chunk : Context<Chunk>
                     {
                         b.SetID((int) BlockUV.Grass);
                     }
-                    else if (y + this.Position.Y > height)
+                    else if (y + this.Position.Y > height + 1)
                     {
                         b.SetID((int) BlockUV.Air);
                     }
+//                    else if (y + this.Position.Y > height)
+//                    {
+//                        b.SetID((int) BlockUV.Cactus);
+//                    }
 
                     this.AddBlock(b);
                 }
@@ -234,19 +238,19 @@ public class Chunk : Context<Chunk>
     public bool GetNeigbourAt(int index, Int3 blockPos)
     {
         Int3 local = blockPos;
-            switch (index)
+        switch (index)
             {
                 case 0:
                     {
                         if ((local + directions[0]).Z < chunkSize)
                         {
-                            return blocks[GetFlattenIndex(local.X + directions[0].X, local.Y + directions[0].Y, local.Z + directions[0].Z)].ID != -1;
+                            return blocks[GetFlattenIndex(local.X + directions[0].X, local.Y + directions[0].Y, local.Z + directions[0].Z)].ID >= 0;
                         }
                         else
                         {
                             if (chunkNeigbours[0] != null)
                             {
-                                return chunkNeigbours[0].GetBlock(blockPos.X, blockPos.Y, 0).ID != -1;
+                                return chunkNeigbours[0].GetBlock(blockPos.X, blockPos.Y, 0).ID >= 0;
                             }
                         }
                         break;
@@ -254,65 +258,65 @@ public class Chunk : Context<Chunk>
                 case 1:
                     if ((local + directions[1]).Z >= 0)
                     {
-                        return blocks[GetFlattenIndex(local.X + directions[1].X, local.Y + directions[1].Y, local.Z + directions[1].Z)].ID != -1;
+                        return blocks[GetFlattenIndex(local.X + directions[1].X, local.Y + directions[1].Y, local.Z + directions[1].Z)].ID >= 0;
                     }
                     else
                     {
                         if (chunkNeigbours[1] != null)
                         {
-                            return chunkNeigbours[1].GetBlock(blockPos.X, blockPos.Y, chunkSize - 1).ID != -1;
+                            return chunkNeigbours[1].GetBlock(blockPos.X, blockPos.Y, chunkSize - 1).ID >= 0;
                         }
                     }
                     break;
                 case 2:
                     if ((local + directions[2]).Y < chunkSize)
                     {
-                        return blocks[GetFlattenIndex(local.X + directions[2].X, local.Y + directions[2].Y, local.Z + directions[2].Z)].ID != -1;
+                        return blocks[GetFlattenIndex(local.X + directions[2].X, local.Y + directions[2].Y, local.Z + directions[2].Z)].ID >= 0;
                     }
                     else
                     {
                         if (chunkNeigbours[2] != null)
                         {
-                            return chunkNeigbours[2].GetBlock(blockPos.X, 0, blockPos.Z).ID != -1;
+                            return chunkNeigbours[2].GetBlock(blockPos.X, 0, blockPos.Z).ID >= 0;
                         }
                     }
                     break;
                 case 3:
                     if ((local + directions[3]).Y >= 0)
                     {
-                        return blocks[GetFlattenIndex(local.X + directions[3].X, local.Y + directions[3].Y, local.Z + directions[3].Z)].ID != -1;
+                        return blocks[GetFlattenIndex(local.X + directions[3].X, local.Y + directions[3].Y, local.Z + directions[3].Z)].ID >= 0;
                     }
                     else
                     {
                         if (chunkNeigbours[3] != null)
                         {
-                            return chunkNeigbours[3].GetBlock(blockPos.X, chunkSize - 1, blockPos.Z).ID != -1;
+                            return chunkNeigbours[3].GetBlock(blockPos.X, chunkSize - 1, blockPos.Z).ID >= 0;
                         }
                     }
                     break;
                 case 4:
                     if ((local + directions[4]).X >= 0)
                     {
-                        return blocks[GetFlattenIndex(local.X + directions[4].X, local.Y + directions[4].Y, local.Z + directions[4].Z)].ID != -1;
+                        return blocks[GetFlattenIndex(local.X + directions[4].X, local.Y + directions[4].Y, local.Z + directions[4].Z)].ID >= 0;
                     }
                     else
                     {
                         if (chunkNeigbours[4] != null)
                         {
-                            return chunkNeigbours[4].GetBlock(chunkSize - 1, blockPos.Y, blockPos.Z).ID != -1;
+                            return chunkNeigbours[4].GetBlock(chunkSize - 1, blockPos.Y, blockPos.Z).ID >= 0;
                         }
                     }
                     break;
                 case 5:
                     if ((local + directions[5]).X < chunkSize)
                     {
-                        return blocks[GetFlattenIndex(local.X + directions[5].X, local.Y + directions[5].Y, local.Z + directions[5].Z)].ID != -1;
+                        return blocks[GetFlattenIndex(local.X + directions[5].X, local.Y + directions[5].Y, local.Z + directions[5].Z)].ID >= 0;
                     }
                     else
                     {
                         if (chunkNeigbours[5] != null)
                         {
-                            return chunkNeigbours[5].GetBlock(0, blockPos.Y, blockPos.Z).ID != -1;
+                            return chunkNeigbours[5].GetBlock(0, blockPos.Y, blockPos.Z).ID >= 0;
                         }
                     }
                     break;
