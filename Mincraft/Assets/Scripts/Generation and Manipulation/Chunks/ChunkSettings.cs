@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class ChunkSettings : SingletonBehaviour<ChunkSettings>
 {
-    public static int GetMaxSize => (int) Instance.chunkSize;
+    public static int ChunkSize => (int) Instance.chunkSize;
     public static int MaxYHeight => Instance.maxYHeight;
     public static SimplexNoiseSettings SimplexNoiseSettings => Instance.simplexNoiseSettings;
+    public static Int3 DrawDistance => Instance.drawDistance;
     public bool drawGizmosChunks = false;
 
     [Header("Chunksettings")]
@@ -25,7 +26,7 @@ public class ChunkSettings : SingletonBehaviour<ChunkSettings>
     [Header("Instantiation")]
     //[SerializeField] private BlockUV surface = default;
     //[SerializeField] private BlockUV bottom = default;
-    [SerializeField] public Int3 drawDistance = default;
+    [SerializeField] private Int3 drawDistance = default;
 
 
     private void OnValidate() => PlayerPrefs.SetInt(nameof(chunkSize), (int)chunkSize);

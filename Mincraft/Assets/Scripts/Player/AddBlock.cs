@@ -36,7 +36,7 @@ public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
 
     private void Start()
     {
-        chunkSize = ChunkSettings.GetMaxSize;
+        chunkSize = ChunkSettings.ChunkSize;
         GoPool = ChunkGameObjectPool.Instance;
         cameraRef = Camera.main;
         gameManager = GameManager.Instance;

@@ -1,28 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\thoma\.Rider2018.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\thoma\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_Mincraft.470111848.00" t="ExcludeRecursive" />
+    <e p="C:\Users\thoma\.Rider2019.1\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\thoma\.Rider2019.1\system\resharper-host\local\Transient\ReSharperHost\v191\SolutionCaches\_Mincraft.470111848.00" t="ExcludeRecursive" />
     <e p="C:\Users\thoma\Documents\UnityProjectGithubRepo\minecraft\Mincraft" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
+        <e p="BOXOPHOBIC" t="Include">
+          <e p="Skybox Cubemap Extended" t="Include">
+            <e p="Shaders" t="Include">
+              <e p="Skybox Cubemap Extended.shader" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="Editor" t="Include">
+          <e p="DrawIfFalsePropertyDrawer.cs" t="Include" />
+          <e p="DrawIfTruePropertyDrawer.cs" t="Include" />
           <e p="Int3Drawer.cs" t="Include" />
+          <e p="ReadOnlyDrawer.cs" t="Include" />
+          <e p="ShowOnlyDrawer.cs" t="Include" />
+        </e>
+        <e p="FirstPersonCharacter" t="Include">
+          <e p="FirstPersonCharacterGuidelines.txt" t="Include" />
+          <e p="Scripts" t="Include">
+            <e p="FirstPersonController.cs" t="Include" />
+            <e p="HeadBob.cs" t="Include" />
+            <e p="MouseLook.cs" t="Include" />
+            <e p="RigidbodyFirstPersonController.cs" t="Include" />
+          </e>
         </e>
         <e p="Scripts" t="Include">
+          <e p="Attributes" t="Include">
+            <e p="DrawIfFalseAttribute.cs" t="Include" />
+            <e p="DrawIfTrueAttribute.cs" t="Include" />
+            <e p="ReadOnlyAttribute.cs" t="Include" />
+            <e p="ShowOnlyAttribute.cs" t="Include" />
+          </e>
           <e p="Generation and Manipulation" t="Include">
             <e p="Bioms" t="Include">
               <e p="Biom.cs" t="Include" />
             </e>
             <e p="Chunks" t="Include">
+              <e p="Chunk Task job" t="Include">
+                <e p="ChunkJob.cs" t="Include" />
+                <e p="ChunkJobManager.cs" t="Include" />
+              </e>
               <e p="Chunk.cs" t="Include" />
               <e p="ChunkGameObjectPool.cs" t="Include" />
-              <e p="ChunkGenerator.cs" t="Include" />
               <e p="ChunkGizmosDrawer.cs" t="Include" />
-              <e p="IChunk.cs" t="Include" />
-              <e p="ICreateChunk.cs" t="Include" />
+              <e p="ChunkSavingSettings.cs" t="Include" />
+              <e p="ChunkSettings.cs" t="Include" />
+              <e p="ChunkUpdater.cs" t="Include" />
               <e p="IRemoveChunk.cs" t="Include" />
             </e>
             <e p="Mesh" t="Include">
@@ -43,6 +73,13 @@
                 <e p="UVDictionary.cs" t="Include" />
               </e>
             </e>
+            <e p="Noise" t="Include">
+              <e p="SimplexNoise.cs" t="Include" />
+              <e p="SimplexNoiseSettings.cs" t="Include" />
+            </e>
+            <e p="Tree generation" t="Include">
+              <e p="TreeGenerator.cs" t="Include" />
+            </e>
           </e>
           <e p="Manager" t="Include">
             <e p="GameManager.cs" t="Include" />
@@ -56,24 +93,35 @@
             <e p="RemoveBlock.cs" t="Include" />
             <e p="SelectedBlockVisualizer.cs" t="Include" />
           </e>
+          <e p="Saving" t="Include">
+            <e p="Context.cs" t="Include" />
+            <e p="ContextIO.cs" t="Include" />
+            <e p="SavingJob.cs" t="Include" />
+            <e p="SerializeHelper" t="Include">
+              <e p="ChunkSerializeHelper.cs" t="Include" />
+              <e p="SimplexNoiseSettingsSerializeHelper.cs" t="Include" />
+            </e>
+          </e>
+          <e p="UI" t="Include">
+            <e p="Console" t="Include">
+              <e p="ConsoleInputer.cs" t="Include" />
+              <e p="ConsoleMethodAttribute.cs" t="Include" />
+              <e p="IConsoleToggle.cs" t="Include" />
+            </e>
+            <e p="MainMenu" t="Include">
+              <e p="MainMenuUI.cs" t="Include" />
+              <e p="OptionsDialogUI.cs" t="Include" />
+              <e p="PlayDialogUI.cs" t="Include" />
+            </e>
+          </e>
           <e p="Utilities" t="Include">
             <e p="Extensions.cs" t="Include" />
             <e p="Int3.cs" t="Include" />
+            <e p="MathHelper.cs" t="Include" />
             <e p="SingletonBehaviour.cs" t="Include" />
           </e>
         </e>
         <e p="Standard Assets" t="Include">
-          <e p="Characters" t="Include">
-            <e p="FirstPersonCharacter" t="Include">
-              <e p="FirstPersonCharacterGuidelines.txt" t="Include" />
-              <e p="Scripts" t="Include">
-                <e p="FirstPersonController.cs" t="Include" />
-                <e p="HeadBob.cs" t="Include" />
-                <e p="MouseLook.cs" t="Include" />
-                <e p="RigidbodyFirstPersonController.cs" t="Include" />
-              </e>
-            </e>
-          </e>
           <e p="CrossPlatformInput" t="Include">
             <e p="CrossPlatformInputGuidelines.txt" t="Include" />
             <e p="Scripts" t="Include">
@@ -119,14 +167,36 @@
             <e p="WaypointProgressTracker.cs" t="Include" />
           </e>
         </e>
+        <e p="TextMesh Pro" t="Include">
+          <e p="Resources" t="Include">
+            <e p="LineBreaking Following Characters.txt" t="Include" />
+            <e p="LineBreaking Leading Characters.txt" t="Include" />
+            <e p="Shaders" t="Include">
+              <e p="TMP_Bitmap-Custom-Atlas.shader" t="Include" />
+              <e p="TMP_Bitmap-Mobile.shader" t="Include" />
+              <e p="TMP_Bitmap.shader" t="Include" />
+              <e p="TMP_SDF Overlay.shader" t="Include" />
+              <e p="TMP_SDF-Mobile Masking.shader" t="Include" />
+              <e p="TMP_SDF-Mobile Overlay.shader" t="Include" />
+              <e p="TMP_SDF-Mobile.shader" t="Include" />
+              <e p="TMP_SDF-Surface-Mobile.shader" t="Include" />
+              <e p="TMP_SDF-Surface.shader" t="Include" />
+              <e p="TMP_SDF.shader" t="Include" />
+              <e p="TMP_Sprite.shader" t="Include" />
+              <e p="TMPro.cginc" t="Include" />
+              <e p="TMPro_Properties.cginc" t="Include" />
+              <e p="TMPro_Surface.cginc" t="Include" />
+            </e>
+          </e>
+          <e p="Sprites" t="Include">
+            <e p="EmojiOne Attribution.txt" t="Include" />
+          </e>
+        </e>
       </e>
-      <e p="Library" t="ExcludeRecursive" />
       <e p="Mincraft.sln" t="IncludeFlat" />
       <e p="obj" t="ExcludeRecursive" />
       <e p="packages" t="ExcludeRecursive" />
-      <e p="Temp" t="ExcludeRecursive">
-        <e p="bin" t="ExcludeRecursive" />
-      </e>
+      <e p="Temp\bin" t="ExcludeRecursive" />
     </e>
   </component>
 </project>

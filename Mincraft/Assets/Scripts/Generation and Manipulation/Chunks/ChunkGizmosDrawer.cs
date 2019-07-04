@@ -7,13 +7,13 @@ public class ChunkGizmosDrawer : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (!Application.isPlaying || !ChunkSettings.Instance.drawGizmosChunks || gameObject.name == "Unused chunk" || !GetComponent<MeshRenderer>().enabled)
+        if (!Application.isPlaying || !ChunkSettings.Instance.drawGizmosChunks /*|| gameObject.name == "Unused chunk"*/ || !GetComponent<MeshRenderer>().enabled)
             return;
 
         if (position == default || size == default)
         {
-            position = this.transform.position;
-            size = Vector3.one * ChunkSettings.GetMaxSize;
+                position = this.transform.position;
+            size = Vector3.one * ChunkSettings.ChunkSize;
         }
 
         Gizmos.color = Color.white;

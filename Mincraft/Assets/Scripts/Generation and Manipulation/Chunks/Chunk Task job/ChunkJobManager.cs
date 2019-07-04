@@ -33,7 +33,7 @@ public class ChunkJobManager : IDisposable
 
     public ChunkJobManager()
     {
-        chunkSize = ChunkSettings.GetMaxSize;
+        chunkSize = ChunkSettings.ChunkSize;
         Jobs = new ConcurrentQueue<ChunkJob>();
         FinishedJobs = new ConcurrentQueue<ChunkJob>();
         chunkLoader = new ContextIO<Chunk>(ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName + "/");

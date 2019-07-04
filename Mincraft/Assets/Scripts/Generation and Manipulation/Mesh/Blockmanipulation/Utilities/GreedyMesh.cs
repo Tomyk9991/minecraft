@@ -5,7 +5,7 @@ using UnityEngine;
 public class GreedyMesh
 {
     private int size;
-    public GreedyMesh() => size = ChunkSettings.GetMaxSize;
+    public GreedyMesh() => size = ChunkSettings.ChunkSize;
 
     public MeshData ReduceMesh(Chunk chunk)
     {

@@ -13,7 +13,7 @@ public class MeshModifier
     private static int[] tri2 = { 0, 1, 2, 2, 1, 3 };
     private static int[] tris = { 1, 0, 0, 1, 1, 0 };
 
-    public event EventHandler<MeshData> MeshAvailable = null;
+    //public event EventHandler<MeshData> MeshAvailable = null;
     
     public void RedrawMeshFilter(GameObject g, MeshData data)
     {
@@ -45,7 +45,7 @@ public class MeshModifier
 
         refMesh.mesh.RecalculateNormals();
 
-        //TODO füge MeshCollider wieder ein
+        //TODO fÃ¼ge MeshCollider wieder ein
         g.GetComponent<MeshCollider>().sharedMesh = null;
 
 

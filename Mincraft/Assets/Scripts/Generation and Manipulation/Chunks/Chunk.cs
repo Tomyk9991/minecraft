@@ -34,7 +34,7 @@ public class Chunk : Context<Chunk>
 
     public Chunk()
     {
-        chunkSize = ChunkSettings.GetMaxSize;
+        chunkSize = ChunkSettings.ChunkSize;
         smoothness = ChunkSettings.SimplexNoiseSettings.Smoothness;
         steepness = ChunkSettings.SimplexNoiseSettings.Steepness;
         seed = ChunkSettings.SimplexNoiseSettings.Seed;
@@ -71,6 +71,12 @@ public class Chunk : Context<Chunk>
     }    
     #endregion
 
+    /// <summary>
+    /// Fügt den Block zum Chunk hinzu. Wenn dieser Block nicht mehr zum Chunk gehört, wird dieser zum nächsten
+    /// benachbarten Chunk hinzugefügt
+    /// </summary>
+    /// <param name="block">Block, welcher eine globale Position hat</param>
+    /// <returns>Gibt den Chunk zurück, wo der Block hinzugefügt wurde. Ist dieser Chunk nicht vorhanden, wird null zurückgegeben</returns>
     public Chunk TryAddBlockFromGlobal(Block block)
     {
         Chunk chunkReturn = this;
@@ -144,27 +150,22 @@ public class Chunk : Context<Chunk>
                 for (int z = 0; z < chunkSize; z++)
                 {
                     float height = OctavePerlin((x + this.Position.X + seed) * smoothness, (z + this.Position.Z + seed) * smoothness, 8, 0.5f) * steepness;
-
-                    //Debug.Log(height);
-
+                    Block b = new Block(new Int3(x, y, z));
 
                     if (y + this.Position.Y < height - 1)
                     {
-                        Block b = new Block(new Int3(x, y, z));
-                        b.SetID((int)BlockUV.Dirt);
-                        this.AddBlock(b);
+                        b.SetID((int) BlockUV.Dirt);
                     }
                     else if (y + this.Position.Y < height)
                     {
-                        Block b = new Block(new Int3(x,y, z));
                         b.SetID((int) BlockUV.Grass);
-                        this.AddBlock(b);
                     }
-                    else
+                    else if (y + this.Position.Y > height)
                     {
-                        Block b = new Block(new Int3(x, y, z));
-                        this.AddBlock(b);
+                        b.SetID((int) BlockUV.Air);
                     }
+
+                    this.AddBlock(b);
                 }
             }
         }
@@ -343,7 +344,7 @@ public class Chunk : Context<Chunk>
     private void GetChunkBoundsCalc()
     {
         boundsCalculated = true;
-        int maxSize = ChunkSettings.GetMaxSize;
+        int maxSize = ChunkSettings.ChunkSize;
         int half = maxSize / 2;
 
         lowerBound = new Int3(Mathf.FloorToInt(Position.X),

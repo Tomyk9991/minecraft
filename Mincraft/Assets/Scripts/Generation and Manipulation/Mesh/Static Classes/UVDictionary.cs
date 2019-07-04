@@ -21,26 +21,35 @@ public static class UVDictionary
             new UVData(3f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Back
             new UVData(12f / 16f, 3f / 16f, 1f / 16f, 1f / 16f), //Up
             new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Down
-            new UVData(3f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //left
-            new UVData(3f / 16f, 15f / 16f, 1f / 16f, 1f / 16f) //right
+            new UVData(3f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Left
+            new UVData(3f / 16f, 15f / 16f, 1f / 16f, 1f / 16f)  //Right
         });
         dictionary.Add(BlockUV.Stone, new []
         {
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f)
+            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Forward
+            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Back
+            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Up
+            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Down
+            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Left
+            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f)  //Right
         });
         dictionary.Add(BlockUV.Dirt, new []
         {
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f),
+            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Forward
+            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Back
+            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Up
+            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Down
+            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Left
+            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f)  //Right
+        });
+        dictionary.Add(BlockUV.Air, new[]
+        {
+            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Forward
+            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Back
+            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Up
+            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Down
+            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Left
+            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f)  //Right
         });
     }
 

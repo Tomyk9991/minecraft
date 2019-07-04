@@ -6,7 +6,6 @@ public class ChunkUpdater : MonoBehaviour
     public ChunkGameObjectPool GoPool { get; set; }
 
     [Header("References")]
-    [SerializeField] private ChunkSettings generator = null;
     [SerializeField] private GameObject player = null;
 
     [SerializeField] private int amountDrawChunksPerFrame = 5;
@@ -30,9 +29,9 @@ public class ChunkUpdater : MonoBehaviour
         chunkJobManager.Start();
 
         latestPlayerPosition = player.transform.position.ToInt3();
-        drawDistance = generator.drawDistance;
+        drawDistance = ChunkSettings.DrawDistance;
 
-        chunkSize = ChunkSettings.GetMaxSize;
+        chunkSize = ChunkSettings.ChunkSize;
 
         GoPool = ChunkGameObjectPool.Instance;
 
