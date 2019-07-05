@@ -60,6 +60,15 @@ public static class UVDictionary
             new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Left
             new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f)  //Right
         });
+        dictionary.Add(BlockUV.Glass, new[] 
+        {
+            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Forward
+            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Back
+            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Up
+            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Down
+            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Left
+            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f)  //Right
+        });
     }
 
     public static void Clear()

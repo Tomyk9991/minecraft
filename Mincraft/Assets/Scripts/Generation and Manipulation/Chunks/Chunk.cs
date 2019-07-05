@@ -164,10 +164,10 @@ public class Chunk : Context<Chunk>
                     {
                         b.SetID((int) BlockUV.Air);
                     }
-//                    else if (y + this.Position.Y > height)
-//                    {
-//                        b.SetID((int) BlockUV.Cactus);
-//                    }
+                    else if (y + this.Position.Y > height)
+                    {
+                        b.SetID((int) BlockUV.Glass);
+                    }
 
                     this.AddBlock(b);
                 }

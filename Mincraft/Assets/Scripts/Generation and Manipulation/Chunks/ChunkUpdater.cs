@@ -95,8 +95,6 @@ public class ChunkUpdater : MonoBehaviour
 
         for (int x = xStart - drawDistance.X / 2; x < xStart + drawDistance.X / 2; x += chunkSize)
         {
-            //Vielleicht yStart?
-            //for (int y = yStart; y > -drawDistance.Y; y -= chunkSize) // Minus to calculate chunks downwards, not upwards
             for(int y = yStart + drawDistance.Y / 2; y >= yStart - drawDistance.Y / 2; y -= chunkSize)
             {
                 for (int z = zStart - drawDistance.Z / 2; z < zStart + drawDistance.Z / 2; z += chunkSize)
@@ -106,7 +104,6 @@ public class ChunkUpdater : MonoBehaviour
 
                     if (!HashSetPositionChecker.Contains(chunkPos)) //Wenn man innerhalb der neuen Position einen Chunk braucht
                     {
-
                         //Wird in ChunkJob zum Hash hinzugefügt
                         ChunkJob job = new ChunkJob(chunkPos);
                         chunkJobManager.Add(job);
@@ -142,6 +139,22 @@ public class ChunkUpdater : MonoBehaviour
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(latestPlayerPosition.ToVector3(), 2f);
+        }
+    }
+
+    TreeGenerator treeGenerator = null;
+    Int3[] treeCubes;
+    private void OnDrawGizmosSelected() 
+    {
+        if (treeGenerator == null) 
+        {
+            treeGenerator = new TreeGenerator(new Int2(10, 15), new Int2(7, 10));
+            treeCubes = treeGenerator.Generate(Int3.Zero);
+        }
+        for (int i = 0; i < treeCubes.Length; i++)
+        {
+            Gizmos.color = i < treeGenerator.MaxWood ? new Color(139f / 255f, 69f / 255f, 19f / 255f) : Color.green;
+            Gizmos.DrawCube(treeCubes[i].ToVector3(), Vector3.one);
         }
     }
 

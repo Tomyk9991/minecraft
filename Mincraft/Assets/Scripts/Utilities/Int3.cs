@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public struct Int3
+public struct Int3 : IntVector
 {
     public int X;
     public int Y;
@@ -56,6 +56,8 @@ public struct Int3
     public static Int3 Down => new Int3(0, -1, 0);
     public static Int3 Left => new Int3(-1, 0, 0);
     public static Int3 Right => new Int3(1, 0, 0);
+
+    public static Int3 Zero => new Int3(0, 0, 0);
 
     public static Int3 ToInt3(Vector3 target)
         => new Int3(Mathf.RoundToInt(target.x), Mathf.RoundToInt(target.y), Mathf.RoundToInt(target.z));

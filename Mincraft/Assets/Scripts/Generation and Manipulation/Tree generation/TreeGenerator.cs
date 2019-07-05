@@ -1,87 +1,76 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Transactions;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class TreeGenerator : MonoBehaviour
+public class TreeGenerator
 {
-    public ChunkGameObjectPool GoPool { get; set; }
-    
-    private Int3 drawDistance;
-    private int chunkSize = 16;
-    
-    private MeshModifier modifier;
-    private ChunkJobManager chunkJobManager;
-    
-    private void Start()
-    {
-        drawDistance = ChunkSettings.DrawDistance;
-        chunkSize = ChunkSettings.ChunkSize;
-        GoPool = ChunkGameObjectPool.Instance;
-        
-        modifier = new MeshModifier();
-        chunkJobManager = new ChunkJobManager();
-        chunkJobManager.Start();
+    private Int2 minMaxHeight;
+    private Int2 minMaxVolume;
+    private int maxWood = 0;
 
-        RecalculateChunks();
-    }
-
-    private void Update()
-    {
-        for (int i = 0; i < chunkJobManager.FinishedJobsCount; i++)
+    /// <summary>Gets the Index of the last wood-block </summary>    
+    public int MaxWood 
+    { 
+        get => maxWood;            
+        private set
         {
-            ChunkJob task = chunkJobManager.DequeueFinishedJobs();
-
-            if (task != null && task.Completed)
-            {
-                RenderCall(task);
-            }
+            maxWood = value;
         }
     }
 
-    private void RecalculateChunks()
+    public TreeGenerator(Int2 minMaxHeight, Int2 minMaxVolume)
     {
-        for (int x = -(drawDistance.X / 2); x < drawDistance.X / 2; x += chunkSize)
-        {
-            //Vielleicht yStart?
-            //for (int y = yStart; y > -drawDistance.Y; y -= chunkSize) // Minus to calculate chunks downwards, not upwards
-            for(int y = +drawDistance.Y / 2; y >= -drawDistance.Y / 2; y -= chunkSize)
-            {
-                for (int z = -(drawDistance.Z / 2); z < drawDistance.Z / 2; z += chunkSize)
-                {
-                    // 2)
-                    Int3 chunkPos = new Int3(x, y, z);
+        this.minMaxHeight = minMaxHeight;
+        this.minMaxVolume = minMaxVolume;
+    }
 
-                    if (!HashSetPositionChecker.Contains(chunkPos)) //Wenn man innerhalb der neuen Position einen Chunk braucht
+    public Int3[] Generate(Int3 initialPosition)
+    {
+        //Ersetze Random durch Perlin noise, basierend auf der aktuellen Position, um es deterministisch zu gestalten#
+        //Möglicherweise auch Random mit Seed
+        int height = Random.Range(minMaxHeight.X, minMaxHeight.Y + 1);
+        int volume = Random.Range(minMaxVolume.X, minMaxVolume.Y + 1);
+        Int3 latestPos = initialPosition;
+        var tR = new List<Int3>();
+
+        volume += volume % 2 == 0 ? 1 : 0;
+
+        for (int i = initialPosition.Y + 1; i < initialPosition.Y + height; i++)
+        {
+            
+            Int3 blockPos = new Int3(initialPosition.X, i, initialPosition.Z);
+            latestPos = blockPos;
+            tR.Add(blockPos);
+            maxWood++;
+        }
+
+        for (int i = 0; i < volume; i++)
+        {
+            for (int j = 0; j < volume; j++)
+            {
+                for (int k = 0; k < volume; k++)
+                {
+                    if(LeafSpawn(i, j, k, volume)) 
                     {
-                        //Wird in ChunkJob zum Hash hinzugefügt
-                        ChunkJob job = new ChunkJob(chunkPos);
-                        chunkJobManager.Add(job);
+                        Int3 blockPos = new Int3(
+                            latestPos.X - volume / 2 + i,
+                            latestPos.Y - volume / 2 + j,
+                            latestPos.Z - volume / 2 + k);
+                        tR.Add(blockPos);
                     }
                 }
             }
         }
+
+        return tR.ToArray();
     }
 
-    private void RenderCall(ChunkJob t)
+    private bool LeafSpawn(int x, int y, int z, int volume) 
     {
-        //Ab hier wieder synchron auf Mainthread
-        var newChunk = t.Chunk;
+        float a = Mathf.Abs(-volume / 2 + x);
+        float b = Mathf.Abs(-volume / 2 + y);
+        float c = Mathf.Abs(-volume / 2 + z);
 
-        if (newChunk.CurrentGO == null)
-        {
-            newChunk.CurrentGO = GoPool.GetNextUnusedChunk();
-        }
-
-        newChunk.CurrentGO.SetActive(true);
-        newChunk.CurrentGO.transform.position = newChunk.Position.ToVector3();
-
-        modifier.SetMesh(newChunk.CurrentGO, t.MeshData, t.ColliderData);
-    }
-
-    private void OnDestroy()
-    {
-        chunkJobManager?.Dispose();
+        float distance = Mathf.Sqrt(Mathf.Pow(a, 2) + Mathf.Pow(b, 2) + Mathf.Pow(c, 2));
+        return (distance < volume / 2 && Random.Range(0, volume) > distance);
     }
 }
