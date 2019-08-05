@@ -1,76 +1,62 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class TreeGenerator
+public abstract class TreeGenerator
 {
-    private Int2 minMaxHeight;
-    private Int2 minMaxVolume;
-    private int maxWood = 0;
-
-    /// <summary>Gets the Index of the last wood-block </summary>    
-    public int MaxWood 
-    { 
-        get => maxWood;            
-        private set
-        {
-            maxWood = value;
-        }
-    }
-
-    public TreeGenerator(Int2 minMaxHeight, Int2 minMaxVolume)
+    /// <summary>
+    /// Adds an block to the corresponding Chunk automatically
+    /// </summary>
+    /// <param name="block">The blockposition has to be in global space</param>
+    /// <param name="chunk">The chunk, you're setting the initial tree plant</param>
+    public void SetBlock(Block block, Chunk chunk)
     {
-        this.minMaxHeight = minMaxHeight;
-        this.minMaxVolume = minMaxVolume;
-    }
+        //May cache the most common chunks to boost the performance
+        //Chunk c = chunk.TryAddBlockFromGlobal(block, out Int3 chunkPosition);
 
-    public Int3[] Generate(Int3 initialPosition)
-    {
-        //Ersetze Random durch Perlin noise, basierend auf der aktuellen Position, um es deterministisch zu gestalten#
-        //Möglicherweise auch Random mit Seed
-        int height = Random.Range(minMaxHeight.X, minMaxHeight.Y + 1);
-        int volume = Random.Range(minMaxVolume.X, minMaxVolume.Y + 1);
-        Int3 latestPos = initialPosition;
-        var tR = new List<Int3>();
+        Chunk c = chunk.GetChunkFromGlobalBlock(block, out Int3 chunkPosition);
 
-        volume += volume % 2 == 0 ? 1 : 0;
-
-        for (int i = initialPosition.Y + 1; i < initialPosition.Y + height; i++)
+        if (c == null)
         {
-            
-            Int3 blockPos = new Int3(initialPosition.X, i, initialPosition.Z);
-            latestPos = blockPos;
-            tR.Add(blockPos);
-            maxWood++;
-        }
-
-        for (int i = 0; i < volume; i++)
-        {
-            for (int j = 0; j < volume; j++)
+            Chunk tempChunk = new Chunk
             {
-                for (int k = 0; k < volume; k++)
-                {
-                    if(LeafSpawn(i, j, k, volume)) 
-                    {
-                        Int3 blockPos = new Int3(
-                            latestPos.X - volume / 2 + i,
-                            latestPos.Y - volume / 2 + j,
-                            latestPos.Z - volume / 2 + k);
-                        tR.Add(blockPos);
-                    }
-                }
-            }
+                Position = chunkPosition
+            };
+
+            block.Position -= tempChunk.Position;
+            tempChunk.AddBlock(block);
+
+            tempChunk.AddedToDick = true;
+        }
+        else
+        {
+            block.Position -= chunkPosition;
+            c.AddBlock(block);
         }
 
-        return tR.ToArray();
+        //if (c != chunk)
+        //{
+        //    if (c == null)
+        //    {
+        //        if (!HashSetPositionChecker.Contains(chunkPosition))
+        //        {
+        //            Chunk tempChunk = new Chunk
+        //            {
+        //                Position = chunkPosition
+        //            };
+
+        //            block.Position -= tempChunk.Position;
+        //            tempChunk.AddBlock(block);
+
+        //            ChunkJob chunkJob = new ChunkJob(tempChunk, true);
+        //            ChunkJobManager.ChunkJobManagerUpdaterInstance.Add(chunkJob);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        ChunkJob chunkJob = new ChunkJob(c, true);
+        //        ChunkJobManager.ChunkJobManagerUpdaterInstance.Add(chunkJob);
+        //    }
+        //}
     }
 
-    private bool LeafSpawn(int x, int y, int z, int volume) 
-    {
-        float a = Mathf.Abs(-volume / 2 + x);
-        float b = Mathf.Abs(-volume / 2 + y);
-        float c = Mathf.Abs(-volume / 2 + z);
-
-        float distance = Mathf.Sqrt(Mathf.Pow(a, 2) + Mathf.Pow(b, 2) + Mathf.Pow(c, 2));
-        return (distance < volume / 2 && Random.Range(0, volume) > distance);
-    }
+    public virtual void Generate(Chunk c, int x, int y, int z) { }
 }

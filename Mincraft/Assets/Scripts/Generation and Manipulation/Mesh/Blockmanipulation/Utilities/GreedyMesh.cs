@@ -6,6 +6,7 @@ public class GreedyMesh
 {
     private int size;
     public GreedyMesh() => size = ChunkSettings.ChunkSize;
+    public GreedyMesh(bool test) => size = 16;
 
     public MeshData ReduceMesh(Chunk chunk)
     {

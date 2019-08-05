@@ -56,6 +56,7 @@ public struct Int3 : IntVector
     public static Int3 Down => new Int3(0, -1, 0);
     public static Int3 Left => new Int3(-1, 0, 0);
     public static Int3 Right => new Int3(1, 0, 0);
+    public static Int3 One => new Int3(1, 1, 1);
 
     public static Int3 Zero => new Int3(0, 0, 0);
 
@@ -78,7 +79,18 @@ public struct Int3 : IntVector
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        unchecked
+        {
+            const int hashingbase = (int)2166136261;
+            const int hashingMultiplier = 16777619;
+
+            int hash = hashingbase;
+            hash = (hash * hashingMultiplier) ^ this.X.GetHashCode();
+            hash = (hash * hashingMultiplier) ^ this.Y.GetHashCode();
+            hash = (hash * hashingMultiplier) ^ this.Z.GetHashCode();
+
+            return hash;
+        }
     }
 
     public override string ToString()
@@ -90,6 +102,7 @@ public struct Int3 : IntVector
         bool xResult = predicate(this.X); // wenn wahr, dann true z.b 16 > 15? true
         bool yResult = predicate(this.Y);
         bool zResult = predicate(this.Z);
+        
 
         if (xResult)
             value = 0;

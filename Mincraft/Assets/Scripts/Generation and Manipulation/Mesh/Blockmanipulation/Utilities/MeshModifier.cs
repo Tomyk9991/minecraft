@@ -14,33 +14,76 @@ public class MeshModifier
     private static int[] tris = { 1, 0, 0, 1, 1, 0 };
 
     //public event EventHandler<MeshData> MeshAvailable = null;
-    
+
     public void RedrawMeshFilter(GameObject g, MeshData data)
     {
+        //var refMesh = g.GetComponent<MeshFilter>();
+        //refMesh.mesh = new Mesh()
+        //{
+        //    indexFormat = IndexFormat.UInt32,
+        //    vertices = data.Vertices.ToArray(),
+        //    triangles = data.Triangles.ToArray(),
+        //    uv = data.UVs.ToArray()
+        //};
+
+
+        //refMesh.mesh.RecalculateNormals();
+        //g.GetComponent<MeshCollider>().sharedMesh = refMesh.mesh;
+
         var refMesh = g.GetComponent<MeshFilter>();
         refMesh.mesh = new Mesh()
         {
             indexFormat = IndexFormat.UInt32,
             vertices = data.Vertices.ToArray(),
-            triangles = data.Triangles.ToArray(),
-            uv = data.UVs.ToArray()
+            uv = data.UVs.ToArray(),
+            subMeshCount = 2
         };
 
-        
+        refMesh.mesh.SetTriangles(data.Triangles.ToArray(), 0);
+        refMesh.mesh.SetTriangles(data.TransparentTriangles.ToArray(), 1);
+
+
         refMesh.mesh.RecalculateNormals();
         g.GetComponent<MeshCollider>().sharedMesh = refMesh.mesh;
     }
 
     public void SetMesh(GameObject g, MeshData meshData, MeshData colliderData)
     {
+        //var refMesh = g.GetComponent<MeshFilter>();
+        //refMesh.mesh = new Mesh()
+        //{
+        //    indexFormat = IndexFormat.UInt32,
+        //    vertices = meshData.Vertices.ToArray(),
+        //    triangles = meshData.Triangles.ToArray(),
+        //    uv = meshData.UVs.ToArray()
+        //};
+
+
+        //refMesh.mesh.RecalculateNormals();
+
+        ////TODO füge MeshCollider wieder ein
+        //g.GetComponent<MeshCollider>().sharedMesh = null;
+
+
+        //Mesh colliderMesh = new Mesh();
+        //colliderMesh.indexFormat = IndexFormat.UInt32;
+        //colliderMesh.vertices = colliderData.Vertices.ToArray();
+        //colliderMesh.triangles = colliderData.Triangles.ToArray();
+
+        //g.GetComponent<MeshCollider>().sharedMesh = colliderMesh;
+
+
         var refMesh = g.GetComponent<MeshFilter>();
         refMesh.mesh = new Mesh()
         {
             indexFormat = IndexFormat.UInt32,
             vertices = meshData.Vertices.ToArray(),
-            triangles = meshData.Triangles.ToArray(),
-            uv = meshData.UVs.ToArray()
+            uv = meshData.UVs.ToArray(),
+            subMeshCount = 2
         };
+
+        refMesh.mesh.SetTriangles(meshData.Triangles.ToArray(), 0);
+        refMesh.mesh.SetTriangles(meshData.TransparentTriangles.ToArray(), 1);
 
 
         refMesh.mesh.RecalculateNormals();

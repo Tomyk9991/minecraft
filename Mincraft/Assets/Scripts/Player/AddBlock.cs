@@ -17,7 +17,7 @@ public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
     
     [SerializeField] private int mouseButtonIndex = 1;
     [SerializeField] private float raycastHitable = 1000f;
-    [SerializeField] private BlockUV blockUV = BlockUV.Dirt;
+    [SerializeField] private BlockUV blockUV = BlockUV.Wood;
 
     private int chunkSize;
     
@@ -66,13 +66,21 @@ public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
 
                 Chunk chunkOnClicked = ChunkDictionary.GetValue(hit.transform.position.ToInt3());
 
-                Chunk chunk = chunkOnClicked.TryAddBlockFromGlobal(block);
+                //Chunk chunk = chunkOnClicked.TryAddBlockFromGlobal(block, out Int3 chunkPos);
+                Chunk chunk = chunkOnClicked.GetChunkFromGlobalBlock(block, out Int3 chunkPos);
 
                 if (chunk != null)
                 {
-                    chunkJobManager.Add(new ChunkJob(chunk));
+                    chunk.AddBlock(block);
+                    //TODO add to chunkjobmanager somehow
                     chunk.SaveChunk();
                 }
+
+                //if (chunk != null)
+                //{
+                //    chunkJobManager.Add(new ChunkJob(chunk));
+                //    chunk.SaveChunk();
+                //}
             }
         }
 

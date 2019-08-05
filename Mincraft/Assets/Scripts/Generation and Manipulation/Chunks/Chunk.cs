@@ -1,4 +1,4 @@
-﻿using Unity.Mathematics;
+﻿using System;
 using UnityEngine;
 
 public class Chunk : Context<Chunk>
@@ -6,9 +6,13 @@ public class Chunk : Context<Chunk>
     //TODO, wenn der Chunk sich durch Simulation (z.B. Gras ist gewachsen) verändert, soll ebenfalls gespeichert werden
     public GameObject CurrentGO { get; set; }
     public Int3 Position { get; set; }
+    public bool AddedToDick { get; set; }
+    public bool AddedToHash { get; set; }
+
+    public bool NeedRedraw { get; set; }
 
     private Int3 lowerBound, higherBound;
-    
+
     private bool boundsCalculated = false;
     private Block[] blocks;
     private static int chunkSize;
@@ -20,7 +24,9 @@ public class Chunk : Context<Chunk>
     private float steepness = 0;
     private int seed = -1;
 
-    private static Int3[] directions = 
+    private TreeGenerator treeGenerator;
+
+    private static Int3[] directions =
     {
         Int3.Forward, // 0
         Int3.Back, // 1
@@ -29,8 +35,7 @@ public class Chunk : Context<Chunk>
         Int3.Left, // 4
         Int3.Right // 5
     };
-    
-    #region Interface implementation
+
 
     public Chunk()
     {
@@ -38,10 +43,20 @@ public class Chunk : Context<Chunk>
         smoothness = ChunkSettings.SimplexNoiseSettings.Smoothness;
         steepness = ChunkSettings.SimplexNoiseSettings.Steepness;
         seed = ChunkSettings.SimplexNoiseSettings.Seed;
+        NeedRedraw = true;
+        treeGenerator = new OakTreeGenerator(new Int2(4, 6), new Int2(2, 4));
 
-        
+
         blocks = new Block[chunkSize * chunkSize * chunkSize];
         chunkNeigbours = new Chunk[6];
+    }
+
+    public Chunk(bool test) //Test
+    {
+        chunkSize = 16;
+        blocks = new Block[chunkSize * chunkSize * chunkSize];
+        chunkNeigbours = new Chunk[6];
+        NeedRedraw = true;
     }
 
     public void AddBlock(Block block)
@@ -63,13 +78,52 @@ public class Chunk : Context<Chunk>
 
     public override Chunk Caster(object data)
     {
-        var helper = (ChunkSerializeHelper) data;
+        var helper = (ChunkSerializeHelper)data;
         this.Position = helper.ChunkPosition;
         this.blocks = helper.localBlocks;
 
         return this;
-    }    
+    }
     #endregion
+
+    ///// <summary>
+    ///// Fügt den Block zum Chunk hinzu. Wenn dieser Block nicht mehr zum Chunk gehört, wird dieser zum nächsten
+    ///// benachbarten Chunk hinzugefügt
+    ///// </summary>
+    ///// <param name="block">Block, welcher eine globale Position hat</param>
+    ///// <returns>Gibt den Chunk zurück, wo der Block hinzugefügt wurde. Ist dieser Chunk nicht vorhanden, wird null zurückgegeben</returns>
+    //public Chunk TryAddBlockFromGlobal(Block block, out Int3 chunkPosition)
+    //{
+    //    Chunk chunkReturn = this;
+    //    chunkPosition = this.Position;
+
+    //    Int3 local = new Int3(block.Position.X - this.Position.X, block.Position.Y - this.Position.Y, block.Position.Z - this.Position.Z);
+
+
+    //    if (local.X >= 0 && local.X < chunkSize
+    //     && local.Y >= 0 && local.Y < chunkSize
+    //     && local.Z >= 0 && local.Z < chunkSize)
+    //    {
+    //        block.Position = local;
+    //        this.AddBlock(block);
+    //        return this;
+    //    }
+
+    //    int chunkX = Mathf.FloorToInt(block.Position.X / (float) chunkSize) * chunkSize;
+    //    int chunkY = Mathf.FloorToInt(block.Position.Y / (float) chunkSize) * chunkSize;
+    //    int chunkZ = Mathf.FloorToInt(block.Position.Z / (float) chunkSize) * chunkSize;
+
+    //    chunkPosition = new Int3(chunkX, chunkY, chunkZ);
+
+    //    Chunk target = ChunkDictionary.GetValue(chunkPosition);
+
+    //    if (target != null)
+    //    {
+    //        block.Position -= target.Position;
+    //        target.AddBlock(block);
+    //    }
+    //    return target;
+    //}
 
     /// <summary>
     /// Fügt den Block zum Chunk hinzu. Wenn dieser Block nicht mehr zum Chunk gehört, wird dieser zum nächsten
@@ -77,54 +131,35 @@ public class Chunk : Context<Chunk>
     /// </summary>
     /// <param name="block">Block, welcher eine globale Position hat</param>
     /// <returns>Gibt den Chunk zurück, wo der Block hinzugefügt wurde. Ist dieser Chunk nicht vorhanden, wird null zurückgegeben</returns>
-    public Chunk TryAddBlockFromGlobal(Block block)
+    public Chunk GetChunkFromGlobalBlock(Block block, out Int3 chunkPosition)
     {
         Chunk chunkReturn = this;
+        chunkPosition = this.Position;
 
         Int3 local = new Int3(block.Position.X - this.Position.X, block.Position.Y - this.Position.Y, block.Position.Z - this.Position.Z);
 
-        if (local.AnyAttribute(dim => dim > chunkSize - 1, out int dimension))
+
+        if (local.X >= 0 && local.X < chunkSize
+         && local.Y >= 0 && local.Y < chunkSize
+         && local.Z >= 0 && local.Z < chunkSize)
         {
-            local = new Int3(local.X % chunkSize, local.Y % chunkSize, local.Z % chunkSize);
-            switch (dimension)
-            {
-                case 0:
-                    chunkReturn = ChunkDictionary.GetValue(this.Position + directions[5] * chunkSize);
-                    break;
-                case 1:
-                    chunkReturn = ChunkDictionary.GetValue(this.Position + directions[2] * chunkSize);
-                    break;
-                case 2:
-                    chunkReturn = ChunkDictionary.GetValue(this.Position + directions[0] * chunkSize);
-                    break;
-            }
-        }
-        else if (local.AnyAttribute(dim => dim < 0, out dimension))
-        {
-            switch (dimension)
-            {
-                case 0: //X
-                    local = new Int3(chunkSize + local.X, local.Y, local.Z);
-                    chunkReturn = ChunkDictionary.GetValue(this.Position + directions[4] * chunkSize);
-                    break;
-                case 1: //Y
-                    local = new Int3(local.X, chunkSize + local.Y, local.Z);
-                    chunkReturn = ChunkDictionary.GetValue(this.Position + directions[3] * chunkSize);
-                    break;
-                case 2: //Z
-                    local = new Int3(local.X, local.Y, chunkSize + local.Z);
-                    chunkReturn = ChunkDictionary.GetValue(this.Position + directions[1] * chunkSize);
-                    break;
-            }
+            block.Position = local;
+            return this;
         }
 
-        if (chunkReturn == null)
-        {
-            return null;
-        }
+        int chunkX = Mathf.FloorToInt(block.Position.X / (float)chunkSize) * chunkSize;
+        int chunkY = Mathf.FloorToInt(block.Position.Y / (float)chunkSize) * chunkSize;
+        int chunkZ = Mathf.FloorToInt(block.Position.Z / (float)chunkSize) * chunkSize;
 
-        chunkReturn.AddBlock(new Block(local) {ID = block.ID} );
-        return chunkReturn;
+        chunkPosition = new Int3(chunkX, chunkY, chunkZ);
+
+        Chunk target = ChunkDictionary.GetValue(chunkPosition);
+
+        if (target != null)
+        {
+            block.Position -= target.Position;
+        }
+        return target;
     }
 
     public void RemoveBlockAsGlobal(Int3 globalBlockPos)
@@ -132,14 +167,6 @@ public class Chunk : Context<Chunk>
         int index = GetFlattenIndex(globalBlockPos.X - this.Position.X, globalBlockPos.Y - this.Position.Y, globalBlockPos.Z - this.Position.Z);
         blocks[index] = Block.Empty();
     }
-
-    private void RemoveBlock(Int3 blockPos)
-    {
-        int index = GetFlattenIndex(blockPos.X, blockPos.Y, blockPos.Z);
-        blocks[index] = Block.Empty();
-    }
-    
-    public int BlockCount() => blocks.Length;
 
     public void GenerateBlocks() // TODO: Make this based on biom. Maybe virtual or pass in IBiom?
     {
@@ -150,29 +177,35 @@ public class Chunk : Context<Chunk>
                 for (int z = 0; z < chunkSize; z++)
                 {
                     float height = OctavePerlin((x + this.Position.X + seed) * smoothness, (z + this.Position.Z + seed) * smoothness, 8, 0.5f) * steepness;
-                    Block b = new Block(new Int3(x, y, z));
 
                     if (y + this.Position.Y < height - 1)
                     {
-                        b.SetID((int) BlockUV.Dirt);
+                        Block b = new Block(new Int3(x, y, z));
+                        b.SetID((int)BlockUV.Dirt);
+                        this.AddBlock(b);
                     }
                     else if (y + this.Position.Y < height)
                     {
-                        b.SetID((int) BlockUV.Grass);
+                        Block b = new Block(new Int3(x, y, z));
+                        b.SetID((int)BlockUV.Grass);
+                        this.AddBlock(b);
                     }
-                    else if (y + this.Position.Y > height + 1)
+                    else if (y + this.Position.Y == (int)height + 1)
                     {
-                        b.SetID((int) BlockUV.Air);
-                    }
-                    else if (y + this.Position.Y > height)
-                    {
-                        b.SetID((int) BlockUV.Glass);
-                    }
+                        float TESTZOOMLEVEL = 1.08f;
 
-                    this.AddBlock(b);
+                        float result = Mathf.PerlinNoise((x + this.Position.X + seed) * TESTZOOMLEVEL, (z + this.Position.Z + seed) * TESTZOOMLEVEL);
+                        if (result > 0.93f) //93
+                        {
+                            //Irgendwas bei der Tree-Generation kaputt. Rechnet in zwei verschiende Chunks 2 mal das selbe Resultat
+                            //treeGenerator.Generate(this, x, y, z);
+                        }
+                    }
                 }
             }
         }
+
+        this.NeedRedraw = true;
     }
 
     private float OctavePerlin(float x, float y, int octaves, float persistence)
@@ -198,13 +231,13 @@ public class Chunk : Context<Chunk>
     {
         return blocks[GetFlattenIndex(x, y, z)];
     }
-    
+
     public Block[] GetBlocks() => blocks;
     public bool IsNotEmpty(int x, int y, int z)
     {
         //Maybe no GetLocalPosition
         Block currentBlock = blocks[GetFlattenIndex(x, y, z)];
-        return currentBlock.ID != -1;
+        return currentBlock.ID != (int)BlockUV.Air;
     }
 
     public (Int3 lowerBound, Int3 higherBound) GetChunkBounds()
@@ -214,7 +247,7 @@ public class Chunk : Context<Chunk>
 
         return (lowerBound, higherBound);
     }
-    
+
     public void CalculateNeigbours()
     {
         for (int i = 0; i < chunkNeigbours.Length; i++)
@@ -235,98 +268,99 @@ public class Chunk : Context<Chunk>
     /// <param name="index"></param>
     /// <param name="blockPos">Rufe Block mit globaler Position auf</param>
     /// <returns></returns>
-    public bool GetNeigbourAt(int index, Int3 blockPos)
+    private bool GetNeigbourAt(int index, Int3 blockPos, BlockUV uv)
     {
         Int3 local = blockPos;
-        switch (index)
-            {
-                case 0:
-                    {
-                        if ((local + directions[0]).Z < chunkSize)
-                        {
-                            return blocks[GetFlattenIndex(local.X + directions[0].X, local.Y + directions[0].Y, local.Z + directions[0].Z)].ID >= 0;
-                        }
-                        else
-                        {
-                            if (chunkNeigbours[0] != null)
-                            {
-                                return chunkNeigbours[0].GetBlock(blockPos.X, blockPos.Y, 0).ID >= 0;
-                            }
-                        }
-                        break;
-                    }
-                case 1:
-                    if ((local + directions[1]).Z >= 0)
-                    {
-                        return blocks[GetFlattenIndex(local.X + directions[1].X, local.Y + directions[1].Y, local.Z + directions[1].Z)].ID >= 0;
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[1] != null)
-                        {
-                            return chunkNeigbours[1].GetBlock(blockPos.X, blockPos.Y, chunkSize - 1).ID >= 0;
-                        }
-                    }
-                    break;
-                case 2:
-                    if ((local + directions[2]).Y < chunkSize)
-                    {
-                        return blocks[GetFlattenIndex(local.X + directions[2].X, local.Y + directions[2].Y, local.Z + directions[2].Z)].ID >= 0;
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[2] != null)
-                        {
-                            return chunkNeigbours[2].GetBlock(blockPos.X, 0, blockPos.Z).ID >= 0;
-                        }
-                    }
-                    break;
-                case 3:
-                    if ((local + directions[3]).Y >= 0)
-                    {
-                        return blocks[GetFlattenIndex(local.X + directions[3].X, local.Y + directions[3].Y, local.Z + directions[3].Z)].ID >= 0;
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[3] != null)
-                        {
-                            return chunkNeigbours[3].GetBlock(blockPos.X, chunkSize - 1, blockPos.Z).ID >= 0;
-                        }
-                    }
-                    break;
-                case 4:
-                    if ((local + directions[4]).X >= 0)
-                    {
-                        return blocks[GetFlattenIndex(local.X + directions[4].X, local.Y + directions[4].Y, local.Z + directions[4].Z)].ID >= 0;
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[4] != null)
-                        {
-                            return chunkNeigbours[4].GetBlock(chunkSize - 1, blockPos.Y, blockPos.Z).ID >= 0;
-                        }
-                    }
-                    break;
-                case 5:
-                    if ((local + directions[5]).X < chunkSize)
-                    {
-                        return blocks[GetFlattenIndex(local.X + directions[5].X, local.Y + directions[5].Y, local.Z + directions[5].Z)].ID >= 0;
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[5] != null)
-                        {
-                            return chunkNeigbours[5].GetBlock(0, blockPos.Y, blockPos.Z).ID >= 0;
-                        }
-                    }
-                    break;
-            }
+        Block block = new Block();
 
-        return false;
+        switch (index)
+        {
+            case 0: //Forward
+                {
+                    if ((local + directions[0]).Z < chunkSize)
+                    {
+                        block = blocks[GetFlattenIndex(local.X + directions[0].X, local.Y + directions[0].Y, local.Z + directions[0].Z)];
+                    }
+                    else
+                    {
+                        if (chunkNeigbours[0] != null)
+                        {
+                            block = chunkNeigbours[0].GetBlock(blockPos.X, blockPos.Y, 0);
+                        }
+                    }
+                    break;
+                }
+            case 1: //Back
+                if ((local + directions[1]).Z >= 0)
+                {
+                    block = blocks[GetFlattenIndex(local.X + directions[1].X, local.Y + directions[1].Y, local.Z + directions[1].Z)];
+                }
+                else
+                {
+
+                    if (chunkNeigbours[1] != null)
+                    {
+                        block = chunkNeigbours[1].GetBlock(blockPos.X, blockPos.Y, chunkSize - 1);
+                    }
+                }
+                break;
+            case 2: //Up
+                if ((local + directions[2]).Y < chunkSize)
+                {
+                    block = blocks[GetFlattenIndex(local.X + directions[2].X, local.Y + directions[2].Y, local.Z + directions[2].Z)];
+                }
+                else
+                {
+                    if (chunkNeigbours[2] != null)
+                    {
+                        block = chunkNeigbours[2].GetBlock(blockPos.X, 0, blockPos.Z);
+                    }
+                }
+                break;
+            case 3: //Down
+                if ((local + directions[3]).Y >= 0)
+                {
+                    block = blocks[GetFlattenIndex(local.X + directions[3].X, local.Y + directions[3].Y, local.Z + directions[3].Z)];
+                }
+                else
+                {
+                    if (chunkNeigbours[3] != null)
+                    {
+                        block = chunkNeigbours[3].GetBlock(blockPos.X, chunkSize - 1, blockPos.Z);
+                    }
+                }
+                break;
+            case 4: //Left
+                if ((local + directions[4]).X >= 0)
+                {
+                    block = blocks[GetFlattenIndex(local.X + directions[4].X, local.Y + directions[4].Y, local.Z + directions[4].Z)];
+                }
+                else
+                {
+                    if (chunkNeigbours[4] != null)
+                    {
+                        block = chunkNeigbours[4].GetBlock(chunkSize - 1, blockPos.Y, blockPos.Z);
+                    }
+                }
+                break;
+            case 5: //Right
+                if ((local + directions[5]).X < chunkSize)
+                {
+                    block = blocks[GetFlattenIndex(local.X + directions[5].X, local.Y + directions[5].Y, local.Z + directions[5].Z)];
+                }
+                else
+                {
+                    if (chunkNeigbours[5] != null)
+                    {
+                        block = chunkNeigbours[5].GetBlock(0, blockPos.Y, blockPos.Z);
+                    }
+                }
+                break;
+        }
+
+        return !(block.ID == (int)uv || block.IsTransparent() == true);
     }
-    
-    #endregion
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -334,17 +368,17 @@ public class Chunk : Context<Chunk>
     /// <returns></returns>
     public bool[] BoolNeigbours(Int3 blockPos)
     {
-        return new []
+        return new[]
         {
-            GetNeigbourAt(0, blockPos),
-            GetNeigbourAt(1, blockPos),
-            GetNeigbourAt(2, blockPos),
-            GetNeigbourAt(3, blockPos),
-            GetNeigbourAt(4, blockPos),
-            GetNeigbourAt(5, blockPos)
+            GetNeigbourAt(0, blockPos, BlockUV.Air),
+            GetNeigbourAt(1, blockPos, BlockUV.Air),
+            GetNeigbourAt(2, blockPos, BlockUV.Air),
+            GetNeigbourAt(3, blockPos, BlockUV.Air),
+            GetNeigbourAt(4, blockPos, BlockUV.Air),
+            GetNeigbourAt(5, blockPos, BlockUV.Air)
         };
     }
-    
+
     private void GetChunkBoundsCalc()
     {
         boundsCalculated = true;
@@ -376,6 +410,11 @@ public class Chunk : Context<Chunk>
         {
             neighbour.chunkNeigbours[GetOppositeIndex(neighbourIndex)] = this;
         }
+    }
+
+    public Chunk[] GetNeigbours()
+    {
+        return chunkNeigbours;
     }
 
     private int GetOppositeIndex(int index)

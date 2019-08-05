@@ -25,7 +25,7 @@ public class ChunkUpdater : MonoBehaviour
     private void Start()
     {
         modifier = new MeshModifier();
-        chunkJobManager = new ChunkJobManager();
+        chunkJobManager = new ChunkJobManager(true);
         chunkJobManager.Start();
 
         latestPlayerPosition = player.transform.position.ToInt3();
@@ -40,9 +40,9 @@ public class ChunkUpdater : MonoBehaviour
 
     private void Update()
     {
-        RecalculateChunks();
+        //RecalculateChunks();
 
-        latestPlayerPosition = player.transform.position.ToInt3();
+        //latestPlayerPosition = player.transform.position.ToInt3();
 
         for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < amountDrawChunksPerFrame; i++)
         {
@@ -63,30 +63,17 @@ public class ChunkUpdater : MonoBehaviour
         if (newChunk.CurrentGO == null)
         {
             newChunk.CurrentGO = GoPool.GetNextUnusedChunk();
+            newChunk.CurrentGO.SetActive(true);
+            newChunk.CurrentGO.transform.position = newChunk.Position.ToVector3();
+            newChunk.CurrentGO.name = newChunk.Position.ToString();
+
+            modifier.SetMesh(newChunk.CurrentGO, t.MeshData, t.ColliderData);
         }
-
-        newChunk.CurrentGO.SetActive(true);
-        newChunk.CurrentGO.transform.position = newChunk.Position.ToVector3();
-
-        modifier.SetMesh(newChunk.CurrentGO, t.MeshData, t.ColliderData);
     }
 
 
     private void RecalculateChunks()
     {
-        // 1) Iteriere durch alle Chunkpositionen in der Umgebung des Spielers
-        // 2) Prüfe, ob die Chunkpositionen bereits gezeichnet sind
-        // 2.a.1) Erstelle neuen Chunk
-        // 2.a.2) Wenn ein Chunk noch nicht gezeichnet wurde, zeichne diesen Chunk
-        // 2.a.3) Füge den neu gezeichneten Chunk zu den aktuell gezeichneten Chunks hinzu
-        // 2.b.1) Wenn ein Chunk bereits gezeichnet wurde, aber nicht mehr im Umgebung, entferne den Chunk
-        // 2.b.2) Entferne alle Referenzen zu diesem Chunk und gib das GameObject wieder frei
-        // 3) Berechne Chunks neu. (Nicht alle, nur die Am Rand und die neu hinzugefügten
-
-
-        // 1)
-
-
         int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
         int yStart = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize);
         int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
@@ -101,19 +88,27 @@ public class ChunkUpdater : MonoBehaviour
                 {
                     // 2)
                     Int3 chunkPos = new Int3(x, y, z);
+                    Chunk c = ChunkDictionary.GetValue(chunkPos);
 
-                    if (!HashSetPositionChecker.Contains(chunkPos)) //Wenn man innerhalb der neuen Position einen Chunk braucht
+                    if (c == null)
                     {
-                        //Wird in ChunkJob zum Hash hinzugefügt
                         ChunkJob job = new ChunkJob(chunkPos);
+                        //Chunk createdChunk = job.CreateChunk();
                         chunkJobManager.Add(job);
                     }
+
+                    //if (!HashSetPositionChecker.Contains(chunkPos)) //Wenn man innerhalb der neuen Position einen Chunk braucht
+                    //{
+                    //    //Wird in ChunkJob zum Hash hinzugefügt
+                    //    ChunkJob job = new ChunkJob(chunkPos);
+                    //    chunkJobManager.Add(job);
+                    //}
                 }
             }
         }
 
 
-        //Kann eigentlich asynchron laufen
+        //TODO: Kann eigentlich asynchron laufen
         var list = ChunkDictionary.GetActiveChunks();
 
         for (int i = 0; i < list.Count; i++)
@@ -139,22 +134,6 @@ public class ChunkUpdater : MonoBehaviour
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(latestPlayerPosition.ToVector3(), 2f);
-        }
-    }
-
-    TreeGenerator treeGenerator = null;
-    Int3[] treeCubes;
-    private void OnDrawGizmosSelected() 
-    {
-        if (treeGenerator == null) 
-        {
-            treeGenerator = new TreeGenerator(new Int2(10, 15), new Int2(7, 10));
-            treeCubes = treeGenerator.Generate(Int3.Zero);
-        }
-        for (int i = 0; i < treeCubes.Length; i++)
-        {
-            Gizmos.color = i < treeGenerator.MaxWood ? new Color(139f / 255f, 69f / 255f, 19f / 255f) : Color.green;
-            Gizmos.DrawCube(treeCubes[i].ToVector3(), Vector3.one);
         }
     }
 

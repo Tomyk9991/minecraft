@@ -62,6 +62,7 @@ public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk, IConsoleTo
                 chunk.RemoveBlockAsGlobal(globalCenterCubePosition);
                 chunk.SaveChunk();
 
+                //TODO mach das optimierter mit einem Greedymesh
                 MeshData data = ModifyMesh.Combine(chunk);
                 modifier.RedrawMeshFilter(data.GameObject, data);
                 

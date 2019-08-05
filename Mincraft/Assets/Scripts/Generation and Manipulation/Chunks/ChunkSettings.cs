@@ -1,5 +1,4 @@
 using System;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class ChunkSettings : SingletonBehaviour<ChunkSettings>
@@ -75,7 +74,7 @@ public class ChunkSettings : SingletonBehaviour<ChunkSettings>
         if (noiseIO.Path != ContextIO.DefaultPath)
         {
             Debug.Log("Wird gespeichert");
-            noiseIO.SaveContext(simplexNoiseSettings, "HardcodedShit");
+            noiseIO.SaveContext(simplexNoiseSettings, "Noise");
         }
     }
 }

@@ -1,8 +1,14 @@
+using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using UnityEngine;
 
-public static class UVDictionary
+public class UVDictionary : MonoBehaviour
 {
-    private static UVData[] notFoundData = new UVData[6]
+    [ArrayElementTitle("EnumType")]
+    [SerializeField] private BlockInformation[] data = null;
+
+    private static readonly UVData[] notFoundData = 
     {
         new UVData(7f / 16f, 1f / 16f, 1f / 16f, 1f / 16f),
         new UVData(7f / 16f, 1f / 16f, 1f / 16f, 1f / 16f),
@@ -11,78 +17,76 @@ public static class UVDictionary
         new UVData(7f / 16f, 1f / 16f, 1f / 16f, 1f / 16f),
         new UVData(7f / 16f, 1f / 16f, 1f / 16f, 1f / 16f),
     };
-    private static Dictionary<BlockUV, UVData[]> dictionary = new Dictionary<BlockUV, UVData[]>();
 
-    public static void Init()
+    private static UVData[][] dictionary;
+    private static bool[] isSolidInformation;
+    private static bool[] isTransparentInformation;
+
+    private void Awake()
     {
-        dictionary.Add(BlockUV.Grass, new []
+        dictionary = new UVData[data.Length][];
+        isSolidInformation = new bool[data.Length];
+        isTransparentInformation = new bool[data.Length];
+
+        for (int i = 0; i < data.Length; i++)
         {
-            new UVData(3f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Forward
-            new UVData(3f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Back
-            new UVData(12f / 16f, 3f / 16f, 1f / 16f, 1f / 16f), //Up
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Down
-            new UVData(3f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Left
-            new UVData(3f / 16f, 15f / 16f, 1f / 16f, 1f / 16f)  //Right
-        });
-        dictionary.Add(BlockUV.Stone, new []
-        {
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Forward
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Back
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Up
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Down
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Left
-            new UVData(1f / 16f, 15f / 16f, 1f / 16f, 1f / 16f)  //Right
-        });
-        dictionary.Add(BlockUV.Dirt, new []
-        {
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Forward
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Back
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Up
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Down
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f), //Left
-            new UVData(2f / 16f, 15f / 16f, 1f / 16f, 1f / 16f)  //Right
-        });
-        dictionary.Add(BlockUV.Air, new[]
-        {
-            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Forward
-            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Back
-            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Up
-            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Down
-            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f), //Left
-            new UVData(4f / 16f, 4f / 16f, 1f / 16f, 1f / 16f)  //Right
-        });
-        dictionary.Add(BlockUV.Cactus, new[]
-        {
-            new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Forward
-            new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Back
-            new UVData(5f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Up
-            new UVData(5f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Down
-            new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f), //Left
-            new UVData(6f / 16f, 11f / 16f, 1f / 16f, 1f / 16f)  //Right
-        });
-        dictionary.Add(BlockUV.Glass, new[] 
-        {
-            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Forward
-            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Back
-            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Up
-            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Down
-            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f), //Left
-            new UVData(1f / 16f, 12f / 16f, 1f / 16f, 1f / 16f)  //Right
-        });
+            dictionary[(int)data[i].EnumType] = new []
+            {
+                new UVData(data[i].Forward.TileX / 16f, data[i].Forward.TileY / 16f, data[i].Forward.SizeX / 16f, data[i].Forward.SizeY / 16f),
+                new UVData(data[i].Back.TileX / 16f, data[i].Back.TileY / 16f, data[i].Back.SizeX / 16f, data[i].Back.SizeY / 16f),
+                new UVData(data[i].Up.TileX / 16f, data[i].Up.TileY / 16f, data[i].Up.SizeX / 16f, data[i].Up.SizeY / 16f),
+
+                new UVData(data[i].Down.TileX / 16f, data[i].Down.TileY / 16f, data[i].Down.SizeX / 16f, data[i].Down.SizeY / 16f),
+                new UVData(data[i].Left.TileX / 16f, data[i].Left.TileY / 16f, data[i].Left.SizeX / 16f, data[i].Left.SizeY / 16f),
+                new UVData(data[i].Right.TileX / 16f, data[i].Right.TileY / 16f, data[i].Right.SizeX / 16f, data[i].Right.SizeY / 16f),
+            };
+
+            isSolidInformation[(int) data[i].EnumType] = data[i].isSolid;
+            isTransparentInformation[(int) data[i].EnumType] = data[i].isTransparent;
+        }
     }
 
     public static void Clear()
     {
-        dictionary.Clear();
+        dictionary = null;
     }
 
     public static UVData[] GetValue(BlockUV id)
     {
-        if (dictionary.TryGetValue(id, out UVData[] result))
-        {
-            return result;
-        }
+        if ((int) id < 0 || (int) id > dictionary.Length - 1)
+            return notFoundData;
 
-        return notFoundData;
+        return dictionary[(int) id];
     }
+
+    public static bool IsSolidID(BlockUV id)
+    {
+        if ((int)id < 0 || (int)id > isSolidInformation.Length - 1)
+            return false;
+
+        return isSolidInformation[(int) id];
+    }
+
+    public static bool IsTransparentID(BlockUV id)
+    {
+        if ((int)id < 0 || (int)id > isSolidInformation.Length - 1)
+            return false;
+
+        return isTransparentInformation[(int) id];
+    }
+}
+
+[Serializable]
+public struct BlockInformation
+{
+    public BlockUV EnumType;
+    public UVData Forward;
+    public UVData Back;
+    public UVData Up;
+    public UVData Down;
+    public UVData Left;
+    public UVData Right;
+
+    public bool isSolid; // Bestimmt, ob es für den Collider relevant ist
+    public bool isTransparent; // Bestimmt, ob es eine Transparent durch den Block gibt
 }

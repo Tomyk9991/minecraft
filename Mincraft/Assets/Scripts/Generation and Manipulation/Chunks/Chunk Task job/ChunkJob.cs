@@ -1,4 +1,6 @@
-﻿public class ChunkJob
+﻿using UnityEngine;
+
+public class ChunkJob
 {
     public bool Completed { get; set; }
     public Chunk Chunk { get; set; }
@@ -7,6 +9,12 @@
 
     public bool HasBlocks { get; private set; }
 
+
+    /// <summary>
+    /// Creates a new ChunkJob and adds it to the 
+    /// </summary>
+    /// <param name="chunkPos"></param>
+    /// <param name="addToDictionary"></param>
     public ChunkJob(Int3 chunkPos, bool addToDictionary = true)
     {
         Chunk chunk = new Chunk();
@@ -14,16 +22,26 @@
         HasBlocks = false;
 
         this.Chunk = chunk;
-
-        if (addToDictionary)
-        {
-            HashSetPositionChecker.Add(chunk.Position);
-        }
     }
 
-    public ChunkJob(Chunk chunk)
-    {
-        this.Chunk = chunk;
-        HasBlocks = true;
-    }
+    ///// <summary>
+    ///// Create ChunkJobs with existing chunks and their block-information
+    ///// </summary>
+    ///// <param name="chunk">Chunk with existing chunk-information</param>
+    ///// <param name="stillGenerate">Determines, if the standard block-generation should still run on top of the existing block-information</param>
+    //public ChunkJob(Chunk chunk, bool stillGenerate = false)
+    //{
+    //    this.Chunk = chunk;
+    //    HasBlocks = !stillGenerate;
+
+
+    //    if (stillGenerate && !chunk.AddedToHash)
+    //    {
+
+    //    }
+    //}
+    //public Chunk CreateChunk()
+    //{
+
+    //}
 }

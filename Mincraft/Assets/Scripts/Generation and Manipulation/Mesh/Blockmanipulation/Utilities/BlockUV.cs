@@ -1,11 +1,11 @@
 public enum BlockUV
 {
-    //Mache alle Blöcke, die Transparenz enthalten, kleiner als 0
-    Glass = -3,
-    Cactus = -2,
-    Air = -1,
-    Grass = 0,
-    Stone = 1,
-    Dirt = 2,
-    
+    Air = 0,
+    Grass = 1,
+    Stone = 2,
+    Dirt = 3,
+    Wood = 4,
+    ProcessedWood = 5,
+    Leaf = 6,
+    Glass = 7,
 }

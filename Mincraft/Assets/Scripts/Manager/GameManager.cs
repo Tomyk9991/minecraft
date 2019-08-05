@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
-        UVDictionary.Init();
+        //UVDictionary.Init();
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 500;
 

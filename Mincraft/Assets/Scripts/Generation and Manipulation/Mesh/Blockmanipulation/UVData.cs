@@ -1,9 +1,10 @@
 using System;
-using UnityEngine;
 
+[Serializable]
 public struct UVData
 {
     private const float epsilon = 0.005f;
+
     public float TileX;
     public float TileY;
     public float SizeX;

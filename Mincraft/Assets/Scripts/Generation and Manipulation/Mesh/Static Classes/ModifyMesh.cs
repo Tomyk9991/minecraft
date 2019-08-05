@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 public static class ModifyMesh
 {
@@ -32,17 +31,28 @@ public static class ModifyMesh
 	    Block[] blocks = chunk.GetBlocks();
 	    List<Vector3> vertices = new List<Vector3>();
 	    List<int> triangles = new List<int>();
+        List<int> transparentTriangles = new List<int>();
 	    List<Vector2> uvs = new List<Vector2>();
 
 	    bool[] neigbours = new bool[6];
 
 	    for (int i = 0; i < blocks.Length; i++)
-	    {
-		    if (blocks[i].ID == -1) // Transparent
+        {
+            bool transparent = blocks[i].IsTransparent();
+		    if (blocks[i].ID == (int) BlockUV.Air)
 		    {
 			    continue;
 		    }
-		    neigbours = chunk.BoolNeigbours(blocks[i].Position);
+
+
+            //Check, ob dieser Block transparent ist, oder nicht
+            // Wenn es so sein sollte, bleibt das neighbours-Array mit 6 false-Werten und jede Seite wird gezeichnet
+
+            neigbours = !transparent
+                ? chunk.BoolNeigbours(blocks[i].Position)
+                : new [] { false, false, false, false, false, false };
+
+
 		    Vector3 blockPos = blocks[i].Position.ToVector3();
 		    
 		    if (neigbours.Any(state => state == false))
@@ -58,11 +68,21 @@ public static class ModifyMesh
 					    vertices.Add(directions[j] + offset1[j] + blockPos);
 					    vertices.Add(directions[j] + offset2[j] + blockPos);
 					    vertices.Add(directions[j] + offset1[j] + offset2[j] + blockPos);
-	
-					    for (int k = 0; k < 6; k++)
-					    {
-						    triangles.Add(vc + (tris[j] == 0 ? tri1[k] : tri2[k]));
-					    }
+
+                        if (!transparent)
+                        {
+					        for (int k = 0; k < 6; k++)
+					        {
+						        triangles.Add(vc + (tris[j] == 0 ? tri1[k] : tri2[k]));
+					        }
+                        }
+                        else
+                        {
+                            for (int k = 0; k < 6; k++)
+                            {
+                                transparentTriangles.Add(vc + (tris[j] == 0 ? tri1[k] : tri2[k]));
+                            }
+                        }
 	
 					    uvs.Add(new Vector2(currentUVData[j].TileX, currentUVData[j].TileY));
 					    uvs.Add(new Vector2(currentUVData[j].TileX + currentUVData[j].SizeX, currentUVData[j].TileY));
@@ -73,6 +93,6 @@ public static class ModifyMesh
 		    }
 	    }
 	    
-	    return new MeshData(vertices, triangles, uvs, chunk.CurrentGO);
+	    return new MeshData(vertices, triangles, transparentTriangles, uvs, chunk.CurrentGO);
     }
 }

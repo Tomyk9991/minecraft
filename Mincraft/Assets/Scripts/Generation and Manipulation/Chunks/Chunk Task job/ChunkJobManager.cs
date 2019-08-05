@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class ChunkJobManager : IDisposable
 {
+    public static ChunkJobManager ChunkJobManagerUpdaterInstance { get; private set; }
     public ConcurrentQueue<ChunkJob> Jobs { get; private set; }
     public ConcurrentQueue<ChunkJob> FinishedJobs { get; private set; }
 
@@ -13,6 +14,7 @@ public class ChunkJobManager : IDisposable
 
     private Thread[] threads;
     private ContextIO<Chunk> chunkLoader;
+    private GreedyMesh greedy;
 
 
     private static Int3[] directions =
@@ -31,10 +33,44 @@ public class ChunkJobManager : IDisposable
     public int JobsCount => Jobs.Count;
     public int FinishedJobsCount => FinishedJobs.Count;
 
-    public ChunkJobManager()
+    public ChunkJobManager(bool chunkUpdaterInstance = false)
     {
+        if (chunkUpdaterInstance)
+            ChunkJobManagerUpdaterInstance = this;
+
         chunkSize = ChunkSettings.ChunkSize;
         Jobs = new ConcurrentQueue<ChunkJob>();
+        greedy = new GreedyMesh();
+
+
+
+        FinishedJobs = new ConcurrentQueue<ChunkJob>();
+        chunkLoader = new ContextIO<Chunk>(ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName + "/");
+        GameManager.AbsolutePath = ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName;
+
+        //What if you got only two cores?
+        threads = SystemInfo.processorCount - 2 <= 0 
+            ? new Thread[1] 
+            : new Thread[SystemInfo.processorCount - 2];
+
+        for (int i = 0; i < threads.Length; i++)
+        {
+            threads[i] = new Thread(Calculate)
+            {
+                IsBackground = true
+            };
+        }
+    }
+
+    public ChunkJobManager(int test)
+    {
+        if (true)
+            ChunkJobManagerUpdaterInstance = this;
+
+        chunkSize = 16;
+        Jobs = new ConcurrentQueue<ChunkJob>();
+        greedy = new GreedyMesh(true);
+
         FinishedJobs = new ConcurrentQueue<ChunkJob>();
         chunkLoader = new ContextIO<Chunk>(ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName + "/");
         GameManager.AbsolutePath = ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName;
@@ -49,6 +85,7 @@ public class ChunkJobManager : IDisposable
             };
         }
     }
+
     private void Calculate()
     { 
         while (Running)
@@ -56,49 +93,48 @@ public class ChunkJobManager : IDisposable
             if (JobsCount == 0)
             {
                 //TODO wieder auf 10ms stellen
-                Thread.Sleep(50); //Needed, because CPU is overloaded in over case
+                Thread.Sleep(10); //Needed, because CPU is overloaded in over case
                 continue;
             }
             else if(JobsCount > 0)
             {
-                ChunkJob job = null;
+                Jobs.TryDequeue(out var job);
 
-                Jobs.TryDequeue(out job);
+                if (job == null) continue;
 
-                if (job != null)
+                if (!job.HasBlocks) // Chunk gets build new
                 {
-                    if (!job.HasBlocks) // Chunk gets build new
+                    if (!job.Chunk.AddedToDick)
                     {
-                        ChunkDictionary.Add(job.Chunk.Position, job.Chunk);
-                        job.Chunk.CalculateNeigbours();
 
-                        string path = chunkLoader.Path + job.Chunk.Position.ToString() + chunkLoader.FileEnding<Chunk>();
+                    }
+                    job.Chunk.CalculateNeigbours();
 
-                        if (File.Exists(path))
-                        {
-                            job.Chunk.LoadChunk(chunkLoader.LoadContext(path));
-                        }
-                        else
-                        {
-                            job.Chunk.GenerateBlocks();
-                        }
+                    string path = chunkLoader.Path + job.Chunk.Position.ToString() + chunkLoader.FileEnding<Chunk>();
+
+                    if (File.Exists(path))
+                    {
+                        job.Chunk.LoadChunk(chunkLoader.LoadContext(path));
                     }
                     else
                     {
-                        job.Chunk.CalculateNeigbours();
+                        job.Chunk.GenerateBlocks();
                     }
-
-                    //if "if" not executed, than chunk already existed
-
-                    //TODO füge MeshCollider wieder hinzu
-                    GreedyMesh mesh = new GreedyMesh();
-                    job.MeshData = ModifyMesh.Combine(job.Chunk);
-                    job.ColliderData = mesh.ReduceMesh(job.Chunk);
-
-
-                    job.Completed = true;
-                    FinishedJobs.Enqueue(job);
                 }
+                else
+                {
+                    job.Chunk.CalculateNeigbours();
+                }
+
+                //if "if" not executed, than chunk already existed
+
+                //TODO: Kann parallisiert werden
+                job.MeshData = ModifyMesh.Combine(job.Chunk);
+                job.ColliderData = greedy.ReduceMesh(job.Chunk);
+
+
+                job.Completed = true;
+                FinishedJobs.Enqueue(job);
             }
         }
     }
@@ -113,6 +149,7 @@ public class ChunkJobManager : IDisposable
 
     public void Add(ChunkJob job)
     {
+        //job.Chunk.NeedRedraw = false;
         Jobs.Enqueue(job);
     }
 
