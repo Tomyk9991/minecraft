@@ -16,11 +16,7 @@ public class ChunkDictionary
         Count++;
     }
 
-    public static int Count
-    {
-        get;
-        private set;
-    }
+    public static int Count { get; private set; }
 
     public static void Remove(Int3 key)
     {
@@ -54,12 +50,20 @@ public static class HashSetPositionChecker
 {
     private static HashSet<Int3> hashSet = new HashSet<Int3>();
 
+    public static int Count { get; private set; }
+
     public static void Add(Int3 item)
     {
-        if(hashSet.Add(item))
+        if(!hashSet.Add(item))
             throw new Exception($"Added an item {item} to the Hashset, that already exists.");
 
+        Count++;
     }
     public static bool Contains(Int3 item) => hashSet.Contains(item);
-    public static void Remove(Int3 item) => hashSet.Remove(item);
+
+    public static void Remove(Int3 item)
+    {
+        hashSet.Remove(item);
+        Count--;
+    }
 }

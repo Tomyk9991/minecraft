@@ -10,18 +10,33 @@ public class ChunkJob
     public bool HasBlocks { get; private set; }
 
 
-    /// <summary>
-    /// Creates a new ChunkJob and adds it to the 
-    /// </summary>
-    /// <param name="chunkPos"></param>
-    /// <param name="addToDictionary"></param>
-    public ChunkJob(Int3 chunkPos, bool addToDictionary = true)
+    ///// <summary>
+    ///// Creates a new ChunkJob and adds it to the 
+    ///// </summary>
+    ///// <param name="chunkPos"></param>
+    ///// <param name="addToDictionary"></param>
+    //public ChunkJob(Int3 chunkPos, bool addToDictionary = true)
+    //{
+    //    Chunk chunk = new Chunk();
+    //    chunk.Position = chunkPos;
+    //    HasBlocks = false;
+
+    //    this.Chunk = chunk;
+    //}
+
+
+
+    public Chunk CreateChunk(Int3 chunkPos)
     {
-        Chunk chunk = new Chunk();
-        chunk.Position = chunkPos;
-        HasBlocks = false;
+        Chunk chunk = new Chunk
+        {
+            Position = chunkPos
+        };
+        this.HasBlocks = false;
 
         this.Chunk = chunk;
+
+        return this.Chunk;
     }
 
     ///// <summary>
@@ -39,9 +54,5 @@ public class ChunkJob
     //    {
 
     //    }
-    //}
-    //public Chunk CreateChunk()
-    //{
-
     //}
 }

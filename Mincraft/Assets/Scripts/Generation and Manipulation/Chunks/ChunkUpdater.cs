@@ -88,12 +88,17 @@ public class ChunkUpdater : MonoBehaviour
                 {
                     // 2)
                     Int3 chunkPos = new Int3(x, y, z);
-                    Chunk c = ChunkDictionary.GetValue(chunkPos);
+                    //Chunk c = ChunkDictionary.GetValue(chunkPos);
 
-                    if (c == null)
+                    //if (c == null)
+                    if(!HashSetPositionChecker.Contains(chunkPos))
                     {
-                        ChunkJob job = new ChunkJob(chunkPos);
-                        //Chunk createdChunk = job.CreateChunk();
+                        ChunkJob job = new ChunkJob();
+                        Chunk createdChunk = job.CreateChunk(chunkPos); //Reference to created Chunk
+
+                        HashSetPositionChecker.Add(chunkPos);
+                        ChunkDictionary.Add(chunkPos, createdChunk);
+
                         chunkJobManager.Add(job);
                     }
 
