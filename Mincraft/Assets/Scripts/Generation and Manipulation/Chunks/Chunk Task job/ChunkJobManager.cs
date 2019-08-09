@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using UnityEngine;
 
@@ -104,10 +105,6 @@ public class ChunkJobManager : IDisposable
 
                 if (!job.HasBlocks) // Chunk gets build new
                 {
-                    if (!job.Chunk.AddedToDick)
-                    {
-
-                    }
                     job.Chunk.CalculateNeigbours();
 
                     string path = chunkLoader.Path + job.Chunk.Position.ToString() + chunkLoader.FileEnding<Chunk>();
@@ -149,7 +146,9 @@ public class ChunkJobManager : IDisposable
 
     public void Add(ChunkJob job)
     {
-        //job.Chunk.NeedRedraw = false;
+        if (Jobs.Any(j => j == job))
+            return;
+
         Jobs.Enqueue(job);
     }
 

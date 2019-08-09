@@ -13,7 +13,6 @@ public class ChunkSettings : SingletonBehaviour<ChunkSettings>
     [SerializeField] private uint chunkSize = 0;
     [SerializeField] private int seed = -1;
     [SerializeField] private int maxYHeight = 256;
-    [SerializeField, ShowOnly] private int dictionarySize;
 
     [Header("Noisesettings")] //Remake this to make is depend on the biom, you're currently at
     [SerializeField] public float smoothness = 40;
@@ -62,11 +61,6 @@ public class ChunkSettings : SingletonBehaviour<ChunkSettings>
             steepness = settings.Steepness;
             smoothness = settings.Smoothness;
         }
-    }
-
-    private void Update()
-    {
-        dictionarySize = ChunkDictionary.GetActiveChunks().Count;
     }
 
     private void OnDestroy()

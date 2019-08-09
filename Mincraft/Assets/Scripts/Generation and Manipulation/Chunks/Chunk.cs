@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Chunk : Context<Chunk>
@@ -9,7 +10,6 @@ public class Chunk : Context<Chunk>
     public bool AddedToDick { get; set; }
     public bool AddedToHash { get; set; }
 
-    public bool NeedRedraw { get; set; }
 
     private Int3 lowerBound, higherBound;
 
@@ -43,7 +43,6 @@ public class Chunk : Context<Chunk>
         smoothness = ChunkSettings.SimplexNoiseSettings.Smoothness;
         steepness = ChunkSettings.SimplexNoiseSettings.Steepness;
         seed = ChunkSettings.SimplexNoiseSettings.Seed;
-        NeedRedraw = true;
         treeGenerator = new OakTreeGenerator(new Int2(4, 6), new Int2(2, 4));
 
 
@@ -56,7 +55,6 @@ public class Chunk : Context<Chunk>
         chunkSize = 16;
         blocks = new Block[chunkSize * chunkSize * chunkSize];
         chunkNeigbours = new Chunk[6];
-        NeedRedraw = true;
     }
 
     public void AddBlock(Block block)
@@ -86,45 +84,6 @@ public class Chunk : Context<Chunk>
     }
     #endregion
 
-    ///// <summary>
-    ///// Fügt den Block zum Chunk hinzu. Wenn dieser Block nicht mehr zum Chunk gehört, wird dieser zum nächsten
-    ///// benachbarten Chunk hinzugefügt
-    ///// </summary>
-    ///// <param name="block">Block, welcher eine globale Position hat</param>
-    ///// <returns>Gibt den Chunk zurück, wo der Block hinzugefügt wurde. Ist dieser Chunk nicht vorhanden, wird null zurückgegeben</returns>
-    //public Chunk TryAddBlockFromGlobal(Block block, out Int3 chunkPosition)
-    //{
-    //    Chunk chunkReturn = this;
-    //    chunkPosition = this.Position;
-
-    //    Int3 local = new Int3(block.Position.X - this.Position.X, block.Position.Y - this.Position.Y, block.Position.Z - this.Position.Z);
-
-
-    //    if (local.X >= 0 && local.X < chunkSize
-    //     && local.Y >= 0 && local.Y < chunkSize
-    //     && local.Z >= 0 && local.Z < chunkSize)
-    //    {
-    //        block.Position = local;
-    //        this.AddBlock(block);
-    //        return this;
-    //    }
-
-    //    int chunkX = Mathf.FloorToInt(block.Position.X / (float) chunkSize) * chunkSize;
-    //    int chunkY = Mathf.FloorToInt(block.Position.Y / (float) chunkSize) * chunkSize;
-    //    int chunkZ = Mathf.FloorToInt(block.Position.Z / (float) chunkSize) * chunkSize;
-
-    //    chunkPosition = new Int3(chunkX, chunkY, chunkZ);
-
-    //    Chunk target = ChunkDictionary.GetValue(chunkPosition);
-
-    //    if (target != null)
-    //    {
-    //        block.Position -= target.Position;
-    //        target.AddBlock(block);
-    //    }
-    //    return target;
-    //}
-
     /// <summary>
     /// Fügt den Block zum Chunk hinzu. Wenn dieser Block nicht mehr zum Chunk gehört, wird dieser zum nächsten
     /// benachbarten Chunk hinzugefügt
@@ -133,98 +92,27 @@ public class Chunk : Context<Chunk>
     /// <returns>Gibt den Chunk zurück, wo der Block hinzugefügt wurde. Ist dieser Chunk nicht vorhanden, wird null zurückgegeben</returns>
     public Chunk GetChunkFromGlobalBlock(Block block, out Int3 chunkPosition)
     {
-        Chunk chunkReturn = this;
-        chunkPosition = this.Position;
-
-        Int3 local = new Int3(block.Position.X - this.Position.X, block.Position.Y - this.Position.Y, block.Position.Z - this.Position.Z);
-
-
-        if (local.X >= 0 && local.X < chunkSize
-         && local.Y >= 0 && local.Y < chunkSize
-         && local.Z >= 0 && local.Z < chunkSize)
+        if (this.Position.X - block.Position.X >= 0 && this.Position.X - block.Position.X < chunkSize
+         && this.Position.Y - block.Position.Y >= 0 && this.Position.Y - block.Position.Y < chunkSize
+         && this.Position.Z - block.Position.Z >= 0 && this.Position.Z - block.Position.Z < chunkSize)
         {
-            block.Position = local;
+            chunkPosition = this.Position;
             return this;
         }
 
-        int chunkX = Mathf.FloorToInt(block.Position.X / (float)chunkSize) * chunkSize;
-        int chunkY = Mathf.FloorToInt(block.Position.Y / (float)chunkSize) * chunkSize;
-        int chunkZ = Mathf.FloorToInt(block.Position.Z / (float)chunkSize) * chunkSize;
+        int chunkX = Mathf.FloorToInt(block.Position.X / (float) chunkSize) * chunkSize;
+        int chunkY = Mathf.FloorToInt(block.Position.Y / (float) chunkSize) * chunkSize;
+        int chunkZ = Mathf.FloorToInt(block.Position.Z / (float) chunkSize) * chunkSize;
 
         chunkPosition = new Int3(chunkX, chunkY, chunkZ);
 
-        Chunk target = ChunkDictionary.GetValue(chunkPosition);
-
-        if (target != null)
-        {
-            block.Position -= target.Position;
-        }
-        return target;
+        return ChunkDictionary.GetValue(chunkPosition);
     }
 
     public void RemoveBlockAsGlobal(Int3 globalBlockPos)
     {
         int index = GetFlattenIndex(globalBlockPos.X - this.Position.X, globalBlockPos.Y - this.Position.Y, globalBlockPos.Z - this.Position.Z);
         blocks[index] = Block.Empty();
-    }
-
-    public void GenerateBlocks() // TODO: Make this based on biom. Maybe virtual or pass in IBiom?
-    {
-        for (int x = 0; x < chunkSize; x++)
-        {
-            for (int y = 0; y < chunkSize; y++)
-            {
-                for (int z = 0; z < chunkSize; z++)
-                {
-                    float height = OctavePerlin((x + this.Position.X + seed) * smoothness, (z + this.Position.Z + seed) * smoothness, 8, 0.5f) * steepness;
-
-                    if (y + this.Position.Y < height - 1)
-                    {
-                        Block b = new Block(new Int3(x, y, z));
-                        b.SetID((int)BlockUV.Dirt);
-                        this.AddBlock(b);
-                    }
-                    else if (y + this.Position.Y < height)
-                    {
-                        Block b = new Block(new Int3(x, y, z));
-                        b.SetID((int)BlockUV.Grass);
-                        this.AddBlock(b);
-                    }
-                    else if (y + this.Position.Y == (int)height + 1)
-                    {
-                        float TESTZOOMLEVEL = 1.08f;
-
-                        float result = Mathf.PerlinNoise((x + this.Position.X + seed) * TESTZOOMLEVEL, (z + this.Position.Z + seed) * TESTZOOMLEVEL);
-                        if (result > 0.93f) //93
-                        {
-                            //Irgendwas bei der Tree-Generation kaputt. Rechnet in zwei verschiende Chunks 2 mal das selbe Resultat
-                            //treeGenerator.Generate(this, x, y, z);
-                        }
-                    }
-                }
-            }
-        }
-
-        this.NeedRedraw = true;
-    }
-
-    private float OctavePerlin(float x, float y, int octaves, float persistence)
-    {
-        float total = 0;
-        float frequency = 1;
-        float amplitude = 1;
-        float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
-        for (int i = 0; i < octaves; i++)
-        {
-            total += Mathf.PerlinNoise(x * frequency, y * frequency) * amplitude;
-
-            maxValue += amplitude;
-
-            amplitude *= persistence;
-            frequency *= 2;
-        }
-
-        return total / maxValue;
     }
 
     public Block GetBlock(int x, int y, int z)
@@ -248,14 +136,9 @@ public class Chunk : Context<Chunk>
         return (lowerBound, higherBound);
     }
 
-    public void CalculateNeigbours()
-    {
-        for (int i = 0; i < chunkNeigbours.Length; i++)
-        {
-            chunkNeigbours[i] = ChunkDictionary.GetValue(this.Position + (directions[i] * chunkSize));
-        }
-    }
-
+    /// <summary>
+    /// Can only be called from the main-Thread
+    /// </summary>
     public void ReleaseGameObject()
     {
         ChunkGameObjectPool.Instance.SetGameObjectToUnsed(this.CurrentGO);
@@ -271,7 +154,10 @@ public class Chunk : Context<Chunk>
     private bool GetNeigbourAt(int index, Int3 blockPos, BlockUV uv)
     {
         Int3 local = blockPos;
-        Block block = new Block();
+        Block block = new Block
+        {
+            ID = (int) BlockUV.Air
+        };
 
         switch (index)
         {
@@ -358,7 +244,7 @@ public class Chunk : Context<Chunk>
                 break;
         }
 
-        return !(block.ID == (int)uv || block.IsTransparent() == true);
+        return !(block.ID == (int)uv || block.IsTransparent());
     }
 
     /// <summary>
@@ -383,7 +269,6 @@ public class Chunk : Context<Chunk>
     {
         boundsCalculated = true;
         int maxSize = ChunkSettings.ChunkSize;
-        int half = maxSize / 2;
 
         lowerBound = new Int3(Mathf.FloorToInt(Position.X),
             Mathf.FloorToInt(Position.Y),
@@ -402,13 +287,11 @@ public class Chunk : Context<Chunk>
         return Position.ToString();
     }
 
-    public void SetNeighbour(Chunk neighbour, int neighbourIndex)
+    public void CalculateNeigbours()
     {
-        this.chunkNeigbours[neighbourIndex] = neighbour;
-
-        if (neighbour != null)
+        for (int i = 0; i < chunkNeigbours.Length; i++)
         {
-            neighbour.chunkNeigbours[GetOppositeIndex(neighbourIndex)] = this;
+            chunkNeigbours[i] = ChunkDictionary.GetValue(this.Position + (directions[i] * chunkSize));
         }
     }
 
@@ -416,20 +299,71 @@ public class Chunk : Context<Chunk>
     {
         return chunkNeigbours;
     }
-
-    private int GetOppositeIndex(int index)
+    
+        public void GenerateBlocks() // TODO: Make this based on biom. Maybe virtual or pass in IBiom?
     {
-        //Wenn index gerade, dann addiere zum index 1
-        //Wenn index ungerade, subtrahiere index um 1
-        if (index % 2 == 0) // Gerade
+        for (int x = 0; x < chunkSize; x++)
         {
-            return index++;
-        }
-        else
-        {
-            return index--;
+            for (int y = 0; y < chunkSize; y++)
+            {
+                for (int z = 0; z < chunkSize; z++)
+                {
+                    float height = OctavePerlin((x + this.Position.X + seed) * smoothness, (z + this.Position.Z + seed) * smoothness, 8, 0.5f) * steepness;
+
+                    if (y + this.Position.Y < height - 1)
+                    {
+                        Block b = new Block(new Int3(x, y, z));
+                        b.SetID((int)BlockUV.Dirt);
+                        this.AddBlock(b);
+                    }
+                    else if (y + this.Position.Y < height)
+                    {
+                        Block b = new Block(new Int3(x, y, z));
+                        b.SetID((int)BlockUV.Grass);
+                        this.AddBlock(b);
+                    }
+                    else if (y + this.Position.Y == (int)height + 1)
+                    {
+                        float TESTZOOMLEVEL = 1.08f;
+
+                        float result = Mathf.PerlinNoise((x + this.Position.X + seed) * TESTZOOMLEVEL, (z + this.Position.Z + seed) * TESTZOOMLEVEL);
+                        if (result > 0.89f) //93
+                        {
+                            //Irgendwas bei der Tree-Generation kaputt. Rechnet in zwei verschiende Chunks 2 mal das selbe Resultat
+                            List<ChunkJob> jobs = treeGenerator.Generate(this, x, y, z);
+
+                            for (int i = 0; i < jobs.Count; i++)
+                            {
+//                                Debug.Log(jobs[i].Chunk.Position);
+                                ChunkJobManager.ChunkJobManagerUpdaterInstance.Add(jobs[i]);
+                            }
+                            
+                        }
+                    }
+                }
+            }
         }
     }
+
+    private float OctavePerlin(float x, float y, int octaves, float persistence)
+    {
+        float total = 0;
+        float frequency = 1;
+        float amplitude = 1;
+        float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
+        for (int i = 0; i < octaves; i++)
+        {
+            total += Mathf.PerlinNoise(x * frequency, y * frequency) * amplitude;
+
+            maxValue += amplitude;
+
+            amplitude *= persistence;
+            frequency *= 2;
+        }
+
+        return total / maxValue;
+    }
+    
 
     public void LoadChunk(Chunk chunk)
     {
@@ -442,3 +376,4 @@ public class Chunk : Context<Chunk>
         GameManager.Instance.SavingJob.AddToSavingQueue(this);
     }
 }
+ 

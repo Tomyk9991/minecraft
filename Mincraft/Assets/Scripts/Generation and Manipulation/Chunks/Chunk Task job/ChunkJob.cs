@@ -7,7 +7,7 @@ public class ChunkJob
     public MeshData MeshData { get; set; }
     public MeshData ColliderData { get; set; }
 
-    public bool HasBlocks { get; private set; }
+    public bool HasBlocks { get; set; }
 
 
     ///// <summary>
@@ -26,6 +26,11 @@ public class ChunkJob
 
 
 
+    /// <summary>
+    /// Creates internally a new Chunk with an empty block array
+    /// </summary>
+    /// <param name="chunkPos"></param>
+    /// <returns></returns>
     public Chunk CreateChunk(Int3 chunkPos)
     {
         Chunk chunk = new Chunk
@@ -39,6 +44,14 @@ public class ChunkJob
         return this.Chunk;
     }
 
+    /// <summary>
+    /// Calculates the mesh, so it can be drawn
+    /// </summary>
+    /// <param name="chunk"></param>
+    public void Redraw(Chunk chunk)
+    {
+        this.Chunk = chunk;
+    }
     ///// <summary>
     ///// Create ChunkJobs with existing chunks and their block-information
     ///// </summary>

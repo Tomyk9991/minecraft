@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\thoma\.Rider2019.1\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\thoma\.Rider2019.1\system\resharper-host\local\Transient\ReSharperHost\v191\SolutionCaches\_Mincraft.470111848.00" t="ExcludeRecursive" />
+    <e p="C:\Users\thoma\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\thoma\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_Mincraft.470111848.00" t="ExcludeRecursive" />
     <e p="C:\Users\thoma\Documents\UnityProjectGithubRepo\minecraft\Mincraft" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
@@ -16,6 +16,7 @@
           </e>
         </e>
         <e p="Editor" t="Include">
+          <e p="ArrayElementTitleDrawer.cs" t="Include" />
           <e p="DrawIfFalsePropertyDrawer.cs" t="Include" />
           <e p="DrawIfTruePropertyDrawer.cs" t="Include" />
           <e p="Int3Drawer.cs" t="Include" />
@@ -33,6 +34,7 @@
         </e>
         <e p="Scripts" t="Include">
           <e p="Attributes" t="Include">
+            <e p="ArrayElementTitleAttribute.cs" t="Include" />
             <e p="DrawIfFalseAttribute.cs" t="Include" />
             <e p="DrawIfTrueAttribute.cs" t="Include" />
             <e p="ReadOnlyAttribute.cs" t="Include" />
@@ -54,6 +56,7 @@
               <e p="ChunkSettings.cs" t="Include" />
               <e p="ChunkUpdater.cs" t="Include" />
               <e p="IRemoveChunk.cs" t="Include" />
+              <e p="NeighbourTestVisualizer.cs" t="Include" />
             </e>
             <e p="Mesh" t="Include">
               <e p="Blockmanipulation" t="Include">
@@ -78,7 +81,9 @@
               <e p="SimplexNoiseSettings.cs" t="Include" />
             </e>
             <e p="Tree generation" t="Include">
+              <e p="OakTreeGenerator.cs" t="Include" />
               <e p="TreeGenerator.cs" t="Include" />
+              <e p="TreeTestMonoBehaviour.cs" t="Include" />
             </e>
           </e>
           <e p="Manager" t="Include">
@@ -108,6 +113,9 @@
               <e p="ConsoleMethodAttribute.cs" t="Include" />
               <e p="IConsoleToggle.cs" t="Include" />
             </e>
+            <e p="DevOverlay" t="Include">
+              <e p="DeveloperOverlay.cs" t="Include" />
+            </e>
             <e p="MainMenu" t="Include">
               <e p="MainMenuUI.cs" t="Include" />
               <e p="OptionsDialogUI.cs" t="Include" />
@@ -116,10 +124,15 @@
           </e>
           <e p="Utilities" t="Include">
             <e p="Extensions.cs" t="Include" />
+            <e p="Int2.cs" t="Include" />
             <e p="Int3.cs" t="Include" />
+            <e p="IntVector.cs" t="Include" />
             <e p="MathHelper.cs" t="Include" />
             <e p="SingletonBehaviour.cs" t="Include" />
           </e>
+        </e>
+        <e p="Shaders" t="Include">
+          <e p="DoubleSidedAlphaClip.shader" t="Include" />
         </e>
         <e p="Standard Assets" t="Include">
           <e p="CrossPlatformInput" t="Include">

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class OakTreeGenerator : TreeGenerator
 {
@@ -11,14 +12,17 @@ public class OakTreeGenerator : TreeGenerator
         this.minMaxVolume = minMaxVolume;
     }
 
-    public override void Generate(Chunk chunk, int x, int y, int z)
+    public override List<ChunkJob> Generate(Chunk chunk, int x, int y, int z) // xyz kommt in localeSpace an
     {
+        base.Generate(chunk, x, y, z);
+
+        //xyz wird zu global space gemacht
         x += chunk.Position.X;
         y += chunk.Position.Y;
         z += chunk.Position.Z;
 
-        int height = (int)Map(Mathf.PerlinNoise(x * 0.9f, z * 0.9f), 0f, 1f, minMaxHeight.X + 1, minMaxHeight.Y);
-        int volume = (int)Map(Mathf.PerlinNoise(x * 0.9f, z * 0.9f), 0f, 1f, minMaxVolume.X + 1, minMaxVolume.Y);
+        int height = (int)MathHelper.Map(Mathf.PerlinNoise(x * 0.9f, z * 0.9f), 0f, 1f, minMaxHeight.X + 1, minMaxHeight.Y);
+        int volume = (int)MathHelper.Map(Mathf.PerlinNoise(x * 0.9f, z * 0.9f), 0f, 1f, minMaxVolume.X + 1, minMaxVolume.Y);
 
         Block block = new Block();
 
@@ -48,6 +52,8 @@ public class OakTreeGenerator : TreeGenerator
                 }
             }
         }
+
+        return base.chunkJobs;
     }
 
     private bool LeafSpawn(int x, int y, int z, int volume) 
@@ -59,7 +65,4 @@ public class OakTreeGenerator : TreeGenerator
         float distance = Mathf.Sqrt(Mathf.Pow(a, 2) + Mathf.Pow(b, 2) + Mathf.Pow(c, 2));
         return (distance < volume / 2f && (Mathf.PerlinNoise(x * 0.9f, y * 0.9f) * volume) > distance);
     }
-
-    private float Map(float n, float start1, float stop1, float start2, float stop2)
-        => ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
 }

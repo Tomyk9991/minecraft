@@ -23,6 +23,7 @@ public class NeighbourTestVisualizer : MonoBehaviour
 
         //if (chunk != null)
         //{
+        //    chunk.CalculateNeigbours();
         //    Chunk[] neigbours = chunk.GetNeigbours();
 
         //    Gizmos.color = Color.white;

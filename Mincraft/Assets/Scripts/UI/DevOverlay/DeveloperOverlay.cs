@@ -1,27 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class DeveloperOverlay : MonoBehaviour
 {
     [Header("Developer overlay")]
     [SerializeField] private bool showingOverlay = false;
-    private Transform[] transforms = null;
-
+    
     [Header("Outputs")]
     [SerializeField] private TextMeshProUGUI playerPositionOutput = null;
     [SerializeField] private TextMeshProUGUI chunksLoadedOutput = null;
     [SerializeField] private TextMeshProUGUI chunksInGameObjectOutput = null;
     [SerializeField] private TextMeshProUGUI chunksInHashmapOutput = null;
+    [SerializeField] private TextMeshProUGUI cpuUsageOutput = null;
 
     [Header("Calculations")]
     [SerializeField] private Transform playerTarget = null;
     [SerializeField] private Transform worldParent = null;
+    
+    private Transform[] transforms = null;
+    private System.Diagnostics.PerformanceCounter cpuCounter;
 
     private void Start()
     {
+        cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total", true);
+
         List<Transform> t = new List<Transform>();
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -49,6 +55,7 @@ public class DeveloperOverlay : MonoBehaviour
             chunksLoadedOutput.text = GetLoadedChunksAmount().ToString();
             chunksInGameObjectOutput.text = GetAmountChunksInGameObjects().ToString();
             chunksInHashmapOutput.text = GetAmountChunksInHashMap().ToString();
+            cpuUsageOutput.text = GetCPUUsage();
         }
     }
 
@@ -62,6 +69,7 @@ public class DeveloperOverlay : MonoBehaviour
         return ChunkDictionary.Count;
     }
 
+    //Änderbar mit GameobjectPool
     private int GetAmountChunksInGameObjects()
     {
         return worldParent.Cast<Transform>().Count(t => t.name != "Unused chunk");
@@ -70,5 +78,10 @@ public class DeveloperOverlay : MonoBehaviour
     private int GetAmountChunksInHashMap()
     {
         return HashSetPositionChecker.Count;
+    }
+
+    private string GetCPUUsage()
+    {
+        return cpuCounter.NextValue() + "%";
     }
 }

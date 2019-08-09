@@ -14,6 +14,7 @@ public class ChunkUpdater : MonoBehaviour
 
     private Int3 drawDistance;
     private int chunkSize;
+    private int maxHeight;
 
     private Int3 latestPlayerPosition;
 
@@ -24,6 +25,7 @@ public class ChunkUpdater : MonoBehaviour
 
     private void Start()
     {
+        maxHeight = ChunkSettings.MaxYHeight;
         modifier = new MeshModifier();
         chunkJobManager = new ChunkJobManager(true);
         chunkJobManager.Start();
@@ -35,14 +37,23 @@ public class ChunkUpdater : MonoBehaviour
 
         GoPool = ChunkGameObjectPool.Instance;
 
-        RecalculateChunks();
+        int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
+        int yStart = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize);
+        int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
+
+        RecalculateChunks(xStart, yStart, zStart);
     }
 
     private void Update()
     {
-        //RecalculateChunks();
+        int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
+        int yStart = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize);
+        int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
 
-        //latestPlayerPosition = player.transform.position.ToInt3();
+        RecalculateChunks(xStart, yStart, zStart);
+        CleanupChunks(xStart, yStart, zStart);
+
+        latestPlayerPosition = player.transform.position.ToInt3();
 
         for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < amountDrawChunksPerFrame; i++)
         {
@@ -72,56 +83,48 @@ public class ChunkUpdater : MonoBehaviour
     }
 
 
-    private void RecalculateChunks()
+    private void RecalculateChunks(int xStart, int yStart, int zStart)
     {
-        int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
-        int yStart = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize);
-        int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
+        if (yStart >= maxHeight) return;
 
-
-
-        for (int x = xStart - drawDistance.X / 2; x < xStart + drawDistance.X / 2; x += chunkSize)
+        
+        for (int x = xStart - drawDistance.X; x < xStart + drawDistance.X; x += chunkSize)
         {
-            for(int y = yStart + drawDistance.Y / 2; y >= yStart - drawDistance.Y / 2; y -= chunkSize)
+            for(int y = yStart + drawDistance.Y; y >= yStart - drawDistance.Y; y -= chunkSize)
             {
-                for (int z = zStart - drawDistance.Z / 2; z < zStart + drawDistance.Z / 2; z += chunkSize)
+                for (int z = zStart - drawDistance.Z; z < zStart + drawDistance.Z; z += chunkSize)
                 {
                     // 2)
                     Int3 chunkPos = new Int3(x, y, z);
-                    //Chunk c = ChunkDictionary.GetValue(chunkPos);
-
-                    //if (c == null)
+                    
                     if(!HashSetPositionChecker.Contains(chunkPos))
                     {
                         ChunkJob job = new ChunkJob();
                         Chunk createdChunk = job.CreateChunk(chunkPos); //Reference to created Chunk
 
                         HashSetPositionChecker.Add(chunkPos);
+                        createdChunk.AddedToHash = true;
                         ChunkDictionary.Add(chunkPos, createdChunk);
+                        createdChunk.AddedToDick = true;
 
                         chunkJobManager.Add(job);
                     }
-
-                    //if (!HashSetPositionChecker.Contains(chunkPos)) //Wenn man innerhalb der neuen Position einen Chunk braucht
-                    //{
-                    //    //Wird in ChunkJob zum Hash hinzugefügt
-                    //    ChunkJob job = new ChunkJob(chunkPos);
-                    //    chunkJobManager.Add(job);
-                    //}
                 }
             }
         }
+    }
 
-
+    private void CleanupChunks(int xStart, int yStart, int zStart)
+    {
         //TODO: Kann eigentlich asynchron laufen
         var list = ChunkDictionary.GetActiveChunks();
 
-        for (int i = 0; i < list.Count; i++)
+        for (int i = 0; i < list.Count; i++) 
         {
             var currentChunk = list[i];
-            if (Mathf.Abs(currentChunk.Position.X - xStart) > drawDistance.X / 2 + chunkSize ||
-                Mathf.Abs(currentChunk.Position.Y - yStart) > drawDistance.Y / 2 + chunkSize * 2 ||
-                Mathf.Abs(currentChunk.Position.Z - zStart) > drawDistance.Z / 2 + chunkSize)
+            if (Mathf.Abs(currentChunk.Position.X - xStart) > drawDistance.X + chunkSize ||
+                Mathf.Abs(currentChunk.Position.Y - yStart) > drawDistance.Y + chunkSize * 2 ||
+                Mathf.Abs(currentChunk.Position.Z - zStart) > drawDistance.Z + chunkSize)
             {
                 if (currentChunk.CurrentGO != null)
                 {
