@@ -51,6 +51,7 @@ public class ChunkJob
     public void Redraw(Chunk chunk)
     {
         this.Chunk = chunk;
+        this.HasBlocks = false;
     }
     ///// <summary>
     ///// Create ChunkJobs with existing chunks and their block-information

@@ -43,7 +43,18 @@ public abstract class TreeGenerator
         Int3 chunkPos = new Int3(chunkX, chunkY, chunkZ);
         bool foundInDictionary = false;
 
-        Chunk c = cachedNeighbours.FirstOrDefault(cc => cc.Position == chunkPos);
+        Chunk c = null;
+        
+        for (int i = 0; i < cachedNeighbours.Count; i++)
+        {
+            if (cachedNeighbours[i].Position == chunkPos)
+            {
+                c = cachedNeighbours[i];
+                break;
+            }
+        }
+        
+//        Chunk c = cachedNeighbours.FirstOrDefault(cc => cc.Position == chunkPos);
         //Statt zu invertieren, einfach vorne hinzufügen
 
         if (c == null)
@@ -52,11 +63,10 @@ public abstract class TreeGenerator
             foundInDictionary = true;
         }
 
-        // Wenn es diese Bedingung betritt, dannn kann es nicht in den cached-chunks gewesen sein
+        // War nicht in den cached-chunks gewesen sein
         // Weder ein Chunk wurde von den bisherigen Blättern gecachet, noch existiert so ein Chunk überhaupt
         if (c == null)
         {
-            Debug.Log(chunkPos);
             ChunkJob job = new ChunkJob();
             c = job.CreateChunk(chunkPos);
             
@@ -74,16 +84,14 @@ public abstract class TreeGenerator
         }
 //        else
 //        {
-//            block.Position -= chunkPosition;
+//            block.Position -= chunkPos;
 //            c.AddBlock(block);
 //            ChunkJob job = new ChunkJob();
 //            job.Redraw(c);
 //            chunkJobs.Add(job);
 //
-//            Debug.Log("Chunk war bereits erstellt");
-//
 //            if (foundInDictionary)
-//                cachedNeighbours.Add(c);
+//                cachedNeighbours.Insert(0, c);
 //        }
     }
 

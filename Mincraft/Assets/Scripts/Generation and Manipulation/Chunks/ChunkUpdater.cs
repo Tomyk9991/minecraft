@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class ChunkUpdater : MonoBehaviour
@@ -20,8 +21,12 @@ public class ChunkUpdater : MonoBehaviour
 
     private ChunkJobManager chunkJobManager;
     private MeshModifier modifier;
+    private ChunkCleanup cleanup;
 
     private SavingJob savingJob;
+
+    private bool done = false;
+    private int counter = 0;
 
     private void Start()
     {
@@ -31,11 +36,12 @@ public class ChunkUpdater : MonoBehaviour
         chunkJobManager.Start();
 
         latestPlayerPosition = player.transform.position.ToInt3();
+
         drawDistance = ChunkSettings.DrawDistance;
-
         chunkSize = ChunkSettings.ChunkSize;
-
         GoPool = ChunkGameObjectPool.Instance;
+
+        cleanup = new ChunkCleanup(drawDistance, chunkSize);
 
         int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
         int yStart = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize);
@@ -87,53 +93,39 @@ public class ChunkUpdater : MonoBehaviour
     {
         if (yStart >= maxHeight) return;
 
-        
-        for (int x = xStart - drawDistance.X; x < xStart + drawDistance.X; x += chunkSize)
+        System.Threading.Tasks.Task.Run(() =>
         {
-            for(int y = yStart + drawDistance.Y; y >= yStart - drawDistance.Y; y -= chunkSize)
+            for (int x = xStart - drawDistance.X; x < xStart + drawDistance.X; x += chunkSize)
             {
-                for (int z = zStart - drawDistance.Z; z < zStart + drawDistance.Z; z += chunkSize)
+                for(int y = yStart + drawDistance.Y; y >= yStart - drawDistance.Y; y -= chunkSize)
                 {
-                    // 2)
-                    Int3 chunkPos = new Int3(x, y, z);
-                    
-                    if(!HashSetPositionChecker.Contains(chunkPos))
+                    for (int z = zStart - drawDistance.Z; z < zStart + drawDistance.Z; z += chunkSize)
                     {
-                        ChunkJob job = new ChunkJob();
-                        Chunk createdChunk = job.CreateChunk(chunkPos); //Reference to created Chunk
+                        // 2)
+                        Int3 chunkPos = new Int3(x, y, z);
+                        
+                        if(!HashSetPositionChecker.Contains(chunkPos))
+                        {
+                            ChunkJob job = new ChunkJob();
+                            Chunk createdChunk = job.CreateChunk(chunkPos); //Reference to created Chunk
 
-                        HashSetPositionChecker.Add(chunkPos);
-                        createdChunk.AddedToHash = true;
-                        ChunkDictionary.Add(chunkPos, createdChunk);
-                        createdChunk.AddedToDick = true;
+                            HashSetPositionChecker.Add(chunkPos);
+                            createdChunk.AddedToHash = true;
+                            ChunkDictionary.Add(chunkPos, createdChunk);
+                            createdChunk.AddedToDick = true;
 
-                        chunkJobManager.Add(job);
+                            chunkJobManager.Add(job);
+                        }
                     }
                 }
             }
-        }
+        });
     }
 
     private void CleanupChunks(int xStart, int yStart, int zStart)
     {
-        //TODO: Kann eigentlich asynchron laufen
-        var list = ChunkDictionary.GetActiveChunks();
-
-        for (int i = 0; i < list.Count; i++) 
-        {
-            var currentChunk = list[i];
-            if (Mathf.Abs(currentChunk.Position.X - xStart) > drawDistance.X + chunkSize ||
-                Mathf.Abs(currentChunk.Position.Y - yStart) > drawDistance.Y + chunkSize * 2 ||
-                Mathf.Abs(currentChunk.Position.Z - zStart) > drawDistance.Z + chunkSize)
-            {
-                if (currentChunk.CurrentGO != null)
-                {
-                    currentChunk.ReleaseGameObject();
-                    ChunkDictionary.Remove(currentChunk.Position);
-                    HashSetPositionChecker.Remove(currentChunk.Position);
-                }
-            }
-        }
+        cleanup.CheckChunks(xStart, yStart, zStart);
+        cleanup.RemoveChunks();
     }
 
     private void OnDrawGizmos()

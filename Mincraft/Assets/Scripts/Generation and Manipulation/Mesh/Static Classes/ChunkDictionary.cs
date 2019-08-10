@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 public class ChunkDictionary
 {
@@ -34,15 +35,8 @@ public class ChunkDictionary
     }
     
     public static List<Chunk> GetActiveChunks()
-    {        
-        var temp = new List<Chunk>();
-        
-        foreach (var chunk in dictionary.Values)
-        {
-            temp.Add(chunk);
-        }
-
-        return temp;
+    {
+        return dictionary.Values.ToList();
     }
 }
 

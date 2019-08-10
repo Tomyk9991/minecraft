@@ -50,6 +50,7 @@
                 <e p="ChunkJobManager.cs" t="Include" />
               </e>
               <e p="Chunk.cs" t="Include" />
+              <e p="ChunkCleanup.cs" t="Include" />
               <e p="ChunkGameObjectPool.cs" t="Include" />
               <e p="ChunkGizmosDrawer.cs" t="Include" />
               <e p="ChunkSavingSettings.cs" t="Include" />
