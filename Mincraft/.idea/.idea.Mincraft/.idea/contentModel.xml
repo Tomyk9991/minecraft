@@ -51,13 +51,19 @@
               </e>
               <e p="Chunk.cs" t="Include" />
               <e p="ChunkCleanup.cs" t="Include" />
+              <e p="ChunkCluster.cs" t="Include" />
               <e p="ChunkGameObjectPool.cs" t="Include" />
-              <e p="ChunkGizmosDrawer.cs" t="Include" />
               <e p="ChunkSavingSettings.cs" t="Include" />
               <e p="ChunkSettings.cs" t="Include" />
+              <e p="ChunkState.cs" t="Include" />
               <e p="ChunkUpdater.cs" t="Include" />
+              <e p="GizmosVisualizer" t="Include">
+                <e p="ChunkClusterVisualizer.cs" t="Include" />
+                <e p="ChunkGizmosDrawer.cs" t="Include" />
+                <e p="NeighbourTestVisualizer.cs" t="Include" />
+              </e>
+              <e p="HashsetPositionChecker.cs" t="Include" />
               <e p="IRemoveChunk.cs" t="Include" />
-              <e p="NeighbourTestVisualizer.cs" t="Include" />
             </e>
             <e p="Mesh" t="Include">
               <e p="Blockmanipulation" t="Include">
@@ -72,7 +78,7 @@
                 <e p="UVData.cs" t="Include" />
               </e>
               <e p="Static Classes" t="Include">
-                <e p="ChunkDictionary.cs" t="Include" />
+                <e p="ChunkClusterDictionary.cs" t="Include" />
                 <e p="ModifyMesh.cs" t="Include" />
                 <e p="UVDictionary.cs" t="Include" />
               </e>
@@ -133,7 +139,8 @@
           </e>
         </e>
         <e p="Shaders" t="Include">
-          <e p="DoubleSidedAlphaClip.shader" t="Include" />
+          <e p="Block.shader" t="Include" />
+          <e p="NewUnlitShader.shader" t="Include" />
         </e>
         <e p="Standard Assets" t="Include">
           <e p="CrossPlatformInput" t="Include">

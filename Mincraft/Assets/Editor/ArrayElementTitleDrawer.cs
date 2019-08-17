@@ -1,6 +1,8 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
+using UnityInspector.PropertyAttributes;
+
 [CustomPropertyDrawer(typeof(ArrayElementTitleAttribute))]
 public class ArrayElementTitleDrawer : PropertyDrawer
 {

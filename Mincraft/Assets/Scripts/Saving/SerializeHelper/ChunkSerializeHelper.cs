@@ -1,6 +1,12 @@
-﻿[System.Serializable]
-public class ChunkSerializeHelper
+﻿using Core.Builder;
+using Core.Math;
+
+namespace Core.Saving.Serializers
 {
-    public Int3 ChunkPosition;
-    public Block[] localBlocks;
+    [System.Serializable]
+    public class ChunkSerializeHelper
+    {
+        public Int3 ChunkPosition;
+        public Block[] localBlocks;
+    }
 }

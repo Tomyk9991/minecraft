@@ -1,6 +1,9 @@
 ﻿using System;
 
-public interface IntVector
+namespace Core.Math
 {
-    bool AnyAttribute(Predicate<int> predicate, out int value);
+    public interface IntVector
+    {
+        bool AnyAttribute(Predicate<int> predicate, out int value);
+    }
 }

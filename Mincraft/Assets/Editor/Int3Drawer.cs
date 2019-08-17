@@ -2,6 +2,8 @@
 using UnityEditor;
 using UnityEngine;
 
+using Core.Math;
+
 [CustomPropertyDrawer(typeof(Int3))]
 public class Int3Drawer : PropertyDrawer
 {

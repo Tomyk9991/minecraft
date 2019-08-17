@@ -1,11 +1,14 @@
 ﻿using System;
 
-[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
-sealed class ConsoleMethodAttribute : Attribute
+namespace Core.UI.Console
 {
-    public string stringName;
-    public ConsoleMethodAttribute(string method)
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
+    sealed class ConsoleMethodAttribute : Attribute
     {
-        stringName = method;
+        public string stringName;
+        public ConsoleMethodAttribute(string method)
+        {
+            stringName = method;
+        }
     }
 }

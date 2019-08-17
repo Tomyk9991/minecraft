@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Core.Builder;
 using UnityEngine;
+using UnityInspector.PropertyAttributes;
 
 public class UVDictionary : MonoBehaviour
 {
@@ -87,6 +89,6 @@ public struct BlockInformation
     public UVData Left;
     public UVData Right;
 
-    public bool isSolid; // Bestimmt, ob es für den Collider relevant ist
+    public bool isSolid; // Bestimmt, ob es fÃ¼r den Collider relevant ist
     public bool isTransparent; // Bestimmt, ob es eine Transparent durch den Block gibt
 }

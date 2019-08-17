@@ -1,4 +1,7 @@
-public interface IRemoveChunk
+namespace Core.Chunking
 {
-    ChunkGameObjectPool GoPool { get; set; }
+    public interface IRemoveChunk
+    {
+        ChunkGameObjectPool GoPool { get; set; }
+    }
 }

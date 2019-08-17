@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DrawIfFalseAttribute : PropertyAttribute
+namespace UnityInspector.PropertyAttributes
 {
-    private string variableName;
-    public string VariableName
+    public class DrawIfFalseAttribute : PropertyAttribute
     {
-        get
+        private string variableName;
+        public string VariableName
         {
-            return this.variableName;
+            get
+            {
+                return this.variableName;
+            }
         }
-    }
 
-    public DrawIfFalseAttribute(string variableName)
-    {
-        this.variableName = variableName;
+        public DrawIfFalseAttribute(string variableName)
+        {
+            this.variableName = variableName;
+        }
     }
 }

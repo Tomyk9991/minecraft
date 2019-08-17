@@ -1,7 +1,10 @@
-﻿[System.Serializable]
-public class SimplexNoiseSettingsSerializeHelper
+﻿namespace Core.Saving.Serializers
 {
-    public float Smoothness;
-    public float Steepness;
-    public int Seed;
+    [System.Serializable]
+    public class SimplexNoiseSettingsSerializeHelper
+    {
+        public float Smoothness;
+        public float Steepness;
+        public int Seed;
+    }
 }

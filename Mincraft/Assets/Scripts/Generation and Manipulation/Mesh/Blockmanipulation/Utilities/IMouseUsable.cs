@@ -1,5 +1,8 @@
-﻿public interface IMouseUsable
+﻿namespace Core.Player
 {
-    float RaycastHitable { get; set; }
-    int MouseButtonIndex { get; set; }
+    public interface IMouseUsable
+    {
+        float RaycastHitable { get; set; }
+        int MouseButtonIndex { get; set; }
+    }
 }

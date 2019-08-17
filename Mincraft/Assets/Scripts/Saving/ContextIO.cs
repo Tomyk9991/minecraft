@@ -5,157 +5,163 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
-public class ContextIO<T> where T : Context<T>, new()
+using Core.Builder.Generation;
+using Core.Chunking;
+
+namespace Core.Saving
 {
-    public string Path { get; private set; }
-    public ContextIO(string path)
+    public class ContextIO<T> where T : Context<T>, new()
     {
-        this.Path = path;
-    }
-
-    public void SaveContext(T obj, string fileName)
-    {
-        object data = obj.Data();
-        string newCombinedPath = Path + fileName + FileEnding<T>();
-
-        if (!Directory.Exists(Path))
-            Directory.CreateDirectory(Path);
-
-        using (FileStream fs = new FileStream(newCombinedPath, FileMode.Create))
+        public string Path { get; private set; }
+        public ContextIO(string path)
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            try
-            {
-                formatter.Serialize(fs, data);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("Failed to serialize. Reason: " + e.Message);
-            }
-            finally
-            {
-                fs.Close();
-            }
-        }
-    }
-
-    public void Swap(string copyDestination, string tempPath)
-    {
-        string copyDestNew = Path + copyDestination + FileEnding<T>();
-        string copyDestNewOld = Path + copyDestination + "Old" + FileEnding<T>();
-        string tempPathNew = Path + tempPath + FileEnding<T>();
-
-        if (!File.Exists(copyDestNew))
-        {
-            File.Move(tempPathNew, copyDestNew);
-        }
-        else
-        {
-            File.Move(copyDestNew, copyDestNewOld);
-            File.Move(tempPathNew, copyDestNew);
-            File.Move(copyDestNewOld, tempPathNew);
-        }
-    }
-
-    public T LoadContext()
-    {
-        if (typeof(T) != typeof(SimplexNoiseSettings))
-        {
-            Debug.LogError("LoadContext darf nur von SimplexNoiseSettings ausgeführt werden");
-            return null;
+            this.Path = path;
         }
 
-        if (!Directory.Exists(Path))
+        public void SaveContext(T obj, string fileName)
         {
-            Debug.LogError("Pfad / Welt wurde nicht gefunden");
-            Debug.Log(Path);
-            return null;
-        }
+            object data = obj.Data();
+            string newCombinedPath = Path + fileName + FileEnding<T>();
 
-        string[] files = Directory.GetFiles(Path, "*" + FileEnding<T>(), SearchOption.TopDirectoryOnly);
+            if (!Directory.Exists(Path))
+                Directory.CreateDirectory(Path);
 
-        if (files.Length == 0)
-        {
-            return null;
-        }
-
-        return LoadContext(files[0]);
-    }
-
-    public T LoadContext(string path)
-    {
-        using (FileStream fs = new FileStream(path, FileMode.Open))
-        {
-            try
+            using (FileStream fs = new FileStream(newCombinedPath, FileMode.Create))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                object data = formatter.Deserialize(fs);
-                T obj = new T();
-                return obj.Caster(data);
+                try
+                {
+                    formatter.Serialize(fs, data);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Failed to serialize. Reason: " + e.Message);
+                }
+                finally
+                {
+                    fs.Close();
+                }
             }
-            catch (Exception e)
+        }
+
+        public void Swap(string copyDestination, string tempPath)
+        {
+            string copyDestNew = Path + copyDestination + FileEnding<T>();
+            string copyDestNewOld = Path + copyDestination + "Old" + FileEnding<T>();
+            string tempPathNew = Path + tempPath + FileEnding<T>();
+
+            if (!File.Exists(copyDestNew))
             {
-                Debug.Log("Failed to deserialize. Reason: " + e.Message);
+                File.Move(tempPathNew, copyDestNew);
             }
-            finally
+            else
             {
-                fs.Close();
+                File.Move(copyDestNew, copyDestNewOld);
+                File.Move(tempPathNew, copyDestNew);
+                File.Move(copyDestNewOld, tempPathNew);
             }
         }
 
-        return null;
-    }
-
-    public List<T> LoadContexts()
-    {
-        if (typeof(T) != typeof(Chunk))
+        public T LoadContext()
         {
-            Debug.LogError("LoadContexts darf nur von Chunk ausgeführt werden");
+            if (typeof(T) != typeof(SimplexNoiseSettings))
+            {
+                Debug.LogError("LoadContext darf nur von SimplexNoiseSettings ausgeführt werden");
+                return null;
+            }
+
+            if (!Directory.Exists(Path))
+            {
+                Debug.LogError("Pfad / Welt wurde nicht gefunden");
+                Debug.Log(Path);
+                return null;
+            }
+
+            string[] files = Directory.GetFiles(Path, "*" + FileEnding<T>(), SearchOption.TopDirectoryOnly);
+
+            if (files.Length == 0)
+            {
+                return null;
+            }
+
+            return LoadContext(files[0]);
+        }
+
+        public T LoadContext(string path)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                try
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    object data = formatter.Deserialize(fs);
+                    T obj = new T();
+                    return obj.Caster(data);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("Failed to deserialize. Reason: " + e.Message);
+                }
+                finally
+                {
+                    fs.Close();
+                }
+            }
+
             return null;
         }
-        if (!Directory.Exists(Path))
+
+        public List<T> LoadContexts()
         {
-            Debug.LogError("Pfad / Welt wurde nicht gefunden");
-            return null;
+            if (typeof(T) != typeof(Chunk))
+            {
+                Debug.LogError("LoadContexts darf nur von Chunk ausgeführt werden");
+                return null;
+            }
+            if (!Directory.Exists(Path))
+            {
+                Debug.LogError("Pfad / Welt wurde nicht gefunden");
+                return null;
+            }
+
+
+            string[] files = Directory.GetFiles(Path, "*" + FileEnding<T>(), SearchOption.TopDirectoryOnly);
+
+            return files.Select(LoadContext).ToList();
         }
 
-
-        string[] files = Directory.GetFiles(Path, "*" + FileEnding<T>(), SearchOption.TopDirectoryOnly);
-
-        return files.Select(LoadContext).ToList();
+        public string FileEnding<K>()
+        {
+            if (typeof(K) == typeof(Chunk))
+            {
+                return ".chk";
+            }
+            else if (typeof(K) == typeof(SimplexNoiseSettings))
+            {
+                return ".nsttngs";
+            }
+            else
+            {
+                Debug.LogError("Something went wrong with casting");
+                return null;
+            }
+        }
     }
 
-    public string FileEnding<K>()
+    public class ContextIO
     {
-        if (typeof(K) == typeof(Chunk))
+        public static string DefaultPath = @"C:/Users/thoma/Documents/MinecraftCloneWorlds/";
+        public static void CreateDirectory(int index, string path = @"C:/Users/thoma/Documents/MinecraftCloneWorlds")
         {
-            return ".chk";
-        }
-        else if (typeof(K) == typeof(SimplexNoiseSettings))
-        {
-            return ".nsttngs";
-        }
-        else
-        {
-            Debug.LogError("Something went wrong with casting");
-            return null;
-        }
-    }
-}
+            string fullPath = path + "/World" + index + "/";
+            if (!Directory.Exists(fullPath))
+            {
+                Directory.CreateDirectory(path + "/World" + index + "/");
+                Debug.Log("Path created");
+                return;
+            }
 
-public class ContextIO
-{
-    public static string DefaultPath = @"C:/Users/thoma/Documents/MinecraftCloneWorlds/";
-    public static void CreateDirectory(int index, string path = @"C:/Users/thoma/Documents/MinecraftCloneWorlds")
-    {
-        string fullPath = path + "/World" + index + "/";
-        if (!Directory.Exists(fullPath))
-        {
-            Directory.CreateDirectory(path + "/World" + index + "/");
-            Debug.Log("Path created");
-            return;
+            Debug.Log("Path already existed");
         }
-
-        Debug.Log("Path already existed");
     }
 }

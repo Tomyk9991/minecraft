@@ -1,28 +1,31 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class OptionsDialogUI : MonoBehaviour
+namespace Core.UI.Menu
 {
-    [SerializeField] private Button backButton = null;
-    [SerializeField] private RectTransform[] transforms = null;
+    public class OptionsDialogUI : MonoBehaviour
+    {
+        [SerializeField] private Button backButton = null;
+        [SerializeField] private RectTransform[] transforms = null;
 
-    private void Start()
-    {
-        backButton.onClick.AddListener(() =>
+        private void Start()
         {
-            SetChildsVisibility(false);
-        });
-    }
-    public void SetChildsVisibility(bool state)
-    {
-        foreach (Transform t in this.transform)
-        {
-            t.gameObject.SetActive(state);
+            backButton.onClick.AddListener(() =>
+            {
+                SetChildsVisibility(false);
+            });
         }
-
-        for (int i = 0; i < transforms.Length; i++)
+        public void SetChildsVisibility(bool state)
         {
-            transforms[i].gameObject.SetActive(!state);
+            foreach (Transform t in this.transform)
+            {
+                t.gameObject.SetActive(state);
+            }
+
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                transforms[i].gameObject.SetActive(!state);
+            }
         }
     }
 }

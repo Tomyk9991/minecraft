@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 
-public class ArrayElementTitleAttribute : PropertyAttribute
+namespace UnityInspector.PropertyAttributes
 {
-    public string varName;
-
-    public ArrayElementTitleAttribute(string elementTitleName)
+    public class ArrayElementTitleAttribute : PropertyAttribute
     {
-        this.varName = elementTitleName;
+        public string varName;
+
+        public ArrayElementTitleAttribute(string elementTitleName)
+        {
+            this.varName = elementTitleName;
+        }
     }
 }

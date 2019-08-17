@@ -1,84 +1,93 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
+using UnityInspector;
+using Extensions;
+
+
+namespace Core.Chunking
 {
-    [Header("Chunk GameObject instantiation settings")]
-    [SerializeField] private GameObject chunkPrefab = null;
-    [Range(1, 10000)]
-    [SerializeField] private int chunksToInstantiate = 210;
-    [SerializeField, ShowOnly] private int currentlyUsedObjs;
-
-    private const string unusedName = "Unused chunk";
-
-    private ConcurrentQueue<GameObject> gameObjectChunks;
-
-    private Queue<GameObject> objectsToRelease;
-    private void Start()
+    public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     {
-        objectsToRelease = new Queue<GameObject>();
-        gameObjectChunks = new ConcurrentQueue<GameObject>();
-        for (int i = 0; i < chunksToInstantiate; i++)
+        [Header("Chunk GameObject instantiation settings")]
+        [SerializeField] private GameObject chunkPrefab = null;
+        [Range(1, 10000)]
+        [SerializeField] private int chunksToInstantiate = 210;
+        [SerializeField, ShowOnly] private int currentlyUsedObjs;
+
+        private const string unusedName = "Unused chunk";
+
+        private Queue<GameObject> gameObjectChunks;
+        private Queue<GameObject> objectsToRelease;
+        
+        private void Start()
         {
-            InstantiateBlock();
+            objectsToRelease = new Queue<GameObject>();
+            gameObjectChunks = new Queue<GameObject>();
+            
+            for (int i = 0; i < chunksToInstantiate; i++)
+            {
+                InstantiateBlock();
+            }
         }
-    }
 
-    private void Update()
-    {
-        for (int i = 0; i < objectsToRelease.Count && i < 5; i++)
+        private void Update()
         {
-            GameObject go = objectsToRelease.Dequeue();
+            for (int i = 0; i < objectsToRelease.Count; i++)
+            {
+                GameObject go = objectsToRelease.Dequeue();
 
+                if (go != null)
+                {
+                    go.name = unusedName;
+
+                    go.GetComponent<MeshFilter>().mesh = null;
+                    go.GetComponent<MeshCollider>().sharedMesh = null;
+                    go.SetActive(false);
+
+                    gameObjectChunks.Enqueue(go);
+                }
+
+            }
+        }
+
+
+        /// <summary>
+        /// Gets the next unused GameObject in Pool. (Can be used in different threads)
+        /// </summary>
+        /// <returns></returns>
+        public GameObject GetNextUnusedChunk() 
+        {
+            if (gameObjectChunks.Count == 0) 
+                return Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
+                
+            GameObject go = gameObjectChunks.Dequeue();
             if (go != null)
             {
-                go.name = unusedName;
-
-                go.GetComponent<MeshFilter>().mesh = null;
-                go.GetComponent<MeshCollider>().sharedMesh = null;
-                go.SetActive(false);
-
-                gameObjectChunks.Enqueue(go);
+                currentlyUsedObjs++;
+                return go;
             }
 
+            return Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
         }
-    }
 
-
-    /// <summary>
-    /// Gets the next unused GameObject in Pool. (Can be used in different threads)
-    /// </summary>
-    /// <returns></returns>
-    public GameObject GetNextUnusedChunk()
-    {
-        GameObject go;
-        if (gameObjectChunks.TryDequeue(out go))
+        private void InstantiateBlock()
         {
-            currentlyUsedObjs++;
-            return go;
+            GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
+            SetInitialGameObjectUnsed(g);
         }
 
-        return Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-    }
+        public void SetGameObjectToUnsed(GameObject go)
+        {
+            currentlyUsedObjs--;
+            objectsToRelease.Enqueue(go);
+        }
 
-    private void InstantiateBlock()
-    {
-        GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-        SetInitialGameObjectUnsed(g);
-    }
-
-    public void SetGameObjectToUnsed(GameObject go)
-    {
-        currentlyUsedObjs--;
-        objectsToRelease.Enqueue(go);
-    }
-
-    private void SetInitialGameObjectUnsed(GameObject go)
-    {
-        go.name = unusedName;
-        go.SetActive(false);
-        gameObjectChunks.Enqueue(go);
+        private void SetInitialGameObjectUnsed(GameObject go)
+        {
+            go.name = unusedName;
+            go.SetActive(false);
+            gameObjectChunks.Enqueue(go);
+        }
     }
 }

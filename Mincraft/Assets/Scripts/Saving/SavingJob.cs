@@ -1,56 +1,61 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using Core.Chunking;
+using Core.Managers;
 
-public class SavingJob : IDisposable
+namespace Core.Saving
 {
-    private Thread thread;
-    private bool running = false;
-    private ContextIO<Chunk> chunkSaver;
-
-    private ConcurrentQueue<Chunk> chunksToSave;
-
-    public SavingJob()
+    public class SavingJob : IDisposable
     {
-        thread = new Thread(Save);
-        chunksToSave = new ConcurrentQueue<Chunk>();
-        chunkSaver = new ContextIO<Chunk>(ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName  + "/");
-    }
+        private Thread thread;
+        private bool running = false;
+        private ContextIO<Chunk> chunkSaver;
 
-    public void Start()
-    {
-        running = true;
-        thread.Start();
-        //thread.IsBackground = true;
-    }
+        private ConcurrentQueue<Chunk> chunksToSave;
 
-    public void AddToSavingQueue(Chunk chunk)
-    {
-        chunksToSave.Enqueue(chunk);
-    }
-
-    private void Save()
-    {
-        while (running)
+        public SavingJob()
         {
-            if (chunksToSave.TryDequeue(out Chunk c))
+            thread = new Thread(Save);
+            chunksToSave = new ConcurrentQueue<Chunk>();
+            chunkSaver = new ContextIO<Chunk>(ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName  + "/");
+        }
+
+        public void Start()
+        {
+            running = true;
+            thread.Start();
+            //thread.IsBackground = true;
+        }
+
+        public void AddToSavingQueue(Chunk chunk)
+        {
+            chunksToSave.Enqueue(chunk);
+        }
+
+        private void Save()
+        {
+            while (running)
             {
-                if (c != null)
+                if (chunksToSave.TryDequeue(out Chunk c))
                 {
-                    chunkSaver.SaveContext(c, "temp");
-                    chunkSaver.Swap(c.Position.ToString(), "temp");
+                    if (c != null)
+                    {
+                        chunkSaver.SaveContext(c, "temp");
+                        chunkSaver.Swap(c.LocalPosition.ToString(), "temp");
+                    }
+                }
+                else
+                {
+                    Thread.Sleep(100);
                 }
             }
-            else
-            {
-                Thread.Sleep(100);
-            }
         }
-    }
 
 
-    public void Dispose()
-    {
-        running = false;
+        public void Dispose()
+        {
+            running = false;
+        }
     }
 }

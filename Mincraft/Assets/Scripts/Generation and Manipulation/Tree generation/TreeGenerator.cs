@@ -2,106 +2,108 @@
 using System.Linq;
 using UnityEngine;
 
-public abstract class TreeGenerator
+using Core.Chunking;
+using Core.Chunking.Threading;
+using Core.Math;
+
+namespace Core.Builder.Generation
 {
-    //Achte darauf nicht mehrmals den selben Chunk hinzuzufügen
-    public List<ChunkJob> chunkJobs = new List<ChunkJob>();
-    private List<Chunk> cachedNeighbours = new List<Chunk>();
-    
-    private const int chunkSize = 16;
-    
-    /// <summary>
-    /// Adds an block to the corresponding Chunk automatically
-    /// </summary>
-    /// <param name="block">The blockposition has to be in global space</param>
-    /// <param name="chunk">The chunk, you're setting the initial tree plant</param>
-    public void SetBlock(Block block, Chunk chunk) // blockpos kommt in global space an
+    public abstract class TreeGenerator
     {
-        int x = block.Position.X - chunk.Position.X;
-        int y = block.Position.Y - chunk.Position.Y;
-        int z = block.Position.Z - chunk.Position.Z;
+        //Achte darauf nicht mehrmals den selben Chunk hinzuzufügen
+        public List<ChunkJob> chunkJobs = new List<ChunkJob>();
+        private List<Chunk> cachedNeighbours = new List<Chunk>();
         
-        //Wenn der zuzufügende Block bereits im mitgegebenen Chunk liegt
-        if (x >= 0 && x < chunkSize && y >= 0 && y < chunkSize && z >= 0 && z < chunkSize)
+        private const int chunkSize = 16;
+        
+        /// <summary>
+        /// Adds an block to the corresponding Chunk automatically
+        /// </summary>
+        /// <param name="block">The blockposition has to be in global space</param>
+        /// <param name="chunk">The chunk, you're setting the initial tree plant</param>
+        public void SetBlock(Block block, Chunk chunk) // blockpos kommt in global space an
         {
-            // Wenn es der selbe Chunk ist, wie der von dem gecallt wird, dann brauche
-            // ich diesen auch nicht mehr auf die Draw-Liste zu packen, weil der sich
-            // ja schon drauf befindet. Von dem geht ja der eigentliche "Generate"- Call
-            // aus
-            block.Position.X -= chunk.Position.X;
-            block.Position.Y -= chunk.Position.Y;
-            block.Position.Z -= chunk.Position.Z;
+            int x = block.Position.X - chunk.LocalPosition.X;
+            int y = block.Position.Y - chunk.LocalPosition.Y;
+            int z = block.Position.Z - chunk.LocalPosition.Z;
             
-            chunk.AddBlock(block);
-            return;
-        }
-
-        int chunkX = Mathf.FloorToInt(block.Position.X / 16f) * 16;
-        int chunkY = Mathf.FloorToInt(block.Position.Y / 16f) * 16;
-        int chunkZ = Mathf.FloorToInt(block.Position.Z / 16f) * 16;
-        
-        Int3 chunkPos = new Int3(chunkX, chunkY, chunkZ);
-        bool foundInDictionary = false;
-
-        Chunk c = null;
-        
-        for (int i = 0; i < cachedNeighbours.Count; i++)
-        {
-            if (cachedNeighbours[i].Position == chunkPos)
+            //Wenn der zuzufügende Block bereits im mitgegebenen Chunk liegt
+            if (x >= 0 && x < chunkSize && y >= 0 && y < chunkSize && z >= 0 && z < chunkSize)
             {
-                c = cachedNeighbours[i];
-                break;
+                // Wenn es der selbe Chunk ist, wie der von dem gecallt wird, dann brauche
+                // ich diesen auch nicht mehr auf die Draw-Liste zu packen, weil der sich
+                // ja schon drauf befindet. Von dem geht ja der eigentliche "Generate"- Call
+                // aus
+                block.Position.X = x;
+                block.Position.Y = y;
+                block.Position.Z = z;
+                
+                chunk.AddBlock(block);
+                return;
             }
-        }
-        
-//        Chunk c = cachedNeighbours.FirstOrDefault(cc => cc.Position == chunkPos);
-        //Statt zu invertieren, einfach vorne hinzufügen
 
-        if (c == null)
-        {
-            c = ChunkDictionary.GetValue(chunkPos);
-            foundInDictionary = true;
-        }
-
-        // War nicht in den cached-chunks gewesen sein
-        // Weder ein Chunk wurde von den bisherigen Blättern gecachet, noch existiert so ein Chunk überhaupt
-        if (c == null)
-        {
-            ChunkJob job = new ChunkJob();
-            c = job.CreateChunk(chunkPos);
+            int chunkX = Mathf.FloorToInt(block.Position.X / 16f) * 16;
+            int chunkY = Mathf.FloorToInt(block.Position.Y / 16f) * 16;
+            int chunkZ = Mathf.FloorToInt(block.Position.Z / 16f) * 16;
             
-            block.Position -= chunkPos;
-            job.Chunk.AddBlock(block);
+            Int3 chunkPos = new Int3(chunkX, chunkY, chunkZ);
+            bool foundInDictionary = false;
 
-            
-            HashSetPositionChecker.Add(chunkPos);
-            c.AddedToHash = true;
-            ChunkDictionary.Add(chunkPos, c);
-            c.AddedToDick = true;
+            Chunk c = cachedNeighbours.FirstOrDefault(t => t.LocalPosition == chunkPos);
 
-            chunkJobs.Add(job);
-            cachedNeighbours.Insert(0, c);
+    //        Chunk c = cachedNeighbours.FirstOrDefault(cc => cc.Position == chunkPos);
+            //Statt zu invertieren, einfach vorne hinzufügen
+
+    //        if (c == null)
+    //        {
+    //            c = ChunkDictionary.GetValue(chunkPos);
+    //            foundInDictionary = true;
+    //        }
+
+            // War nicht in den cached-chunks gewesen sein
+            // Weder ein Chunk wurde von den bisherigen Blättern gecachet, noch existiert so ein Chunk überhaupt
+    //        if (c == null)
+    //        {
+    //            ChunkJob job = new ChunkJob();
+    //            c = job.CreateChunk(chunkPos);
+    //            
+    //            block.Position -= chunkPos;
+    //            c.AddBlock(block);
+    //
+    //            
+    //            ChunkDictionary.Add(chunkPos, c);
+    //            c.AddedToDick = true;
+    //            HashSetPositionChecker.Add(chunkPos);
+    //            c.AddedToHash = true;
+    //
+    //            chunkJobs.Add(job);
+    //            cachedNeighbours.Insert(0, c);
+    //        }
+    //        else
+    //        {
+    //            block.Position -= chunkPos;
+    //            c.AddBlock(block);
+    //
+    //            if (c.IsDrawn)
+    //            {
+    //                //Wenn der Chunk bereits gezeichnet ist, dann muss der Chunk zum neuen Zeichnen 
+    //            }
+    //            
+    //            chunkJobs.Add(job);
+    //
+    //            if (foundInDictionary)
+    //                cachedNeighbours.Insert(0, c);
+    //        }
         }
-//        else
-//        {
-//            block.Position -= chunkPos;
-//            c.AddBlock(block);
-//            ChunkJob job = new ChunkJob();
-//            job.Redraw(c);
-//            chunkJobs.Add(job);
-//
-//            if (foundInDictionary)
-//                cachedNeighbours.Insert(0, c);
-//        }
-    }
 
-    public virtual List<ChunkJob> Generate(Chunk c, int x, int y, int z)
-    {
-        cachedNeighbours.Clear();
-        cachedNeighbours.Add(c);
+        public virtual List<ChunkJob> Generate(Chunk c, int x, int y, int z)
+        {
+            cachedNeighbours.Clear();
+            cachedNeighbours.Add(c);
 
-        chunkJobs.Clear();
+            chunkJobs.Clear();
 
-        return null;
+            return null;
+        }
     }
 }

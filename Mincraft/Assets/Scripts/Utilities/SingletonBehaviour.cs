@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 
-public class SingletonBehaviour<T> : MonoBehaviour where T: SingletonBehaviour<T>
+namespace Extensions
 {
-    public static T Instance { get; protected set; }
- 
-    void Awake()
+    public class SingletonBehaviour<T> : MonoBehaviour where T: SingletonBehaviour<T>
     {
-        if (Instance != null && Instance != this)
-            Destroy(this);
-        else
-            Instance = (T)this;
+        public static T Instance { get; protected set; }
+     
+        void Awake()
+        {
+            if (Instance != null && Instance != this)
+                Destroy(this);
+            else
+                Instance = (T)this;
+        }
     }
 }

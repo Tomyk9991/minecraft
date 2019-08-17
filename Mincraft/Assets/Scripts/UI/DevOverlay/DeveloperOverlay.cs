@@ -1,87 +1,90 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
-using System.Diagnostics;
-using Debug = UnityEngine.Debug;
 
-public class DeveloperOverlay : MonoBehaviour
+using Core.Chunking;
+using Core.Math;
+using Extensions;
+
+namespace Core.UI.DeveloperOverlay
 {
-    [Header("Developer overlay")]
-    [SerializeField] private bool showingOverlay = false;
-    
-    [Header("Outputs")]
-    [SerializeField] private TextMeshProUGUI playerPositionOutput = null;
-    [SerializeField] private TextMeshProUGUI chunksLoadedOutput = null;
-    [SerializeField] private TextMeshProUGUI chunksInGameObjectOutput = null;
-    [SerializeField] private TextMeshProUGUI chunksInHashmapOutput = null;
-    [SerializeField] private TextMeshProUGUI cpuUsageOutput = null;
-
-    [Header("Calculations")]
-    [SerializeField] private Transform playerTarget = null;
-    [SerializeField] private Transform worldParent = null;
-    
-    private Transform[] transforms = null;
-    private System.Diagnostics.PerformanceCounter cpuCounter;
-
-    private void Start()
+    public class DeveloperOverlay : MonoBehaviour
     {
-        cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total", true);
+        [Header("Developer overlay")]
+        [SerializeField] private bool showingOverlay = false;
+        
+        [Header("Outputs")]
+        [SerializeField] private TextMeshProUGUI playerPositionOutput = null;
+        [SerializeField] private TextMeshProUGUI chunksLoadedOutput = null;
+        [SerializeField] private TextMeshProUGUI chunksInGameObjectOutput = null;
+        [SerializeField] private TextMeshProUGUI chunksInHashmapOutput = null;
+        [SerializeField] private TextMeshProUGUI cpuUsageOutput = null;
 
-        List<Transform> t = new List<Transform>();
-        for (int i = 0; i < transform.childCount; i++)
+        [Header("Calculations")]
+        [SerializeField] private Transform playerTarget = null;
+        [SerializeField] private Transform worldParent = null;
+        
+        private Transform[] transforms = null;
+        private ChunkUpdater _chunkUpdater;
+
+        private void Start()
         {
-            t.Add(transform.GetChild(i));
+            List<Transform> t = new List<Transform>();
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                t.Add(transform.GetChild(i));
+            }
+
+            this.transforms = t.ToArray();
+            _chunkUpdater = ChunkUpdater.Instance;
         }
 
-        this.transforms = t.ToArray();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F3))
+        private void Update()
         {
-            showingOverlay = !showingOverlay;
-
-            foreach (Transform rectTransform in transforms)
+            if (Input.GetKeyDown(KeyCode.F3))
             {
-                rectTransform.gameObject.SetActive(showingOverlay);
+                showingOverlay = !showingOverlay;
+
+                foreach (Transform rectTransform in transforms)
+                {
+                    rectTransform.gameObject.SetActive(showingOverlay);
+                }
+            }
+
+            if (showingOverlay)
+            {
+                playerPositionOutput.text = GetPlayerPosition().ToString();
+                chunksLoadedOutput.text = GetLoadedChunksAmount().ToString();
+                chunksInGameObjectOutput.text = GetAmountChunksInGameObjects().ToString();
+                chunksInHashmapOutput.text = GetAmountChunksInHashMap().ToString();
+                cpuUsageOutput.text = GetCPUUsage();
             }
         }
 
-        if (showingOverlay)
+        private Int3 GetPlayerPosition()
         {
-            playerPositionOutput.text = GetPlayerPosition().ToString();
-            chunksLoadedOutput.text = GetLoadedChunksAmount().ToString();
-            chunksInGameObjectOutput.text = GetAmountChunksInGameObjects().ToString();
-            chunksInHashmapOutput.text = GetAmountChunksInHashMap().ToString();
-            cpuUsageOutput.text = GetCPUUsage();
+            return playerTarget.position.ToInt3();
         }
-    }
 
-    private Int3 GetPlayerPosition()
-    {
-        return playerTarget.position.ToInt3();
-    }
+        private int GetLoadedChunksAmount()
+        {
+            return ChunkClusterDictionary.Count;
+        }
 
-    private int GetLoadedChunksAmount()
-    {
-        return ChunkDictionary.Count;
-    }
+        //Änderbar mit GameobjectPool
+        private int GetAmountChunksInGameObjects()
+        {
+            return _chunkUpdater.chunks.Count;
+        }
 
-    //Änderbar mit GameobjectPool
-    private int GetAmountChunksInGameObjects()
-    {
-        return worldParent.Cast<Transform>().Count(t => t.name != "Unused chunk");
-    }
+        private int GetAmountChunksInHashMap()
+        {
+            return HashSetPositionChecker.Count;
+        }
 
-    private int GetAmountChunksInHashMap()
-    {
-        return HashSetPositionChecker.Count;
-    }
-
-    private string GetCPUUsage()
-    {
-        return cpuCounter.NextValue() + "%";
+        private string GetCPUUsage()
+        {
+            return "0%";
+        }
     }
 }

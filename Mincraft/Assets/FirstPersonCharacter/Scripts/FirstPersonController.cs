@@ -3,6 +3,8 @@ using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 
+using Core.UI.Console;
+
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(AudioSource))]
 public class FirstPersonController : MonoBehaviour, IConsoleToggle

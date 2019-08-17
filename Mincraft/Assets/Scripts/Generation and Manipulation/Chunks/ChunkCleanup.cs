@@ -1,56 +1,57 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
-public class ChunkCleanup
+using Core.Math;
+
+namespace Core.Chunking
 {
-    private Int3 drawDistance;
-    private int chunkSize;
-    private List<Chunk> internalChunks;
-    private object _mutex = new object();
-
-    public ChunkCleanup(Int3 drawDistance, int chunkSize = 16)
+    public class ChunkCleanup
     {
-        this.drawDistance = drawDistance;
-        this.chunkSize = chunkSize;
-        internalChunks = new List<Chunk>();
-    }
-    
-    public void CheckChunks(int xStart, int yStart, int zStart)
-    {
-        //TODO: Kann eigentlich asynchron laufen
+        private Int3 drawDistance;
+        private int chunkSize;
 
-        //TODO: mach das in einen Task + locke dann innerhalb die internalChunks-liste und füge hin
-        Task.Run(() =>
+        public ChunkCleanup(Int3 drawDistance, int chunkSize = 16)
         {
-            var list = ChunkDictionary.GetActiveChunks();
-        
-            for (int i = 0; i < list.Count; i++)
-            {
-                Chunk c = list[i];
-                if (Mathf.Abs(c.Position.X - xStart) > drawDistance.X + chunkSize ||
-                    Mathf.Abs(c.Position.Y - yStart) > drawDistance.Y + chunkSize ||
-                    Mathf.Abs(c.Position.Z - zStart) > drawDistance.Z + chunkSize)
-                {
-                    lock (_mutex)
-                    {
-                        internalChunks.Add(c);
-                    }
-                    ChunkDictionary.Remove(c.Position);
-                    HashSetPositionChecker.Remove(c.Position);
-                }
-            };
-        });
-    }
-
-    public void RemoveChunks(int batchsize = 100)
-    {
-        for (int i = 0; i < internalChunks.Count && i < batchsize; i++)
-        {
-            Chunk c = internalChunks[i];
-            c.ReleaseGameObject();
-
-            internalChunks.RemoveAt(i);
+            this.drawDistance = drawDistance;
+            this.chunkSize = chunkSize;
         }
+        
+        public void CheckChunks(int xStart, int yStart, int zStart, List<Chunk> chunks)
+        {
+            
+            for (int i = 0; i < chunks.Count; i++)
+            {
+                Chunk c = chunks[i];
+                
+                if (Mathf.Abs(c.GlobalPosition.X - xStart) > drawDistance.X + chunkSize ||
+                    Mathf.Abs(c.GlobalPosition.Y - yStart) > drawDistance.Y + chunkSize ||
+                    Mathf.Abs(c.GlobalPosition.Z - zStart) > drawDistance.Z + chunkSize)
+                {
+                    //ChunkClusterDictionary.Remove(c.GlobalPosition);
+                    HashSetPositionChecker.Remove(c.GlobalPosition);
+                    c.ReleaseGameObject();
+                    chunks.RemoveAt(i);
+                }
+            }
+        }
+        
+    //    public void CheckChunks(int xStart, int yStart, int zStart)
+    //    {
+    //        var list = ChunkDictionary.GetActiveChunks();
+    //
+    //        for (int i = 0; i < list.Count; i++)
+    //        {
+    //            Chunk c = list[i];
+    //            
+    //            if (Mathf.Abs(c.LocalPosition.X - xStart) > drawDistance.X + chunkSize ||
+    //                Mathf.Abs(c.LocalPosition.Y - yStart) > drawDistance.Y + chunkSize ||
+    //                Mathf.Abs(c.LocalPosition.Z - zStart) > drawDistance.Z + chunkSize)
+    //            {
+    //                ChunkDictionary.Remove(c.LocalPosition);
+    //                HashSetPositionChecker.Remove(c.LocalPosition);
+    //                c.ReleaseGameObject();
+    //            }
+    //        }
+    //    }
     }
 }

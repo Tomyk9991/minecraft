@@ -1,34 +1,38 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenuUI : MonoBehaviour
+namespace Core.UI.Menu
 {
-    [Header("Buttons")]
-    [SerializeField] private Button playButton = null;
-    [SerializeField] private Button optionsButton = null;
-    [SerializeField] private Button exitButton = null;
-
-    [Header("Dialogs")]
-    [SerializeField] private PlayDialogUI playDialogUI = null;
-    [SerializeField] private OptionsDialogUI optionsDialogUI = null;
-
-    private bool playDialogVisibility = false;
-    private bool optionsDialogVisibility = false;
-
-    private void Start()
+    public class MainMenuUI : MonoBehaviour
     {
-        playButton.onClick.AddListener(() =>
-        {
-            //Open "Create a new world or load maps" Dialog
-            playDialogUI.SetChildsVisibility(!playDialogVisibility);
-        });
+        [Header("Buttons")]
+        [SerializeField] private Button playButton = null;
+        [SerializeField] private Button optionsButton = null;
+        [SerializeField] private Button exitButton = null;
 
-        optionsButton.onClick.AddListener(() =>
-        {
-            //Open "options" Dialog
-            optionsDialogUI.SetChildsVisibility(!optionsDialogVisibility);
-        });
+        [Header("Dialogs")]
+        [SerializeField] private 
+            PlayDialogUI playDialogUI = null;
+        [SerializeField] private OptionsDialogUI optionsDialogUI = null;
 
-        exitButton.onClick.AddListener(Application.Quit);
+        private bool playDialogVisibility = false;
+        private bool optionsDialogVisibility = false;
+
+        private void Start()
+        {
+            playButton.onClick.AddListener(() =>
+            {
+                //Open "Create a new world or load maps" Dialog
+                playDialogUI.SetChildsVisibility(!playDialogVisibility);
+            });
+
+            optionsButton.onClick.AddListener(() =>
+            {
+                //Open "options" Dialog
+                optionsDialogUI.SetChildsVisibility(!optionsDialogVisibility);
+            });
+
+            exitButton.onClick.AddListener(Application.Quit);
+        }
     }
 }
