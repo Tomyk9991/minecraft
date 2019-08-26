@@ -25,7 +25,6 @@ namespace Core.Chunking
             {
                 lock (_mutex)
                 {
-                    //Count++;
                     ChunkCluster cc = new ChunkCluster(Int3.One * 16)
                     {
                         Position = key
@@ -46,7 +45,6 @@ namespace Core.Chunking
         {
             if (!dictionary.TryRemove(key, out var value))
                 throw new Exception($"Removing an item {key}, that does not exist");
-            //Count--;
         }
 
         public static ChunkCluster GetValue(Int3 key) 
@@ -55,10 +53,9 @@ namespace Core.Chunking
         public static void Clear()
         {
             dictionary.Clear();
-            //Count = 0;
         }
         
-        public static List<ChunkCluster> GetActiveChunks()
+        public static List<ChunkCluster> GetActiveChunkClusters()
         {
             return dictionary.Values.ToList();
         }

@@ -19,6 +19,7 @@
           <e p="ArrayElementTitleDrawer.cs" t="Include" />
           <e p="DrawIfFalsePropertyDrawer.cs" t="Include" />
           <e p="DrawIfTruePropertyDrawer.cs" t="Include" />
+          <e p="Int2Drawer.cs" t="Include" />
           <e p="Int3Drawer.cs" t="Include" />
           <e p="ReadOnlyDrawer.cs" t="Include" />
           <e p="ShowOnlyDrawer.cs" t="Include" />
@@ -53,7 +54,6 @@
               <e p="ChunkCleanup.cs" t="Include" />
               <e p="ChunkCluster.cs" t="Include" />
               <e p="ChunkGameObjectPool.cs" t="Include" />
-              <e p="ChunkSavingSettings.cs" t="Include" />
               <e p="ChunkSettings.cs" t="Include" />
               <e p="ChunkState.cs" t="Include" />
               <e p="ChunkUpdater.cs" t="Include" />
@@ -140,7 +140,6 @@
         </e>
         <e p="Shaders" t="Include">
           <e p="Block.shader" t="Include" />
-          <e p="NewUnlitShader.shader" t="Include" />
         </e>
         <e p="Standard Assets" t="Include">
           <e p="CrossPlatformInput" t="Include">

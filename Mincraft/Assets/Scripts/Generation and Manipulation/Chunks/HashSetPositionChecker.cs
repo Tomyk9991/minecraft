@@ -6,25 +6,47 @@ using Core.Math;
 
 namespace Core.Chunking
 {
+//    public static class HashSetPositionChecker
+//    {
+//        private static ConcurrentHashSet<Int3> hashSet = new ConcurrentHashSet<Int3>();
+//
+//        public static int Count { get; private set; }
+//
+//        public static void Add(Int3 item)
+//        {
+//            if(!hashSet.Add(item))
+//                throw new Exception($"Added an item {item} to the Hashset, that already exists.");
+//
+//            Count++;
+//        }
+//        public static bool Contains(Int3 item) => hashSet.Contains(item);
+//
+//        public static void Remove(Int3 item)
+//        {
+//            hashSet.Remove(item);
+//            Count--;
+//        }
+//    }
+    
     public static class HashSetPositionChecker
     {
-        private static ConcurrentHashSet<Int3> hashSet = new ConcurrentHashSet<Int3>();
+        private static ConcurrentHashSet<Int2> hashSet = new ConcurrentHashSet<Int2>();
 
         public static int Count { get; private set; }
 
-        public static void Add(Int3 item)
+        public static void Add(Int2 item)
         {
             if(!hashSet.Add(item))
                 throw new Exception($"Added an item {item} to the Hashset, that already exists.");
 
             Count++;
         }
-        public static bool Contains(Int3 item) => hashSet.Contains(item);
+        public static bool Contains(Int2 item) => hashSet.Contains(item);
 
-        public static void Remove(Int3 item)
+        public static void Remove(Int2 item)
         {
-            hashSet.Remove(item);
-            Count--;
+            if (hashSet.Remove(item))
+                Count--;
         }
     }
 

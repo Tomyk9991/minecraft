@@ -24,7 +24,7 @@ namespace Testing.Gizmos
         {
             if (!Application.isPlaying) return;
             
-            List<ChunkCluster> clusters = ChunkClusterDictionary.GetActiveChunks();
+            List<ChunkCluster> clusters = ChunkClusterDictionary.GetActiveChunkClusters();
             length = clusters.Count;
             
             UnityEngine.Gizmos.DrawWireCube(clusters[selectedIndex].Position.ToVector3(), Vector3.one * 16 * 16);

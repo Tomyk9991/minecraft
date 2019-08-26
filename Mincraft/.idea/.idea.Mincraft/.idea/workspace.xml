@@ -5,61 +5,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="548444b7-6046-4b75-8311-c42af3de61bb" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkClusterDictionary.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/indexLayout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imports/Material/Atlas/TextureAtlas.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Imports/Material/Atlas/TextureAtlas.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Chunk Transparent.prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Chunk Transparent.prefab.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Chunk.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Chunk.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Chunk.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Chunk.prefab.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/ChunkTest.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/ChunkTest.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/ChunkTest.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/ChunkTest.prefab.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Editor/Int3Drawer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Editor/Int3Drawer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MainScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Attributes/ArrayElementTitleAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Attributes/ArrayElementTitleAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Attributes/DrawIfFalseAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Attributes/DrawIfFalseAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Attributes/DrawIfTrueAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Attributes/DrawIfTrueAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Attributes/ReadOnlyAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Attributes/ReadOnlyAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Attributes/ShowOnlyAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Attributes/ShowOnlyAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJob.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJob.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJobManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJobManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCleanup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCleanup.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGameObjectPool.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGameObjectPool.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGizmosDrawer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGizmosDrawer.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSavingSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSavingSettings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCluster.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCluster.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSettings.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkUpdater.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkUpdater.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/NeighbourTestVisualizer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/NeighbourTestVisualizer.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/GreedyMesh.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/GreedyMesh.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkDictionary.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkDictionary.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkClusterDictionary.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ModifyMesh.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ModifyMesh.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/OakTreeGenerator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/OakTreeGenerator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/TreeGenerator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/TreeGenerator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Manager/GameManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/AddBlock.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/AddBlock.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/RemoveBlock.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/RemoveBlock.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/SelectedBlockVisualizer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/SelectedBlockVisualizer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Saving/ContextIO.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Saving/ContextIO.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Saving/SavingJob.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Saving/SavingJob.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkClusterVisualizer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkClusterVisualizer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/HashSetPositionChecker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/HashSetPositionChecker.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkClusterDictionary.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkClusterDictionary.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/DevOverlay/DeveloperOverlay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/DevOverlay/DeveloperOverlay.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/MainMenuUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/MainMenuUI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/PlayDialogUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/PlayDialogUI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utilities/Int3.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Utilities/Int3.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utilities/MathHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Utilities/MathHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Shaders/DoubleSidedAlphaClip.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Shaders/DoubleSidedAlphaClip.shader.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utilities/Int2.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Utilities/Int2.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Shaders/NewUnlitShader.shader" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Shaders/NewUnlitShader.shader.meta" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -69,15 +49,21 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkClusterVisualizer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCluster.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///C# Console" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGameObjectPool.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/IRemoveChunk.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkUpdater.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSettings.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/Console/IConsoleToggle.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/Console/ConsoleMethodAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Standard Assets/Utility/WaypointCircuit.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJob.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/Console/ConsoleInputer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJobManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/PlayDialogUI.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/MainMenuUI.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/TreeTestMonoBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/OptionsDialogUI.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/TreeGenerator.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/DevOverlay/DeveloperOverlay.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/OakTreeGenerator.cs" root0="FORCE_HIGHLIGHTING" />
@@ -85,22 +71,30 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Player/AddBlock.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Player/RemoveBlock.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Player/SelectedBlockVisualizer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/Int2Drawer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Saving/SavingJob.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Saving/ContextIO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Saving/Context.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Saving/SerializeHelper/SimplexNoiseSettingsSerializeHelper.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Saving/SerializeHelper/ChunkSerializeHelper.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Manager/GameManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionObject.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Shaders/NewUnlitShader.shader" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkState.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Utilities/Int2.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/DrawIfFalsePropertyDrawer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/DrawIfTruePropertyDrawer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Utilities/Extensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Utilities/IntVector.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Editor/ShowOnlyDrawer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Utilities/MathHelper.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Utilities/SingletonBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/ReadOnlyDrawer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Utilities/Int3.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Editor/Int3Drawer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCleanup.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Attributes/ShowOnlyAttribute.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/ArrayElementTitleDrawer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Attributes/ReadOnlyAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Attributes/ArrayElementTitleAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Attributes/DrawIfTrueAttribute.cs" root0="FORCE_HIGHLIGHTING" />
@@ -109,6 +103,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Shaders/Block.shader" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ModifyMesh.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/UVDictionary.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/FirstPersonCharacter/Scripts/FirstPersonController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkClusterDictionary.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/NeighbourTestVisualizer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Block.cs" root0="FORCE_HIGHLIGHTING" />
@@ -120,64 +115,67 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/GreedyMesh.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/IMouseUsable.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/BlockUV.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.mathematics@1.1.0/Unity.Mathematics/int4x3.gen.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkGizmosDrawer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Noise/SimplexNoise.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/HashSetPositionChecker.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Noise/SimplexNoiseSettings.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/RemoveBlock.cs" />
-        <option value="$PROJECT_DIR$/Assets/ChunkGizmosDrawer.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/AddBlock.cs" />
-        <option value="$PROJECT_DIR$/Assets/Standard Assets/Utility/WaypointProgressTracker.cs" />
-        <option value="$PROJECT_DIR$/Assets/Standard Assets/Utility/WaypointCircuit.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGenerator.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/MeshModifier.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGizmosDrawer.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/BlockUV.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/UVData.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ModifyMesh.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/UVDictionary.cs" />
-        <option value="$PROJECT_DIR$/Assets/Shaders/DoubleSidedAlphaClip.shader" />
-        <option value="$PROJECT_DIR$/Assets/Shaders/Block.shader" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/MathHelper.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/HashsetPositionChecker.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/HashSetPositionChecker.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkDictionary.cs" />
-        <option value="$PROJECT_DIR$/Assets/Editor/ShowOnlyDrawer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Noise/SimplexNoise.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Occlusion/OcclusionObject.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Saving/SerializeHelper/SimplexNoiseSettingsSerializeHelper.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Saving/Context.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/UI/Console/ConsoleMethodAttribute.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/UI/Console/IConsoleToggle.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/MainMenuUI.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/OptionsDialogUI.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/PlayDialogUI.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/Int3.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/UI/DevOverlay/DeveloperOverlay.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/IntVector.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/SingletonBehaviour.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkClusterVisualizer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/Extensions.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Noise/SimplexNoiseSettings.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/OakTreeGenerator.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Player/AddBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Block.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/UI/Console/ConsoleInputer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Player/RemoveBlock.cs" />
+        <option value="$PROJECT_DIR$/Assets/FirstPersonCharacter/Scripts/FirstPersonController.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Player/SelectedBlockVisualizer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/TreeTestMonoBehaviour.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Saving/SerializeHelper/ChunkSerializeHelper.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJob.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJobManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGameObjectPool.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/NeighbourTestVisualizer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/TreeGenerator.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Saving/ContextIO.cs" />
+        <option value="$PROJECT_DIR$/Assets/Editor/DrawIfTruePropertyDrawer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Editor/ReadOnlyDrawer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Editor/DrawIfFalsePropertyDrawer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Editor/ShowOnlyDrawer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Editor/ArrayElementTitleDrawer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSettings.cs" />
+        <option value="$PROJECT_DIR$/Assets/Editor/Int3Drawer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/Int2.cs" />
+        <option value="$PROJECT_DIR$/Assets/Editor/Int2Drawer.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/MathHelper.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkClusterDictionary.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCluster.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJob.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCleanup.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/TreeGenerator.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/OakTreeGenerator.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ModifyMesh.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Manager/GameManager.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/GreedyMesh.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/HashSetPositionChecker.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCleanup.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkUpdater.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Saving/SavingJob.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkClusterVisualizer.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkGizmosDrawer.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Player/AddBlock.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/NeighbourTestVisualizer.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Player/RemoveBlock.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Player/SelectedBlockVisualizer.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Saving/ContextIO.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJobManager.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSettings.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/PlayDialogUI.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/MainMenuUI.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Attributes/ShowOnlyAttribute.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Attributes/ReadOnlyAttribute.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Attributes/DrawIfTrueAttribute.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Attributes/DrawIfFalseAttribute.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Attributes/ArrayElementTitleAttribute.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGameObjectPool.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSavingSettings.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkState.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/UI/DevOverlay/DeveloperOverlay.cs" />
       </list>
     </option>
   </component>
@@ -185,12 +183,6 @@
     <ignored-facets>
       <facet id="riderModule/invalid/Default Android Facet" />
     </ignored-facets>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="20" />
-    <option name="y" value="-17" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
   </component>
   <component name="ProjectId" id="1PC4gajbVe8rbOWpbZJAlLax6TS" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -210,7 +202,7 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="CodeInspectionSettingsId" />
+    <property name="settings.editor.selected.configurable" value="Shelf.Project.Settings" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -334,7 +326,10 @@
       <workItem from="1565968918138" duration="2320000" />
       <workItem from="1565999794890" duration="5607000" />
       <workItem from="1566005896183" duration="315000" />
-      <workItem from="1566040881771" duration="6217000" />
+      <workItem from="1566040881771" duration="8231000" />
+      <workItem from="1566840921817" duration="8388000" />
+      <workItem from="1566855504530" duration="4931000" />
+      <workItem from="1566862760015" duration="1157000" />
     </task>
     <servers />
   </component>
@@ -360,6 +355,8 @@
     <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="709" y="249" key="#Notifications" />
+    <state x="709" y="249" key="#Notifications/1920.1080/1920.1080" />
     <state x="677" y="224" key="RollbackChangesDialog" />
     <state x="677" y="224" key="RollbackChangesDialog/1920.1080/1920.1080" />
     <state x="313" y="114" width="1607" height="693" key="SettingsEditor" />

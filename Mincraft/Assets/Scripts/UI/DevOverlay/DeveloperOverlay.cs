@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -25,7 +26,6 @@ namespace Core.UI.DeveloperOverlay
         [SerializeField] private Transform worldParent = null;
         
         private Transform[] transforms = null;
-        private ChunkUpdater _chunkUpdater;
 
         private void Start()
         {
@@ -36,7 +36,6 @@ namespace Core.UI.DeveloperOverlay
             }
 
             this.transforms = t.ToArray();
-            _chunkUpdater = ChunkUpdater.Instance;
         }
 
         private void Update()
@@ -74,7 +73,7 @@ namespace Core.UI.DeveloperOverlay
         //Änderbar mit GameobjectPool
         private int GetAmountChunksInGameObjects()
         {
-            return _chunkUpdater.chunks.Count;
+            return worldParent.transform.Cast<Transform>().Count(t => t.name != "Unused chunk");
         }
 
         private int GetAmountChunksInHashMap()

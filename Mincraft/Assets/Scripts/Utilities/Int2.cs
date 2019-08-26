@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Core.Math
 {
+    [Serializable]
     public struct Int2 : IntVector
     {
         public int X;

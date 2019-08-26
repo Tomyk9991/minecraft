@@ -12,7 +12,8 @@ namespace Core.Chunking
     public class ChunkSettings : SingletonBehaviour<ChunkSettings>
     {
         public static int ChunkSize => (int) Instance.chunkSize;
-        public static int MaxYHeight => Instance.maxYHeight;
+        public static Int2 MinMaxYHeight => Instance.minMaxYHeight;
+//        public static int MaxYHeight => Instance.maxYHeight;
         public static SimplexNoiseSettings SimplexNoiseSettings => Instance.simplexNoiseSettings;
         public static Int3 DrawDistance => Instance.drawDistance;
         public bool drawGizmosChunks = false;
@@ -20,7 +21,9 @@ namespace Core.Chunking
         [Header("Chunksettings")]
         [SerializeField] private uint chunkSize = 0;
         [SerializeField] private int seed = -1;
-        [SerializeField] private int maxYHeight = 256;
+        [SerializeField] private Int2 minMaxYHeight;
+        
+//        [SerializeField] private int maxYHeight = 256;
 
         [Header("Noisesettings")] //Remake this to make is depend on the biom, you're currently at
         [SerializeField] public float smoothness = 40;

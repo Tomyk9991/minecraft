@@ -4,10 +4,10 @@ using UnityEngine;
 
 using Core.Math;
 
-[CustomPropertyDrawer(typeof(Int3))]
-public class Int3Drawer : PropertyDrawer
+[CustomPropertyDrawer(typeof(Int2))]
+public class Int2Drawer : PropertyDrawer
 {
-    private SerializedProperty X, Y, Z;
+    private SerializedProperty X, Y;
     private string name;
     private bool cache = false;
 
@@ -24,8 +24,6 @@ public class Int3Drawer : PropertyDrawer
             X = property.Copy();
             property.Next(true);
             Y = property.Copy();
-            property.Next(true);
-            Z = property.Copy();
 
             cache = true;
         }
@@ -41,12 +39,12 @@ public class Int3Drawer : PropertyDrawer
             contentPosition.y += 18f;
         }
         
-        float third = contentPosition.width / 3;
+        float half = contentPosition.width / 2;
         GUI.skin.label.padding = new RectOffset(3, 3, 6, 6);
         
         //show the X and Y from the point
         EditorGUIUtility.labelWidth = 14f;
-        contentPosition.width *= 0.3f;
+        contentPosition.width *= 0.5f;
         EditorGUI.indentLevel = 0;
         
         // Begin/end property & change check make each field
@@ -60,7 +58,7 @@ public class Int3Drawer : PropertyDrawer
         }
         EditorGUI.EndProperty();
 
-        contentPosition.x += third;
+        contentPosition.x += half;
 
         EditorGUI.BeginProperty(contentPosition, label, Y);
         {
@@ -70,24 +68,13 @@ public class Int3Drawer : PropertyDrawer
                 Y.intValue = newVal;
         }
         EditorGUI.EndProperty();
-        
-        contentPosition.x += third;
-        
-        EditorGUI.BeginProperty(contentPosition, label, Z);
-        {
-            EditorGUI.BeginChangeCheck();
-            int newVal = EditorGUI.IntField(contentPosition, new GUIContent("Z"), Z.intValue);
-            if (EditorGUI.EndChangeCheck())
-                Z.intValue = newVal;
-        }
-        EditorGUI.EndProperty();
+
         
         if (EditorGUI.EndChangeCheck())
         {
             int factor = PlayerPrefs.GetInt("chunkSize");
             X.intValue = ClosestValueToFactor(X.intValue, factor);
             Y.intValue = ClosestValueToFactor(Y.intValue, factor);
-            Z.intValue = ClosestValueToFactor(Z.intValue, factor);
         }
     }
 

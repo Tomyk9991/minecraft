@@ -18,22 +18,22 @@ namespace Core.Chunking
         [SerializeField] private GameObject player = null;
 
         [SerializeField] private int amountDrawChunksPerFrame = 5;
-        [Header("Debug")]
-        [SerializeField] private bool drawLatestPlayerPosition = false;
 
         private Int3 drawDistance;
         private int chunkSize;
+        
+        private int minHeight;
         private int maxHeight;
 
         private Int3 latestPlayerPosition;
-
-        [SerializeField] private Int3 test = Int3.Zero;
-        private Int3 testLast = Int3.Zero; 
+        private Int3 previousPlayerPosition = Int3.Zero; 
         
 
         private ChunkJobManager chunkJobManager;
         private MeshModifier modifier;
         private ChunkCleanup cleanup;
+
+        public List<Chunk> chunks;
 
         private SavingJob savingJob;
 
@@ -46,11 +46,12 @@ namespace Core.Chunking
         //Time in seconds determining the period of recalculating chunks
         private float timeThreshhold = 5f;
 
-        public List<Chunk> chunks = new List<Chunk>();
-
         private void Start()
         {
-            maxHeight = ChunkSettings.MaxYHeight;
+            var minMaxYHeight = ChunkSettings.MinMaxYHeight;
+            minHeight = minMaxYHeight.X;
+            maxHeight = minMaxYHeight.Y;
+            
             modifier = new MeshModifier();
             chunkJobManager = new ChunkJobManager(true);
             chunkJobManager.Start();
@@ -62,42 +63,31 @@ namespace Core.Chunking
             GoPool = ChunkGameObjectPool.Instance;
 
             cleanup = new ChunkCleanup(drawDistance, chunkSize);
+            chunks = new List<Chunk>();
 
-            int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
-            int yStart = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize);
-            int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
+            int xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
+            int zPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
 
-            //TODO: Make Recalculate in a separat thread
-            RecalculateChunks(xStart, yStart, zStart);
+            StartTaskedProcess(xPlayerPos, zPlayerPos);
         }
 
         private void Update()
         {
             timeElapsed += Time.deltaTime;
-            int xStart = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
-            int yStart = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize);
-            int zStart = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
             
+            int xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
+            int yPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize);
+            int zPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
 
-            test.X = xStart;
-            test.Y = yStart;
-            test.Z = zStart;
 
-            if ((testLast != test) && !isRecalculating || timeElapsed > timeThreshhold)
+            Int3 temp = new Int3(xPlayerPos, yPlayerPos, zPlayerPos);
+
+            if ((previousPlayerPosition != temp) && !isRecalculating || timeElapsed > timeThreshhold)
             {
                 timeElapsed = 0f;
-                testLast = test;
+                previousPlayerPosition = temp;
 
-                Task.Run(() =>
-                {
-                    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                    isRecalculating = true;
-                    cleanup.CheckChunks(xStart, yStart, zStart, chunks);
-                    RecalculateChunks(xStart, yStart, zStart);
-                    isRecalculating = false;
-                    stopwatch.Stop();
-                    Debug.Log("Berechnung: " + stopwatch.ElapsedMilliseconds + "ms");
-                });
+                StartTaskedProcess(xPlayerPos, zPlayerPos);
             }
 
             latestPlayerPosition = player.transform.position.ToInt3();
@@ -105,11 +95,23 @@ namespace Core.Chunking
             for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < amountDrawChunksPerFrame; i++)
             {
                 ChunkJob task = chunkJobManager.DequeueFinishedJobs();
-                if (task != null && task.Completed && InsideDrawDistance(task.Chunk.GlobalPosition, xStart, yStart, zStart))
+                if (task != null && task.Completed && InsideDrawDistance(task.Chunk.GlobalPosition, xPlayerPos, zPlayerPos))
                 {
                     RenderCall(task);
                 }
             }
+        }
+
+        private void StartTaskedProcess(int xPlayerPos, int zPlayerPos)
+        {
+            Task.Run(() =>
+            {
+                isRecalculating = true;
+                RecalculateChunks(xPlayerPos, zPlayerPos);
+                cleanup.CheckChunks(xPlayerPos, zPlayerPos);
+                    
+                isRecalculating = false;
+            });
         }
 
         private void RenderCall(ChunkJob t)
@@ -129,37 +131,35 @@ namespace Core.Chunking
             }
         }
 
-        private bool InsideDrawDistance(Int3 position, int xPos, int yPos, int zPos)
+        private bool InsideDrawDistance(Int3 position, int xPos, int zPos)
         {
             return xPos - drawDistance.X <= position.X && xPos + drawDistance.X >= position.X &&
-                   yPos - drawDistance.Y <= position.Y && yPos + drawDistance.Y >= position.Y &&
                    zPos - drawDistance.Z <= position.Z && zPos + drawDistance.Z >= position.Z;
         }
-        
-        private void RecalculateChunks(int xStart, int yStart, int zStart)
+
+        private void RecalculateChunks(int xPlayerPos, int zPlayerPos)
         {
-            if (yStart >= maxHeight) return;
-
-            for (int x = xStart - drawDistance.X; x < xStart + drawDistance.X; x += chunkSize)
+            for (int x = xPlayerPos - drawDistance.X; x < xPlayerPos + drawDistance.X; x += chunkSize)
             {
-                for(int y = yStart + drawDistance.Y; y >= yStart - drawDistance.Y; y -= chunkSize)
+                for (int z = zPlayerPos - drawDistance.Z; z < zPlayerPos + drawDistance.Z; z += chunkSize)
                 {
-                    for (int z = zStart - drawDistance.Z; z < zStart + drawDistance.Z; z += chunkSize)
+                    Int2 chunkGlobalPosXZ = new Int2(x, z);
+                    
+                    if (!HashSetPositionChecker.Contains(chunkGlobalPosXZ))
                     {
-                        // (-32, 16, -32)
-                        Int3 chunkGlobalPos = new Int3(x, y, z); //Global chunk-Position
-
-                        
-                        if(!HashSetPositionChecker.Contains(chunkGlobalPos))
+                        HashSetPositionChecker.Add(chunkGlobalPosXZ);
+                        for (int y = minHeight; y < maxHeight; y += chunkSize)
                         {
-                            // (-256, 0, -256)
-                            Int3 chunkClusterPosition = new Int3(MathHelper.MultipleFloor(x, chunkSize * chunkSize),
-                                MathHelper.MultipleFloor(y, chunkSize * chunkSize),
-                                MathHelper.MultipleFloor(z, chunkSize * chunkSize));
+                            //(-32, 16, -32)
+                            Int3 chunkGlobalPos = new Int3(x, y, z);
 
-                            //  (32, 0, 0) = (32, 0, 0) - (0, 0, 0) 
+                            Int3 chunkClusterPosition = new Int3(MathHelper.MultipleFloor(x, chunkSize * chunkSize),
+                                                                 MathHelper.MultipleFloor(y, chunkSize * chunkSize),
+                                                                 MathHelper.MultipleFloor(z, chunkSize * chunkSize));
+                            
+                            //(32, 0, 0) = (32, 0, 0) - (0, 0, 0)
                             Int3 chunkLocalPos = chunkGlobalPos - chunkClusterPosition;
-                            // (2, 0, 0)
+                            //(2, 0, 0)
                             chunkLocalPos /= 16;
                             
                             ChunkJob job = new ChunkJob();
@@ -170,9 +170,7 @@ namespace Core.Chunking
                                 chunks.Add(createdChunk);
                             }
                             
-                            HashSetPositionChecker.Add(chunkGlobalPos);
                             createdChunk.AddedToHash = true;
-                                                    
                             ChunkCluster cluster = ChunkClusterDictionary.Add(chunkClusterPosition, createdChunk);
                             createdChunk.AddedToDick = true;
 
@@ -185,16 +183,8 @@ namespace Core.Chunking
                             }
                         }
                     }
+                    
                 }
-            }
-        }
-
-        private void OnDrawGizmos()
-        {
-            if (Application.isPlaying && drawLatestPlayerPosition)
-            {
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawSphere(latestPlayerPosition.ToVector3(), 2f);
             }
         }
 
