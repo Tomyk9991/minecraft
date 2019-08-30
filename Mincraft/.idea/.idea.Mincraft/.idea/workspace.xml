@@ -5,21 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="548444b7-6046-4b75-8311-c42af3de61bb" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Mincraft/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Editor/Int3Drawer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Editor/Int3Drawer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MainScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Chunk.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Chunk.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCleanup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCleanup.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCluster.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCluster.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkSettings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkUpdater.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkUpdater.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkClusterVisualizer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkClusterVisualizer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/HashSetPositionChecker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/HashSetPositionChecker.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkClusterDictionary.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Static Classes/ChunkClusterDictionary.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/NeighbourTestVisualizer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/NeighbourTestVisualizer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/DevOverlay/DeveloperOverlay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/DevOverlay/DeveloperOverlay.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utilities/Int2.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Utilities/Int2.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Shaders/NewUnlitShader.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Shaders/NewUnlitShader.shader.meta" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -49,7 +39,6 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkClusterVisualizer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCluster.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///C# Console" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGameObjectPool.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/IRemoveChunk.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkUpdater.cs" root0="FORCE_HIGHLIGHTING" />
@@ -116,6 +105,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/IMouseUsable.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Mesh/Blockmanipulation/Utilities/BlockUV.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.mathematics@1.1.0/Unity.Mathematics/int4x3.gen.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Prefabs/Chunk.prefab" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/ChunkGizmosDrawer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Bioms/Biom.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Noise/SimplexNoise.cs" root0="FORCE_HIGHLIGHTING" />
@@ -156,7 +146,6 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJob.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk Task job/ChunkJobManager.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkGameObjectPool.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/NeighbourTestVisualizer.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Tree generation/TreeGenerator.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Saving/ContextIO.cs" />
         <option value="$PROJECT_DIR$/Assets/Editor/DrawIfTruePropertyDrawer.cs" />
@@ -173,8 +162,9 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCluster.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/Chunk.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/HashSetPositionChecker.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCleanup.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkUpdater.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/ChunkCleanup.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Generation and Manipulation/Chunks/GizmosVisualizer/NeighbourTestVisualizer.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/UI/DevOverlay/DeveloperOverlay.cs" />
       </list>
     </option>
@@ -224,10 +214,10 @@
       <option name="userSelectedPid" value="false" />
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" pid="3640">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" />
+      <option name="pid" value="3640" />
       <option name="userSelectedPid" value="false" />
       <method v="2" />
     </configuration>
@@ -330,6 +320,8 @@
       <workItem from="1566840921817" duration="8388000" />
       <workItem from="1566855504530" duration="4931000" />
       <workItem from="1566862760015" duration="1157000" />
+      <workItem from="1566923475676" duration="2666000" />
+      <workItem from="1567092021744" duration="818000" />
     </task>
     <servers />
   </component>

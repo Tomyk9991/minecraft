@@ -100,34 +100,6 @@ namespace Core.Chunking
 
         #endregion
 
-    //    /// <summary>
-    //    /// Fügt den Block zum Chunk hinzu. Wenn dieser Block nicht mehr zum Chunk gehört, wird dieser zum nächsten
-    //    /// benachbarten Chunk hinzugefügt
-    //    /// </summary>
-    //    /// <param name="block">Block, welcher eine globale Position hat</param>
-    //    /// <returns>Gibt den Chunk zurück, wo der Block hingehört. Ist dieser Chunk nicht vorhanden, wird null zurückgegeben</returns>
-    //    public Chunk GetChunkFromGlobalBlock(Block block/*, out Int3 chunkClusterPosition*/)
-    //    {
-    //        if (this.LocalPosition.X - block.Position.X >= 0 && this.LocalPosition.X - block.Position.X < chunkSize
-    //         && this.LocalPosition.Y - block.Position.Y >= 0 && this.LocalPosition.Y - block.Position.Y < chunkSize
-    //         && this.LocalPosition.Z - block.Position.Z >= 0 && this.LocalPosition.Z - block.Position.Z < chunkSize)
-    //        {
-    //            return this;
-    //        }
-    //
-    //        int chunkClusterX = MathHelper.MultipleFloor(block.Position.X, chunkSize * chunkSize);
-    //        int chunkClusterY = MathHelper.MultipleFloor(block.Position.Y, chunkSize * chunkSize);
-    //        int chunkClusterZ = MathHelper.MultipleFloor(block.Position.Z, chunkSize * chunkSize);
-    //
-    //        int chunkX = MathHelper.MultipleFloor(block.Position.X, chunkSize);
-    //        int chunkY = MathHelper.MultipleFloor(block.Position.X, chunkSize);
-    //        int chunkZ = MathHelper.MultipleFloor(block.Position.X, chunkSize);
-    //        
-    //        Int3 chunkClusterPosition = new Int3(chunkClusterX, chunkClusterY, chunkClusterZ);
-    //
-    //        return ChunkDictionary.GetValue(chunkClusterPosition).GetChunk(chunkX, chunkY, chunkZ);
-    //    }
-
         public void RemoveBlockAsGlobal(Int3 globalBlockPos)
         {
             int index = GetFlattenIndex(globalBlockPos.X - this.LocalPosition.X, globalBlockPos.Y - this.LocalPosition.Y,

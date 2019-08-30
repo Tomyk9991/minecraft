@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -26,6 +28,7 @@ namespace Core.UI.DeveloperOverlay
         [SerializeField] private Transform worldParent = null;
         
         private Transform[] transforms = null;
+        private PerformanceCounter theCPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total"); 
 
         private void Start()
         {
@@ -83,7 +86,7 @@ namespace Core.UI.DeveloperOverlay
 
         private string GetCPUUsage()
         {
-            return "0%";
+            return theCPUCounter.NextValue() + "%";
         }
     }
 }

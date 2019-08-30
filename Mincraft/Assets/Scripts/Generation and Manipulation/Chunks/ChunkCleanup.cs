@@ -14,7 +14,7 @@ namespace Core.Chunking
             this.chunkSize = chunkSize;
         }
         
-        private bool InsideDrawDistance(Int2 position, int xPos, int zPos)
+        public bool InsideDrawDistance(Int2 position, int xPos, int zPos)
         {
             return xPos - drawDistance.X <= position.X && xPos + drawDistance.X >= position.X &&
                    zPos - drawDistance.Z <= position.Y && zPos + drawDistance.Z >= position.Y;
@@ -38,18 +38,18 @@ namespace Core.Chunking
                         
                         if (!InsideDrawDistance(globalChunkPos, xPlayerPos, zPlayerPos))
                         {
-                            HashSetPositionChecker.Remove(globalChunkPos);
-
                             for (int y = 0; y < chunkSize; y++)
                             {
                                 Chunk chunk = chunks[FlattenIdx(x, y, z)];
 
                                 if (chunk != null)
                                 {
-                                    chunk.ReleaseGameObject();
                                     clusters[i].RemoveChunk(x, y, z);
+                                    chunk.ReleaseGameObject();
                                 }
                             }
+                            
+                            HashSetPositionChecker.Remove(globalChunkPos);
                         }
                     }
                 }

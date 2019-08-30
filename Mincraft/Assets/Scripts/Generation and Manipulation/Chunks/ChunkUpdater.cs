@@ -95,7 +95,7 @@ namespace Core.Chunking
             for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < amountDrawChunksPerFrame; i++)
             {
                 ChunkJob task = chunkJobManager.DequeueFinishedJobs();
-                if (task != null && task.Completed && InsideDrawDistance(task.Chunk.GlobalPosition, xPlayerPos, zPlayerPos))
+                if (task != null && task.Completed && InsideDrawDistance(task.Chunk.GlobalPosition, xPlayerPos, zPlayerPos) && task.HasBlocks)
                 {
                     RenderCall(task);
                 }

@@ -10,6 +10,9 @@ namespace Core.Chunking.Debugging
     {
         [SerializeField, ShowOnly] private int selectedIndex = 0;
         [SerializeField] private Int3 selectedClusterPosition;
+        
+        [SerializeField] private GameObject player = null;
+        
 
         private void OnDrawGizmosSelected()
         {
@@ -23,6 +26,24 @@ namespace Core.Chunking.Debugging
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(chunk.GlobalPosition.ToVector3() + Vector3.one * 8, Vector3.one * 16);
             selectedClusterPosition = chunk.Cluster.Position;
+        }
+
+        [ContextMenu("Test")]
+        private void Test()
+        {
+            Int3 temp = transform.position.ToInt3();
+            Int2 position = new Int2(temp.X, temp.Z);
+            
+            Int3 latestPlayerPosition = player.transform.position.ToInt3();
+            
+            int xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, ChunkSettings.ChunkSize);
+            int zPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Z, ChunkSettings.ChunkSize);
+
+            ChunkCleanup cleanup = new ChunkCleanup(ChunkSettings.DrawDistance, ChunkSettings.ChunkSize);
+
+            Debug.Log("Inside draw-Distance: " + cleanup.InsideDrawDistance(position, xPlayerPos, zPlayerPos));
+            Debug.Log("In Hashset: " + HashSetPositionChecker.Contains(position));
+            Debug.Log("In Dictionary: " + ChunkClusterDictionary.Contains(temp));
         }
     }
 }
