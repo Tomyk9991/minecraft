@@ -31,9 +31,9 @@ public class Int2Drawer : PropertyDrawer
         Rect contentPosition = EditorGUI.PrefixLabel(position, new GUIContent(name));
         
         //Check if there is enough space to put the name on the same line (to save space)
-        if (position.height > 16f)
+        if (position.height > 18f)
         {
-            position.height = 16f;
+            position.height = 18f;
             EditorGUI.indentLevel += 1;
             contentPosition = EditorGUI.IndentedRect(position);
             contentPosition.y += 18f;

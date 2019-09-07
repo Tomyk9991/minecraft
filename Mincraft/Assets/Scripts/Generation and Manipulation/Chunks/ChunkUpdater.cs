@@ -95,7 +95,7 @@ namespace Core.Chunking
             for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < amountDrawChunksPerFrame; i++)
             {
                 ChunkJob task = chunkJobManager.DequeueFinishedJobs();
-                if (task != null && task.Completed && InsideDrawDistance(task.Chunk.GlobalPosition, xPlayerPos, zPlayerPos) && task.HasBlocks)
+                if (task != null && task.Completed && InsideDrawDistance(task.Chunk.GlobalPosition, xPlayerPos, zPlayerPos) && task.MeshData.Vertices.Count != 0)
                 {
                     RenderCall(task);
                 }
@@ -107,9 +107,10 @@ namespace Core.Chunking
             Task.Run(() =>
             {
                 isRecalculating = true;
+                
                 RecalculateChunks(xPlayerPos, zPlayerPos);
                 cleanup.CheckChunks(xPlayerPos, zPlayerPos);
-                    
+                
                 isRecalculating = false;
             });
         }

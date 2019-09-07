@@ -17,6 +17,7 @@
         </e>
         <e p="Editor" t="Include">
           <e p="ArrayElementTitleDrawer.cs" t="Include" />
+          <e p="DarkTheme.cs" t="Include" />
           <e p="DrawIfFalsePropertyDrawer.cs" t="Include" />
           <e p="DrawIfTruePropertyDrawer.cs" t="Include" />
           <e p="Int2Drawer.cs" t="Include" />
