@@ -1,17 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 using Core.Builder;
 using Core.Builder.Generation;
+using Core.Chunking.Threading;
 using Core.Managers;
 using Core.Math;
 using Core.Saving;
 using Core.Saving.Serializers;
+using Test;
+using Random = System.Random;
 
 namespace Core.Chunking
 {
     public class Chunk : Context<Chunk>
     {
-        //TODO, wenn der Chunk sich durch Simulation (z.B. Gras ist gewachsen) verändert, soll ebenfalls gespeichert werden
         public GameObject CurrentGO { get; set; }
 
         //Zwischen [(0, 0, 0) und (15, 15, 15)]
@@ -50,31 +54,33 @@ namespace Core.Chunking
             Int3.Left, // 4
             Int3.Right // 5
         };
-
+        private static FastNoise noise;
 
         public Chunk()
         {
             chunkSize = ChunkSettings.ChunkSize;
-            smoothness = ChunkSettings.SimplexNoiseSettings.Smoothness;
-            steepness = ChunkSettings.SimplexNoiseSettings.Steepness;
-            seed = ChunkSettings.SimplexNoiseSettings.Seed;
+            smoothness = ChunkSettings.NoiseSettings.Smoothness;
+            steepness = ChunkSettings.NoiseSettings.Steepness;
+            seed = ChunkSettings.NoiseSettings.Seed;
+
             treeGenerator = new OakTreeGenerator(new Int2(4, 6), new Int2(2, 4));
 
             blocks = new Block[chunkSize * chunkSize * chunkSize];
             chunkNeigbours = new Chunk[6];
-        }
 
-        public Chunk(bool test) //Test
-        {
-            chunkSize = 16;
-            blocks = new Block[chunkSize * chunkSize * chunkSize];
-            chunkNeigbours = new Chunk[6];
+            if (noise == null)
+                noise = new FastNoise(this.seed);
         }
 
         public void AddBlock(Block block)
         {
             int index = GetFlattenIndex(block.Position.X, block.Position.Y, block.Position.Z);
             blocks[index] = block;
+        }
+        
+        public void InvokeToRedraw()
+        {
+            throw new NotImplementedException();
         }
 
         #region Context
@@ -84,7 +90,8 @@ namespace Core.Chunking
             return new ChunkSerializeHelper()
             {
                 ChunkPosition = this.LocalPosition,
-                localBlocks = this.blocks
+                localBlocks = this.blocks,
+                //global blocks auch!
                 //Later here we will continue with biom settings
             };
         }
@@ -93,6 +100,7 @@ namespace Core.Chunking
         {
             var helper = (ChunkSerializeHelper) data;
             this.LocalPosition = helper.ChunkPosition;
+            //globalblocks auch
             this.blocks = helper.localBlocks;
 
             return this;
@@ -325,68 +333,72 @@ namespace Core.Chunking
         /// Generates the landscape for the chunk, based on it's position
         /// </summary>
         /// <returns>Returns a state, if the chunk has only air in it, or not</returns>
-        public void GenerateBlocks() // TODO: Make this based on biom. Maybe virtual or pass in IBiom?
+        public void GenerateBlocks()
         {
-            for (int x = 0; x < chunkSize; x++)
+            ChunkGen();
+        }
+
+        private void ChunkGen()
+        {
+            for (int x = this.GlobalPosition.X; x < this.GlobalPosition.X + 16; x++)
             {
-                for (int y = 0; y < chunkSize; y++)
+                for (int z = this.GlobalPosition.Z; z < this.GlobalPosition.Z + 16; z++)
                 {
-                    for (int z = 0; z < chunkSize; z++)
-                    {
-                        float height = OctavePerlin((x + this.GlobalPosition.X + seed) * smoothness,
-                                           (z + this.GlobalPosition.Z + seed) * smoothness, 8, 0.5f) * steepness;
-
-                        if (y + this.GlobalPosition.Y < height - 1)
-                        {
-                            Block b = new Block(new Int3(x, y, z));
-                            b.SetID((int) BlockUV.Dirt);
-                            this.AddBlock(b);
-                        }
-                        else if (y + this.GlobalPosition.Y < height)
-                        {
-                            Block b = new Block(new Int3(x, y, z));
-                            b.SetID((int) BlockUV.Grass);
-                            this.AddBlock(b);
-                        }
-                        else if (y + this.GlobalPosition.Y == (int) height + 1)
-                        {
-                            float TESTZOOMLEVEL = 1.08f;
-
-                            float result = Mathf.PerlinNoise((x + this.LocalPosition.X + seed) * TESTZOOMLEVEL,
-                                (z + this.LocalPosition.Z + seed) * TESTZOOMLEVEL);
-                            if (result > 0.89f) //93
-                            {
-    //                            List<ChunkJob> jobs = treeGenerator.Generate(this, x, y, z);
-    //
-    //                            for (int i = 0; i < jobs.Count; i++)
-    //                            {
-    //                                ChunkJobManager.ChunkJobManagerUpdaterInstance.Add(jobs[i]);
-    //                            }
-                            }
-                        }
-                    }
+                    Biom biom = BiomFinder.Find(noise.GetCellular(x * smoothness, z * smoothness));
+                    ChunkColumnGen(x, z, biom);
                 }
             }
         }
 
-        private float OctavePerlin(float x, float y, int octaves, float persistence)
+        public void ChunkColumnGen(int x, int z, Biom biom)
         {
-            float total = 0;
-            float frequency = 1;
-            float amplitude = 1;
-            float maxValue = 0; // Used for normalizing result to 0.0 - 1.0
-            for (int i = 0; i < octaves; i++)
+            //Mountains
+            int lowerHeight = biom.lowerBaseHeight;
+
+            lowerHeight += GetNoise(x, 0, z, biom.lowerMountainFrequency, biom.lowerMountainHeight);
+
+            //Stones
+            if (lowerHeight < biom.lowerMinHeight)
+                lowerHeight = biom.lowerMinHeight;
+
+            lowerHeight += GetNoise(x, 0, z, biom.lowerBaseNoise, biom.lowerBasNoisHeight);
+
+            int midHeight = lowerHeight + biom.midBaseHeight;
+            midHeight += GetNoise(x, 5, z, biom.midBaseNoise, biom.midBaseNoiseHeight);
+
+            //Dirt
+            int topHeight = midHeight + biom.topLayerBaseHeight;
+            topHeight += GetNoise(x, 10, z, biom.topLayerNoise, biom.topLayerNoiseHeight);
+
+            for (int y = this.GlobalPosition.Y; y < this.GlobalPosition.Y + 16; y++)
             {
-                total += Mathf.PerlinNoise(x * frequency, y * frequency) * amplitude;
-
-                maxValue += amplitude;
-
-                amplitude *= persistence;
-                frequency *= 2;
+                int caveChance = GetNoise(x, y, z, biom.caveFrequency, 200);
+                if (y <= lowerHeight && biom.caveSize < caveChance)
+                {
+                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
+                    block.SetID((int) biom.lowerLayerBlock);
+                    this.AddBlock(block);
+                }
+                else if (y <= midHeight && biom.caveSize < caveChance)
+                {
+                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
+                    block.SetID((int)biom.midLayerBlock);
+                    this.AddBlock(block);
+                }
+                else if (y <= topHeight && biom.caveSize < caveChance)
+                {
+                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
+                    block.SetID((int) biom.topLayerBlock);
+                    this.AddBlock(block);
+                }
+                else //Air
+                {
+                }
             }
-
-            return total / maxValue;
         }
+
+        public static int GetNoise(int x, int y, int z, float scale, int max)
+            => Mathf.FloorToInt((noise.GetSimplexFractal(x * scale, y * scale, z * scale) + 1f) * (max / 2f));
 
 
         public void LoadChunk(Chunk chunk)

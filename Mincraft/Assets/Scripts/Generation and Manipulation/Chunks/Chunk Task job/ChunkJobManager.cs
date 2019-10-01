@@ -8,13 +8,15 @@ using Core.Builder;
 using Core.Managers;
 using Core.Math;
 using Core.Saving;
+using Extensions;
+using System.Threading.Tasks;
 
 namespace Core.Chunking.Threading
 {
     public class ChunkJobManager : IDisposable
     {
         public static ChunkJobManager ChunkJobManagerUpdaterInstance { get; private set; }
-        public ConcurrentQueue<ChunkJob> Jobs { get; private set; }
+        private ConcurrentQueue<ChunkJob> jobs;
         public ConcurrentQueue<ChunkJob> FinishedJobs { get; private set; }
 
         public bool Running { get; set; }
@@ -22,7 +24,6 @@ namespace Core.Chunking.Threading
         private Thread[] threads;
         private ContextIO<Chunk> chunkLoader;
         private GreedyMesh greedy;
-
 
         private static Int3[] directions =
         {
@@ -37,7 +38,7 @@ namespace Core.Chunking.Threading
 
         private int chunkSize;
 
-        public int JobsCount => Jobs.Count;
+        public int JobsCount => jobs.Count;
         public int FinishedJobsCount => FinishedJobs.Count;
 
         public ChunkJobManager(bool chunkUpdaterInstance = false)
@@ -46,7 +47,7 @@ namespace Core.Chunking.Threading
                 ChunkJobManagerUpdaterInstance = this;
 
             chunkSize = ChunkSettings.ChunkSize;
-            Jobs = new ConcurrentQueue<ChunkJob>();
+            jobs = new ConcurrentQueue<ChunkJob>();
             greedy = new GreedyMesh();
 
 
@@ -59,30 +60,6 @@ namespace Core.Chunking.Threading
             threads = SystemInfo.processorCount - 2 <= 0 
                 ? new Thread[1] 
                 : new Thread[SystemInfo.processorCount - 2];
-
-            for (int i = 0; i < threads.Length; i++)
-            {
-                threads[i] = new Thread(Calculate)
-                {
-                    IsBackground = true
-                };
-            }
-        }
-
-        public ChunkJobManager(int test)
-        {
-            if (true)
-                ChunkJobManagerUpdaterInstance = this;
-
-            chunkSize = 16;
-            Jobs = new ConcurrentQueue<ChunkJob>();
-            greedy = new GreedyMesh(true);
-
-            FinishedJobs = new ConcurrentQueue<ChunkJob>();
-            chunkLoader = new ContextIO<Chunk>(ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName + "/");
-            GameManager.AbsolutePath = ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName;
-
-            threads = new Thread[SystemInfo.processorCount - 2];
 
             for (int i = 0; i < threads.Length; i++)
             {
@@ -106,7 +83,7 @@ namespace Core.Chunking.Threading
 
                 if(JobsCount > 0)
                 {
-                    Jobs.TryDequeue(out var job);
+                    jobs.TryDequeue(out var job);
 
                     if (job == null) continue;
 
@@ -132,9 +109,16 @@ namespace Core.Chunking.Threading
 
                     //if "if" not executed, than chunk already existed
 
-                    //TODO: Kann parallisiert werden
-                    job.MeshData = ModifyMesh.Combine(job.Chunk);
-                    job.ColliderData = greedy.ReduceMesh(job.Chunk);
+                    //job.MeshData = MeshBuilder.Combine(job.Chunk);
+                    //job.ColliderData = greedy.ReduceMesh(job.Chunk);
+
+                    Task<MeshData> meshData = Task.Run(() => MeshBuilder.Combine(job.Chunk));
+                    Task<MeshData> colliderData = Task.Run(() => greedy.ReduceMesh(job.Chunk));
+
+                    Task.WaitAll(meshData, colliderData);
+
+                    job.MeshData = meshData.Result;
+                    job.ColliderData = colliderData.Result;
 
                     job.Chunk.ChunkState = ChunkState.Generated;
 
@@ -155,7 +139,7 @@ namespace Core.Chunking.Threading
 
         public void Add(ChunkJob job)
         {
-            Jobs.Enqueue(job);
+            jobs.Enqueue(job);
         }
 
         public ChunkJob DequeueFinishedJobs()

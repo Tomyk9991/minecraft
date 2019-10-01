@@ -42,7 +42,7 @@ namespace Core.Chunking
                             {
                                 Chunk chunk = chunks[FlattenIdx(x, y, z)];
 
-                                if (chunk != null)
+                                if (chunk != null && chunk.ChunkState == ChunkState.Drawn)
                                 {
                                     clusters[i].RemoveChunk(x, y, z);
                                     chunk.ReleaseGameObject();

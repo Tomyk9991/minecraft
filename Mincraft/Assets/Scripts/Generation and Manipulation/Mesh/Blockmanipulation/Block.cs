@@ -5,7 +5,7 @@ namespace Core.Builder
     [System.Serializable]
     public struct Block
     {
-        public Int3 Position;
+        public Int3 Position; // Local position from [0, 0, 0] to [15, 15, 15]
         public int ID { get; set; }// For UV-Setting
 
         public Block(Int3 position)

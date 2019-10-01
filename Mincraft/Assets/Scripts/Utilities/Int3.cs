@@ -92,13 +92,10 @@ namespace Core.Math
         {
             unchecked
             {
-                const int hashingbase = (int)2166136261;
-                const int hashingMultiplier = 16777619;
-
-                int hash = hashingbase;
-                hash = (hash * hashingMultiplier) ^ this.X.GetHashCode();
-                hash = (hash * hashingMultiplier) ^ this.Y.GetHashCode();
-                hash = (hash * hashingMultiplier) ^ this.Z.GetHashCode();
+                int hash = 47;
+                hash = hash * 227 + this.X.GetHashCode();
+                hash = hash * 227 + this.Y.GetHashCode();
+                hash = hash * 227 + this.Z.GetHashCode();
 
                 return hash;
             }
@@ -107,6 +104,12 @@ namespace Core.Math
         public override string ToString()
             => $"({this.X}, {this.Y}, {this.Z})";
 
+        /// <summary>
+        /// Determines if any of the attribute values is true to the given predicate
+        /// </summary>
+        /// <param name="predicate">Predicate for each dimension in the int3 vector</param>
+        /// <param name="value">The Dimension in which the predicate is true</param>
+        /// <returns>Is any of the dimensions affected by the predicate</returns>
         public bool AnyAttribute(Predicate<int> predicate, out int value)
         {
             value = -1;
@@ -121,6 +124,30 @@ namespace Core.Math
                 value = 1;
             else if (zResult)
                 value = 2;
+
+            return (xResult || yResult || zResult);
+        }
+
+
+        /// <summary>
+        /// Determines if any of the attribute values is true to the given predicate
+        /// </summary>
+        /// <param name="predicate">Predicate for each dimension in the int3 vector</param>
+        /// <param name="mask">The Dimension in which the predicate is true</param>
+        /// <returns>Is any of the dimensions affected by the predicate</returns>
+        public bool AnyAttributeMasked(Predicate<int> predicate, out int mask)
+        {
+            mask = 0b000;
+            var xResult = predicate(this.X); // wenn wahr, dann true z.b 16 > 15? true
+            var yResult = predicate(this.Y);
+            var zResult = predicate(this.Z);
+
+            if (xResult)
+                mask |= 1 << 0;
+            if (yResult)
+                mask |= 1 << 1;
+            if (zResult)
+                mask |= 1 << 2;
 
             return (xResult || yResult || zResult);
         }

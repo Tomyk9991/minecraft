@@ -2,32 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 
-using Core.Math;
-
-namespace Core.Chunking
-{
-//    public static class HashSetPositionChecker
-//    {
-//        private static ConcurrentHashSet<Int3> hashSet = new ConcurrentHashSet<Int3>();
-//
-//        public static int Count { get; private set; }
-//
-//        public static void Add(Int3 item)
-//        {
-//            if(!hashSet.Add(item))
-//                throw new Exception($"Added an item {item} to the Hashset, that already exists.");
-//
-//            Count++;
-//        }
-//        public static bool Contains(Int3 item) => hashSet.Contains(item);
-//
-//        public static void Remove(Int3 item)
-//        {
-//            hashSet.Remove(item);
-//            Count--;
-//        }
-//    }
-    
+namespace Core.Math
+{   
     public static class HashSetPositionChecker
     {
         private static ConcurrentHashSet<Int2> hashSet = new ConcurrentHashSet<Int2>();

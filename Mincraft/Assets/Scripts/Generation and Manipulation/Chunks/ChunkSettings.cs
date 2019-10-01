@@ -6,6 +6,7 @@ using Core.Managers;
 using Core.Math;
 using Core.Saving;
 using Extensions;
+using System.Collections.Generic;
 
 namespace Core.Chunking
 {
@@ -13,24 +14,24 @@ namespace Core.Chunking
     {
         public static int ChunkSize => (int) Instance.chunkSize;
         public static Int2 MinMaxYHeight => Instance.minMaxYHeight;
-//        public static int MaxYHeight => Instance.maxYHeight;
-        public static SimplexNoiseSettings SimplexNoiseSettings => Instance.simplexNoiseSettings;
+        public static NoiseSettings NoiseSettings => Instance.biomNoiseSettings;
         public static Int3 DrawDistance => Instance.drawDistance;
         public bool drawGizmosChunks = false;
+
+        public List<Biom> Bioms => bioms;
 
         [Header("Chunksettings")]
         [SerializeField] private uint chunkSize = 0;
         [SerializeField] private int seed = -1;
         [SerializeField] private Int2 minMaxYHeight;
-        
-//        [SerializeField] private int maxYHeight = 256;
 
-        [Header("Noisesettings")] //Remake this to make is depend on the biom, you're currently at
+        [Header("Biom settings")]
+        [SerializeField] List<Biom> bioms;
         [SerializeField] public float smoothness = 40;
         [SerializeField] public float steepness = 2;
-        private SimplexNoiseSettings simplexNoiseSettings;
+        private NoiseSettings biomNoiseSettings;
 
-        private ContextIO<SimplexNoiseSettings> noiseIO;
+        private ContextIO<NoiseSettings> noiseIO;
 
         [Header("Instantiation")]
         //[SerializeField] private BlockUV surface = default;
@@ -44,13 +45,13 @@ namespace Core.Chunking
         {
             if (GameManager.CurrentWorldName == "")
             {
-                noiseIO = new ContextIO<SimplexNoiseSettings>(ContextIO.DefaultPath);
+                noiseIO = new ContextIO<NoiseSettings>(ContextIO.DefaultPath);
             }
             else
             {
-                noiseIO = new ContextIO<SimplexNoiseSettings>(ContextIO.DefaultPath + GameManager.CurrentWorldName + "/");
+                noiseIO = new ContextIO<NoiseSettings>(ContextIO.DefaultPath + GameManager.CurrentWorldName + "/");
             }
-            SimplexNoiseSettings settings = noiseIO.LoadContext();
+            NoiseSettings settings = noiseIO.LoadContext();
 
 
             if (settings == null)
@@ -58,7 +59,7 @@ namespace Core.Chunking
                 if (seed == -1)
                     seed = UnityEngine.Random.Range(-100_000, 100_000);
 
-                simplexNoiseSettings = new SimplexNoiseSettings(smoothness, steepness, seed);
+                biomNoiseSettings = new NoiseSettings(smoothness, steepness, seed);
 
                 if (drawDistance.X % chunkSize != 0 || drawDistance.Y % chunkSize != 0 || drawDistance.Z % chunkSize != 0)
                 {
@@ -67,7 +68,7 @@ namespace Core.Chunking
             }
             else
             {
-                simplexNoiseSettings = settings;
+                biomNoiseSettings = settings;
                 seed = settings.Seed;
                 steepness = settings.Steepness;
                 smoothness = settings.Smoothness;
@@ -79,7 +80,7 @@ namespace Core.Chunking
             if (noiseIO.Path != ContextIO.DefaultPath)
             {
                 Debug.Log("Wird gespeichert");
-                noiseIO.SaveContext(simplexNoiseSettings, "Noise");
+                noiseIO.SaveContext(NoiseSettings, "Noise");
             }
         }
     }

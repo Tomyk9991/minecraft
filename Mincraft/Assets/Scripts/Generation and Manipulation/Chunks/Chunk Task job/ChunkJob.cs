@@ -1,4 +1,5 @@
-﻿using Core.Builder;
+﻿using System;
+using Core.Builder;
 using Core.Math;
 
 namespace Core.Chunking.Threading
@@ -29,6 +30,18 @@ namespace Core.Chunking.Threading
             this.Chunk = chunk;
 
             return this.Chunk;
+        }
+
+        /// <summary>
+        /// Creates a new Chunkjob with an existing chunk, so the information is not getting lost
+        /// </summary>
+        /// <param name="chunkPos">Expects a local space coordinate </param>
+        /// <returns></returns>
+        public void CreateChunkFromExisting(Chunk chunk)
+        {
+            this.Chunk = chunk ?? throw new Exception("Chunk is null");
+            this.HasBlocks = true;
+            this.Chunk.ChunkState = ChunkState.Dirty;
         }
     }
 }

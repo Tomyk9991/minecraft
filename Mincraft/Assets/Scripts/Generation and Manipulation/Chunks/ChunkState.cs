@@ -15,6 +15,11 @@
         /// <summary>
         /// Chunk is Generated and not a Chunkjob anymore
         /// </summary>
-        Generated
+        Generated,
+
+        /// <summary>
+        /// Chunk is displayed, but its not up to date anymore
+        /// </summary>
+        Dirty
     }
 }

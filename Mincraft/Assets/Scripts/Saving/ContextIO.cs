@@ -64,7 +64,7 @@ namespace Core.Saving
 
         public T LoadContext()
         {
-            if (typeof(T) != typeof(SimplexNoiseSettings))
+            if (typeof(T) != typeof(NoiseSettings))
             {
                 Debug.LogError("LoadContext darf nur von SimplexNoiseSettings ausgeführt werden");
                 return null;
@@ -136,7 +136,7 @@ namespace Core.Saving
             {
                 return ".chk";
             }
-            else if (typeof(K) == typeof(SimplexNoiseSettings))
+            else if (typeof(K) == typeof(NoiseSettings))
             {
                 return ".nsttngs";
             }

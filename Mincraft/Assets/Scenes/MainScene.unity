@@ -35,10 +35,10 @@ RenderSettings:
   m_DefaultReflectionMode: 0
   m_DefaultReflectionResolution: 128
   m_ReflectionBounces: 1
-  m_ReflectionIntensity: 1
+  m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.31442666, g: 0.6711553, b: 1.0519277, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 0}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -51,7 +51,7 @@ LightmapSettings:
     m_IndirectOutputScale: 1
     m_AlbedoBoost: 1
     m_EnvironmentLightingMode: 0
-    m_EnableBakedLightmaps: 1
+    m_EnableBakedLightmaps: 0
     m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
     serializedVersion: 12
@@ -878,6 +878,7 @@ GameObject:
   - component: {fileID: 787175595}
   - component: {fileID: 787175597}
   - component: {fileID: 787175596}
+  - component: {fileID: 787175599}
   - component: {fileID: 787175598}
   m_Layer: 0
   m_Name: Chunks
@@ -912,8 +913,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41e048f7d897b4648aeee018fd3af2b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveWithPlayer: 0
   player: {fileID: 961055918}
-  amountDrawChunksPerFrame: 10000
 --- !u!114 &787175597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -932,12 +933,53 @@ MonoBehaviour:
   minMaxYHeight:
     X: -32
     Y: 272
-  smoothness: 0.01
-  steepness: 50
+  bioms:
+  - Name: Default Biom
+    minValue: -1
+    maxValue: 0
+    topLayerBlock: 1
+    topLayerBaseHeight: 1
+    topLayerNoiseHeight: 1
+    topLayerNoise: 4.5
+    midLayerBlock: 3
+    midBaseHeight: 2
+    midBaseNoiseHeight: 2
+    midBaseNoise: 0.05
+    lowerLayerBlock: 2
+    lowerBaseHeight: -24
+    lowerBasNoisHeight: 4
+    lowerBaseNoise: 5
+    lowerMountainHeight: 48
+    lowerMinHeight: -12
+    lowerMountainFrequency: 0.8
+    caveFrequency: 0
+    caveSize: 0
+  - Name: Sand
+    minValue: 0
+    maxValue: 1
+    topLayerBlock: 8
+    topLayerBaseHeight: 1
+    topLayerNoiseHeight: 1
+    topLayerNoise: 4.5
+    midLayerBlock: 8
+    midBaseHeight: 2
+    midBaseNoiseHeight: 4
+    midBaseNoise: 0.05
+    lowerLayerBlock: 2
+    lowerBaseHeight: -24
+    lowerBasNoisHeight: 4
+    lowerBaseNoise: 5
+    lowerMountainHeight: 48
+    lowerMinHeight: -12
+    lowerMountainFrequency: 0.8
+    caveFrequency: 0
+    caveSize: 0
+  smoothness: 2.5
+  steepness: 40
   drawDistance:
-    X: 64
+    X: 128
     Y: 0
-    Z: 64
+    Z: 128
 --- !u!114 &787175598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -950,10 +992,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8b061d7cc7c7d7469acb45f4df69dd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkPrefab: {fileID: 4515187503092839614, guid: 02dcadce2da90f849b7e5d6b9f104dd7,
+  chunkPrefab: {fileID: 4515187503092839614, guid: b63b53b89b503cf48a2590c9d347a9b5,
     type: 3}
   chunksToInstantiate: 5000
   currentlyUsedObjs: 0
+--- !u!114 &787175599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787175594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93252ff4e66938145a77f3f432affc73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amountDrawChunksPerFrame: 5
 --- !u!1 &835364579
 GameObject:
   m_ObjectHideFlags: 0
@@ -1011,10 +1066,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1344046751}
     m_Modifications:
-    - target: {fileID: 100000, guid: 81154777d5417884981849c5243f6c01, type: 3}
-      propertyPath: m_Name
-      value: FramerateCounter
-      objectReference: {fileID: 0}
     - target: {fileID: 22409990, guid: 81154777d5417884981849c5243f6c01, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1110,6 +1161,10 @@ PrefabInstance:
     - target: {fileID: 22409990, guid: 81154777d5417884981849c5243f6c01, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 81154777d5417884981849c5243f6c01, type: 3}
+      propertyPath: m_Name
+      value: FramerateCounter
       objectReference: {fileID: 0}
     - target: {fileID: 11410038, guid: 81154777d5417884981849c5243f6c01, type: 3}
       propertyPath: m_FontData.m_Font
@@ -1439,7 +1494,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -1951,6 +2006,39 @@ MonoBehaviour:
       SizeY: 1
     isSolid: 1
     isTransparent: 1
+  - EnumType: 8
+    Forward:
+      TileX: 2
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Back:
+      TileX: 2
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Up:
+      TileX: 2
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Down:
+      TileX: 2
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Left:
+      TileX: 2
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Right:
+      TileX: 2
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    isSolid: 1
+    isTransparent: 0
 --- !u!4 &1579627208
 Transform:
   m_ObjectHideFlags: 0
@@ -2877,7 +2965,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 67.98, y: -50}
+  m_AnchoredPosition: {x: 67.98047, y: -50}
   m_SizeDelta: {x: 135.97, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1984577722

@@ -37,7 +37,7 @@ namespace Core.Player
                 for (int i = 0; i < gameObjects.Length; i++)
                     gameObjects[i].SetActive(true);
 
-                Vector3 blockPos = ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;
+                Vector3 blockPos = MeshBuilder.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;
                 transform.position = blockPos + Vector3.one / 2;
             }
             else

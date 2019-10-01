@@ -3,15 +3,15 @@ using Core.Saving.Serializers;
 
 namespace Core.Builder.Generation
 {
-    public class SimplexNoiseSettings : Context<SimplexNoiseSettings>
+    public class NoiseSettings : Context<NoiseSettings>
     {
         public float Smoothness { get; set; }
         public float Steepness { get; set; }
         public int Seed { get; set; }
 
-        public SimplexNoiseSettings() { }
+        public NoiseSettings() { }
 
-        public SimplexNoiseSettings(float smoothness, float steepness, int seed)
+        public NoiseSettings(float smoothness, float steepness, int seed)
         {
             this.Smoothness = smoothness;
             this.Steepness = steepness;
@@ -28,7 +28,7 @@ namespace Core.Builder.Generation
             };
         }
 
-        public override SimplexNoiseSettings Caster(object data)
+        public override NoiseSettings Caster(object data)
         {
             var helper = (SimplexNoiseSettingsSerializeHelper) data;
             this.Seed = helper.Seed;

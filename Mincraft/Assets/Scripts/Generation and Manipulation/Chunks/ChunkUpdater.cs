@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Extensions;
 using UnityEngine;
 
-using Core.Builder;
 using Core.Chunking.Threading;
 using Core.Math;
 using Core.Saving;
@@ -12,12 +10,10 @@ namespace Core.Chunking
 {
     public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     {
-        public ChunkGameObjectPool GoPool { get; set; }
-
+        public Int3 LatestPlayerPosition => latestPlayerPosition;
+        [SerializeField] private bool moveWithPlayer = true;
         [Header("References")]
         [SerializeField] private GameObject player = null;
-
-        [SerializeField] private int amountDrawChunksPerFrame = 5;
 
         private Int3 drawDistance;
         private int chunkSize;
@@ -26,25 +22,17 @@ namespace Core.Chunking
         private int maxHeight;
 
         private Int3 latestPlayerPosition;
-        private Int3 previousPlayerPosition = Int3.Zero; 
-        
+
 
         private ChunkJobManager chunkJobManager;
-        private MeshModifier modifier;
         private ChunkCleanup cleanup;
 
-        public List<Chunk> chunks;
 
         private SavingJob savingJob;
 
         //Tasking
-        private object _mutexChunks = new object();
         private object _mutexManager = new object();
         private bool isRecalculating = false;
-        //Counter, if chunk needs to be recalculated
-        private float timeElapsed = 0f;
-        //Time in seconds determining the period of recalculating chunks
-        private float timeThreshhold = 5f;
 
         private void Start()
         {
@@ -52,7 +40,6 @@ namespace Core.Chunking
             minHeight = minMaxYHeight.X;
             maxHeight = minMaxYHeight.Y;
             
-            modifier = new MeshModifier();
             chunkJobManager = new ChunkJobManager(true);
             chunkJobManager.Start();
 
@@ -60,11 +47,9 @@ namespace Core.Chunking
 
             drawDistance = ChunkSettings.DrawDistance;
             chunkSize = ChunkSettings.ChunkSize;
-            GoPool = ChunkGameObjectPool.Instance;
 
             cleanup = new ChunkCleanup(drawDistance, chunkSize);
-            chunks = new List<Chunk>();
-
+            
             int xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
             int zPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
 
@@ -73,33 +58,16 @@ namespace Core.Chunking
 
         private void Update()
         {
-            timeElapsed += Time.deltaTime;
-            
+            if (!moveWithPlayer) return;
+
             int xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
-            int yPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Y, chunkSize);
             int zPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
-
-
-            Int3 temp = new Int3(xPlayerPos, yPlayerPos, zPlayerPos);
-
-            if ((previousPlayerPosition != temp) && !isRecalculating || timeElapsed > timeThreshhold)
-            {
-                timeElapsed = 0f;
-                previousPlayerPosition = temp;
-
+            
+            
+            if (!isRecalculating)
                 StartTaskedProcess(xPlayerPos, zPlayerPos);
-            }
 
             latestPlayerPosition = player.transform.position.ToInt3();
-
-            for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < amountDrawChunksPerFrame; i++)
-            {
-                ChunkJob task = chunkJobManager.DequeueFinishedJobs();
-                if (task != null && task.Completed && InsideDrawDistance(task.Chunk.GlobalPosition, xPlayerPos, zPlayerPos) && task.MeshData.Vertices.Count != 0)
-                {
-                    RenderCall(task);
-                }
-            }
         }
 
         private void StartTaskedProcess(int xPlayerPos, int zPlayerPos)
@@ -113,29 +81,6 @@ namespace Core.Chunking
                 
                 isRecalculating = false;
             });
-        }
-
-        private void RenderCall(ChunkJob t)
-        {
-            //Ab hier wieder synchron auf Mainthread
-            var drawingChunk = t.Chunk;
-
-            if (drawingChunk.CurrentGO == null)
-            {
-                drawingChunk.ChunkState = ChunkState.Drawn;
-                drawingChunk.CurrentGO = GoPool.GetNextUnusedChunk();
-                drawingChunk.CurrentGO.SetActive(true);
-                drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
-                drawingChunk.CurrentGO.name = drawingChunk.GlobalPosition.ToString();
-
-                modifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
-            }
-        }
-
-        private bool InsideDrawDistance(Int3 position, int xPos, int zPos)
-        {
-            return xPos - drawDistance.X <= position.X && xPos + drawDistance.X >= position.X &&
-                   zPos - drawDistance.Z <= position.Z && zPos + drawDistance.Z >= position.Z;
         }
 
         private void RecalculateChunks(int xPlayerPos, int zPlayerPos)
@@ -166,11 +111,6 @@ namespace Core.Chunking
                             ChunkJob job = new ChunkJob();
                             Chunk createdChunk = job.CreateChunk(chunkLocalPos, chunkClusterPosition); //Reference to created Chunk
 
-                            lock (_mutexChunks)
-                            {
-                                chunks.Add(createdChunk);
-                            }
-                            
                             createdChunk.AddedToHash = true;
                             ChunkCluster cluster = ChunkClusterDictionary.Add(chunkClusterPosition, createdChunk);
                             createdChunk.AddedToDick = true;
@@ -184,7 +124,6 @@ namespace Core.Chunking
                             }
                         }
                     }
-                    
                 }
             }
         }

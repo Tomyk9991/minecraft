@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using Core.Chunking.Threading;
+using UnityEngine;
 
 using UnityInspector;
 using Core.Math;
@@ -16,10 +18,11 @@ namespace Core.Chunking.Debugging
 
         private void OnDrawGizmosSelected()
         {
-            if (!Application.isPlaying) return;
+            if (!Application.isPlaying || !ChunkSettings.Instance.drawGizmosChunks) return;
 
             Chunk chunk = ChunkClusterDictionary.GetChunkAt(this.transform.position.ToInt3());
 
+            if (chunk == null) return;
             Gizmos.color = Color.white;
             Gizmos.DrawWireCube(chunk.Cluster.Position.ToVector3() + Vector3.one * 128, Vector3.one * 16 * 16);
 
@@ -28,7 +31,18 @@ namespace Core.Chunking.Debugging
             selectedClusterPosition = chunk.Cluster.Position;
         }
 
-        [ContextMenu("Test")]
+        [ContextMenu("Redraw chunk")]
+        private void Redraw()
+        {
+            Chunk c = ChunkClusterDictionary.GetChunkAt(this.transform.position.ToInt3());
+
+            ChunkJob job = new ChunkJob();
+            job.CreateChunkFromExisting(c);
+
+            ChunkJobManager.ChunkJobManagerUpdaterInstance.Add(job);
+        }
+
+        [ContextMenu("Chunkcleanup test")]
         private void Test()
         {
             Int3 temp = transform.position.ToInt3();
@@ -43,6 +57,7 @@ namespace Core.Chunking.Debugging
 
             Debug.Log("Inside draw-Distance: " + cleanup.InsideDrawDistance(position, xPlayerPos, zPlayerPos));
             Debug.Log("In Hashset: " + HashSetPositionChecker.Contains(position));
+
             Debug.Log("In Dictionary: " + ChunkClusterDictionary.Contains(temp));
         }
     }

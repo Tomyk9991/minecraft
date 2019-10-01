@@ -3,10 +3,11 @@ using System.Linq;
 using UnityEngine;
 
 using Core.Chunking;
+using System;
 
 namespace Core.Builder
 {
-	public static class ModifyMesh
+	public static class MeshBuilder
 	{
 		private static Vector3[] directions = {Vector3.forward, Vector3.zero, Vector3.up, Vector3.zero, Vector3.zero, Vector3.right};
 		private static Vector3[] offset1 = {Vector3.right, Vector3.right, Vector3.right, Vector3.right, Vector3.forward, Vector3.forward};
@@ -63,7 +64,7 @@ namespace Core.Builder
 			    {
 				    UVData[] currentUVData = UVDictionary.GetValue((BlockUV) blocks[i].ID);
 
-				    for (int j = 0; j < neigbours.Length; j++)
+				    for (int j = 0; j < 6; j++)
 				    {
 					    if (neigbours[j] == false)
 					    {
@@ -99,5 +100,5 @@ namespace Core.Builder
 		    
 		    return new MeshData(vertices, triangles, transparentTriangles, uvs, chunk.CurrentGO);
 	    }
-	}
+    }
 }

@@ -10,5 +10,6 @@ namespace Core.Builder
         ProcessedWood = 5,
         Leaf = 6,
         Glass = 7,
+        Sand = 8,
     }
 }
