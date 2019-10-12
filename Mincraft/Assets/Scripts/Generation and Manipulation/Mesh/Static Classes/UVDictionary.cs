@@ -20,14 +20,19 @@ namespace Core.Builder
         };
 
         private static UVData[][] dictionary;
+
         private static bool[] isSolidInformation;
         private static bool[] isTransparentInformation;
+        private static float[] meshOffsetInformation;
+        private static float[] transparancyLevel;
 
         private void Awake()
         {
             dictionary = new UVData[data.Length][];
             isSolidInformation = new bool[data.Length];
             isTransparentInformation = new bool[data.Length];
+            meshOffsetInformation = new float[data.Length];
+            transparancyLevel = new float[data.Length];
 
             for (int i = 0; i < data.Length; i++)
             {
@@ -44,7 +49,16 @@ namespace Core.Builder
 
                 isSolidInformation[(int) data[i].EnumType] = data[i].isSolid;
                 isTransparentInformation[(int) data[i].EnumType] = data[i].isTransparent;
+                meshOffsetInformation[(int)data[i].EnumType] = data[i].Meshoffset;
+                transparancyLevel[(int)data[i].EnumType] = data[i].transparencyLevel;
             }
+        }
+
+        public static float TransparencyLevelID(BlockUV id)
+        {
+            if (id < 0 || (int)id > transparancyLevel.Length - 1)
+                return 0f;
+            return transparancyLevel[(int)id];
         }
 
         public static void Clear()
@@ -54,15 +68,22 @@ namespace Core.Builder
 
         public static UVData[] GetValue(BlockUV id)
         {
-            if ((int) id < 0 || (int) id > dictionary.Length - 1)
+            if (id < 0 || (int) id > dictionary.Length - 1)
                 return notFoundData;
 
             return dictionary[(int) id];
         }
 
+        public static float MeshOffsetID(BlockUV id)
+        {
+            if (id < 0 || (int)id > meshOffsetInformation.Length - 1)
+                return 0f;
+            return meshOffsetInformation[(int)id];
+        }
+
         public static bool IsSolidID(BlockUV id)
         {
-            if ((int)id < 0 || (int)id > isSolidInformation.Length - 1)
+            if (id < 0 || (int)id > isSolidInformation.Length - 1)
                 return false;
 
             return isSolidInformation[(int) id];
@@ -70,7 +91,7 @@ namespace Core.Builder
 
         public static bool IsTransparentID(BlockUV id)
         {
-            if ((int)id < 0 || (int)id > isSolidInformation.Length - 1)
+            if (id < 0 || (int)id > isTransparentInformation.Length - 1)
                 return false;
 
             return isTransparentInformation[(int) id];
@@ -87,6 +108,9 @@ namespace Core.Builder
         public UVData Down;
         public UVData Left;
         public UVData Right;
+
+        public float Meshoffset;
+        public float transparencyLevel;
 
         public bool isSolid; // Bestimmt, ob es für den Collider relevant ist
         public bool isTransparent; // Bestimmt, ob es eine Transparent durch den Block gibt

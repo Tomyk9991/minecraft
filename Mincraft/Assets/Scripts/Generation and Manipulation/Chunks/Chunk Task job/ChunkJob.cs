@@ -8,10 +8,15 @@ namespace Core.Chunking.Threading
     {
         public bool Completed { get; set; }
         public Chunk Chunk { get; set; }
+        public ChunkColumn Column { get; private set; }
         public MeshData MeshData { get; set; }
         public MeshData ColliderData { get; set; }
 
         public bool HasBlocks { get; set; }
+        public bool RedrawTwice { get; set; }
+        public bool OnlyNoise { get; set; }
+
+        public int Counter = 0;
 
         /// <summary>
         /// Creates internally a new Chunk with an empty block array
@@ -29,7 +34,36 @@ namespace Core.Chunking.Threading
             this.HasBlocks = false;
             this.Chunk = chunk;
 
-            return this.Chunk;
+            return chunk;
+        }
+
+        public Chunk CreateChunk(Int3 globalPos, Int3 localPos, ChunkColumn column)
+        {
+            Chunk chunk = new Chunk
+            {
+                GlobalPosition = globalPos,
+                LocalPosition = localPos
+            };
+
+            this.Column = column;
+
+            this.HasBlocks = false;
+            this.Chunk = chunk;
+
+            return chunk;
+        }
+
+        public Chunk CreateChunk(Int3 globalPos)
+        {
+            Chunk chunk = new Chunk
+            {
+                GlobalPosition = globalPos
+            };
+
+            this.HasBlocks = false;
+            this.Chunk = chunk;
+
+            return chunk;
         }
 
         /// <summary>
@@ -41,7 +75,6 @@ namespace Core.Chunking.Threading
         {
             this.Chunk = chunk ?? throw new Exception("Chunk is null");
             this.HasBlocks = true;
-            this.Chunk.ChunkState = ChunkState.Dirty;
         }
     }
 }

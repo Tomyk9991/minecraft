@@ -27,6 +27,7 @@ namespace Core.Chunking
 
         [Header("Biom settings")]
         [SerializeField] List<Biom> bioms;
+        [Header("Biom Noise Settings")]
         [SerializeField] public float smoothness = 40;
         [SerializeField] public float steepness = 2;
         private NoiseSettings biomNoiseSettings;

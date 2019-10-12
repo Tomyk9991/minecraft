@@ -37,5 +37,11 @@ namespace Core.Builder.Generation
         [Header("Cave layer")]
         public float caveFrequency = 2.5f;
         public int caveSize = 30;
+
+        [Header("Tree layer")]
+        public BlockUV treeTrunkBlock;
+        public BlockUV treeLeafBlock;
+        [Range(0f, 1f)] public float treeProbability = 0.11f;
+        public float treeZoomLevel = 1.08f;
     }
 }

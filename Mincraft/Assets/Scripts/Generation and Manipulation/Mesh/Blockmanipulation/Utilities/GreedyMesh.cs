@@ -156,7 +156,7 @@ namespace Core.Builder
                 }
             }
 
-            return new MeshData(vertices, elements, null, null);
+            return new MeshData(vertices, elements, null, null, null);
         }
         private static void AddFace(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, List<Vector3> vertices, List<int> elements, int order)
         {

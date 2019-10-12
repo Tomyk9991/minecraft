@@ -9,6 +9,8 @@ namespace Core.Math
         public int X;
         public int Y;
 
+        public static Int2 One => new Int2(1, 1);
+
         public Int2(int x, int y)
         {
             this.X = x;
@@ -37,6 +39,13 @@ namespace Core.Math
         {
             target.X *= scale;
             target.Y *= scale;
+            return target;
+        }
+
+        public static Int2 operator /(Int2 target, int scale)
+        {
+            target.X /= scale;
+            target.Y /= scale;
             return target;
         }
 

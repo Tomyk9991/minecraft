@@ -1,19 +1,17 @@
-﻿using System.Linq;
-using Core.Chunking.Threading;
-using UnityEngine;
+﻿using UnityEngine;
 
 using UnityInspector;
 using Core.Math;
 using Extensions;
+using System.Collections.Generic;
 
 namespace Core.Chunking.Debugging
 {
     public class NeighbourTestVisualizer : MonoBehaviour
     {
-        [SerializeField, ShowOnly] private int selectedIndex = 0;
-        [SerializeField] private Int3 selectedClusterPosition;
-        
-        [SerializeField] private GameObject player = null;
+        public Chunk Chunk;
+
+        private List<Vector3> points;
         
 
         private void OnDrawGizmosSelected()
@@ -28,37 +26,32 @@ namespace Core.Chunking.Debugging
 
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(chunk.GlobalPosition.ToVector3() + Vector3.one * 8, Vector3.one * 16);
-            selectedClusterPosition = chunk.Cluster.Position;
         }
 
-        [ContextMenu("Redraw chunk")]
-        private void Redraw()
+        private void OnDrawGizmos()
         {
-            Chunk c = ChunkClusterDictionary.GetChunkAt(this.transform.position.ToInt3());
-
-            ChunkJob job = new ChunkJob();
-            job.CreateChunkFromExisting(c);
-
-            ChunkJobManager.ChunkJobManagerUpdaterInstance.Add(job);
+            if(points != null)
+            {
+                for (int i = 0; i < points.Count; i++)
+                {
+                    Gizmos.DrawCube(points[i], Vector3.one * 16);
+                }
+            }
         }
 
-        [ContextMenu("Chunkcleanup test")]
+        [ContextMenu("Test")]
         private void Test()
         {
-            Int3 temp = transform.position.ToInt3();
-            Int2 position = new Int2(temp.X, temp.Z);
-            
-            Int3 latestPlayerPosition = player.transform.position.ToInt3();
-            
-            int xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, ChunkSettings.ChunkSize);
-            int zPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Z, ChunkSettings.ChunkSize);
+            Chunk[] neighbours = Chunk.GetNeigbours();
 
-            ChunkCleanup cleanup = new ChunkCleanup(ChunkSettings.DrawDistance, ChunkSettings.ChunkSize);
+            points = new List<Vector3>();
+            for (int i = 0; i < neighbours.Length; i++)
+            {
+                if (neighbours[i] == null)
+                    continue;
 
-            Debug.Log("Inside draw-Distance: " + cleanup.InsideDrawDistance(position, xPlayerPos, zPlayerPos));
-            Debug.Log("In Hashset: " + HashSetPositionChecker.Contains(position));
-
-            Debug.Log("In Dictionary: " + ChunkClusterDictionary.Contains(temp));
+                points.Add(neighbours[i].GlobalPosition.ToVector3() + Vector3.one * 8);
+            }
         }
     }
 }

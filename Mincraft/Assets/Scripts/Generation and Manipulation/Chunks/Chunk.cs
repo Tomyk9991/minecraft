@@ -4,7 +4,6 @@ using UnityEngine;
 
 using Core.Builder;
 using Core.Builder.Generation;
-using Core.Chunking.Threading;
 using Core.Managers;
 using Core.Math;
 using Core.Saving;
@@ -16,6 +15,8 @@ namespace Core.Chunking
 {
     public class Chunk : Context<Chunk>
     {
+        private static float lightFalloff = 0.08f;
+
         public GameObject CurrentGO { get; set; }
 
         //Zwischen [(0, 0, 0) und (15, 15, 15)]
@@ -34,7 +35,7 @@ namespace Core.Chunking
         private Block[] blocks;
         private static int chunkSize;
 
-        private Chunk[] chunkNeigbours;
+        private Chunk[] chunkNeighbours;
 
         public ChunkCluster Cluster { get; set; }
 
@@ -66,7 +67,7 @@ namespace Core.Chunking
             treeGenerator = new OakTreeGenerator(new Int2(4, 6), new Int2(2, 4));
 
             blocks = new Block[chunkSize * chunkSize * chunkSize];
-            chunkNeigbours = new Chunk[6];
+            chunkNeighbours = new Chunk[6];
 
             if (noise == null)
                 noise = new FastNoise(this.seed);
@@ -89,9 +90,9 @@ namespace Core.Chunking
         {
             return new ChunkSerializeHelper()
             {
-                ChunkPosition = this.LocalPosition,
+                ChunkPosition = this.GlobalPosition,
                 localBlocks = this.blocks,
-                //global blocks auch!
+                //local blocks auch!
                 //Later here we will continue with biom settings
             };
         }
@@ -147,140 +148,148 @@ namespace Core.Chunking
         }
 
         /// <summary>
-        /// Returns Block's neigbours
+        /// Get block
         /// </summary>
         /// <param name="index"></param>
-        /// <param name="blockPos">Rufe Block mit globaler Position auf</param>
+        /// <param name="blockPos"></param>
         /// <returns></returns>
-        private bool GetNeigbourAt(int index, Int3 blockPos, BlockUV uv)
+        private Block GetNeigbourAt(int index, Int3 blockPos)
         {
             Int3 local = blockPos;
+            Int3 direction = directions[index];
+            Chunk chunkNeighbour = chunkNeighbours[index];
+            
             Block block = new Block
             {
-                ID = (int) BlockUV.Air
+                ID = (int)BlockUV.Stone
             };
+
 
             switch (index)
             {
                 case 0: //Forward
-                {
-                    if ((local + directions[0]).Z < chunkSize)
                     {
-                        block = blocks[
-                            GetFlattenIndex(local.X + directions[0].X, local.Y + directions[0].Y,
-                                local.Z + directions[0].Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[0] != null)
+                        if ((local + direction).Z < chunkSize)
                         {
-                            block = chunkNeigbours[0].GetBlock(blockPos.X, blockPos.Y, 0);
+                            block = blocks[
+                                GetFlattenIndex(local.X + direction.X, local.Y + direction.Y,
+                                    local.Z + direction.Z)];
                         }
-                    }
+                        else
+                        {
+                            if (chunkNeighbour != null)
+                            {
+                                block = chunkNeighbour.GetBlock(blockPos.X, blockPos.Y, 0);
+                            }
+                        }
 
-                    break;
-                }
+                        break;
+                    }
                 case 1: //Back
-                    if ((local + directions[1]).Z >= 0)
                     {
-                        block = blocks[
-                            GetFlattenIndex(local.X + directions[1].X, local.Y + directions[1].Y,
-                                local.Z + directions[1].Z)];
-                    }
-                    else
-                    {
-
-                        if (chunkNeigbours[1] != null)
+                        if ((local + direction).Z >= 0)
                         {
-                            block = chunkNeigbours[1].GetBlock(blockPos.X, blockPos.Y, chunkSize - 1);
+                            block = blocks[
+                                GetFlattenIndex(local.X + direction.X, local.Y + direction.Y,
+                                    local.Z + direction.Z)];
                         }
-                    }
+                        else
+                        {
+                            if (chunkNeighbour != null)
+                            {
+                                block = chunkNeighbour.GetBlock(blockPos.X, blockPos.Y, chunkSize - 1);
+                            }
+                        }
 
-                    break;
+                        break;
+                    }
                 case 2: //Up
-                    if ((local + directions[2]).Y < chunkSize)
                     {
-                        block = blocks[
-                            GetFlattenIndex(local.X + directions[2].X, local.Y + directions[2].Y,
-                                local.Z + directions[2].Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[2] != null)
+                        if ((local + direction).Y < chunkSize)
                         {
-                            block = chunkNeigbours[2].GetBlock(blockPos.X, 0, blockPos.Z);
+                            block = blocks[
+                                GetFlattenIndex(local.X + direction.X, local.Y + direction.Y,
+                                    local.Z + direction.Z)];
                         }
-                    }
+                        else
+                        {
+                            if (chunkNeighbour != null)
+                            {
+                                block = chunkNeighbour.GetBlock(blockPos.X, 0, blockPos.Z);
+                            }
+                        }
 
-                    break;
+                        break;
+                    }
                 case 3: //Down
-                    if ((local + directions[3]).Y >= 0)
                     {
-                        block = blocks[
-                            GetFlattenIndex(local.X + directions[3].X, local.Y + directions[3].Y,
-                                local.Z + directions[3].Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[3] != null)
+                        if ((local + direction).Y >= 0)
                         {
-                            block = chunkNeigbours[3].GetBlock(blockPos.X, chunkSize - 1, blockPos.Z);
+                            block = blocks[
+                                GetFlattenIndex(local.X + direction.X, local.Y + direction.Y,
+                                    local.Z + direction.Z)];
                         }
-                    }
+                        else
+                        {
+                            if (chunkNeighbour != null)
+                            {
+                                block = chunkNeighbour.GetBlock(blockPos.X, chunkSize - 1, blockPos.Z);
+                            }
+                        }
 
-                    break;
+                        break;
+                    }
                 case 4: //Left
-                    if ((local + directions[4]).X >= 0)
                     {
-                        block = blocks[
-                            GetFlattenIndex(local.X + directions[4].X, local.Y + directions[4].Y,
-                                local.Z + directions[4].Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[4] != null)
+                        if ((local + direction).X >= 0)
                         {
-                            block = chunkNeigbours[4].GetBlock(chunkSize - 1, blockPos.Y, blockPos.Z);
+                            block = blocks[
+                                GetFlattenIndex(local.X + direction.X, local.Y + direction.Y,
+                                    local.Z + direction.Z)];
                         }
-                    }
+                        else
+                        {
+                            if (chunkNeighbour != null)
+                            {
+                                block = chunkNeighbour.GetBlock(chunkSize - 1, blockPos.Y, blockPos.Z);
+                            }
+                        }
 
-                    break;
+                        break;
+                    }
                 case 5: //Right
-                    if ((local + directions[5]).X < chunkSize)
                     {
-                        block = blocks[
-                            GetFlattenIndex(local.X + directions[5].X, local.Y + directions[5].Y,
-                                local.Z + directions[5].Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeigbours[5] != null)
+                        if ((local + direction).X < chunkSize)
                         {
-                            block = chunkNeigbours[5].GetBlock(0, blockPos.Y, blockPos.Z);
+                            block = blocks[
+                                GetFlattenIndex(local.X + direction.X, local.Y + direction.Y,
+                                    local.Z + direction.Z)];
                         }
-                    }
+                        else
+                        {
+                            if (chunkNeighbour != null)
+                            {
+                                block = chunkNeighbour.GetBlock(0, blockPos.Y, blockPos.Z);
+                            }
+                        }
 
-                    break;
+                        break;
+                    }
             }
 
-            return !(block.ID == (int) uv || block.IsTransparent());
+            return block;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="blockPos">Rufe Block mit globaler Position auf</param>
-        /// <returns></returns>
-        public bool[] BoolNeigbours(Int3 blockPos)
+        public Block[] Neighbours(Int3 blockPos)
         {
             return new[]
             {
-                GetNeigbourAt(0, blockPos, BlockUV.Air),
-                GetNeigbourAt(1, blockPos, BlockUV.Air),
-                GetNeigbourAt(2, blockPos, BlockUV.Air),
-                GetNeigbourAt(3, blockPos, BlockUV.Air),
-                GetNeigbourAt(4, blockPos, BlockUV.Air),
-                GetNeigbourAt(5, blockPos, BlockUV.Air)
+                GetNeigbourAt(0, blockPos),
+                GetNeigbourAt(1, blockPos),
+                GetNeigbourAt(2, blockPos),
+                GetNeigbourAt(3, blockPos),
+                GetNeigbourAt(4, blockPos),
+                GetNeigbourAt(5, blockPos)
             };
         }
 
@@ -306,27 +315,37 @@ namespace Core.Chunking
             return LocalPosition.ToString();
         }
 
-        public void CalculateNeigbours()
+        public void CalculateNeighbours()
         {
-            for (int i = 0; i < chunkNeigbours.Length; i++)
+            for (int i = 0; i < chunkNeighbours.Length; i++)
             {
                 Int3 curRes = this.LocalPosition + directions[i];
 
                 if (curRes.X >= 0 && curRes.X < 16 && curRes.Y >= 0 && curRes.Y < 16 && curRes.Z >= 0 && curRes.Z < 16)
                 {
-                    chunkNeigbours[i] = Cluster.GetChunk(this.LocalPosition + directions[i]);
+                    chunkNeighbours[i] = Cluster.GetChunk(this.LocalPosition + directions[i]);
                 }
                 else
                 {
-                    chunkNeigbours[i] =
+                    chunkNeighbours[i] =
                         ChunkClusterDictionary.GetChunkAt(this.GlobalPosition + (directions[i] * chunkSize));
                 }
             }
         }
+        public void CalculateNeighboursNew()
+        {
+            for (int i = 0; i < chunkNeighbours.Length; i++)
+            {
+                chunkNeighbours[i] = AvailableChunks.GetChunk(this.LocalPosition + directions[i]);
+            }
+        }
+
+        private int GetFlattenIndex2D(int x, int y)
+            => (2 * 2 + 1) * x + y;
 
         public Chunk[] GetNeigbours()
         {
-            return chunkNeigbours;
+            return chunkNeighbours;
         }
 
         /// <summary>
@@ -335,17 +354,67 @@ namespace Core.Chunking
         /// <returns>Returns a state, if the chunk has only air in it, or not</returns>
         public void GenerateBlocks()
         {
-            ChunkGen();
-        }
-
-        private void ChunkGen()
-        {
+            //Terrain generation
             for (int x = this.GlobalPosition.X; x < this.GlobalPosition.X + 16; x++)
             {
                 for (int z = this.GlobalPosition.Z; z < this.GlobalPosition.Z + 16; z++)
                 {
                     Biom biom = BiomFinder.Find(noise.GetCellular(x * smoothness, z * smoothness));
                     ChunkColumnGen(x, z, biom);
+                }
+            }
+
+            // Tree generation
+        }
+
+        public void CalculateLight()
+        {
+            Queue<Int3> litVoxels = new Queue<Int3>();
+
+            for (int x = 0; x < chunkSize; x++)
+            {
+                for (int z = 0; z < chunkSize; z++)
+                {
+                    float lightRay = 1f;
+                    for (int y = chunkSize - 1; y >= 0; y--)
+                    {
+                        Block b = blocks[GetFlattenIndex(x, y, z)];
+                        if (b.ID > 0 && b.TransparentcyLevel() < lightRay) //If it's not air
+                            lightRay = b.TransparentcyLevel();
+
+                        b.GlobalLightPercent = lightRay;
+                        blocks[GetFlattenIndex(x, y, z)] = b;
+
+                        if(lightRay > lightFalloff)
+                            litVoxels.Enqueue(new Int3(x, y, z));
+                    }
+                }
+            }
+
+            while (litVoxels.Count > 0)
+            {
+                Int3 currentPosition = litVoxels.Dequeue();
+                Block currentBlock = blocks[GetFlattenIndex(currentPosition.X, currentPosition.Y, currentPosition.Z)];
+
+                for (int p = 0; p < 6; p++)
+                {
+                    Int3 neighbourPosition = currentPosition + directions[p];
+
+                    if (neighbourPosition.X > 0 && neighbourPosition.X < 16 && 
+                        neighbourPosition.Y > 0 && neighbourPosition.Y < 16 && 
+                        neighbourPosition.Z > 0 && neighbourPosition.Z < 16)
+                    {
+                        Block neighbourBlock = blocks[GetFlattenIndex(neighbourPosition.X, neighbourPosition.Y, neighbourPosition.Z)];
+                        if (neighbourBlock.GlobalLightPercent < currentBlock.GlobalLightPercent - lightFalloff)
+                        {
+                            float result = currentBlock.GlobalLightPercent - lightFalloff;
+                            blocks[GetFlattenIndex(neighbourPosition.X, neighbourPosition.Y, neighbourPosition.Z)].GlobalLightPercent = result;
+                            if (result > lightFalloff)
+                            {
+                                litVoxels.Enqueue(neighbourBlock.Position);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -357,9 +426,11 @@ namespace Core.Chunking
 
             lowerHeight += GetNoise(x, 0, z, biom.lowerMountainFrequency, biom.lowerMountainHeight);
 
+            int lowerMinHeight = biom.lowerMinHeight;
+            
             //Stones
-            if (lowerHeight < biom.lowerMinHeight)
-                lowerHeight = biom.lowerMinHeight;
+            if (lowerHeight < lowerMinHeight)
+                lowerHeight = lowerMinHeight;
 
             lowerHeight += GetNoise(x, 0, z, biom.lowerBaseNoise, biom.lowerBasNoisHeight);
 
@@ -370,26 +441,50 @@ namespace Core.Chunking
             int topHeight = midHeight + biom.topLayerBaseHeight;
             topHeight += GetNoise(x, 10, z, biom.topLayerNoise, biom.topLayerNoiseHeight);
 
+            int caveSize = biom.caveSize;
+
+            //Trees
+            float treeZoomLevel = biom.treeZoomLevel;
+            float treeValue = Mathf.PerlinNoise((x + seed) * treeZoomLevel, (z + seed) * treeZoomLevel);
+
             for (int y = this.GlobalPosition.Y; y < this.GlobalPosition.Y + 16; y++)
             {
-                int caveChance = GetNoise(x, y, z, biom.caveFrequency, 200);
-                if (y <= lowerHeight && biom.caveSize < caveChance)
+                int caveChance = GetNoise(x, y, z, biom.caveFrequency, caveSize * 5);
+                if (y <= lowerHeight && caveSize < caveChance)
                 {
                     Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
                     block.SetID((int) biom.lowerLayerBlock);
                     this.AddBlock(block);
                 }
-                else if (y <= midHeight && biom.caveSize < caveChance)
+                else if (y <= midHeight && caveSize < caveChance)
                 {
                     Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
                     block.SetID((int)biom.midLayerBlock);
                     this.AddBlock(block);
                 }
-                else if (y <= topHeight && biom.caveSize < caveChance)
+                else if (y <= topHeight && caveSize < caveChance)
                 {
                     Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
                     block.SetID((int) biom.topLayerBlock);
                     this.AddBlock(block);
+                }
+
+                if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
+                {
+                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
+                    //block.SetID((int)biom.treeTrunkBlock);
+                    //this.AddBlock(block);
+
+                    if (block.Position.Y + 1 < chunkSize && block.Position.X + 1 < chunkSize)
+                    {
+                        block.Position.Y += 1;
+                        block.SetID((int)biom.treeLeafBlock);
+                        this.AddBlock(block);
+
+                        block.Position.X += 1;
+                        block.SetID((int)biom.lowerLayerBlock);
+                        this.AddBlock(block);
+                    }
                 }
                 else //Air
                 {

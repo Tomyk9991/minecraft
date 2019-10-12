@@ -11,5 +11,6 @@ namespace Core.Builder
         Leaf = 6,
         Glass = 7,
         Sand = 8,
+        Cactus = 9,
     }
 }

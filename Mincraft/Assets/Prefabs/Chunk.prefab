@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5834300258596323135}
   - component: {fileID: 8349464485949914669}
   m_Layer: 0
-  m_Name: ChunkTest
+  m_Name: Chunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

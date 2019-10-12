@@ -6,9 +6,7 @@ using UnityEngine;
 
 using Core.Builder;
 using Core.Managers;
-using Core.Math;
 using Core.Saving;
-using Extensions;
 using System.Threading.Tasks;
 
 namespace Core.Chunking.Threading
@@ -25,19 +23,6 @@ namespace Core.Chunking.Threading
         private ContextIO<Chunk> chunkLoader;
         private GreedyMesh greedy;
 
-        private static Int3[] directions =
-        {
-            Int3.Forward, // 0
-            Int3.Back, // 1
-            Int3.Up, // 2
-            Int3.Down, // 3
-            Int3.Left, // 4
-            Int3.Right // 5
-        };
-
-
-        private int chunkSize;
-
         public int JobsCount => jobs.Count;
         public int FinishedJobsCount => FinishedJobs.Count;
 
@@ -46,7 +31,6 @@ namespace Core.Chunking.Threading
             if (chunkUpdaterInstance)
                 ChunkJobManagerUpdaterInstance = this;
 
-            chunkSize = ChunkSettings.ChunkSize;
             jobs = new ConcurrentQueue<ChunkJob>();
             greedy = new GreedyMesh();
 
@@ -77,7 +61,7 @@ namespace Core.Chunking.Threading
                 if (JobsCount == 0)
                 {
                     //TODO wieder auf 10ms stellen
-                    Thread.Sleep(10); //Needed, because CPU is overloaded in over case
+                    Thread.Sleep(10); //Needed, because CPU is overloaded in other case
                     continue;
                 }
 
@@ -87,11 +71,9 @@ namespace Core.Chunking.Threading
 
                     if (job == null) continue;
 
-                    if (!job.HasBlocks) // Chunk gets build new
+                    if(job.OnlyNoise)
                     {
-                        job.Chunk.CalculateNeigbours();
-
-                        string path = chunkLoader.Path + job.Chunk.LocalPosition.ToString() + chunkLoader.FileEnding<Chunk>();
+                        string path = chunkLoader.Path + job.Chunk.GlobalPosition.ToString() + chunkLoader.FileEnding<Chunk>();
 
                         if (File.Exists(path))
                         {
@@ -100,11 +82,49 @@ namespace Core.Chunking.Threading
                         else
                         {
                             job.Chunk.GenerateBlocks();
+                            job.HasBlocks = true;
+
+                            if (job.Column != null)
+                            {
+                                job.Column.NoiseReady = true;
+                                job.Column.GeneratingQueue = false;
+                            }
+                            else
+                                throw new Exception("Test");
                         }
+
+                        continue;
+                    }
+
+                    if (!job.HasBlocks) // Chunk gets build new
+                    {
+                        job.Chunk.CalculateNeighboursNew();
+
+                        string path = chunkLoader.Path + job.Chunk.GlobalPosition.ToString() + chunkLoader.FileEnding<Chunk>();
+
+                        if (File.Exists(path))
+                        {
+                            job.Chunk.LoadChunk(chunkLoader.LoadContext(path));
+                        }
+                        else
+                        {
+                            job.Chunk.GenerateBlocks();
+                            job.HasBlocks = true;
+                            job.Chunk.CalculateLight();
+                        }
+
+                        job.Counter++;
                     }
                     else
                     {
-                        job.Chunk.CalculateNeigbours();
+                        job.Counter++;
+                        job.Chunk.CalculateNeighboursNew();
+                        job.Chunk.CalculateLight();
+                    }
+
+                    if (job.Counter >= 2)
+                    {
+                        job.RedrawTwice = true;
                     }
 
                     //if "if" not executed, than chunk already existed
@@ -116,6 +136,7 @@ namespace Core.Chunking.Threading
                     Task<MeshData> colliderData = Task.Run(() => greedy.ReduceMesh(job.Chunk));
 
                     Task.WaitAll(meshData, colliderData);
+
 
                     job.MeshData = meshData.Result;
                     job.ColliderData = colliderData.Result;
