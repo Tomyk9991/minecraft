@@ -14,7 +14,6 @@ namespace Core.Chunking.Threading
 
         public bool HasBlocks { get; set; }
         public bool RedrawTwice { get; set; }
-        public bool OnlyNoise { get; set; }
 
         public int Counter = 0;
 

@@ -125,7 +125,6 @@ namespace Core.Chunking
 
         public bool IsNotEmpty(int x, int y, int z)
         {
-            //Maybe no GetLocalPosition
             Block currentBlock = blocks[GetFlattenIndex(x, y, z)];
             return currentBlock.ID != (int) BlockUV.Air;
         }
@@ -312,7 +311,7 @@ namespace Core.Chunking
 
         public override string ToString()
         {
-            return LocalPosition.ToString();
+            return GlobalPosition.ToString();
         }
 
         public void CalculateNeighbours()
@@ -334,9 +333,11 @@ namespace Core.Chunking
         }
         public void CalculateNeighboursNew()
         {
-            for (int i = 0; i < chunkNeighbours.Length; i++)
+            Int3 temp = new Int3(1, 0, 0);
+            for (int i = 0; i < 6; i++)
             {
-                chunkNeighbours[i] = AvailableChunks.GetChunk(this.LocalPosition + directions[i]);
+                Int3 neighbourPos = this.LocalPosition + directions[i] + temp;
+                chunkNeighbours[i] = AvailableChunks.GetChunk(neighbourPos);
             }
         }
 

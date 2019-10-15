@@ -71,31 +71,6 @@ namespace Core.Chunking.Threading
 
                     if (job == null) continue;
 
-                    if(job.OnlyNoise)
-                    {
-                        string path = chunkLoader.Path + job.Chunk.GlobalPosition.ToString() + chunkLoader.FileEnding<Chunk>();
-
-                        if (File.Exists(path))
-                        {
-                            job.Chunk.LoadChunk(chunkLoader.LoadContext(path));
-                        }
-                        else
-                        {
-                            job.Chunk.GenerateBlocks();
-                            job.HasBlocks = true;
-
-                            if (job.Column != null)
-                            {
-                                job.Column.NoiseReady = true;
-                                job.Column.GeneratingQueue = false;
-                            }
-                            else
-                                throw new Exception("Test");
-                        }
-
-                        continue;
-                    }
-
                     if (!job.HasBlocks) // Chunk gets build new
                     {
                         job.Chunk.CalculateNeighboursNew();
@@ -126,11 +101,6 @@ namespace Core.Chunking.Threading
                     {
                         job.RedrawTwice = true;
                     }
-
-                    //if "if" not executed, than chunk already existed
-
-                    //job.MeshData = MeshBuilder.Combine(job.Chunk);
-                    //job.ColliderData = greedy.ReduceMesh(job.Chunk);
 
                     Task<MeshData> meshData = Task.Run(() => MeshBuilder.Combine(job.Chunk));
                     Task<MeshData> colliderData = Task.Run(() => greedy.ReduceMesh(job.Chunk));

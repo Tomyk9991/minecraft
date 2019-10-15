@@ -3478,5 +3478,10 @@ PrefabInstance:
       propertyPath: canMoveMouse
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3399322170811529383, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: m_RenderingPath
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ada145dfe0b44a4e8985c27da1d88fb, type: 3}
