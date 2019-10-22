@@ -15,20 +15,19 @@ namespace Core.UI.DeveloperOverlay
     {
         [Header("Developer overlay")]
         [SerializeField] private bool showingOverlay = false;
-        
+
         [Header("Outputs")]
         [SerializeField] private TextMeshProUGUI playerPositionOutput = null;
         [SerializeField] private TextMeshProUGUI chunksLoadedOutput = null;
         [SerializeField] private TextMeshProUGUI chunksInGameObjectOutput = null;
-        [SerializeField] private TextMeshProUGUI chunksInHashmapOutput = null;
         [SerializeField] private TextMeshProUGUI cpuUsageOutput = null;
 
         [Header("Calculations")]
         [SerializeField] private Transform playerTarget = null;
         [SerializeField] private Transform worldParent = null;
-        
+
         private Transform[] transforms = null;
-        private PerformanceCounter theCPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total"); 
+        private PerformanceCounter theCPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
         private void Start()
         {
@@ -58,7 +57,6 @@ namespace Core.UI.DeveloperOverlay
                 playerPositionOutput.text = GetPlayerPosition().ToString();
                 chunksLoadedOutput.text = GetLoadedChunksAmount().ToString();
                 chunksInGameObjectOutput.text = GetAmountChunksInGameObjects().ToString();
-                chunksInHashmapOutput.text = GetAmountChunksInHashMap().ToString();
                 cpuUsageOutput.text = GetCPUUsage();
             }
         }
@@ -70,18 +68,13 @@ namespace Core.UI.DeveloperOverlay
 
         private int GetLoadedChunksAmount()
         {
-            return ChunkClusterDictionary.Count;
+            return ChunkBuffer.Columns.Length * ChunkBuffer.YBound;
         }
 
         //Änderbar mit GameobjectPool
         private int GetAmountChunksInGameObjects()
         {
             return worldParent.transform.Cast<Transform>().Count(t => t.name != "Unused chunk");
-        }
-
-        private int GetAmountChunksInHashMap()
-        {
-            return HashSetPositionChecker.Count;
         }
 
         private string GetCPUUsage()

@@ -28,7 +28,7 @@ namespace Core.Chunking.Debugging
         [ContextMenu("Test")]
         private void Test()
         {
-            Chunk.CalculateNeighboursNew();
+            Chunk.CalculateNeighbours();
             Chunk[] neighbours = Chunk.GetNeigbours();
 
             points = new List<Vector3>();

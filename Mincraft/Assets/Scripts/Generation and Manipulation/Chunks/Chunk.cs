@@ -37,8 +37,6 @@ namespace Core.Chunking
 
         private Chunk[] chunkNeighbours;
 
-        public ChunkCluster Cluster { get; set; }
-
         //Simplex noise
         private float smoothness = 0;
         private float steepness = 0;
@@ -78,7 +76,7 @@ namespace Core.Chunking
             int index = GetFlattenIndex(block.Position.X, block.Position.Y, block.Position.Z);
             blocks[index] = block;
         }
-        
+
         public void InvokeToRedraw()
         {
             throw new NotImplementedException();
@@ -99,7 +97,7 @@ namespace Core.Chunking
 
         public override Chunk Caster(object data)
         {
-            var helper = (ChunkSerializeHelper) data;
+            var helper = (ChunkSerializeHelper)data;
             this.LocalPosition = helper.ChunkPosition;
             //globalblocks auch
             this.blocks = helper.localBlocks;
@@ -126,7 +124,7 @@ namespace Core.Chunking
         public bool IsNotEmpty(int x, int y, int z)
         {
             Block currentBlock = blocks[GetFlattenIndex(x, y, z)];
-            return currentBlock.ID != (int) BlockUV.Air;
+            return currentBlock.ID != (int)BlockUV.Air;
         }
 
         public (Int3 lowerBound, Int3 higherBound) GetChunkBounds()
@@ -157,7 +155,7 @@ namespace Core.Chunking
             Int3 local = blockPos;
             Int3 direction = directions[index];
             Chunk chunkNeighbour = chunkNeighbours[index];
-            
+
             Block block = new Block
             {
                 ID = (int)BlockUV.Stone
@@ -316,28 +314,10 @@ namespace Core.Chunking
 
         public void CalculateNeighbours()
         {
-            for (int i = 0; i < chunkNeighbours.Length; i++)
-            {
-                Int3 curRes = this.LocalPosition + directions[i];
-
-                if (curRes.X >= 0 && curRes.X < 16 && curRes.Y >= 0 && curRes.Y < 16 && curRes.Z >= 0 && curRes.Z < 16)
-                {
-                    chunkNeighbours[i] = Cluster.GetChunk(this.LocalPosition + directions[i]);
-                }
-                else
-                {
-                    chunkNeighbours[i] =
-                        ChunkClusterDictionary.GetChunkAt(this.GlobalPosition + (directions[i] * chunkSize));
-                }
-            }
-        }
-        public void CalculateNeighboursNew()
-        {
-            Int3 temp = new Int3(1, 0, 0);
             for (int i = 0; i < 6; i++)
             {
-                Int3 neighbourPos = this.LocalPosition + directions[i] + temp;
-                chunkNeighbours[i] = AvailableChunks.GetChunk(neighbourPos);
+                Int3 neighbourPos = this.LocalPosition + directions[i];
+                chunkNeighbours[i] = ChunkBuffer.GetChunk(neighbourPos);
             }
         }
 
@@ -386,7 +366,7 @@ namespace Core.Chunking
                         b.GlobalLightPercent = lightRay;
                         blocks[GetFlattenIndex(x, y, z)] = b;
 
-                        if(lightRay > lightFalloff)
+                        if (lightRay > lightFalloff)
                             litVoxels.Enqueue(new Int3(x, y, z));
                     }
                 }
@@ -401,8 +381,8 @@ namespace Core.Chunking
                 {
                     Int3 neighbourPosition = currentPosition + directions[p];
 
-                    if (neighbourPosition.X > 0 && neighbourPosition.X < 16 && 
-                        neighbourPosition.Y > 0 && neighbourPosition.Y < 16 && 
+                    if (neighbourPosition.X > 0 && neighbourPosition.X < 16 &&
+                        neighbourPosition.Y > 0 && neighbourPosition.Y < 16 &&
                         neighbourPosition.Z > 0 && neighbourPosition.Z < 16)
                     {
                         Block neighbourBlock = blocks[GetFlattenIndex(neighbourPosition.X, neighbourPosition.Y, neighbourPosition.Z)];
@@ -428,7 +408,7 @@ namespace Core.Chunking
             lowerHeight += GetNoise(x, 0, z, biom.lowerMountainFrequency, biom.lowerMountainHeight);
 
             int lowerMinHeight = biom.lowerMinHeight;
-            
+
             //Stones
             if (lowerHeight < lowerMinHeight)
                 lowerHeight = lowerMinHeight;
@@ -454,7 +434,7 @@ namespace Core.Chunking
                 if (y <= lowerHeight && caveSize < caveChance)
                 {
                     Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
-                    block.SetID((int) biom.lowerLayerBlock);
+                    block.SetID((int)biom.lowerLayerBlock);
                     this.AddBlock(block);
                 }
                 else if (y <= midHeight && caveSize < caveChance)
@@ -466,7 +446,7 @@ namespace Core.Chunking
                 else if (y <= topHeight && caveSize < caveChance)
                 {
                     Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
-                    block.SetID((int) biom.topLayerBlock);
+                    block.SetID((int)biom.topLayerBlock);
                     this.AddBlock(block);
                 }
 

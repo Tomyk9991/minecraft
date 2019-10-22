@@ -41,8 +41,8 @@ namespace Core.Chunking.Threading
             GameManager.AbsolutePath = ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName;
 
             //What if you got only two cores?
-            threads = SystemInfo.processorCount - 2 <= 0 
-                ? new Thread[1] 
+            threads = SystemInfo.processorCount - 2 <= 0
+                ? new Thread[1]
                 : new Thread[SystemInfo.processorCount - 2];
 
             for (int i = 0; i < threads.Length; i++)
@@ -55,7 +55,7 @@ namespace Core.Chunking.Threading
         }
 
         private void Calculate()
-        { 
+        {
             while (Running)
             {
                 if (JobsCount == 0)
@@ -65,15 +65,13 @@ namespace Core.Chunking.Threading
                     continue;
                 }
 
-                if(JobsCount > 0)
+                if (JobsCount > 0)
                 {
-                    jobs.TryDequeue(out var job);
-
-                    if (job == null) continue;
+                    if (!jobs.TryDequeue(out var job)) continue;
 
                     if (!job.HasBlocks) // Chunk gets build new
                     {
-                        job.Chunk.CalculateNeighboursNew();
+                        job.Chunk.CalculateNeighbours();
 
                         string path = chunkLoader.Path + job.Chunk.GlobalPosition.ToString() + chunkLoader.FileEnding<Chunk>();
 
@@ -83,23 +81,14 @@ namespace Core.Chunking.Threading
                         }
                         else
                         {
-                            job.Chunk.GenerateBlocks();
                             job.HasBlocks = true;
                             job.Chunk.CalculateLight();
                         }
-
-                        job.Counter++;
                     }
                     else
                     {
-                        job.Counter++;
-                        job.Chunk.CalculateNeighboursNew();
+                        job.Chunk.CalculateNeighbours();
                         job.Chunk.CalculateLight();
-                    }
-
-                    if (job.Counter >= 2)
-                    {
-                        job.RedrawTwice = true;
                     }
 
                     Task<MeshData> meshData = Task.Run(() => MeshBuilder.Combine(job.Chunk));
@@ -128,7 +117,7 @@ namespace Core.Chunking.Threading
                 threads[i].Start();
         }
 
-        public void Add(ChunkJob job)
+        public void AddJob(ChunkJob job)
         {
             jobs.Enqueue(job);
         }

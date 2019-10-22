@@ -15,8 +15,6 @@ namespace Core.Chunking.Threading
         public bool HasBlocks { get; set; }
         public bool RedrawTwice { get; set; }
 
-        public int Counter = 0;
-
         /// <summary>
         /// Creates internally a new Chunk with an empty block array
         /// </summary>
@@ -30,22 +28,6 @@ namespace Core.Chunking.Threading
                 GlobalPosition = chunkClusterPosition + (chunkPos * 16)
             };
             
-            this.HasBlocks = false;
-            this.Chunk = chunk;
-
-            return chunk;
-        }
-
-        public Chunk CreateChunk(Int3 globalPos, Int3 localPos, ChunkColumn column)
-        {
-            Chunk chunk = new Chunk
-            {
-                GlobalPosition = globalPos,
-                LocalPosition = localPos
-            };
-
-            this.Column = column;
-
             this.HasBlocks = false;
             this.Chunk = chunk;
 
@@ -70,9 +52,10 @@ namespace Core.Chunking.Threading
         /// </summary>
         /// <param name="chunkPos">Expects a local space coordinate </param>
         /// <returns></returns>
-        public void CreateChunkFromExisting(Chunk chunk)
+        public void CreateChunkFromExisting(Chunk chunk, ChunkColumn column)
         {
             this.Chunk = chunk ?? throw new Exception("Chunk is null");
+            this.Column = column;
             this.HasBlocks = true;
         }
     }

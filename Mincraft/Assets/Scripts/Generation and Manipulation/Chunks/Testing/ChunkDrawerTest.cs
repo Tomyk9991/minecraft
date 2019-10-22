@@ -24,20 +24,13 @@ public class ChunkDrawerTest : SingletonBehaviour<ChunkDrawerTest>
 
     private void Update()
     {
-        for (int i = 0; i < chunkJobManager.FinishedJobsCount/* && i < drawsPerUpdate*/; i++)
+        for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < drawsPerUpdate; i++)
         {
-            ChunkJob task = chunkJobManager.DequeueFinishedJobs();
+            ChunkJob task = chunkJobManager.DequeueFinishedJobs(); 
 
             if(task != null && task.Completed && task.MeshData.Vertices.Count != 0)
             {
-                //if (task.Counter > 1)
-                //    drawsPerUpdate = 1;
-                //else
-                //    drawsPerUpdate = 10;
-
-                //if (!task.RedrawTwice)
-                //    chunkJobManager.Add(task);
-
+                task.Column.State = DrawingState.Drawn;
                 RenderCall(task);
             }
         }
@@ -58,11 +51,6 @@ public class ChunkDrawerTest : SingletonBehaviour<ChunkDrawerTest>
             drawingChunk.CurrentGO.GetComponent<NeighbourTestVisualizer>().Chunk = drawingChunk;
 
             modifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
-        }
-        else
-        {
-            modifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
-            drawingChunk.ChunkState = ChunkState.Drawn;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Core.Builder.Generation
 
         public override List<ChunkJob> Generate(Chunk chunk, int x, int y, int z) // xyz kommt in globalspace an
         {
-            base.Generate(chunk, x, y, z);
+            //base.Generate(chunk, x, y, z);
 
             int height = (int)MathHelper.Map(Mathf.PerlinNoise(x * 0.9f, z * 0.9f), 0f, 1f, minMaxHeight.X + 1, minMaxHeight.Y);
             int volume = (int)MathHelper.Map(Mathf.PerlinNoise(x * 0.9f, z * 0.9f), 0f, 1f, minMaxVolume.X + 1, minMaxVolume.Y);
@@ -32,16 +32,16 @@ namespace Core.Builder.Generation
             int localY = y - chunk.GlobalPosition.Y;
             int localZ = z - chunk.GlobalPosition.Z;
 
-            block.ID = (int) BlockUV.Wood;
+            block.ID = (int)BlockUV.Wood;
             (Chunk c, bool ownChunk) result;
 
-            for (int i = localY; i < localY + height; i++) //tree trunk
-            {
-                block.Position = new Int3(localX, i, localZ);
+            //for (int i = localY; i < localY + height; i++) //tree trunk
+            //{
+            //    block.Position = new Int3(localX, i, localZ);
 
-                result = base.AddBlock(block, chunk);
-                base.HandleChunk(result.c, result.ownChunk);
-            }
+            //    result = base.AddBlock(block, chunk);
+            //    base.HandleChunk(result.c, result.ownChunk);
+            //}
 
             //block.ID = (int) BlockUV.Leaf;
             //for (int sx = localX - 3; sx <= localX + 3; sx++) // tree top
@@ -57,12 +57,13 @@ namespace Core.Builder.Generation
             //    }
             //}
 
-            return chunkJobs.ToList();
+            //return chunkJobs.ToList();
+            return null;
         }
 
-        
 
-        private bool LeafSpawn(int x, int y, int z, int volume) 
+
+        private bool LeafSpawn(int x, int y, int z, int volume)
         {
             float a = Mathf.Abs(-volume / 2 + x);
             float b = Mathf.Abs(-volume / 2 + y);
