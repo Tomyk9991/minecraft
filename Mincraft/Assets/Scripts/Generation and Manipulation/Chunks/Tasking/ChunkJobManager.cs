@@ -41,9 +41,10 @@ namespace Core.Chunking.Threading
             GameManager.AbsolutePath = ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName;
 
             //What if you got only two cores?
-            threads = SystemInfo.processorCount - 2 <= 0
-                ? new Thread[1]
-                : new Thread[SystemInfo.processorCount - 2];
+            //threads = SystemInfo.processorCount - 2 <= 0
+            //    ? new Thread[1]
+            //    : new Thread[SystemInfo.processorCount - 2];
+            threads = new Thread[1];
 
             for (int i = 0; i < threads.Length; i++)
             {

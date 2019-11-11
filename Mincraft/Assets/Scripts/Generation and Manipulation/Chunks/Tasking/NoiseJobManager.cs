@@ -19,9 +19,10 @@ namespace Core.Chunking.Threading
             if (noiseUpdaterInstance)
                 NoiseJobManagerUpdaterInstance = this;
 
-            threads = SystemInfo.processorCount - 2 <= 0
-                ? new Thread[1]
-                : new Thread[SystemInfo.processorCount - 2];
+            threads = new Thread[2];
+            //threads = SystemInfo.processorCount - 2 <= 0
+            //    ? new Thread[1]
+            //    : new Thread[SystemInfo.processorCount - 2];
 
             for (int i = 0; i < threads.Length; i++)
             {

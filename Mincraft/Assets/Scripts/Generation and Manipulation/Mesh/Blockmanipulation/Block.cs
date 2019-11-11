@@ -25,11 +25,11 @@ namespace Core.Builder
 
         //TODO: Add this to the actual block object for performance
         public bool IsTransparent()
-            => UVDictionary.IsTransparentID((BlockUV) this.ID);
+            => UVDictionary.IsTransparentID((BlockUV)this.ID);
 
         //TODO: Add this to the actual block object for performance
         public bool IsSolid()
-            => UVDictionary.IsSolidID((BlockUV) this.ID);
+            => UVDictionary.IsSolidID((BlockUV)this.ID);
 
         public float MeshOffset()
             => UVDictionary.MeshOffsetID((BlockUV)this.ID);
@@ -38,7 +38,7 @@ namespace Core.Builder
         {
             return new Block(new Int3(0, 0, 0))
             {
-                ID = 0
+                ID = -15000
             };
         }
 

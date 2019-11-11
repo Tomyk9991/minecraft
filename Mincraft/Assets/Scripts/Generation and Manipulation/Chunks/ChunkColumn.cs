@@ -4,14 +4,32 @@ namespace Core.Chunking
 {
     public class ChunkColumn
     {
+        private DrawingState state;
         public Int2 GlobalPosition { get; }
         /// <summary>
         /// Discribes the local position, which depends on the global player position 
         /// </summary>
         public Int2 LocalPosition { get; private set; }
-        public DrawingState State { get; set; }
+        public DrawingState State
+        {
+            get
+            {
+                lock (_drawingstateMutex)
+                {
+                    return state;
+                }
+            }
+            set
+            {
+                lock (_drawingstateMutex)
+                {
+                    this.state = value;
+                }
+            }
+        }
 
         private object _mutex = new object();
+        private object _drawingstateMutex = new object();
 
         public Chunk[] chunks;
 
@@ -40,6 +58,17 @@ namespace Core.Chunking
                 //Back
                 ChunkBuffer.GetColumn(this.LocalPosition.X, this.LocalPosition.Y - 1),
             };
+        }
+
+        public int ChunksLength
+        {
+            get
+            {
+                lock (_mutex)
+                {
+                    return chunks.Length;
+                }
+            }
         }
 
         public Chunk this[int index]

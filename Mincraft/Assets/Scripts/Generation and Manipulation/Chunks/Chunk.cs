@@ -379,17 +379,16 @@ namespace Core.Chunking
 
                 for (int p = 0; p < 6; p++)
                 {
-                    Int3 neighbourPosition = currentPosition + directions[p];
-
-                    if (neighbourPosition.X > 0 && neighbourPosition.X < 16 &&
-                        neighbourPosition.Y > 0 && neighbourPosition.Y < 16 &&
-                        neighbourPosition.Z > 0 && neighbourPosition.Z < 16)
+                    Int3 nPos = currentPosition + directions[p];
+                    if (nPos.X > 0 && nPos.X < 16 &&
+                        nPos.Y > 0 && nPos.Y < 16 &&
+                        nPos.Z > 0 && nPos.Z < 16)
                     {
-                        Block neighbourBlock = blocks[GetFlattenIndex(neighbourPosition.X, neighbourPosition.Y, neighbourPosition.Z)];
+                        Block neighbourBlock = GetNeigbourAt(p, currentPosition);
                         if (neighbourBlock.GlobalLightPercent < currentBlock.GlobalLightPercent - lightFalloff)
                         {
                             float result = currentBlock.GlobalLightPercent - lightFalloff;
-                            blocks[GetFlattenIndex(neighbourPosition.X, neighbourPosition.Y, neighbourPosition.Z)].GlobalLightPercent = result;
+                            blocks[GetFlattenIndex(nPos.X, nPos.Y, nPos.Z)].GlobalLightPercent = result;
                             if (result > lightFalloff)
                             {
                                 litVoxels.Enqueue(neighbourBlock.Position);
@@ -450,23 +449,23 @@ namespace Core.Chunking
                     this.AddBlock(block);
                 }
 
-                if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
-                {
-                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
-                    //block.SetID((int)biom.treeTrunkBlock);
-                    //this.AddBlock(block);
+                //if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
+                //{
+                //Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z));
+                //block.SetID((int)biom.treeTrunkBlock);
+                //this.AddBlock(block);
 
-                    if (block.Position.Y + 1 < chunkSize && block.Position.X + 1 < chunkSize)
-                    {
-                        block.Position.Y += 1;
-                        block.SetID((int)biom.treeLeafBlock);
-                        this.AddBlock(block);
+                //if (block.Position.Y + 1 < chunkSize && block.Position.X + 1 < chunkSize)
+                //{
+                //    block.Position.Y += 1;
+                //    block.SetID((int)biom.treeLeafBlock);
+                //    this.AddBlock(block);
 
-                        block.Position.X += 1;
-                        block.SetID((int)biom.lowerLayerBlock);
-                        this.AddBlock(block);
-                    }
-                }
+                //    block.Position.X += 1;
+                //    block.SetID((int)biom.lowerLayerBlock);
+                //    this.AddBlock(block);
+                //}
+                //}
                 else //Air
                 {
                 }

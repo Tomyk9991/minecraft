@@ -5,7 +5,7 @@ using Core.Chunking.Threading;
 using Extensions;
 using UnityEngine;
 
-public class ChunkDrawerTest : SingletonBehaviour<ChunkDrawerTest>
+public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
 {
     public ChunkGameObjectPool GoPool { get; set; }
     [SerializeField] private int drawsPerUpdate = 2;

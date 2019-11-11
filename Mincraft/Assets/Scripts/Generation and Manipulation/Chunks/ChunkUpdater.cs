@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class ChunkUpdaterTest : SingletonBehaviour<ChunkUpdaterTest>
+public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 {
     public Int3 LatestPlayerPosition => latestPlayerPosition;
     [SerializeField] private bool moveWithPlayer = true;
