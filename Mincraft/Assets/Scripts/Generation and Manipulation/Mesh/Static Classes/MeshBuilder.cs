@@ -173,5 +173,101 @@ namespace Core.Builder
 		    
 		    return new MeshData(vertices, triangles, transparentTriangles, uvs, colors, chunk.CurrentGO);
 	    }
+        
+        public static MeshData TestCombine(Chunk chunk)
+	    {   
+		    Block[] blocks = chunk.GetBlocks();
+		    List<Vector3> vertices = new List<Vector3>();
+		    List<int> triangles = new List<int>();
+	        List<int> transparentTriangles = new List<int>();
+		    List<Vector2> uvs = new List<Vector2>();
+            List<Color> colors = new List<Color>();
+
+		    for (int i = 0; i < blocks.Length; i++)
+	        {
+	            bool transparent = blocks[i].IsTransparent();
+
+                Block block = blocks[i];
+			    if (block.ID == (int) BlockUV.Air)
+			    {
+				    continue;
+			    }
+			    
+			    Vector3 blockPos = block.Position.ToVector3();
+			    
+			    UVData[] currentUVData = UVDictionary.GetValue((BlockUV) block.ID);
+                float meshOffset = UVDictionary.MeshOffsetID((BlockUV)block.ID);
+
+			    for (int faceIndex = 0; faceIndex < 6; faceIndex++)
+			    {
+				    int vc = vertices.Count;
+
+
+                    #region Meshoffsets
+                    switch (faceIndex)
+                    {
+                        case 0: //Forward
+                            vertices.Add(directions[faceIndex] + blockPos - new Vector3(0, 0f, meshOffset));
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + blockPos - new Vector3(0, 0f, meshOffset));
+                            vertices.Add(directions[faceIndex] + offset2[faceIndex] + blockPos - new Vector3(0, 0f, meshOffset));
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + offset2[faceIndex] + blockPos - new Vector3(0, 0f, meshOffset));
+                            break;
+                        case 1: //Back
+                            vertices.Add(directions[faceIndex] + blockPos + new Vector3(0, 0f, meshOffset));
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + blockPos + new Vector3(0, 0f, meshOffset));
+                            vertices.Add(directions[faceIndex] + offset2[faceIndex] + blockPos + new Vector3(0, 0f, meshOffset));
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + offset2[faceIndex] + blockPos + new Vector3(0, 0f, meshOffset));
+                            break;
+                        case 2: //Up
+                            vertices.Add(directions[faceIndex] + blockPos);
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + blockPos);
+                            vertices.Add(directions[faceIndex] + offset2[faceIndex] + blockPos);
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + offset2[faceIndex] + blockPos);
+                            break;
+                        case 3: // Down
+                            vertices.Add(directions[faceIndex] + blockPos);
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + blockPos);
+                            vertices.Add(directions[faceIndex] + offset2[faceIndex] + blockPos);
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + offset2[faceIndex] + blockPos);
+                            break;
+                        case 4: //Left
+                            vertices.Add(directions[faceIndex] + blockPos + new Vector3(meshOffset, 0f, 0f));
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + blockPos + new Vector3(meshOffset, 0f, 0f));
+                            vertices.Add(directions[faceIndex] + offset2[faceIndex] + blockPos + new Vector3(meshOffset, 0f, 0f));
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + offset2[faceIndex] + blockPos + new Vector3(meshOffset, 0f, 0f));
+                            break;
+                        case 5: //Right
+                            vertices.Add(directions[faceIndex] + blockPos - new Vector3(meshOffset, 0f, 0f));
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + blockPos - new Vector3(meshOffset, 0f, 0f));
+                            vertices.Add(directions[faceIndex] + offset2[faceIndex] + blockPos - new Vector3(meshOffset, 0f, 0f));
+                            vertices.Add(directions[faceIndex] + offset1[faceIndex] + offset2[faceIndex] + blockPos - new Vector3(meshOffset, 0f, 0f));
+                            break;
+                    }
+                    #endregion
+
+                    if (!transparent)
+                    {
+				        for (int k = 0; k < 6; k++)
+				        {
+					        triangles.Add(vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
+				        }
+                    }
+                    else
+                    {
+                        for (int k = 0; k < 6; k++)
+                        {
+                            transparentTriangles.Add(vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
+                        }
+                    }
+
+				    uvs.Add(new Vector2(currentUVData[faceIndex].TileX, currentUVData[faceIndex].TileY));
+				    uvs.Add(new Vector2(currentUVData[faceIndex].TileX + currentUVData[faceIndex].SizeX, currentUVData[faceIndex].TileY));
+				    uvs.Add(new Vector2(currentUVData[faceIndex].TileX, currentUVData[faceIndex].TileY + currentUVData[faceIndex].SizeY));
+				    uvs.Add(new Vector2(currentUVData[faceIndex].TileX + currentUVData[faceIndex].SizeX,currentUVData[faceIndex].TileY + currentUVData[faceIndex].SizeY));
+			    }
+		    }
+		    
+		    return new MeshData(vertices, triangles, transparentTriangles, uvs, colors, chunk.CurrentGO);
+	    }
     }
 }

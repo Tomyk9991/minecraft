@@ -48,7 +48,7 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
             drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
             drawingChunk.CurrentGO.name = drawingChunk.GlobalPosition.ToString();
 
-            drawingChunk.CurrentGO.GetComponent<NeighbourTestVisualizer>().Chunk = drawingChunk;
+            drawingChunk.CurrentGO.GetComponent<NeighbourTestVisualizer>().chunk = drawingChunk;
 
             modifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
         }

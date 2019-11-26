@@ -20,9 +20,9 @@ namespace Core.Chunking.Threading
                 NoiseJobManagerUpdaterInstance = this;
 
             threads = new Thread[2];
-            //threads = SystemInfo.processorCount - 2 <= 0
-            //    ? new Thread[1]
-            //    : new Thread[SystemInfo.processorCount - 2];
+            threads = SystemInfo.processorCount - 2 <= 0
+                ? new Thread[1]
+                : new Thread[(SystemInfo.processorCount - 2) / 3];
 
             for (int i = 0; i < threads.Length; i++)
             {
@@ -45,7 +45,7 @@ namespace Core.Chunking.Threading
 
         public void Stop() => Running = false;
 
-        public void AddJob(NoiseJob job)
+        public void AddJob(NoiseJob job, bool a = false)
         {
             jobs.Enqueue(job);
         }
@@ -57,7 +57,7 @@ namespace Core.Chunking.Threading
                 if (jobs.Count == 0)
                 {
                     //TODO wieder auf 10ms stellen
-                    System.Threading.Thread.Sleep(10); //Needed, because CPU is overloaded in other case
+                    System.Threading.Thread.Sleep(100); //Needed, because CPU is overloaded in other case
                     continue;
                 }
 
@@ -69,6 +69,7 @@ namespace Core.Chunking.Threading
                     }
 
                     job.Column.State = DrawingState.NoiseReady;
+                    Thread.Sleep(10);
                 }
             }
         }

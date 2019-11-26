@@ -22,6 +22,7 @@ namespace Core.Chunking.Threading
         private Thread[] threads;
         private ContextIO<Chunk> chunkLoader;
         private GreedyMesh greedy;
+        private bool _calculateShadows;
 
         public int JobsCount => jobs.Count;
         public int FinishedJobsCount => FinishedJobs.Count;
@@ -33,6 +34,7 @@ namespace Core.Chunking.Threading
 
             jobs = new ConcurrentQueue<ChunkJob>();
             greedy = new GreedyMesh();
+            _calculateShadows = ChunkSettings.CalculateShadows;
 
 
 
@@ -41,10 +43,9 @@ namespace Core.Chunking.Threading
             GameManager.AbsolutePath = ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName;
 
             //What if you got only two cores?
-            //threads = SystemInfo.processorCount - 2 <= 0
-            //    ? new Thread[1]
-            //    : new Thread[SystemInfo.processorCount - 2];
-            threads = new Thread[1];
+            threads = SystemInfo.processorCount - 2 <= 0
+                ? new Thread[1]
+                : new Thread[4];
 
             for (int i = 0; i < threads.Length; i++)
             {
@@ -62,7 +63,7 @@ namespace Core.Chunking.Threading
                 if (JobsCount == 0)
                 {
                     //TODO wieder auf 10ms stellen
-                    Thread.Sleep(10); //Needed, because CPU is overloaded in other case
+                    Thread.Sleep(100); //Needed, because CPU is overloaded in other case
                     continue;
                 }
 
@@ -83,13 +84,17 @@ namespace Core.Chunking.Threading
                         else
                         {
                             job.HasBlocks = true;
-                            job.Chunk.CalculateLight();
+                            
+                            if (_calculateShadows)
+                                job.Chunk.CalculateLight();
                         }
                     }
                     else
                     {
                         job.Chunk.CalculateNeighbours();
-                        job.Chunk.CalculateLight();
+                        
+                        if (_calculateShadows)
+                            job.Chunk.CalculateLight();
                     }
 
                     Task<MeshData> meshData = Task.Run(() => MeshBuilder.Combine(job.Chunk));

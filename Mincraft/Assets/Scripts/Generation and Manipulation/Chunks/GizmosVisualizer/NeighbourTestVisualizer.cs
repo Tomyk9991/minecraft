@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 using System.Collections.Generic;
 
@@ -6,7 +7,7 @@ namespace Core.Chunking.Debugging
 {
     public class NeighbourTestVisualizer : MonoBehaviour
     {
-        public Chunk Chunk;
+        public Chunk chunk;
 
         private List<Vector3> points;
 
@@ -28,8 +29,8 @@ namespace Core.Chunking.Debugging
         [ContextMenu("Test")]
         private void Test()
         {
-            Chunk.CalculateNeighbours();
-            Chunk[] neighbours = Chunk.GetNeigbours();
+            chunk.CalculateNeighbours();
+            Chunk[] neighbours = chunk.GetNeigbours();
 
             points = new List<Vector3>();
             for (int i = 0; i < neighbours.Length; i++)

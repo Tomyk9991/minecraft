@@ -15,24 +15,6 @@ namespace Core.Chunking.Threading
         public bool HasBlocks { get; set; }
         public bool RedrawTwice { get; set; }
 
-        /// <summary>
-        /// Creates internally a new Chunk with an empty block array
-        /// </summary>
-        /// <param name="chunkPos">Expects a local space coordinate </param>
-        /// <returns></returns>
-        public Chunk CreateChunk(Int3 chunkPos, Int3 chunkClusterPosition)
-        {
-            Chunk chunk = new Chunk
-            {
-                LocalPosition = chunkPos,
-                GlobalPosition = chunkClusterPosition + (chunkPos * 16)
-            };
-            
-            this.HasBlocks = false;
-            this.Chunk = chunk;
-
-            return chunk;
-        }
 
         public Chunk CreateChunk(Int3 globalPos)
         {

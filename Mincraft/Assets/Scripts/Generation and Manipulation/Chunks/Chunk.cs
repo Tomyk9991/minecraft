@@ -9,7 +9,6 @@ using Core.Math;
 using Core.Saving;
 using Core.Saving.Serializers;
 using Test;
-using Random = System.Random;
 
 namespace Core.Chunking
 {
@@ -63,12 +62,17 @@ namespace Core.Chunking
             seed = ChunkSettings.NoiseSettings.Seed;
 
             treeGenerator = new OakTreeGenerator(new Int2(4, 6), new Int2(2, 4));
-
             blocks = new Block[chunkSize * chunkSize * chunkSize];
             chunkNeighbours = new Chunk[6];
 
             if (noise == null)
                 noise = new FastNoise(this.seed);
+        }
+
+        public Chunk(string s)
+        {
+            chunkSize = 16;
+            blocks = new Block[chunkSize * chunkSize * chunkSize];
         }
 
         public void AddBlock(Block block)
@@ -320,9 +324,6 @@ namespace Core.Chunking
                 chunkNeighbours[i] = ChunkBuffer.GetChunk(neighbourPos);
             }
         }
-
-        private int GetFlattenIndex2D(int x, int y)
-            => (2 * 2 + 1) * x + y;
 
         public Chunk[] GetNeigbours()
         {

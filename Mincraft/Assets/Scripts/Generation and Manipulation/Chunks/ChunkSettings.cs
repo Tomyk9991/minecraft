@@ -16,11 +16,13 @@ namespace Core.Chunking
         public static Int2 MinMaxYHeight => Instance.minMaxYHeight;
         public static NoiseSettings NoiseSettings => Instance.biomNoiseSettings;
         public static Int3 DrawDistance => Instance.drawDistance;
+        public static bool CalculateShadows => Instance.calculateShadows;
         public bool drawGizmosChunks = false;
 
         public List<Biom> Bioms => bioms;
 
         [Header("Chunksettings")]
+        [SerializeField] private bool calculateShadows = true;
         [SerializeField] private uint chunkSize = 0;
         [SerializeField] private int seed = -1;
         [SerializeField] private Int2 minMaxYHeight;

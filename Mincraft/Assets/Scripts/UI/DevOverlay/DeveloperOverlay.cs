@@ -68,7 +68,7 @@ namespace Core.UI.DeveloperOverlay
 
         private int GetLoadedChunksAmount()
         {
-            return ChunkBuffer.Columns.Length * ChunkBuffer.YBound;
+            return ChunkBuffer.Data.Length * ChunkBuffer.YBound;
         }
 
         //Änderbar mit GameobjectPool
