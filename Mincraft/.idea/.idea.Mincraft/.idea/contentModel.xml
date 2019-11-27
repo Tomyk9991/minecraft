@@ -118,6 +118,7 @@
           </e>
           <e p="Testing" t="Include">
             <e p="CreateTexturedCubeTest.cs" t="Include" />
+            <e p="TestChunkBuffer.cs" t="Include" />
           </e>
           <e p="UI" t="Include">
             <e p="Console" t="Include">
@@ -224,7 +225,7 @@
       </e>
       <e p="Mincraft.sln" t="IncludeFlat" />
       <e p="obj" t="ExcludeRecursive" />
-      <e p="packages" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
       <e p="Temp\bin" t="ExcludeRecursive" />
     </e>
   </component>
