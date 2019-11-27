@@ -1,14 +1,12 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Core.Chunking;
 using Core.Chunking.Threading;
 using Core.Math;
 using Core.Saving;
 using Extensions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
 using Tests;
+using UnityEngine;
 
 public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 {
@@ -38,8 +36,15 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 
     private void Start()
     {
+        PlayerMovementTracker.OnChunkPositionChanged += (x, z) =>
+        {
+            Debug.Log("Updating position");
+            this.xPlayerPos = x;
+            this.zPlayerPos = z;
+        };
+        
         PlayerMovementTracker.OnDirectionModified += DirectionModified;
-        PlayerMovementTracker.OnChunkPositionChanged += UpdateXZPlayerPos;
+        
         var minMaxYHeight = ChunkSettings.MinMaxYHeight;
         minHeight = minMaxYHeight.X;
         maxHeight = minMaxYHeight.Y;
@@ -55,6 +60,7 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         yHeight = ChunkBuffer.YBound;
         distanceNorm = 2 * drawDistanceInChunks + 1;
 
+        Debug.Log("Creating");
         for (int x = xPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localx = 0; x <= xPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize; x += chunkSize, localx++)
         {
             for (int z = zPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localz = 0; z <= zPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize; z += chunkSize, localz++)
@@ -89,77 +95,38 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
                 }
             }
         }
-
-
-        chunksRender.Clear();
-        chunksNoise.Clear();
-
-        for (int x = xPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localx = 0;
-            x <= xPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize;
-            x += chunkSize, localx++)
-        {
-            for (int z = zPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localz = 0;
-                z <= zPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize;
-                z += chunkSize, localz++)
-            {
-                ChunkColumn column = ChunkBuffer.GetChunkColumn(localx, localz);
-                //Check, if the current column is inside the draw-distance
-                //The Else-branch are the columns, that are in the buffer but they will not be displayed
-                if (column.LocalPosition.X > 0 && column.LocalPosition.X <= distanceNorm && column.LocalPosition.Y > 0 && column.LocalPosition.Y <= distanceNorm)
-                {
-                    chunksRender.Add(new Vector3(x, 0, z));
-                }
-                else
-                {
-                    chunksNoise.Add(new Vector3(x, 0, z));
-                }
-            }
-        }
-
     }
 
     private void DirectionModified(Direction direction)
     {
         ChunkBuffer.Shift(direction);
-        Debug.Log("Shifting to " + direction.ToString());
 
         chunksRender.Clear();
         chunksNoise.Clear();
 
-        for (int x = xPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localx = 0;
-            x <= xPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize;
-            x += chunkSize, localx++)
+        int dimension = ChunkBuffer.dimension;
+        
+        for (int x = 0; x < dimension; x++)
         {
-            for (int z = zPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localz = 0;
-                z <= zPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize;
-                z += chunkSize, localz++)
+            for (int z = 0; z < dimension; z++)
             {
-                ChunkColumn column = ChunkBuffer.GetChunkColumn(localx, localz);
-                //Check, if the current column is inside the draw-distance
-                //The Else-branch are the columns, that are in the buffer but they will not be displayed
-                //                if (column.LocalPosition.X > 0 && column.LocalPosition.X <= distanceNorm && column.LocalPosition.Y > 0 && column.LocalPosition.Y <= distanceNorm)
+                ChunkColumn column = ChunkBuffer.GetChunkColumn(x, z);
                 if (column.DesiredForVisualization)
                 {
-                    chunksRender.Add(new Vector3(x, 0, z));
+                    chunksRender.Add(new Vector3(column.GlobalPosition.X, 0, column.GlobalPosition.Y));
                 }
                 else
                 {
-                    chunksNoise.Add(new Vector3(x, 0, z));
+                    chunksNoise.Add(new Vector3(column.GlobalPosition.X, 0, column.GlobalPosition.Y));
                 }
             }
         }
     }
-
-    private void UpdateXZPlayerPos(int x, int z)
-    {
-        this.xPlayerPos = x;
-        this.zPlayerPos = z;
-    }
-
+    
     private void Update()
     {
         isChecking = true;
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             FindObjectOfType<TestChunkBuffer>().DrawTest();
         }
@@ -188,34 +155,6 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
                 }
             }
         }
-
-        //for (int x = xPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localx = 0; x <= xPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize; x += chunkSize, localx++)
-        //{
-        //    for (int z = zPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localz = 0; z <= zPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize; z += chunkSize, localz++)
-        //    {
-        //        //ChunkColumn column = ChunkBuffer.GetChunkColumn(localx, localz);
-
-        //        ////if (column.LocalPosition.X > 0 && column.LocalPosition.X <= distanceNorm && column.LocalPosition.Y > 0 && column.LocalPosition.Y <= distanceNorm && column.State == DrawingState.NoiseReady)
-        //        //if (column.DesiredForVisualization)
-        //        //{
-        //        //    //PrintNeighbourPositions(column);
-
-        //        //    ChunkColumn[] neighbour = column.Neighbours();
-
-        //        //    if (neighbour.All(c => c.State == DrawingState.NoiseReady || c.State == DrawingState.Drawn))
-        //        //    {
-        //        //        column.State = DrawingState.Drawn;
-        //        //        for (int y = minHeight, localy = 0; y < maxHeight; y += chunkSize, localy++)
-        //        //        {
-        //        //            Chunk chunk = column[localy];
-        //        //            ChunkJob job = new ChunkJob();
-        //        //            job.CreateChunkFromExisting(chunk, column);
-        //        //            chunkJobManager.AddJob(job);
-        //        //        }
-        //        //    }
-        //        //}
-        //    }
-        //}
 
         isChecking = false;
     }

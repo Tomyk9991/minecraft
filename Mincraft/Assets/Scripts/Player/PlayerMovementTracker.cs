@@ -29,6 +29,7 @@ public class PlayerMovementTracker : MonoBehaviour
         zPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
         prevXPlayerPos = xPlayerPos;
         prevZPlayerPos = zPlayerPos;
+        OnChunkPositionChanged?.Invoke(xPlayerPos, zPlayerPos);
     }
     private void Update()
     {

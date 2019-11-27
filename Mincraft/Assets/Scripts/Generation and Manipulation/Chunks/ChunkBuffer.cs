@@ -61,6 +61,7 @@ namespace Core.Chunking
                         ChunkColumn from = data[Idx2D(x + 1, y)];
                         data[Idx2D(x, y)] = new ChunkColumn(from.GlobalPosition, new Int2(x, y), minHeight, maxHeight)
                         {
+                            State = from.State,
                             chunks = from.chunks
                         };
 
@@ -73,16 +74,7 @@ namespace Core.Chunking
                             data[Idx2D(x, y)].DesiredForVisualization = true;
                     }
                 }
-
-                for (int y = 0; y < dimension; y++)
-                {
-                    for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
-                    {
-                        data[Idx2D(0, y)][localy].ReleaseGameObject();
-                    }
-                }
-
-
+                
                 ChunkColumn leftNeighbour = data[Idx2D(dimension - 2, 0)];
                 for (int y = 0; y < dimension; y++)
                 {
@@ -90,13 +82,12 @@ namespace Core.Chunking
                     Int2 localPosition = new Int2(dimension - 1, y);
 
                     ChunkColumn column = new ChunkColumn(globalPosition, localPosition, minHeight, maxHeight);
-
                     for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
                     {
                         Chunk chunk = new Chunk()
                         {
                             LocalPosition = new Int3(dimension - 1, localy, y),
-                            GlobalPosition = new Int3(globalPosition.X, y, globalPosition.Y)
+                            GlobalPosition = new Int3(globalPosition.X, h, globalPosition.Y)
                         };
 
                         column[localy] = chunk;
@@ -112,6 +103,16 @@ namespace Core.Chunking
 
                     NoiseJobManager.NoiseJobManagerUpdaterInstance.AddJob(noiseJob);
                 }
+
+                for (int y = 0; y < dimension; y++)
+                {
+                    for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
+                    {
+                        data[Idx2D(0, y)][localy].ReleaseGameObject();
+                    }
+                }
+
+
             }
         }
 

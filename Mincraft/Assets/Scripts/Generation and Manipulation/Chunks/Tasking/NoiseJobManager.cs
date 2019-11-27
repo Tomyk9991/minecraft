@@ -45,7 +45,7 @@ namespace Core.Chunking.Threading
 
         public void Stop() => Running = false;
 
-        public void AddJob(NoiseJob job, bool a = false)
+        public void AddJob(NoiseJob job)
         {
             jobs.Enqueue(job);
         }
