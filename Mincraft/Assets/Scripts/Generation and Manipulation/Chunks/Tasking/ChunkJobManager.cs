@@ -62,7 +62,7 @@ namespace Core.Chunking.Threading
             {
                 if (JobsCount == 0)
                 {
-                    //TODO wieder auf 10ms stellen
+                    //TODO Weg finden, das von Performance des Rechners abhängig zu machen
                     Thread.Sleep(100); //Needed, because CPU is overloaded in other case
                     continue;
                 }
@@ -73,7 +73,7 @@ namespace Core.Chunking.Threading
 
                     if (!job.HasBlocks) // Chunk gets build new
                     {
-                        job.Chunk.CalculateNeighbours();
+                        //job.Chunk.CalculateNeighbour();
 
                         string path = chunkLoader.Path + job.Chunk.GlobalPosition.ToString() + chunkLoader.FileEnding<Chunk>();
 
@@ -91,7 +91,7 @@ namespace Core.Chunking.Threading
                     }
                     else
                     {
-                        job.Chunk.CalculateNeighbours();
+                        //job.Chunk.CalculateNeighbour();
                         
                         if (_calculateShadows)
                             job.Chunk.CalculateLight();
@@ -128,7 +128,7 @@ namespace Core.Chunking.Threading
             jobs.Enqueue(job);
         }
 
-        public ChunkJob DequeueFinishedJobs()
+        public ChunkJob DequeueFinishedJob()
         {
             if (FinishedJobs.TryDequeue(out var result))
             {

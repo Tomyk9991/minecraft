@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Core.Chunking;
 using Core.Chunking.Threading;
 using Core.Math;
 using Core.Saving;
 using Extensions;
-using Tests;
 using UnityEngine;
 
 public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
@@ -28,9 +26,7 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     private NoiseJobManager noiseJobManager;
 
     private SavingJob savingJob;
-    private bool isRecalculating = false;
     private bool isChecking = false;
-    private int yHeight = 0;
 
     int distanceNorm = 0;
 
@@ -38,10 +34,12 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     {
         PlayerMovementTracker.OnChunkPositionChanged += (x, z) =>
         {
-            Debug.Log("Updating position");
             this.xPlayerPos = x;
             this.zPlayerPos = z;
         };
+
+        xPlayerPos = PlayerMovementTracker.Instance.xPlayerPos;
+        zPlayerPos = PlayerMovementTracker.Instance.zPlayerPos;
         
         PlayerMovementTracker.OnDirectionModified += DirectionModified;
         
@@ -57,10 +55,8 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         chunkSize = ChunkSettings.ChunkSize;
         ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
 
-        yHeight = ChunkBuffer.YBound;
         distanceNorm = 2 * drawDistanceInChunks + 1;
 
-        Debug.Log("Creating");
         for (int x = xPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localx = 0; x <= xPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize; x += chunkSize, localx++)
         {
             for (int z = zPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localz = 0; z <= zPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize; z += chunkSize, localz++)
@@ -100,37 +96,12 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     private void DirectionModified(Direction direction)
     {
         ChunkBuffer.Shift(direction);
-
-        chunksRender.Clear();
-        chunksNoise.Clear();
-
-        int dimension = ChunkBuffer.dimension;
-        
-        for (int x = 0; x < dimension; x++)
-        {
-            for (int z = 0; z < dimension; z++)
-            {
-                ChunkColumn column = ChunkBuffer.GetChunkColumn(x, z);
-                if (column.DesiredForVisualization)
-                {
-                    chunksRender.Add(new Vector3(column.GlobalPosition.X, 0, column.GlobalPosition.Y));
-                }
-                else
-                {
-                    chunksNoise.Add(new Vector3(column.GlobalPosition.X, 0, column.GlobalPosition.Y));
-                }
-            }
-        }
     }
     
     private void Update()
     {
         isChecking = true;
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            FindObjectOfType<TestChunkBuffer>().DrawTest();
-        }
-
+        
         int dimension = ChunkBuffer.dimension;
         for (int x = 0; x < dimension; x++)
         {
@@ -163,26 +134,5 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     {
         chunkJobManager.Dispose();
         noiseJobManager.Dispose();
-    }
-
-    private List<Vector3> chunksNoise = new List<Vector3>();
-    private List<Vector3> chunksRender = new List<Vector3>();
-
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
-        {
-            Gizmos.color = Color.red;
-            for (int i = 0; i < chunksNoise.Count; i++)
-            {
-                Gizmos.DrawWireCube(chunksNoise[i] + Vector3.one * 8, Vector3.one * 16);
-            }
-
-            Gizmos.color = Color.white;
-            for (int i = 0; i < chunksRender.Count; i++)
-            {
-                Gizmos.DrawWireCube(chunksRender[i] + Vector3.one * 8, Vector3.one * 16);
-            }
-        }
     }
 }

@@ -9,6 +9,7 @@ namespace Core.Chunking.Threading
     {
         public static NoiseJobManager NoiseJobManagerUpdaterInstance { get; private set; }
         public bool Running { get; set; }
+        public int Count => jobs.Count;
 
         private Thread[] threads;
 
@@ -56,7 +57,7 @@ namespace Core.Chunking.Threading
             {
                 if (jobs.Count == 0)
                 {
-                    //TODO wieder auf 10ms stellen
+                    //TODO Weg finden, das von Performance des Rechners abhängig zu machen
                     System.Threading.Thread.Sleep(100); //Needed, because CPU is overloaded in other case
                     continue;
                 }

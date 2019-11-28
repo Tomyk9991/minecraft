@@ -13,7 +13,7 @@ namespace Core.Chunking
         [SerializeField] private GameObject chunkPrefab = null;
         [Range(1, 10000)]
         [SerializeField] private int chunksToInstantiate = 210;
-        [SerializeField, ShowOnly] private int currentlyUsedObjs;
+        [SerializeField, ShowOnly] private int gameobjectCount;
 
         private const string unusedName = "Unused chunk";
 
@@ -41,8 +41,13 @@ namespace Core.Chunking
                 {
                     go.name = unusedName;
 
-                    go.GetComponent<MeshFilter>().mesh = null;
-                    go.GetComponent<MeshCollider>().sharedMesh = null;
+                    var refMesh = go.GetComponent<MeshFilter>(); 
+                    refMesh.mesh.name = unusedName;
+//                    refMesh.sharedMesh.name = unusedName;
+                    
+//                    refMesh.sharedMesh = null;
+//                    refMesh.sharedMesh = null;
+//                    go.GetComponent<MeshCollider>().sharedMesh = null;
                     go.SetActive(false);
 
                     gameObjectChunks.Enqueue(go);
@@ -58,35 +63,48 @@ namespace Core.Chunking
         /// <returns></returns>
         public GameObject GetNextUnusedChunk() 
         {
-            if (gameObjectChunks.Count == 0) 
-                return Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
+            if (gameObjectChunks.Count == 0)
+            {
+                GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
+                g.name = unusedName;
+                g.SetActive(false);
+                g.GetComponent<MeshFilter>().mesh = new Mesh();
+                return g;
+            }
                 
             GameObject go = gameObjectChunks.Dequeue();
+            gameobjectCount = transform.childCount;
+            
             if (go != null)
             {
-                currentlyUsedObjs++;
                 return go;
             }
 
-            return Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
+            GameObject g0 = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
+            g0.name = unusedName;
+            g0.SetActive(false);
+            g0.GetComponent<MeshFilter>().mesh = new Mesh();
+            return g0;
         }
 
         private void InstantiateBlock()
         {
             GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
             SetInitialGameObjectUnsed(g);
+            gameobjectCount = transform.childCount;
         }
 
         public void SetGameObjectToUnsed(GameObject go)
         {
-            currentlyUsedObjs--;
             objectsToRelease.Enqueue(go);
+            gameobjectCount = transform.childCount;
         }
 
         private void SetInitialGameObjectUnsed(GameObject go)
         {
-            go.name = unusedName;
+            go.name = "FUCK";
             go.SetActive(false);
+            go.GetComponent<MeshFilter>().mesh = new Mesh();
             gameObjectChunks.Enqueue(go);
         }
     }

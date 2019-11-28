@@ -53,7 +53,6 @@
 				{
 					fixed4 col = tex2D(_MainTex, i.uv);
 					
-					//float shade = (_maxGlobalLightLevel - _minGlobalLightLevel) * _GlobalLightLevel + _minGlobalLightLevel;
 					float shade = lerp(_minGlobalLightLevel, _maxGlobalLightLevel, _GlobalLightLevel);
 					shade *= i.color.a;
 

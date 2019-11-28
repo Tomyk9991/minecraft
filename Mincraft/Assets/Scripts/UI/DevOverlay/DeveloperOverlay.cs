@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 
 using Core.Chunking;
-using Core.Math;
-using Extensions;
+using Core.Chunking.Threading;
 
 namespace Core.UI.DeveloperOverlay
 {
@@ -21,9 +19,10 @@ namespace Core.UI.DeveloperOverlay
         [SerializeField] private TextMeshProUGUI chunksLoadedOutput = null;
         [SerializeField] private TextMeshProUGUI chunksInGameObjectOutput = null;
         [SerializeField] private TextMeshProUGUI cpuUsageOutput = null;
+        [SerializeField] private TextMeshProUGUI amountNoiseJobsOutput = null;
+        [SerializeField] private TextMeshProUGUI amountChunkJobsOutput = null;
 
         [Header("Calculations")]
-        [SerializeField] private Transform playerTarget = null;
         [SerializeField] private Transform worldParent = null;
 
         private Transform[] transforms = null;
@@ -54,17 +53,25 @@ namespace Core.UI.DeveloperOverlay
 
             if (showingOverlay)
             {
-                playerPositionOutput.text = GetPlayerPosition().ToString();
+                playerPositionOutput.text = PlayerMovementTracker.Instance.PlayerPos();
                 chunksLoadedOutput.text = GetLoadedChunksAmount().ToString();
                 chunksInGameObjectOutput.text = GetAmountChunksInGameObjects().ToString();
                 cpuUsageOutput.text = GetCPUUsage();
+                amountNoiseJobsOutput.text = GetNoiseJobCount();
+                amountChunkJobsOutput.text = GetChunkJobCount();
             }
         }
 
-        private Int3 GetPlayerPosition()
+        private string GetNoiseJobCount()
         {
-            return playerTarget.position.ToInt3();
+            return NoiseJobManager.NoiseJobManagerUpdaterInstance.Count.ToString();
         }
+
+        private string GetChunkJobCount()
+        {
+            return ChunkJobManager.ChunkJobManagerUpdaterInstance.JobsCount + " finished jobs: " + ChunkJobManager.ChunkJobManagerUpdaterInstance.FinishedJobsCount;
+        }
+        
 
         private int GetLoadedChunksAmount()
         {

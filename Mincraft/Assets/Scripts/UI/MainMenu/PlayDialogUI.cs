@@ -13,7 +13,7 @@ namespace Core.UI.Menu
 {
     public class PlayDialogUI : MonoBehaviour
     {
-        //TODO, wenn später Welten einen eigenen Namen haben können, achte darauf, dass die Namen verschieden sind
+        //wenn später Welten einen eigenen Namen haben können, achte darauf, dass die Namen verschieden sind
         [Header("Button")]
         [SerializeField] private Button backButton = null;
         [SerializeField] private Button loadButton = null;

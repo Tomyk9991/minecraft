@@ -5,7 +5,7 @@ using Extensions;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class PlayerMovementTracker : MonoBehaviour
+public class PlayerMovementTracker : SingletonBehaviour<PlayerMovementTracker>
 {
     public static event Action<Direction> OnDirectionModified;
     public static event Action<int, int> OnChunkPositionChanged;
@@ -70,5 +70,10 @@ public class PlayerMovementTracker : MonoBehaviour
             prevZPlayerPos = zPlayerPos;
             OnChunkPositionChanged?.Invoke(xPlayerPos, zPlayerPos);
         }
+    }
+
+    public string PlayerPos()
+    {
+        return latestPlayerPosition.ToString();
     }
 }

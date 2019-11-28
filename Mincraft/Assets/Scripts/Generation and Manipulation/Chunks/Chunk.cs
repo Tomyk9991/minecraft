@@ -34,7 +34,7 @@ namespace Core.Chunking
         private Block[] blocks;
         private static int chunkSize;
 
-        private Chunk[] chunkNeighbours;
+        //private Chunk[] chunkNeighbours;
 
         //Simplex noise
         private float smoothness = 0;
@@ -63,7 +63,7 @@ namespace Core.Chunking
 
             treeGenerator = new OakTreeGenerator(new Int2(4, 6), new Int2(2, 4));
             blocks = new Block[chunkSize * chunkSize * chunkSize];
-            chunkNeighbours = new Chunk[6];
+            //chunkNeighbours = new Chunk[6];
 
             if (noise == null)
                 noise = new FastNoise(this.seed);
@@ -79,11 +79,6 @@ namespace Core.Chunking
         {
             int index = GetFlattenIndex(block.Position.X, block.Position.Y, block.Position.Z);
             blocks[index] = block;
-        }
-
-        public void InvokeToRedraw()
-        {
-            throw new NotImplementedException();
         }
 
         #region Context
@@ -110,13 +105,7 @@ namespace Core.Chunking
         }
 
         #endregion
-
-        public void RemoveBlockAsGlobal(Int3 globalBlockPos)
-        {
-            int index = GetFlattenIndex(globalBlockPos.X - this.LocalPosition.X, globalBlockPos.Y - this.LocalPosition.Y,
-                globalBlockPos.Z - this.LocalPosition.Z);
-            blocks[index] = Block.Empty();
-        }
+        
 
         public Block GetBlock(int x, int y, int z)
         {
@@ -158,7 +147,8 @@ namespace Core.Chunking
         {
             Int3 local = blockPos;
             Int3 direction = directions[index];
-            Chunk chunkNeighbour = chunkNeighbours[index];
+//            Chunk chunkNeighbour = chunkNeighbours[index];
+            Chunk chunkNeighbour = CalculateNeighbour(index);
 
             Block block = new Block
             {
@@ -316,18 +306,28 @@ namespace Core.Chunking
             return GlobalPosition.ToString();
         }
 
-        public void CalculateNeighbours()
+        public Chunk CalculateNeighbour(int i) //direction int -> Int3 table at top
         {
-            for (int i = 0; i < 6; i++)
-            {
-                Int3 neighbourPos = this.LocalPosition + directions[i];
-                chunkNeighbours[i] = ChunkBuffer.GetChunk(neighbourPos);
-            }
+            return ChunkBuffer.GetChunk(this.LocalPosition + directions[i]);
+//            for (int i = 0; i < 6; i++)
+//            {
+//                Int3 neighbourPos = this.LocalPosition + directions[i];
+//                chunkNeighbours[i] = ChunkBuffer.GetChunk(neighbourPos);
+//            }
         }
 
         public Chunk[] GetNeigbours()
         {
-            return chunkNeighbours;
+            return new[]
+            {
+                CalculateNeighbour(0),
+                CalculateNeighbour(1),
+                CalculateNeighbour(2),
+                CalculateNeighbour(3),
+                CalculateNeighbour(4),
+                CalculateNeighbour(5),
+            };
+            //return chunkNeighbours;
         }
 
         /// <summary>

@@ -11,27 +11,33 @@ namespace Core.Builder
         public void SetMesh(GameObject g, MeshData meshData, MeshData colliderData)
         {
             var refMesh = g.GetComponent<MeshFilter>();
-            refMesh.mesh = new Mesh()
+            
+            Mesh mesh = new Mesh()
             {
+                name = g.transform.position.ToString(),
                 indexFormat = IndexFormat.UInt32,
                 vertices = meshData.Vertices.ToArray(),
                 uv = meshData.UVs.ToArray(),
                 colors = meshData.Colors.ToArray(),
-                subMeshCount = 2
+                subMeshCount = 2,
             };
+            
+            mesh.SetTriangles(meshData.Triangles.ToArray(), 0);
+            mesh.SetTriangles(meshData.TransparentTriangles.ToArray(), 1);
+            
+            mesh.RecalculateNormals();
 
-            refMesh.mesh.SetTriangles(meshData.Triangles.ToArray(), 0);
-            refMesh.mesh.SetTriangles(meshData.TransparentTriangles.ToArray(), 1);
+            refMesh.sharedMesh = mesh;
 
-            refMesh.mesh.RecalculateNormals();
 
             g.GetComponent<MeshCollider>().sharedMesh = null;
 
-
-            Mesh colliderMesh = new Mesh();
-            colliderMesh.indexFormat = IndexFormat.UInt32;
-            colliderMesh.vertices = colliderData.Vertices.ToArray();
-            colliderMesh.triangles = colliderData.Triangles.ToArray();
+            Mesh colliderMesh = new Mesh
+            {
+                indexFormat = IndexFormat.UInt32,
+                vertices = colliderData.Vertices.ToArray(),
+                triangles = colliderData.Triangles.ToArray()
+            };
 
             g.GetComponent<MeshCollider>().sharedMesh = colliderMesh;
         }

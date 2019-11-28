@@ -1,6 +1,7 @@
 ﻿using System;
 using Core.Chunking.Threading;
 using Core.Math;
+using UnityEngine;
 
 namespace Core.Chunking
 {
@@ -52,26 +53,32 @@ namespace Core.Chunking
 
         private static void MoveRight()
         {
-            lock (mutex)
-            {
+            //lock (mutex)
+            //{
+                for (int y = 0; y < dimension; y++)
+                {
+                    data[Idx2D(0, y)] = new ChunkColumn(Int2.Back, Int2.Back, 0, 0);
+                }
+                
                 for (int x = 0; x < dimension - 1; x++)
                 {
                     for (int y = 0; y < dimension; y++)
                     {
-                        ChunkColumn from = data[Idx2D(x + 1, y)];
-                        data[Idx2D(x, y)] = new ChunkColumn(from.GlobalPosition, new Int2(x, y), minHeight, maxHeight)
-                        {
-                            State = from.State,
-                            chunks = from.chunks
-                        };
+                        ChunkColumn column = data[Idx2D(x, y)];
+                        column = data[Idx2D(x + 1, y)];
+                        column.LocalPosition = new Int2(x, y);
 
                         for (int h = 0; h < data[Idx2D(x, y)].chunks.Length; h++)
                         {
-                            data[Idx2D(x, y)].chunks[h].LocalPosition = new Int3(x, h, y);
+                            column.chunks[h].LocalPosition = new Int3(x, h, y);
                         }
 
                         if (x > 0 && y > 0 && y < dimension - 1)
-                            data[Idx2D(x, y)].DesiredForVisualization = true;
+                            column.DesiredForVisualization = true;
+                        else
+                            column.DesiredForVisualization = false;
+
+                        data[Idx2D(x, y)] = column;
                     }
                 }
                 
@@ -111,9 +118,7 @@ namespace Core.Chunking
                         data[Idx2D(0, y)][localy].ReleaseGameObject();
                     }
                 }
-
-
-            }
+                //}
         }
 
         public static Chunk GetChunk(Int3 local)

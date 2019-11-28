@@ -94,7 +94,7 @@ namespace Core.Player
 
             for (int i = 0; i < chunkJobManager.FinishedJobsCount; i++)
             {
-                ChunkJob task = chunkJobManager.DequeueFinishedJobs();
+                ChunkJob task = chunkJobManager.DequeueFinishedJob();
 
                 if (task != null && task.Completed)
                 {

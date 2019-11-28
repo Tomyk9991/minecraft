@@ -54,7 +54,10 @@ public class CreateTexturedCubeTest : MonoBehaviour
 
         byte[] itemBytes = CreateUnitIcon().texture.EncodeToPNG();
         File.WriteAllBytes(Application.dataPath + $"/Imports/Sprites/InventorySprites/Inventory{uv.ToString()}.png", itemBytes);
+
+#if UNITY_EDITOR
         AssetDatabase.Refresh();
+#endif
     }
 
 

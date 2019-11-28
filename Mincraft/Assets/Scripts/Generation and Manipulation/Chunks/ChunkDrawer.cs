@@ -26,7 +26,7 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
     {
         for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < drawsPerUpdate; i++)
         {
-            ChunkJob task = chunkJobManager.DequeueFinishedJobs(); 
+            ChunkJob task = chunkJobManager.DequeueFinishedJob(); 
 
             if(task != null && task.Completed && task.MeshData.Vertices.Count != 0)
             {
@@ -47,8 +47,6 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
             drawingChunk.CurrentGO.SetActive(true);
             drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
             drawingChunk.CurrentGO.name = drawingChunk.GlobalPosition.ToString();
-
-            drawingChunk.CurrentGO.GetComponent<NeighbourTestVisualizer>().chunk = drawingChunk;
 
             modifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
         }
