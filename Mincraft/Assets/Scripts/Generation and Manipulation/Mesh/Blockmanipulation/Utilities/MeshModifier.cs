@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -10,36 +7,32 @@ namespace Core.Builder
     {
         public void SetMesh(GameObject g, MeshData meshData, MeshData colliderData)
         {
-            var refMesh = g.GetComponent<MeshFilter>();
+            var refMesh = g.GetComponent<MeshFilter>().sharedMesh;
             
-            Mesh mesh = new Mesh()
-            {
-                name = g.transform.position.ToString(),
-                indexFormat = IndexFormat.UInt32,
-                vertices = meshData.Vertices.ToArray(),
-                uv = meshData.UVs.ToArray(),
-                colors = meshData.Colors.ToArray(),
-                subMeshCount = 2,
-            };
+            refMesh.Clear();
             
-            mesh.SetTriangles(meshData.Triangles.ToArray(), 0);
-            mesh.SetTriangles(meshData.TransparentTriangles.ToArray(), 1);
+            refMesh.indexFormat = IndexFormat.UInt32;
+            refMesh.SetVertices(meshData.Vertices);
+            refMesh.SetUVs(0, meshData.UVs);
+            refMesh.SetColors(meshData.Colors);
+            refMesh.subMeshCount = 2;
+
+            refMesh.SetTriangles(meshData.Triangles, 0);
+            refMesh.SetTriangles(meshData.TransparentTriangles, 1);
+            refMesh.RecalculateNormals();
+
+
+            var colliderReference = g.GetComponent<MeshCollider>();
+            var collRefMesh = colliderReference.sharedMesh;
             
-            mesh.RecalculateNormals();
+            collRefMesh.Clear();
+            
+            collRefMesh.name = g.transform.position.ToString();
+            collRefMesh.indexFormat = IndexFormat.UInt32;
+            collRefMesh.vertices = colliderData.Vertices.ToArray();
+            collRefMesh.triangles = colliderData.Triangles.ToArray();
 
-            refMesh.sharedMesh = mesh;
-
-
-            g.GetComponent<MeshCollider>().sharedMesh = null;
-
-            Mesh colliderMesh = new Mesh
-            {
-                indexFormat = IndexFormat.UInt32,
-                vertices = colliderData.Vertices.ToArray(),
-                triangles = colliderData.Triangles.ToArray()
-            };
-
-            g.GetComponent<MeshCollider>().sharedMesh = colliderMesh;
+            colliderReference.sharedMesh = collRefMesh;
         }
     }
 }

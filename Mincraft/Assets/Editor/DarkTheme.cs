@@ -39,10 +39,9 @@ public static class DarkTheme
                 sheet.name = oldName;
             }
         }
-        
-        
-        //TODO füge wieder hinzu
-        //EditorUtility.RequestScriptReload();
+
+
+        EditorUtility.RequestScriptReload();
         InternalEditorUtility.RepaintAllViews();
     }
 

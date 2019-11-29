@@ -18,6 +18,7 @@ namespace Core.Chunking
         private const string unusedName = "Unused chunk";
 
         private Queue<GameObject> gameObjectChunks;
+        
         private Queue<GameObject> objectsToRelease;
         
         private void Start()
@@ -27,7 +28,7 @@ namespace Core.Chunking
             
             for (int i = 0; i < chunksToInstantiate; i++)
             {
-                InstantiateBlock();
+                InstantiateChunkGameObject();
             }
         }
 
@@ -40,57 +41,40 @@ namespace Core.Chunking
                 if (go != null)
                 {
                     go.name = unusedName;
-
-                    var refMesh = go.GetComponent<MeshFilter>(); 
-                    refMesh.mesh.name = unusedName;
-//                    refMesh.sharedMesh.name = unusedName;
-                    
-//                    refMesh.sharedMesh = null;
-//                    refMesh.sharedMesh = null;
-//                    go.GetComponent<MeshCollider>().sharedMesh = null;
                     go.SetActive(false);
-
                     gameObjectChunks.Enqueue(go);
                 }
-
             }
         }
 
 
         /// <summary>
-        /// Gets the next unused GameObject in Pool. (Can be used in different threads)
+        /// Gets the next unused GameObject in Pool
         /// </summary>
         /// <returns></returns>
         public GameObject GetNextUnusedChunk() 
         {
             if (gameObjectChunks.Count == 0)
             {
-                GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-                g.name = unusedName;
-                g.SetActive(false);
-                g.GetComponent<MeshFilter>().mesh = new Mesh();
-                return g;
+                InstantiateChunkGameObject();
             }
                 
-            GameObject go = gameObjectChunks.Dequeue();
             gameobjectCount = transform.childCount;
-            
-            if (go != null)
-            {
-                return go;
-            }
-
-            GameObject g0 = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-            g0.name = unusedName;
-            g0.SetActive(false);
-            g0.GetComponent<MeshFilter>().mesh = new Mesh();
-            return g0;
+            return gameObjectChunks.Dequeue();
         }
 
-        private void InstantiateBlock()
+        private void InstantiateChunkGameObject()
         {
             GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-            SetInitialGameObjectUnsed(g);
+            g.name = unusedName;
+            g.SetActive(false);
+
+            var m1 = new Mesh();
+            var m2 = new Mesh();
+            g.GetComponent<MeshFilter>().sharedMesh = m1;
+            g.GetComponent<MeshCollider>().sharedMesh = m2;
+            
+            gameObjectChunks.Enqueue(g);
             gameobjectCount = transform.childCount;
         }
 
@@ -98,14 +82,6 @@ namespace Core.Chunking
         {
             objectsToRelease.Enqueue(go);
             gameobjectCount = transform.childCount;
-        }
-
-        private void SetInitialGameObjectUnsed(GameObject go)
-        {
-            go.name = "FUCK";
-            go.SetActive(false);
-            go.GetComponent<MeshFilter>().mesh = new Mesh();
-            gameObjectChunks.Enqueue(go);
         }
     }
 }
