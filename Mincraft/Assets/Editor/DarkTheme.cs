@@ -5,8 +5,10 @@ using UnityEngine.UIElements;
 using UnityEditor;
 using UnityEditorInternal;
 
+[InitializeOnLoad]
 public static class DarkTheme
 {
+    static DarkTheme() => Init();
     [MenuItem("Theme/Init Dark")]
     static void Init()
     {

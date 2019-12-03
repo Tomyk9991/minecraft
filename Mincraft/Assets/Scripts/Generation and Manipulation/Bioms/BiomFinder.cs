@@ -17,7 +17,7 @@ namespace Core.Builder.Generation
         public static Biom Find(float value)
         {
             if (bioms == null)
-                bioms = ChunkSettings.Instance.Bioms;
+                bioms = WorldSettings.Instance.Bioms;
 
             return bioms.Find(biom => biom.minValue <= value && value < biom.maxValue);
             return null;

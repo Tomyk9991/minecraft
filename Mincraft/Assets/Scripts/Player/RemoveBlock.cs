@@ -43,7 +43,7 @@ namespace Core.Player
         private void Start()
         {
             cameraRef = Camera.main;
-            chunkSize = ChunkSettings.ChunkSize;
+            chunkSize = WorldSettings.ChunkSize;
 
             GoPool = ChunkGameObjectPool.Instance;
             modifier = new MeshModifier();
@@ -96,7 +96,7 @@ namespace Core.Player
         private (Int3[] Directions, bool HasDirections) IsBoundBlock((Int3 lowerBound, Int3 higherBound) tuple, Int3 pos)
         {
             List<Int3> directions = new List<Int3>();
-            int maxSize = ChunkSettings.ChunkSize;
+            int maxSize = WorldSettings.ChunkSize;
             bool result = false;
             
             

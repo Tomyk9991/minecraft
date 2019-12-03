@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Core.Chunking;
 using Core.Chunking.Threading;
+using Core.Player;
 
 namespace Core.UI.DeveloperOverlay
 {

@@ -34,7 +34,7 @@ namespace Core.Chunking.Threading
 
             jobs = new ConcurrentQueue<ChunkJob>();
             greedy = new GreedyMesh();
-            _calculateShadows = ChunkSettings.CalculateShadows;
+            _calculateShadows = WorldSettings.CalculateShadows;
 
 
 

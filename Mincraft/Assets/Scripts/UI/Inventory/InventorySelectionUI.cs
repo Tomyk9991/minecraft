@@ -13,7 +13,7 @@ public class InventorySelectionUI : MonoBehaviour, IConsoleToggle
         get => this.enabled;
         set => this.enabled = value;
     }
-
+    
     private void Update()
     {
         float scrollDirection = Input.mouseScrollDelta.y;

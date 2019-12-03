@@ -44,7 +44,7 @@ namespace Core.Player
 
         private void Start()
         {
-            chunkSize = ChunkSettings.ChunkSize;
+            chunkSize = WorldSettings.ChunkSize;
             GoPool = ChunkGameObjectPool.Instance;
             cameraRef = Camera.main;
             gameManager = GameManager.Instance;

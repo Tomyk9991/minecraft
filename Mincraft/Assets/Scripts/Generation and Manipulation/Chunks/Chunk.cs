@@ -56,10 +56,10 @@ namespace Core.Chunking
 
         public Chunk()
         {
-            chunkSize = ChunkSettings.ChunkSize;
-            smoothness = ChunkSettings.NoiseSettings.Smoothness;
-            steepness = ChunkSettings.NoiseSettings.Steepness;
-            seed = ChunkSettings.NoiseSettings.Seed;
+            chunkSize = WorldSettings.ChunkSize;
+            smoothness = WorldSettings.NoiseSettings.Smoothness;
+            steepness = WorldSettings.NoiseSettings.Steepness;
+            seed = WorldSettings.NoiseSettings.Seed;
 
             treeGenerator = new OakTreeGenerator(new Int2(4, 6), new Int2(2, 4));
             blocks = new Block[chunkSize * chunkSize * chunkSize];
@@ -287,7 +287,7 @@ namespace Core.Chunking
         private void GetChunkBoundsCalc()
         {
             boundsCalculated = true;
-            int maxSize = ChunkSettings.ChunkSize;
+            int maxSize = WorldSettings.ChunkSize;
 
             lowerBound = new Int3(Mathf.FloorToInt(LocalPosition.X),
                 Mathf.FloorToInt(LocalPosition.Y),

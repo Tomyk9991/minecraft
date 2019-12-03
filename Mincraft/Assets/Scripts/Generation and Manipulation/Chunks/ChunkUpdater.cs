@@ -1,49 +1,43 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Core;
 using Core.Chunking;
 using Core.Chunking.Threading;
 using Core.Math;
+using Core.Player;
 using Core.Saving;
 using Extensions;
 using UnityEngine;
+using Utilities;
 
 public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 {
-    //public Int3 LatestPlayerPosition => latestPlayerPosition;
     [SerializeField] private bool moveWithPlayer = true;
     [SerializeField] private int drawDistanceInChunks = 12;
-    [Header("References")]
-    [SerializeField] private GameObject player = null;
 
     private int chunkSize;
 
     private int minHeight;
     private int maxHeight;
-
-    public int xPlayerPos = 0;
-    public int zPlayerPos = 0;
+    private int dimension;
 
     private ChunkJobManager chunkJobManager;
     private NoiseJobManager noiseJobManager;
 
     private SavingJob savingJob;
     private bool isChecking = false;
-
-    int distanceNorm = 0;
+    
+    private Queue<Direction> shiftDirections = new Queue<Direction>();
+    private Timer timer;
 
     private void Start()
     {
-        PlayerMovementTracker.OnChunkPositionChanged += (x, z) =>
-        {
-            this.xPlayerPos = x;
-            this.zPlayerPos = z;
-        };
+        int xPlayerPos = PlayerMovementTracker.Instance.xPlayerPos;
+        int zPlayerPos = PlayerMovementTracker.Instance.zPlayerPos;
 
-        xPlayerPos = PlayerMovementTracker.Instance.xPlayerPos;
-        zPlayerPos = PlayerMovementTracker.Instance.zPlayerPos;
-        
         PlayerMovementTracker.OnDirectionModified += DirectionModified;
-        
-        var minMaxYHeight = ChunkSettings.MinMaxYHeight;
+
+        var minMaxYHeight = WorldSettings.MinMaxYHeight;
         minHeight = minMaxYHeight.X;
         maxHeight = minMaxYHeight.Y;
 
@@ -52,10 +46,11 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         noiseJobManager = new NoiseJobManager(true);
         noiseJobManager.Start();
 
-        chunkSize = ChunkSettings.ChunkSize;
+        chunkSize = WorldSettings.ChunkSize;
         ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
 
-        distanceNorm = 2 * drawDistanceInChunks + 1;
+        dimension = ChunkBuffer.dimension;
+        timer = new Timer(WorldSettings.WorldTick);
 
         for (int x = xPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localx = 0; x <= xPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize; x += chunkSize, localx++)
         {
@@ -84,25 +79,40 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 
                 noiseJobManager.AddJob(noiseJob);
                 column.State = DrawingState.InNoiseQueue;
-                if (column.LocalPosition.X > 0 && column.LocalPosition.X <= distanceNorm &&
-                    column.LocalPosition.Y > 0 && column.LocalPosition.Y <= distanceNorm)
+
+                if (localx == 0 || localx == dimension - 1 || localz == 0 || localz == dimension - 1)
                 {
-                    column.DesiredForVisualization = true;
+                    column.DesiredForVisualization = false;
                 }
+                else
+                    column.DesiredForVisualization = true;
             }
         }
     }
 
     private void DirectionModified(Direction direction)
     {
-        ChunkBuffer.Shift(direction);
+        if (moveWithPlayer)
+            shiftDirections.Enqueue(direction);
     }
-    
+
     private void Update()
+    {
+        CheckDrawReady();
+        
+        if (timer.TimeElapsed(Time.deltaTime))
+        {
+            if (shiftDirections.Count > 0 && chunkJobManager.JobsCount == 0)
+            {
+                ChunkBuffer.Shift(shiftDirections.Dequeue());
+            }
+        }
+    }
+
+    private void CheckDrawReady()
     {
         isChecking = true;
         
-        int dimension = ChunkBuffer.dimension;
         for (int x = 0; x < dimension; x++)
         {
             for (int y = 0; y < dimension; y++)
