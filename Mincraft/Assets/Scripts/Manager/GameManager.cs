@@ -55,9 +55,9 @@ namespace Core.Managers
         private void Start()
         {
             DontDestroyOnLoad(gameObject);
-            //UVDictionary.Init();
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = 500;
+            Screen.SetResolution(1920, 1080, FullScreenMode.MaximizedWindow);
 
             savingJob = new SavingJob();
             savingJob.Start();

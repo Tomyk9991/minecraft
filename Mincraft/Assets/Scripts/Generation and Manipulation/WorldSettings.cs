@@ -11,7 +11,6 @@ namespace Core
     public class WorldSettings : SingletonBehaviour<WorldSettings>
 {
     public static float WorldTick => Instance.worldTick;
-    public static int ChunkSize => (int) Instance.chunkSize;
     public static Int2 MinMaxYHeight => Instance.minMaxYHeight;
     public static NoiseSettings NoiseSettings => Instance.biomNoiseSettings;
     public static bool CalculateShadows => Instance.calculateShadows;
@@ -24,7 +23,6 @@ namespace Core
 
     [Header("Chunksettings")]
     [SerializeField] private bool calculateShadows = true;
-    [SerializeField] private uint chunkSize = 0;
     [SerializeField] private int seed = -1;
     [SerializeField] private Int2 minMaxYHeight;
 

@@ -23,7 +23,7 @@ namespace Core.Player
 
         private void Start()
         {
-            chunkSize = WorldSettings.ChunkSize;
+            chunkSize = 0x10;
             latestPlayerPosition = transform.position.ToInt3();
             
             xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);

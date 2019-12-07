@@ -11,9 +11,16 @@ public class InventorySelectionUI : MonoBehaviour, IConsoleToggle
     public bool Enabled
     {
         get => this.enabled;
-        set => this.enabled = value;
+        set
+        {
+            foreach (var slot in slots)
+                slot.gameObject.SetActive(value);
+            
+            selectedSlotItem.gameObject.SetActive(value);
+            this.enabled = value;
+        }
     }
-    
+
     private void Update()
     {
         float scrollDirection = Input.mouseScrollDelta.y;

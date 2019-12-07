@@ -23,6 +23,9 @@ namespace Core.UI.Menu
         [Header("Dropdown")]
         [SerializeField] private TMP_Dropdown dropdown = null;
 
+        [Header("Transforms to activate / deactivate")] 
+        [SerializeField] private RectTransform[] ts = null;
+        
         [Header("Transforms to invert")]
         [SerializeField] private RectTransform[] transforms = null;
 
@@ -103,11 +106,11 @@ namespace Core.UI.Menu
         }
         public void SetChildsVisibility(bool state)
         {
-            foreach (Transform t in this.transform)
+            foreach (RectTransform rectTransform in ts)
             {
-                t.gameObject.SetActive(state);
+                rectTransform.gameObject.SetActive(state);
             }
-
+            
             for (int i = 0; i < transforms.Length; i++)
             {
                 transforms[i].gameObject.SetActive(!state);

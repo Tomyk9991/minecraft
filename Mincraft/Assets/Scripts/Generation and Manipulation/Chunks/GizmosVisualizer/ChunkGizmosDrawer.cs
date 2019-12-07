@@ -15,7 +15,7 @@ namespace Core.Chunking.Debugging
             if (position == default || size == default)
             {
                     position = this.transform.position;
-                size = Vector3.one * WorldSettings.ChunkSize;
+                size = Vector3.one * 0x10;
             }
 
             Gizmos.color = Color.white;

@@ -20,7 +20,6 @@ namespace Core.Builder.Generation
                 bioms = WorldSettings.Instance.Bioms;
 
             return bioms.Find(biom => biom.minValue <= value && value < biom.maxValue);
-            return null;
         }
     }
 }

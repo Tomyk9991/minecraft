@@ -8,7 +8,7 @@ namespace Core.Builder
     public class GreedyMesh
     {
         private int size;
-        public GreedyMesh() => size = WorldSettings.ChunkSize;
+        public GreedyMesh() => size = 0x10;
         public GreedyMesh(bool test) => size = 16;
 
         public MeshData ReduceMesh(Chunk chunk)

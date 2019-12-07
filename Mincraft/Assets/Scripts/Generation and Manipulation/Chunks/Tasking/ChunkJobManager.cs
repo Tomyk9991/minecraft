@@ -45,7 +45,7 @@ namespace Core.Chunking.Threading
             //What if you got only two cores?
             threads = SystemInfo.processorCount - 2 <= 0
                 ? new Thread[1]
-                : new Thread[4];
+                : new Thread[SystemInfo.processorCount / 2 - 5];
 
             for (int i = 0; i < threads.Length; i++)
             {
@@ -76,29 +76,30 @@ namespace Core.Chunking.Threading
                         //job.Chunk.CalculateNeighbour();
 
                         string path = chunkLoader.Path + job.Chunk.GlobalPosition.ToString() + chunkLoader.FileEnding<Chunk>();
-
+                        
                         if (File.Exists(path))
                         {
                             job.Chunk.LoadChunk(chunkLoader.LoadContext(path));
                         }
                         else
                         {
-                            job.HasBlocks = true;
-                            
+//                            job.Chunk.GenerateAdditionalBlocks();
+//                            job.HasBlocks = true;
                             if (_calculateShadows)
                                 job.Chunk.CalculateLight();
                         }
                     }
                     else
                     {
-                        //job.Chunk.CalculateNeighbour();
+                        job.Chunk.GenerateAdditionalBlocks();
+//                        job.Chunk.CalculateNeighbour();
                         
-                        if (_calculateShadows)
-                            job.Chunk.CalculateLight();
+//                        if (_calculateShadows)
+//                            job.Chunk.CalculateLight();
                     }
 
-                    Task<MeshData> meshData = Task.Run(() => MeshBuilder.Combine(job.Chunk));
-                    Task<MeshData> colliderData = Task.Run(() => greedy.ReduceMesh(job.Chunk));
+                    Task<MeshData>  meshData = Task.Run(() => MeshBuilder.Combine(job.Chunk));
+                    Task<MeshData>  colliderData = Task.Run(() => greedy.ReduceMesh(job.Chunk));
 
                     Task.WaitAll(meshData, colliderData);
 

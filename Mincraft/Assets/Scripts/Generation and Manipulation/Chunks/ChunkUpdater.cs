@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core;
 using Core.Chunking;
 using Core.Chunking.Threading;
@@ -46,7 +47,7 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         noiseJobManager = new NoiseJobManager(true);
         noiseJobManager.Start();
 
-        chunkSize = WorldSettings.ChunkSize;
+        chunkSize = 0x10;
         ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
 
         dimension = ChunkBuffer.dimension;
@@ -98,7 +99,10 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 
     private void Update()
     {
-        CheckDrawReady();
+        if (!isChecking)
+        {
+            CheckDrawReady();
+        }
         
         if (timer.TimeElapsed(Time.deltaTime))
         {
@@ -112,31 +116,34 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     private void CheckDrawReady()
     {
         isChecking = true;
-        
-        for (int x = 0; x < dimension; x++)
-        {
-            for (int y = 0; y < dimension; y++)
-            {
-                ChunkColumn column = ChunkBuffer.GetChunkColumn(x, y);
-                if (column.DesiredForVisualization && column.State == DrawingState.NoiseReady)
-                {
-                    ChunkColumn[] neighbours = column.Neighbours();
 
-                    if (neighbours.All(c => c.State == DrawingState.NoiseReady || c.State == DrawingState.Drawn))
+        Task.Run(() =>
+        {
+            for (int x = 0; x < dimension; x++)
+            {
+                for (int y = 0; y < dimension; y++)
+                {
+                    ChunkColumn column = ChunkBuffer.GetChunkColumn(x, y);
+                    if (column.DesiredForVisualization && column.State == DrawingState.NoiseReady)
                     {
-                        column.State = DrawingState.Drawn;
-                        for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
+                        ChunkColumn[] neighbours = column.Neighbours();
+
+                        if (neighbours.All(c => c.State == DrawingState.NoiseReady || c.State == DrawingState.Drawn))
                         {
-                            Chunk chunk = column[localy];
-                            ChunkJob job = new ChunkJob();
-                            job.CreateChunkFromExisting(chunk, column);
-                            chunkJobManager.AddJob(job);
+                            column.State = DrawingState.Drawn;
+                            for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
+                            {
+                                Chunk chunk = column[localy];
+                                ChunkJob job = new ChunkJob();
+                                job.CreateChunkFromExisting(chunk, column);
+                                chunkJobManager.AddJob(job);
+                            }
                         }
                     }
                 }
             }
-        }
 
+        }); 
         isChecking = false;
     }
 

@@ -6,6 +6,8 @@ namespace Core.UI.Menu
     public class OptionsDialogUI : MonoBehaviour
     {
         [SerializeField] private Button backButton = null;
+        [SerializeField] private RectTransform[] activeTransforms = null;
+        
         [SerializeField] private RectTransform[] transforms = null;
 
         private void Start()
@@ -17,7 +19,7 @@ namespace Core.UI.Menu
         }
         public void SetChildsVisibility(bool state)
         {
-            foreach (Transform t in this.transform)
+            foreach (RectTransform t in activeTransforms)
             {
                 t.gameObject.SetActive(state);
             }
