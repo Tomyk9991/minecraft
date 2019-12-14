@@ -74,8 +74,8 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
         m_AudioSource = GetComponent<AudioSource>();
         m_MouseLook.Init(transform, m_Camera.transform);
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+//        Cursor.lockState = CursorLockMode.Locked;
+//        Cursor.visible = false;
     }
 
 

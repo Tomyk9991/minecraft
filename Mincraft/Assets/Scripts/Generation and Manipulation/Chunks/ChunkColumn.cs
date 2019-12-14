@@ -11,8 +11,6 @@ namespace Core.Chunking
         public Chunk[] chunks;
         private DrawingState state;
 
-        private int minHeight = 0;
-        private int maxHeight = 0;
         /// <summary>
         /// Discribes the local position, which depends on the global player position 
         /// </summary>
@@ -61,8 +59,6 @@ namespace Core.Chunking
             this.GlobalPosition = globalPosition;
             this.LocalPosition = localPosition;
             chunks = new Chunk[System.Math.Abs(minYHeight / 16) + System.Math.Abs(maxYHeight / 16)];
-            this.minHeight = minYHeight;
-            this.maxHeight = maxYHeight;
         }
 
         public ChunkColumn[] Neighbours()
@@ -86,6 +82,7 @@ namespace Core.Chunking
         None = 0,
         Drawn = 1,
         NoiseReady = 2,
-        InNoiseQueue = 3
+        InNoiseQueue = 3,
+        Dirty = 4
     }
 }

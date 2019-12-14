@@ -1416,7 +1416,7 @@ MonoBehaviour:
     caveFrequency: 5
     caveSize: 10
     treeTrunkBlock: 9
-    treeLeafBlock: 9
+    treeLeafBlock: 0
     treeProbability: 0.04
     treeZoomLevel: 1.08
   smoothness: 2.5

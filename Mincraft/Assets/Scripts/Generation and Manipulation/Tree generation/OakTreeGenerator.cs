@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-
 using Core.Chunking;
 using Core.Math;
 
@@ -19,23 +18,17 @@ namespace Core.Builder.Generation
 
         public void Generate(Chunk chunk, Biom biom, int x, int y, int z) // xyz kommt in localSpace an
         {
-            int height = (int)MathHelper.Map(Mathf.PerlinNoise(x * 0.9f, z * 0.9f), 0f, 1f, minMaxHeight.X + 1, minMaxHeight.Y);
-            int volume = (int)MathHelper.Map(Mathf.PerlinNoise(x * 0.9f, z * 0.9f), 0f, 1f, minMaxVolume.X + 1, minMaxVolume.Y);
+            int globalX = x + chunk.GlobalPosition.X;
+            int globalZ = z + chunk.GlobalPosition.Z;
+            float noiseValue = Mathf.PerlinNoise(globalX * 0.9f, globalZ * 0.9f);
+            
+            int height = (int) MathHelper.Map(noiseValue, 0f, 1f, minMaxHeight.X, minMaxHeight.Y + 1);
+            int volume = (int) MathHelper.Map(noiseValue, 0f, 1f, minMaxVolume.X, minMaxVolume.Y + 1);
 
             Block block = new Block()
             {
-                ID = (int)biom.treeTrunkBlock
+                ID = (int) biom.treeTrunkBlock
             };
-
-    //        private static Int3[] directions =
-    //        {
-    //            Int3.Forward, // 0
-    //            Int3.Back, // 1
-    //            Int3.Up, // 2
-    //            Int3.Down, // 3
-    //            Int3.Left, // 4
-    //            Int3.Right // 5
-    //        };
 
             for (int i = y; i < y + height; i++) //tree trunk
             {
@@ -53,71 +46,85 @@ namespace Core.Builder.Generation
                 }
             }
 
-//            block.ID = (int) biom.treeLeafBlock;
-//            for (int sx = x - 3; sx <= x + 3; sx++) // tree top
-//            {
-//                for (int sy = y + height; sy < y + height + 1; sy++)
-//                {
-//                    for (int sz = z - 3; sz <= z + 3; sz++)
-//                    {
-//                        (Chunk c, int newX, int newY, int newZ) = ChunkForBlock(chunk, sx, sy, sz);
-//                        if (newY < 0 || newY > 15 || newZ < 0 || newZ > 15)
-//                        {
-//                            continue;
-//                        }
-//
-//                        try
-//                        {
-//                            block.Position = new Int3(newX, newY, newZ);
-//                        }
-//                        catch (Exception e)
-//                        {
-//                            Debug.Log(newX + " " + newY + " " + newZ);
-//                            throw;
-//                        }
-//
-//                        try
-//                        {
-//
-//                            c.AddBlock(block);
-//                        }
-//                        catch (Exception e)
-//                        {
-//                            Debug.Log(newX + " " + newY + " " + newZ);                       
-//                        }
-//                    }
-//                }
-//            }
+            // tree top sΔ is somewhere between (-volume, 16 + volume) 
+            block.ID = (int) biom.treeLeafBlock;
+            for (int sx = x - volume; sx <= x + volume; sx++)
+            {
+                for (int sy = y + height; sy < y + height + volume; sy++)
+                {
+                    for (int sz = z - volume; sz <= z + volume; sz++)
+                    {
+                        (Chunk c, int newX, int newY, int newZ) = ChunkForBlock(chunk, sx, sy, sz);
+
+                        block.Position = new Int3(newX, newY, newZ);
+                        c.AddBlock(block);
+                    }
+                }
+            }
         }
 
         private (Chunk c, int dx, int dy, int dz) ChunkForBlock(Chunk root, int x, int y, int z)
         {
+//            Forward, // 0
+//            Back, // 1
+//            Up, // 2
+//            Down, // 3
+//            Left, // 4
+//            Right // 5
+            Chunk c = root;
+            
+            int xModified = x;
+            int yModified = y;
+            int zModified = z;
+
+            bool otherChunk = false;
+
             if (x < 0)
-                return (root.CalculateNeighbour(4), x + 16, y, z);
-            if (x > 15)
-                return (root.CalculateNeighbour(5), x - 16, y, z);
-//            if (z < 0)
-//                return (root.CalculateNeighbour(1), x, y, z + 16);
-//            if (z > 15)
-//                return (root.CalculateNeighbour(0), x, y, z - 16);
-//            if (y < 0)
-//                return (root.CalculateNeighbour(3), x, y + 16, z);
-//            if (y > 15)
-//                return (root.CalculateNeighbour(2), x, y - 16, z);
+            {
+                c = c.CalculateNeighbour(4);
+                xModified += 16;
+                otherChunk = true;
+            }
+            else if (x > 15)
+            {
+                c = c.CalculateNeighbour(5);
+                xModified -= 16;
+                otherChunk = true;
+            }
 
-            return (root, x, y, z);
-        }
+            if (z < 0)
+            {
+                c = c.CalculateNeighbour(1);
+                zModified += 16;
+                otherChunk = true;
+            }
+            else if (z > 15)
+            {
+                c = c.CalculateNeighbour(0);
+                zModified -= 16;
+                otherChunk = true;
+            }
 
+            if (y < 0)
+            {
+                c = c.CalculateNeighbour(3);
+                yModified += 16;
+                otherChunk = true;
+            }
+            else if (y > 15)
+            {
+                c = c.CalculateNeighbour(2);
+                yModified -= 16;
+                otherChunk = true;
+            }
 
-
-        private bool LeafSpawn(int x, int y, int z, int volume)
-        {
-            float a = Mathf.Abs(-volume / 2 + x);
-            float b = Mathf.Abs(-volume / 2 + y);
-            float c = Mathf.Abs(-volume / 2 + z);
-
-            float distance = Mathf.Sqrt(a * a + b * b + c * c);
-            return (distance < volume / 2f && (Mathf.PerlinNoise(x * 0.9f, y * 0.9f) * volume) > distance);
+            if (otherChunk)
+            {
+                c.ChunkState = ChunkState.Dirty;
+                ChunkBuffer.ModifyChunkColumn(new Int2(c.LocalPosition.X, c.LocalPosition.Z), DrawingState.Dirty);
+            }
+            
+            return (c, xModified, yModified, zModified);
         }
     }
 }

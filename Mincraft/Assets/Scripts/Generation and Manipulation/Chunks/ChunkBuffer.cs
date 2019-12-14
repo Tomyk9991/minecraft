@@ -330,6 +330,19 @@ namespace Core.Chunking
                 }
             }
         }
+        
+        public static void ModifyChunkColumn(Int2 local, DrawingState state)
+        {
+            if (local.X < 0 || local.X >= dimension || local.Y < 0 || local.Y >= dimension)
+            {
+                throw new IndexOutOfRangeException($"Local space: {local.ToString()} is out of range [{0}, {dimension})");
+            }
+
+            lock (mutex)
+            {
+                data[Idx2D(local.X, local.Y)].State = state;
+            }
+        }
 
         public static Chunk GetChunk(Int3 local)
         {

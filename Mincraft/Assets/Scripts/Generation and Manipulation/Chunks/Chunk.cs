@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Core.Builder;
 using Core.Builder.Generation;
@@ -60,7 +61,7 @@ namespace Core.Chunking
             steepness = WorldSettings.NoiseSettings.Steepness;
             seed = WorldSettings.NoiseSettings.Seed;
 
-            treeGenerator = new OakTreeGenerator(new Int2(4, 6), new Int2(2, 4));
+            treeGenerator = new OakTreeGenerator(new Int2(3, 5), new Int2(2, 5));
             blocks = new Block[chunkSize * chunkSize * chunkSize];
 
             if (noise == null)

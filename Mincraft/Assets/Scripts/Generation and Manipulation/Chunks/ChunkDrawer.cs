@@ -30,7 +30,6 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
 
             if(task != null && task.Completed && task.MeshData.Vertices.Count != 0)
             {
-                task.Column.State = DrawingState.Drawn;
                 RenderCall(task);
             }
         }
@@ -48,6 +47,12 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
             drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
             drawingChunk.CurrentGO.name = drawingChunk.GlobalPosition.ToString();
 
+            modifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
+        }
+        else
+        {
+            //These chunks are already drawn atm. and need a refresh
+            drawingChunk.ChunkState = ChunkState.Drawn;
             modifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
         }
     }

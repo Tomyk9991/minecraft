@@ -119,8 +119,8 @@ namespace Core.UI.Console
             if (Input.GetKeyDown(KeyCode.F1))
             {
                 showingConsole = !showingConsole;
-                Cursor.lockState = showingConsole ? CursorLockMode.None : CursorLockMode.Locked;
-                Cursor.visible = showingConsole;
+//                Cursor.lockState = showingConsole ? CursorLockMode.None : CursorLockMode.Locked;
+//                Cursor.visible = showingConsole;
 
                 foreach (Transform child in consoleParent.transform)
                 {
