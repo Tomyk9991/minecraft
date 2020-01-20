@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace Core.Chunking.Threading
     {
         public static ChunkJobManager ChunkJobManagerUpdaterInstance { get; private set; }
         private ConcurrentQueue<ChunkJob> jobs;
+
         public ConcurrentQueue<ChunkJob> FinishedJobs { get; private set; }
 
         public bool Running { get; set; }
@@ -32,6 +34,7 @@ namespace Core.Chunking.Threading
             if (chunkUpdaterInstance)
                 ChunkJobManagerUpdaterInstance = this;
 
+            //jobs = new ConcurrentQueue<ChunkJob>();
             jobs = new ConcurrentQueue<ChunkJob>();
             greedy = new GreedyMesh();
             _calculateShadows = WorldSettings.CalculateShadows;
@@ -91,7 +94,7 @@ namespace Core.Chunking.Threading
                     }
                     else
                     {
-                        job.Chunk.GenerateAdditionalBlocks();
+//                        job.Chunk.GenerateAdditionalBlocks();
 //                        job.Chunk.CalculateNeighbour();
                         
 //                        if (_calculateShadows)
@@ -142,6 +145,170 @@ namespace Core.Chunking.Threading
         public void Dispose()
         {
             Running = false;
+            foreach (var thread in threads)
+            {
+                thread.Join();
+            }
         }
     }
+//    public class ChunkJobManager : AutoThreadCollection<ChunkJob>, IDisposable
+//    {
+//        public static ChunkJobManager ChunkJobManagerUpdaterInstance { get; private set; }
+//        
+//        public int FinishedJobsCount => FinishedJobs.Count;
+//        public int JobsCount => jobs.Count;
+//        
+//        private ContextIO<Chunk> chunkLoader;
+//        private GreedyMesh greedy;
+//        private bool _calculateShadows;
+//
+//        public ChunkJobManager(bool chunkUpdaterInstance = false)
+//        {
+//            if (chunkUpdaterInstance)
+//                ChunkJobManagerUpdaterInstance = this;
+//            
+//            greedy = new GreedyMesh();
+//            _calculateShadows = WorldSettings.CalculateShadows;
+//
+//            
+//            chunkLoader = new ContextIO<Chunk>(ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName + "/");
+//            GameManager.AbsolutePath = ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName;
+//        }
+//
+//        public override void JobExecute(ChunkJob job)
+//        {
+//            if (!job.HasBlocks) // Chunk gets build new
+//            {
+//                //job.Chunk.CalculateNeighbour();
+//
+//                string path = chunkLoader.Path + job.Chunk.GlobalPosition.ToString() + chunkLoader.FileEnding<Chunk>();
+//                
+//                if (File.Exists(path))
+//                {
+//                    job.Chunk.LoadChunk(chunkLoader.LoadContext(path));
+//                }
+//                else
+//                {
+////                            job.Chunk.GenerateAdditionalBlocks();
+////                            job.HasBlocks = true;
+//                    if (_calculateShadows)
+//                        job.Chunk.CalculateLight();
+//                }
+//            }
+//            else
+//            {
+////                job.Chunk.GenerateAdditionalBlocks();
+////                job.Chunk.CalculateNeighbour();
+////
+////                if (_calculateShadows)
+////                    job.Chunk.CalculateLight();
+//            }
+//
+//            Task<MeshData>  meshData = Task.Run(() => MeshBuilder.Combine(job.Chunk));
+//            Task<MeshData>  colliderData = Task.Run(() => greedy.ReduceMesh(job.Chunk));
+//
+//            Task.WaitAll(meshData, colliderData);
+//
+//
+//            job.MeshData = meshData.Result;
+//            job.ColliderData = colliderData.Result;
+//
+//            job.Chunk.ChunkState = ChunkState.Generated;
+//
+//
+//            job.Completed = true;
+//            FinishedJobs.Enqueue(job);
+//        }
+//
+//        public ChunkJob DequeueFinishedJob()
+//        {
+//            if (FinishedJobs.TryDequeue(out var result))
+//            {
+//                return result;
+//            }
+//
+//            return null;
+//        }
+//        
+//        public void AddJob(ChunkJob job)
+//        {
+//            base.Add(job);
+//        }
+//
+//        public void Dispose()
+//        {
+//            base.Stop();
+//        }
+//    }
+//    
+//    public abstract class AutoThreadCollection<T>
+//    {
+//        public ConcurrentQueue<T> FinishedJobs { get; private set; }
+//
+//        protected Queue<T> jobs;
+//        protected Thread[] threads;
+//        protected bool running = false;
+//        private object lockObject;
+//
+//        public AutoThreadCollection()
+//        {
+//            this.jobs = new Queue<T>();
+//            this.FinishedJobs = new ConcurrentQueue<T>();
+//            this.lockObject = new object();
+//
+//            int amountThreads = SystemInfo.processorCount - 2 <= 0 ? 1 : SystemInfo.processorCount / 2 - 5;
+//            
+//            threads = new Thread[amountThreads];
+//            for (int i = 0; i < amountThreads; i++)
+//            {
+//                threads[i] = new Thread(Run);
+//            }
+//        }
+//
+//        public abstract void JobExecute(T job);
+//
+//        private void Run()
+//        {
+//            while (running)
+//            {
+//                T job;
+//                lock (lockObject)
+//                {
+//                    Monitor.Wait(lockObject);
+//                    job = jobs.Dequeue();
+//                }
+//
+//                JobExecute(job);
+//                
+//                FinishedJobs.Enqueue(job);
+//            }
+//        }
+//
+//        public void Add(T job)
+//        {
+//            lock (lockObject)
+//            {
+//                this.jobs.Enqueue(job);
+//                Monitor.Pulse(lockObject);
+//            }
+//        }
+//
+//        public void Start()
+//        {
+//            this.running = true;
+//            for (int i = 0; i < threads.Length; i++)
+//            {
+//                threads[i].Start();
+//            }
+//        }
+//
+//        public void Stop()
+//        {
+//            this.running = false;
+////            for (int i = 0; i < threads.Length; i++)
+////            {
+////                threads[i].Join();
+////            }
+//        }
+//    }
 }

@@ -319,11 +319,11 @@ namespace Core.Chunking
             }
         }
 
-        public void GenerateAdditionalBlocks()
-        {
-            foreach (var treeTrunk in trunkBuffer)
-                treeGenerator.Generate(this, treeTrunk.Biom, treeTrunk.X, treeTrunk.Y, treeTrunk.Z);
-        }
+//        public void GenerateAdditionalBlocks()
+//        {
+//            foreach (var treeTrunk in trunkBuffer)
+//                treeGenerator.Generate(this, treeTrunk.Biom, treeTrunk.X, treeTrunk.Y, treeTrunk.Z);
+//        }
 
         public void CalculateLight()
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using Core.Chunking;
 using Core.Math;
 
@@ -29,6 +28,7 @@ namespace Core.Builder.Generation
             {
                 ID = (int) biom.treeTrunkBlock
             };
+            
 
             for (int i = y; i < y + height; i++) //tree trunk
             {

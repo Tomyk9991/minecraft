@@ -128,16 +128,17 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
                     {
                         ChunkColumn[] neighbours = column.Neighbours();
 
-                        if (neighbours.All(c => c.State == DrawingState.NoiseReady || 
-                                                c.State == DrawingState.Drawn ||
-                                                c.State == DrawingState.Dirty))
+//                        if (neighbours.All(c => c.State == DrawingState.NoiseReady || c.State == DrawingState.Drawn || c.State == DrawingState.Dirty))
+                        DrawingState mask = DrawingState.NoiseReady | DrawingState.Drawn | DrawingState.Dirty;
+                        
+                        if (neighbours.All(c => (c.State & mask) != 0))
                         {
                             if (column.State == DrawingState.Dirty)
                             {
                                 column.State = DrawingState.Drawn;
                                 for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
                                 {
-                                    column.State = DrawingState.Drawn;
+                                    //column.State = DrawingState.Drawn;
                                     Chunk chunk = column[localy];
                                     if (chunk.ChunkState == ChunkState.Dirty)
                                     {
@@ -169,7 +170,7 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 
     private void OnDestroy()
     {
-        chunkJobManager.Dispose();
-        noiseJobManager.Dispose();
+        chunkJobManager?.Dispose();
+        noiseJobManager?.Dispose();
     }
 }

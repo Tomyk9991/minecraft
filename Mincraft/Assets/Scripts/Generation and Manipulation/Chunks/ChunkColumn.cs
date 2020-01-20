@@ -77,12 +77,13 @@ namespace Core.Chunking
         }
     }
 
+    [Flags]
     public enum DrawingState
     {
         None = 0,
         Drawn = 1,
         NoiseReady = 2,
-        InNoiseQueue = 3,
-        Dirty = 4
+        InNoiseQueue = 4,
+        Dirty = 8
     }
 }
