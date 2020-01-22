@@ -7,6 +7,7 @@ using UnityEngine;
 using Core.Chunking;
 using Core.Chunking.Threading;
 using Core.Player;
+using Utilities;
 
 namespace Core.UI.DeveloperOverlay
 {
@@ -28,6 +29,7 @@ namespace Core.UI.DeveloperOverlay
 
         private Transform[] transforms = null;
         private PerformanceCounter theCPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+        private Timer timer;
 
         private void Start()
         {
@@ -37,6 +39,7 @@ namespace Core.UI.DeveloperOverlay
                 t.Add(transform.GetChild(i));
             }
 
+            timer = new Timer(WorldSettings.WorldTick);
             this.transforms = t.ToArray();
         }
 
@@ -52,7 +55,7 @@ namespace Core.UI.DeveloperOverlay
                 }
             }
 
-            if (showingOverlay)
+            if (showingOverlay && timer.TimeElapsed(Time.deltaTime))
             {
                 playerPositionOutput.text = PlayerMovementTracker.Instance.PlayerPos();
                 chunksLoadedOutput.text = GetLoadedChunksAmount().ToString();

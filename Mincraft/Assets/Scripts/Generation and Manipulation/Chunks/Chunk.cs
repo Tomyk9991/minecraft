@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Core.Builder;
 using Core.Builder.Generation;
@@ -38,9 +35,7 @@ namespace Core.Chunking
         private float smoothness = 0;
         private float steepness = 0;
         private int seed = -1;
-
-        private IStructureBuilder treeGenerator;
-
+        
         private static Int3[] directions =
         {
             Int3.Forward, // 0
@@ -61,7 +56,6 @@ namespace Core.Chunking
             steepness = WorldSettings.NoiseSettings.Steepness;
             seed = WorldSettings.NoiseSettings.Seed;
 
-            treeGenerator = new OakTreeGenerator(new Int2(3, 5), new Int2(2, 5));
             blocks = new Block[chunkSize * chunkSize * chunkSize];
 
             if (noise == null)
@@ -138,7 +132,6 @@ namespace Core.Chunking
         {
             Int3 local = blockPos;
             Int3 direction = directions[index];
-//            Chunk chunkNeighbour = chunkNeighbours[index];
             Chunk chunkNeighbour = CalculateNeighbour(index);
 
             Block block = new Block
@@ -299,7 +292,6 @@ namespace Core.Chunking
                 CalculateNeighbour(4),
                 CalculateNeighbour(5),
             };
-            //return chunkNeighbours;
         }
 
         /// <summary>
@@ -430,13 +422,13 @@ namespace Core.Chunking
                     this.AddBlock(block);
                 }
 
-                if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
-                {
-                    trunkBuffer.Add(new TreeTrunk(biom, 
-                        x - this.GlobalPosition.X,
-                        y - this.GlobalPosition.Y,
-                        z - this.GlobalPosition.Z));
-                }
+//                if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
+//                {
+//                    trunkBuffer.Add(new TreeTrunk(biom, 
+//                        x - this.GlobalPosition.X,
+//                        y - this.GlobalPosition.Y,
+//                        z - this.GlobalPosition.Z));
+//                }
             }
         }
 

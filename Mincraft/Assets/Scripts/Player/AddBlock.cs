@@ -5,6 +5,7 @@ using UnityEngine;
 using Core.Chunking.Threading;
 using Core.UI.Console;
 using Core.Managers;
+using Core.Math;
 
 namespace Core.Player
 {
@@ -31,7 +32,6 @@ namespace Core.Player
         
         private Camera cameraRef;
 
-        private ChunkJobManager chunkJobManager;
         private MeshModifier modifier;
 
         private GameManager gameManager;
@@ -49,63 +49,36 @@ namespace Core.Player
             cameraRef = Camera.main;
             gameManager = GameManager.Instance;
 
-            chunkJobManager = new ChunkJobManager();
             modifier = new MeshModifier();
-            chunkJobManager.Start();
         }
 
         public void SetBlock(BlockUV uv) => blockUV = uv;
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(mouseButtonIndex))
-            {
-    //            Ray ray = cameraRef.ScreenPointToRay(Input.mousePosition);
-    //
-    //            if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable))
-    //            {
-    //                Int3 globalCenterCubePosition =
-    //                    Int3.FloorToInt(ModifyMesh.CenteredClickPositionOutSide(hit.point, hit.normal));
-    //
-    //                Block block = new Block(globalCenterCubePosition)
-    //                {
-    //                    ID = (int)blockUV
-    //                };
-    //
-    //                Chunk chunkOnClicked = ChunkDictionary.GetValue(hit.transform.position.ToInt3());
-    //
-    //                //Chunk chunk = chunkOnClicked.TryAddBlockFromGlobal(block, out Int3 chunkPos);
-    //                Chunk chunk = chunkOnClicked.GetChunkFromGlobalBlock(block, out Int3 chunkPos);
-    //
-    //                if (chunk != null)
-    //                {
-    //                    chunk.AddBlock(block);
-    //                    //TODO add to chunkjobmanager somehow
-    //                    chunk.SaveChunk();
-    //                }
-    //
-    //                //if (chunk != null)
-    //                //{
-    //                //    chunkJobManager.Add(new ChunkJob(chunk));
-    //                //    chunk.SaveChunk();
-    //                //}
-    //            }
-            }
+//            if (Input.GetMouseButtonDown(mouseButtonIndex))
+//            {
+//                Ray ray = cameraRef.ScreenPointToRay(Input.mousePosition);
+//    
+//                if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable))
+//                {
+//                    Int3 globalCenterBlockPosition =
+//                        Int3.FloorToInt(MeshBuilder.CenteredClickPositionOutSide(hit.point, hit.normal));
 
-            for (int i = 0; i < chunkJobManager.FinishedJobsCount; i++)
-            {
-                ChunkJob task = chunkJobManager.DequeueFinishedJob();
-
-                if (task != null && task.Completed)
-                {
-                    modifier.SetMesh(task.Chunk.CurrentGO, task.MeshData, task.ColliderData);
-                }
-            }
+            //Convert the global chunkposition (hit.transform.position.ToInt3() to local space
+                    //Chunk chunkOnClicked =  get chunk reference
+    
+                    //Chunk chunk = chunkOnClicked.GetChunkFromGlobalBlock(block, out Int3 chunkPos);
+                    //if blocks over-ranges the chunk you have to add the block to the neighbourchunk
+                    //get the index for the neighbouringchunk
+                    //int idx = getNeighbourIndex(chunkOnClicked, globalCenterBlockPosition);
+                    //get the chunkposition
+                    //chunkOnClicked.CalculateNeighbour()
+                    //chunk != null ?!?!? notwendig? => chunk.addblock(createBlockWithGlobalPosToLocalPos)
+                    //chunk.save()
+            //TODO add to chunkJobManager a priority so the chunks, that were manipulated get recalculated first
+            //Do the same for the noisejobmanager, if necessary
         }
 
-        private void OnDestroy()
-        {
-            //chunkJobManager.Dispose();
-        }
     }
 }

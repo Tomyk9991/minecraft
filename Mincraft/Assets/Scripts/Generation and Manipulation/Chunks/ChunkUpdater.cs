@@ -8,6 +8,7 @@ using Core.Player;
 using Core.Saving;
 using Extensions;
 using UnityEngine;
+using UnityInspector;
 using Utilities;
 
 public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
@@ -41,9 +42,12 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         minHeight = minMaxYHeight.X;
         maxHeight = minMaxYHeight.Y;
 
-        chunkJobManager = new ChunkJobManager(true);
+        int chunkJobThreadAmount = SystemInfo.processorCount - 2 <= 0 ? 1 :SystemInfo.processorCount / 2 - 5;
+        int noiseJobThreadAmount = SystemInfo.processorCount - 2 <= 0 ? 1 : (SystemInfo.processorCount - 2) / 3;
+        
+        chunkJobManager = new ChunkJobManager(chunkJobThreadAmount, true);
         chunkJobManager.Start();
-        noiseJobManager = new NoiseJobManager(true);
+        noiseJobManager = new NoiseJobManager(noiseJobThreadAmount, true);
         noiseJobManager.Start();
 
         chunkSize = 0x10;
@@ -77,7 +81,7 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
                     Column = column
                 };
 
-                noiseJobManager.AddJob(noiseJob);
+                noiseJobManager.Add(noiseJob);
                 column.State = DrawingState.InNoiseQueue;
 
                 if (localx == 0 || localx == dimension - 1 || localz == 0 || localz == dimension - 1)
@@ -129,7 +133,7 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
                         ChunkColumn[] neighbours = column.Neighbours();
 
 //                        if (neighbours.All(c => c.State == DrawingState.NoiseReady || c.State == DrawingState.Drawn || c.State == DrawingState.Dirty))
-                        DrawingState mask = DrawingState.NoiseReady | DrawingState.Drawn | DrawingState.Dirty;
+                        DrawingState mask = DrawingState.NoiseReady | DrawingState.Drawn;
                         
                         if (neighbours.All(c => (c.State & mask) != 0))
                         {

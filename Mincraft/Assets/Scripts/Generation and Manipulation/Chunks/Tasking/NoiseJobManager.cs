@@ -2,82 +2,35 @@
 using UnityEngine;
 using System.Threading;
 using System;
+using Core.Performance.Parallelisation;
+using UnityEditor;
 
 namespace Core.Chunking.Threading
 {
-    public class NoiseJobManager : IDisposable
+    public class NoiseJobManager : AutoThreadCollection<NoiseJob>, IDisposable
     {
         public static NoiseJobManager NoiseJobManagerUpdaterInstance { get; private set; }
-        public bool Running { get; set; }
-        public int Count => jobs.Count;
+        public int Count => this.jobs.Count; 
 
-        private Thread[] threads;
-
-        private ConcurrentQueue<NoiseJob> jobs;
-
-        public NoiseJobManager(bool noiseUpdaterInstance = false)
+        public NoiseJobManager(int amountThreads, bool noiseUpdaterInstance = false) : base(amountThreads)
         {
             if (noiseUpdaterInstance)
                 NoiseJobManagerUpdaterInstance = this;
+        }
 
-            threads = new Thread[2];
-            threads = SystemInfo.processorCount - 2 <= 0
-                ? new Thread[1]
-                : new Thread[(SystemInfo.processorCount - 2) / 3];
-
-            for (int i = 0; i < threads.Length; i++)
+        public override void JobExecute(NoiseJob job)
+        {
+            for (int i = 0; i < job.Column.chunks.Length; i++)
             {
-                threads[i] = new Thread(Calculate)
-                {
-                    IsBackground = true
-                };
+                job.Column.chunks[i].GenerateBlocks();
             }
 
-            jobs = new ConcurrentQueue<NoiseJob>();
+            job.Column.State = DrawingState.NoiseReady;
         }
-
-        public void Start()
-        {
-            Running = true;
-
-            for (int i = 0; i < threads.Length; i++)
-                threads[i].Start();
-        }
-
-        public void Stop() => Running = false;
-
-        public void AddJob(NoiseJob job)
-        {
-            jobs.Enqueue(job);
-        }
-
-        private void Calculate()
-        {
-            while (Running)
-            {
-                if (jobs.Count == 0)
-                {
-                    //TODO Weg finden, das von Performance des Rechners abhängig zu machen
-                    System.Threading.Thread.Sleep(100); //Needed, because CPU is overloaded in other case
-                    continue;
-                }
-
-                if (jobs.TryDequeue(out var job))
-                {
-                    for (int i = 0; i < job.Column.chunks.Length; i++)
-                    {
-                        job.Column.chunks[i].GenerateBlocks();
-                    }
-
-                    job.Column.State = DrawingState.NoiseReady;
-                    Thread.Sleep(10);
-                }
-            }
-        }
-
+        
         public void Dispose()
         {
-            Running = false;
+            base.Stop();
         }
     }
 }

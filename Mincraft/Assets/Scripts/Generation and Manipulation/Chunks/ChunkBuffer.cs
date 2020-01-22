@@ -110,7 +110,7 @@ namespace Core.Chunking
                     };
                     column.State = DrawingState.InNoiseQueue;
 
-                    noiseJobManager.AddJob(noiseJob);
+                    noiseJobManager.Add(noiseJob);
                 }
 
                 for (int x = 0; x < dimension; x++)
@@ -179,7 +179,7 @@ namespace Core.Chunking
                     };
                     column.State = DrawingState.InNoiseQueue;
 
-                    noiseJobManager.AddJob(noiseJob);
+                    noiseJobManager.Add(noiseJob);
                 }
 
                 for (int x = 0; x < dimension; x++)
@@ -248,7 +248,7 @@ namespace Core.Chunking
                     };
                     column.State = DrawingState.InNoiseQueue;
 
-                    noiseJobManager.AddJob(noiseJob);
+                    noiseJobManager.Add(noiseJob);
                 }
 
                 for (int y = 0; y < dimension; y++)
@@ -316,7 +316,7 @@ namespace Core.Chunking
                     };
                     column.State = DrawingState.InNoiseQueue;
 
-                    noiseJobManager.AddJob(noiseJob);
+                    noiseJobManager.Add(noiseJob);
                 }
 
                 for (int y = 0; y < dimension; y++)
@@ -330,19 +330,6 @@ namespace Core.Chunking
                 }
             }
         }
-        
-        public static void ModifyChunkColumn(Int2 local, DrawingState state)
-        {
-            if (local.X < 0 || local.X >= dimension || local.Y < 0 || local.Y >= dimension)
-            {
-                throw new IndexOutOfRangeException($"Local space: {local.ToString()} is out of range [{0}, {dimension})");
-            }
-
-            lock (mutex)
-            {
-                data[Idx2D(local.X, local.Y)].State = state;
-            }
-        }
 
         public static Chunk GetChunk(Int3 local)
         {
@@ -352,6 +339,17 @@ namespace Core.Chunking
             lock (mutex)
             {
                 return data[Idx2D(local.X, local.Z)][local.Y];
+            }
+        }
+        
+        public static Chunk GetChunk(int x, int y, int z)
+        {
+            if (y >= YBound || y < 0)
+                return null;
+
+            lock (mutex)
+            {
+                return data[Idx2D(x, z)][y];
             }
         }
 
