@@ -8,7 +8,6 @@ using Core.Player;
 using Core.Saving;
 using Extensions;
 using UnityEngine;
-using UnityInspector;
 using Utilities;
 
 public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>

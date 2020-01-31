@@ -1,6 +1,7 @@
 ﻿using System;
 using Core.Chunking.Threading;
 using Core.Math;
+using Core.Player;
 using UnityEngine;
 using UnityEngine.TextCore.LowLevel;
 
@@ -18,7 +19,8 @@ namespace Core.Chunking
 
         private static int minHeight;
         private static int maxHeight;
-
+        private static int chunkSize = 0x10;
+        
         public static void Init(int chunkSize, int _minHeight, int _maxHeight, int drawDistanceInChunks)
         {
             noiseJobManager = NoiseJobManager.NoiseJobManagerUpdaterInstance;
@@ -32,6 +34,8 @@ namespace Core.Chunking
 
             data = new ChunkColumn[dimension * dimension]; // Um eins in jede Richtung größer, als renderColumns
         }
+        #region Move
+        
         /// <summary>
         /// Shift all entries inside the array in the given direction. Only one direction supported
         /// </summary>
@@ -331,6 +335,8 @@ namespace Core.Chunking
             }
         }
 
+        #endregion
+        
         public static Chunk GetChunk(Int3 local)
         {
             if (local.Y >= YBound || local.Y < 0)
@@ -340,6 +346,31 @@ namespace Core.Chunking
             {
                 return data[Idx2D(local.X, local.Z)][local.Y];
             }
+        }
+
+        public static Chunk GetChunkFromGlobal(int x, int y, int z, Int2 playerPos)
+        {
+            //TODO Methode finden
+            //0, 0, 0 bottom left
+            Debug.Log("Global Player Position: "+ playerPos + " DrawDistanceInChunks: " + DrawDistanceInChunks
+                      + " GlobalChunkPosition: " + new Int3(x, y, z).ToString()); // (-16, -16)
+
+            Int3 localPos = new Int3(
+                    ToLocal(x, DrawDistanceInChunks, playerPos.X),
+                    (y / chunkSize) + 2,
+                    ToLocal(z, DrawDistanceInChunks, playerPos.Y)
+            );
+
+            Debug.Log("Calculated local Position: " + localPos.ToString());
+            Debug.Log("Global Position from calculated local Position: " + GetChunk(localPos).GlobalPosition);
+            
+            // (-16 * (5 + 1)) / -96 = 1
+            return null;
+        }
+
+        private static int ToLocal(int dim, int drawDistance, int playerPos)
+        {
+            return playerPos * (drawDistance + 1) / dim;
         }
         
         public static Chunk GetChunk(int x, int y, int z)
@@ -383,12 +414,5 @@ namespace Core.Chunking
 
         private static int Idx2D(int x, int y)
             => ((2 * DrawDistanceInChunks + 3)) * x + y;
-    }
-
-    public enum Direction
-    {
-        None,
-        Left, Right,
-        Forward, Back,
     }
 }

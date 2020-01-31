@@ -70,4 +70,11 @@ namespace Core.Player
             return latestPlayerPosition.ToString();
         }
     }
+    
+    public enum Direction
+    {
+        None,
+        Left, Right,
+        Forward, Back,
+    }
 }

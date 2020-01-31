@@ -10,6 +10,11 @@ namespace Core.Math
         public int Y;
 
         public static Int2 One => new Int2(1, 1);
+        public static Int2 Zero = new Int2(0, 0);
+        public static Int2 Forward => new Int2(0, 1);
+        public static Int2 Back => new Int2(0, -1);
+        public static Int2 Left => new Int2(-1, 0);
+        public static Int2 Right => new Int2(1, 0);
 
         public Int2(int x, int y)
         {
@@ -51,11 +56,6 @@ namespace Core.Math
 
         public static bool operator !=(Int2 target1, Int2 target2)
             => !(target1 == target2);
-
-        public static Int2 Forward => new Int2(0, 1);
-        public static Int2 Back => new Int2(0, -1);
-        public static Int2 Left => new Int2(-1, 0);
-        public static Int2 Right => new Int2(1, 0);
 
         public static Int2 ToInt2(Vector2 target)
             => new Int2(Mathf.RoundToInt(target.x), Mathf.RoundToInt(target.y));
