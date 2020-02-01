@@ -4,7 +4,7 @@ using Core.Math;
 
 namespace Core.Chunking.Threading
 {
-    public class ChunkJob
+    public class MeshJob
     {
         public bool Completed { get; set; }
         public Chunk Chunk { get; set; }

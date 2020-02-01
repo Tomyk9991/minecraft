@@ -27,8 +27,17 @@ namespace Core.Math
     
         public static int MultipleFloor(int n, int x)
             => Mathf.FloorToInt(n / (float)x) * x;
-    
-        public static float Map(float n, float start1, float stop1, float start2, float stop2)
-            => ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
+        
+        /// <summary>
+        /// Maps n from a range of [istart, istop] to [ostart, ostop]
+        /// </summary>
+        public static int MapToInt(float value, float istart, float istop, float ostart, float ostop)
+            => (int)(ostart + (ostop - ostart) * ((value - istart) / (istop - istart)));
+        
+        /// <summary>
+        /// Maps n from a range of [istart, istop] to [ostart, ostop]
+        /// </summary>
+        public static float Map(float value, float istart, float istop, float ostart, float ostop)
+            => ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
     }
 }

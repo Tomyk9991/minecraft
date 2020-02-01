@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using UnityEngine;
 
 using Core.Math;
@@ -16,6 +17,13 @@ namespace Extensions
             while (queue.TryDequeue(out item))
             {
             }
+        }
+
+        public static T RemoveAndGet<T>(this IList<T> list, int index)
+        {
+            T result = list[index];
+            list.RemoveAt(index);
+            return result;
         }
     }
 }

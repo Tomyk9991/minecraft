@@ -23,6 +23,7 @@ namespace Core.Player
         [SerializeField] private float raycastHitable = 1000f;
         
         private Camera cameraRef;
+        private readonly Vector3 centerScreenNormalized = new Vector3(0.5f, 0.5f, 0f);
 
         private void Start()
         {
@@ -31,7 +32,7 @@ namespace Core.Player
         
         private void Update()
         {
-            Ray ray = cameraRef.ScreenPointToRay(Input.mousePosition);
+            Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
             if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable, layerMask))
             {
                 for (int i = 0; i < gameObjects.Length; i++)

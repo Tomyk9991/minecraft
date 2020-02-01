@@ -6,24 +6,34 @@ using Core.Managers;
 using Core.Saving;
 using System.Threading.Tasks;
 using Core.Performance.Parallelisation;
+using Extensions;
 
 namespace Core.Chunking.Threading
 {
-    public class ChunkJobManager : AutoThreadCollection<ChunkJob>, IDisposable
+    public class MeshJobManager : AutoThreadCollection<MeshJob>, IDisposable
     {
-        public static ChunkJobManager ChunkJobManagerUpdaterInstance { get; private set; }
-        
-        public int FinishedJobsCount => FinishedJobs.Count;
+        public static MeshJobManager MeshJobManagerUpdaterInstance { get; private set; }
+
+        public int FinishedJobsCount
+        {
+            get
+            {
+                lock (FinishedJobs)
+                {
+                    return FinishedJobs.Count;
+                }
+            }
+        }
         public int JobsCount => jobs.Count;
         
         private ContextIO<Chunk> chunkLoader;
         private GreedyMesh greedy;
         private bool _calculateShadows;
 
-        public ChunkJobManager(int amountThreads, bool chunkUpdaterInstance = false) : base(amountThreads)
+        public MeshJobManager(int amountThreads, bool chunkUpdaterInstance = false) : base(amountThreads)
         {
             if (chunkUpdaterInstance)
-                ChunkJobManagerUpdaterInstance = this;
+                MeshJobManagerUpdaterInstance = this;
             
             greedy = new GreedyMesh();
             _calculateShadows = WorldSettings.CalculateShadows;
@@ -33,7 +43,7 @@ namespace Core.Chunking.Threading
             GameManager.AbsolutePath = ContextIO.DefaultPath + "/" + GameManager.CurrentWorldName;
         }
 
-        public override void JobExecute(ChunkJob job)
+        public override void JobExecute(MeshJob job)
         {
             if (!job.HasBlocks) // Chunk gets build new
             {
@@ -75,22 +85,20 @@ namespace Core.Chunking.Threading
 
 
             job.Completed = true;
-            FinishedJobs.Enqueue(job);
         }
 
-        public ChunkJob DequeueFinishedJob()
+        public MeshJob DequeueFinishedJob()
         {
-            if (FinishedJobs.TryDequeue(out var result))
+            lock (FinishedJobs)
             {
-                return result;
+                return FinishedJobs.RemoveAndGet(0);
             }
+//            if (FinishedJobs.TryDequeue(out var result))
+//            {
+//                return result;
+//            }
 
             return null;
-        }
-        
-        public void AddJob(ChunkJob job)
-        {
-            base.Add(job);
         }
 
         public void Dispose()

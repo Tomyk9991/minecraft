@@ -9,22 +9,22 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
     public ChunkGameObjectPool GoPool { get; set; }
     [SerializeField] private int drawsPerUpdate = 2;
     
-    private ChunkJobManager chunkJobManager;
+    private MeshJobManager _meshJobManager;
     private MeshModifier modifier;
 
     private void Start()
     {
         GoPool = ChunkGameObjectPool.Instance;
-        chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
+        _meshJobManager = MeshJobManager.MeshJobManagerUpdaterInstance;
 
         modifier = new MeshModifier();
     }
 
     private void Update()
     {
-        for (int i = 0; i < chunkJobManager.FinishedJobsCount && i < drawsPerUpdate; i++)
+        for (int i = 0; i < _meshJobManager.FinishedJobsCount && i < drawsPerUpdate; i++)
         {
-            ChunkJob task = chunkJobManager.DequeueFinishedJob(); 
+            MeshJob task = _meshJobManager.DequeueFinishedJob();
 
             if(task != null && task.Completed && task.MeshData.Vertices.Count != 0)
             {
@@ -33,7 +33,7 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
         }
     }
 
-    private void RenderCall(ChunkJob t)
+    private void RenderCall(MeshJob t)
     {
         var drawingChunk = t.Chunk;
 

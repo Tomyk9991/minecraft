@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -6,9 +5,11 @@ namespace Core.Performance.Parallelisation
 {
     public abstract class AutoThreadCollection<T> where T : class
     {
-        public ConcurrentQueue<T> FinishedJobs { get; private set; }
+//        public ConcurrentQueue<T> FinishedJobs { get; private set; }
+        public List<T> FinishedJobs { get; private set; }
 
         protected Queue<T> jobs;
+        protected Queue<T> highPriorityJobs;
         private Thread[] threads;
         private bool running = false;
         private object lockObject;
@@ -18,7 +19,9 @@ namespace Core.Performance.Parallelisation
         protected AutoThreadCollection(int amountThreads)
         {
             this.jobs = new Queue<T>();
-            this.FinishedJobs = new ConcurrentQueue<T>();
+            this.highPriorityJobs = new Queue<T>();
+//            this.FinishedJobs = new ConcurrentQueue<T>();
+            this.FinishedJobs = new List<T>();
             semaphore = new SemaphoreSlim(0);
             this.lockObject = new object();
 
@@ -41,21 +44,40 @@ namespace Core.Performance.Parallelisation
                 T job;
                 semaphore.Wait();
 
+                bool highPriority = false;
                 lock (lockObject)
                 {
-                    job = jobs.Dequeue();
+                    if (highPriorityJobs.Count > 0)
+                    {
+                        job = highPriorityJobs.Dequeue();
+                        highPriority = true;
+                    }
+                    else
+                    {
+                        job = jobs.Dequeue();
+                    }
                 }
 
                 JobExecute(job);
-                FinishedJobs.Enqueue(job);
+
+                lock (FinishedJobs) //Sorgt dafür, dass die Jobs mit hoher Priorität auch als erster aus der Liste genommen werden
+                {
+                    if (highPriority)
+                        FinishedJobs.Insert(0, job);
+                    else
+                        FinishedJobs.Add(job);
+                }
             }
         }
 
-        public void Add(T job)
+        public void AddJob(T job, JobPriority priority = JobPriority.Normal)
         {
             lock (lockObject)
             {
-                this.jobs.Enqueue(job);
+                if (priority == JobPriority.High)
+                    this.highPriorityJobs.Enqueue(job);
+                else
+                    this.jobs.Enqueue(job);
             }
 
             semaphore.Release();
@@ -79,5 +101,11 @@ namespace Core.Performance.Parallelisation
                 threads[i].Abort();
             }
         }
+    }
+
+    public enum JobPriority
+    {
+        Normal,
+        High,
     }
 }

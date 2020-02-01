@@ -1,6 +1,10 @@
+using Core.Builder;
 using Core.Chunking;
+using Core.Chunking.Threading;
 using Core.Math;
+using Core.Performance.Parallelisation;
 using Core.Player;
+using Core.StructureGeneration;
 using UnityEngine;
 
 namespace Testing
@@ -9,7 +13,12 @@ namespace Testing
     {
         private Int2 playerPos = Int2.Zero;
         private Vector3 chunkPos = Vector3.zero;
+
+        private int drawDistance;
+        private const int CHUNKSIZE = 0x10;
         
+        private MeshJobManager _meshJobManager;
+
         private void Start()
         {
             PlayerMovementTracker.OnChunkPositionChanged += (x, y) =>
@@ -17,35 +26,36 @@ namespace Testing
                 playerPos.X = x;
                 playerPos.Y = y;
             };
+            
+            _meshJobManager = MeshJobManager.MeshJobManagerUpdaterInstance;
         }
+        
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.H))
             {
-                Chunk c = ChunkBuffer.GetChunkFromGlobal(-16, 0, -16, playerPos);
-//                Chunk c = ChunkBuffer.GetChunkFromGlobal(-96, 0, -96, playerPos);
-//                StructureBuilder builder = new StructureBuilder();
-            }
-        }
+                GameObject chunkGameObject = GameObject.Find("(-16, 0, -16)");
+                
+                Chunk clickedChunk = ChunkBuffer.GetChunkFromGlobal((int) chunkGameObject.transform.position.x,
+                    (int) chunkGameObject.transform.position.y,
+                    (int) chunkGameObject.transform.position.z, playerPos);
 
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.magenta;
-//            Gizmos.DrawCube(new Vector3(.5f, 7 + .5f, .5f),  Vector3.one);
-            Gizmos.DrawCube(chunkPos - (Vector3.one * 8), Vector3.one * 16);
-        }
+                TreeBuilder tb = new TreeBuilder(0, 0);
+                IStructureBuilder treeBuilder = new TreeBuilder(0, 0);
+                
 
-        private class StructureBuilder
-        {
-            private Chunk initialChunk;
-            private Int3 localBlockPosition;
-            private Int3[] blockPositions;
+                MeshJob job = null;
+                foreach (Block block in treeBuilder.NextBlock())
+                {   
+                    clickedChunk.AddBlock(block);
+                    
+                    job = new MeshJob();
+                    var chunkColumn = ChunkBuffer.GetChunkColumn(clickedChunk.LocalPosition.X, clickedChunk.LocalPosition.Z);
+                    
+                    job.CreateChunkFromExisting(clickedChunk, chunkColumn);
+                }
 
-            public StructureBuilder(Chunk initialChunk, Int3 localBlockPosition, Int3[] blockPositions)
-            {
-                this.initialChunk = initialChunk;
-                this.localBlockPosition = localBlockPosition;
-                this.blockPositions = blockPositions;
+                _meshJobManager.AddJob(job, JobPriority.High);
             }
         }
     }

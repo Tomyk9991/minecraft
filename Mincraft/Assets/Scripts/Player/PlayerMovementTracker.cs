@@ -17,13 +17,12 @@ namespace Core.Player
         public int prevXPlayerPos = 0;
         public int prevZPlayerPos = 0;
         
-        private int chunkSize;
+        private const int chunkSize = 0x10;
 
         private Int3 latestPlayerPosition;
 
         private void Start()
         {
-            chunkSize = 0x10;
             latestPlayerPosition = transform.position.ToInt3();
             
             xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
@@ -32,6 +31,7 @@ namespace Core.Player
             prevZPlayerPos = zPlayerPos;
             OnChunkPositionChanged?.Invoke(xPlayerPos, zPlayerPos);
         }
+        
         private void Update()
         {
             latestPlayerPosition = transform.position.ToInt3();

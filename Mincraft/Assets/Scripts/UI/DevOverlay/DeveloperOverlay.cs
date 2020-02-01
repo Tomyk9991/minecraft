@@ -73,7 +73,7 @@ namespace Core.UI.DeveloperOverlay
 
         private string GetChunkJobCount()
         {
-            return ChunkJobManager.ChunkJobManagerUpdaterInstance.JobsCount + " finished jobs: " + ChunkJobManager.ChunkJobManagerUpdaterInstance.FinishedJobsCount;
+            return MeshJobManager.MeshJobManagerUpdaterInstance.JobsCount + " finished jobs: " + MeshJobManager.MeshJobManagerUpdaterInstance.FinishedJobsCount;
         }
         
 
