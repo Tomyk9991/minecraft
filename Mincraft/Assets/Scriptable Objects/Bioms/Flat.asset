@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0108329c39d53cd40b2bd2bd00b503a9, type: 3}
+  m_Name: Flat
+  m_EditorClassIdentifier: 
+  bioms:
+  - Name: Default Biom
+    minValue: -1
+    maxValue: 1
+    topLayerBlock: 1
+    topLayerBaseHeight: 1
+    topLayerNoiseHeight: 1
+    topLayerNoise: 1
+    midLayerBlock: 3
+    midBaseHeight: 2
+    midBaseNoiseHeight: 2
+    midBaseNoise: 1
+    lowerLayerBlock: 2
+    lowerBaseHeight: -48
+    lowerBasNoisHeight: 4
+    lowerBaseNoise: 5
+    lowerMountainHeight: 8
+    lowerMinHeight: 8
+    lowerMountainFrequency: 0
+    caveFrequency: 0
+    caveSize: 20
+    treeTrunkBlock: 4
+    treeLeafBlock: 6
+    treeProbability: 0.11
+    treeZoomLevel: 1.08

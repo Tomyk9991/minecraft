@@ -29,7 +29,7 @@ namespace Core.Chunking.Debugging
         [ContextMenu("Test")]
         private void Test()
         {
-            Chunk[] neighbours = chunk.GetNeigbours();
+            Chunk[] neighbours = chunk.GetChunkNeighbours();
 
             points = new List<Vector3>();
             for (int i = 0; i < neighbours.Length; i++)

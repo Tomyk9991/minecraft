@@ -24,7 +24,6 @@ namespace Core.Chunking
 
         //Chunkdata
         private Block[] blocks;
-        private List<TreeTrunk> trunkBuffer;
 
         //Helper properties
         public ChunkState ChunkState { get; set; }
@@ -50,7 +49,6 @@ namespace Core.Chunking
 
         public Chunk()
         {
-            trunkBuffer = new List<TreeTrunk>();
             chunkSize = 0x10;
             smoothness = WorldSettings.NoiseSettings.Smoothness;
             steepness = WorldSettings.NoiseSettings.Steepness;
@@ -128,11 +126,11 @@ namespace Core.Chunking
         /// <param name="index"></param>
         /// <param name="blockPos"></param>
         /// <returns></returns>
-        private Block GetNeigbourAt(int index, Int3 blockPos)
+        private Block GetBlockNeigbourAt(int index, Int3 blockPos)
         {
             Int3 local = blockPos;
             Int3 direction = directions[index];
-            Chunk chunkNeighbour = CalculateNeighbour(index);
+            Chunk chunkNeighbour = ChunkNeighbour(index);
 
             Block block = new Block
             {
@@ -255,16 +253,16 @@ namespace Core.Chunking
             return block;
         }
 
-        public Block[] Neighbours(Int3 blockPos)
+        public Block[] GetBlockNeighbours(Int3 blockPos)
         {
             return new[]
             {
-                GetNeigbourAt(0, blockPos),
-                GetNeigbourAt(1, blockPos),
-                GetNeigbourAt(2, blockPos),
-                GetNeigbourAt(3, blockPos),
-                GetNeigbourAt(4, blockPos),
-                GetNeigbourAt(5, blockPos)
+                GetBlockNeigbourAt(0, blockPos),
+                GetBlockNeigbourAt(1, blockPos),
+                GetBlockNeigbourAt(2, blockPos),
+                GetBlockNeigbourAt(3, blockPos),
+                GetBlockNeigbourAt(4, blockPos),
+                GetBlockNeigbourAt(5, blockPos)
             };
         }
 
@@ -276,21 +274,21 @@ namespace Core.Chunking
             return GlobalPosition.ToString();
         }
 
-        public Chunk CalculateNeighbour(int i)
+        public Chunk ChunkNeighbour(int i)
         {
             return ChunkBuffer.GetChunk(this.LocalPosition + directions[i]);
         }
 
-        public Chunk[] GetNeigbours()
+        public Chunk[] GetChunkNeighbours()
         {
             return new[]
             {
-                CalculateNeighbour(0),
-                CalculateNeighbour(1),
-                CalculateNeighbour(2),
-                CalculateNeighbour(3),
-                CalculateNeighbour(4),
-                CalculateNeighbour(5),
+                ChunkNeighbour(0),
+                ChunkNeighbour(1),
+                ChunkNeighbour(2),
+                ChunkNeighbour(3),
+                ChunkNeighbour(4),
+                ChunkNeighbour(5),
             };
         }
 
@@ -306,16 +304,10 @@ namespace Core.Chunking
                 for (int z = this.GlobalPosition.Z; z < this.GlobalPosition.Z + 16; z++)
                 {
                     Biom biom = BiomFinder.Find(noise.GetCellular(x * smoothness, z * smoothness));
-                        ChunkColumnGen(x, z, biom);
+                    ChunkColumnGen(x, z, biom);
                 }
             }
         }
-
-//        public void GenerateAdditionalBlocks()
-//        {
-//            foreach (var treeTrunk in trunkBuffer)
-//                treeGenerator.Generate(this, treeTrunk.Biom, treeTrunk.X, treeTrunk.Y, treeTrunk.Z);
-//        }
 
         public void CalculateLight()
         {
@@ -354,7 +346,7 @@ namespace Core.Chunking
                         nPos.Y > 0 && nPos.Y < 16 &&
                         nPos.Z > 0 && nPos.Z < 16)
                     {
-                        Block neighbourBlock = GetNeigbourAt(p, currentPosition);
+                        Block neighbourBlock = GetBlockNeigbourAt(p, currentPosition);
                         if (neighbourBlock.GlobalLightPercent < currentBlock.GlobalLightPercent - lightFalloff)
                         {
                             float result = currentBlock.GlobalLightPercent - lightFalloff;
@@ -369,9 +361,10 @@ namespace Core.Chunking
             }
         }
         
+        // x z in global space
         private void ChunkColumnGen(int x, int z, Biom biom)
         {
-            //Mountains
+//            Mountains
             int lowerHeight = biom.lowerBaseHeight;
 
             lowerHeight += GetNoise(x, 0, z, biom.lowerMountainFrequency, biom.lowerMountainHeight);
@@ -422,14 +415,53 @@ namespace Core.Chunking
                     this.AddBlock(block);
                 }
 
-//                if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
-//                {
-//                    trunkBuffer.Add(new TreeTrunk(biom, 
-//                        x - this.GlobalPosition.X,
-//                        y - this.GlobalPosition.Y,
-//                        z - this.GlobalPosition.Z));
-//                }
+                if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
+                {
+                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
+                        z - this.GlobalPosition.Z));
+                    block.SetID((int) biom.treeTrunkBlock);
+                    this.AddBlock(block);
+
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        block.Position.Y += 1;
+
+                        if (block.Position.Y > 15)
+                        {
+                            block.Position.Y -= 16;
+
+                            Chunk c = ChunkNeighbour((int) ChunkDirection.Up);
+                            c.AddBlock(block);
+                            c.ChunkState = ChunkState.Dirty;
+
+                            ChunkColumn column = ChunkBuffer.GetChunkColumn(c.LocalPosition.X, c.LocalPosition.Z);
+                            column.State = DrawingState.Dirty;
+                        }
+                        else
+                        {
+                            this.AddBlock(block);
+                        }
+                    }
+                }
             }
+
+
+            
+            //For flat
+//            for (int y = this.GlobalPosition.Y; y < this.GlobalPosition.Y + 16; y++)
+//            {
+//                if (y == 16)
+//                {
+//                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z))
+//                    {
+//                        ID = (int) BlockUV.Grass
+//                    };
+//                    
+//                    this.AddBlock(block);
+//                }
+//            }
+                
         }
 
         public static int GetNoise(int x, int y, int z, float scale, int max)
@@ -446,21 +478,15 @@ namespace Core.Chunking
         {
             GameManager.Instance.SavingJob.AddToSavingQueue(this);
         }
+    }
 
-        private struct TreeTrunk
-        {
-            internal Biom Biom { get; set; }
-            internal int X { get; set; }
-            internal int Y { get; set; }
-            internal int Z { get; set; }
-            
-            public TreeTrunk(Biom biom, int x, int y, int z)
-            {
-                Biom = biom;
-                X = x;
-                Y = y;
-                Z = z;
-            }
-        }
+    public enum ChunkDirection
+    {
+        Forward = 0, // 0
+        Back = 1, // 1
+        Up = 2, // 2
+        Down = 3, // 3
+        Left = 4, // 4
+        Right = 5 // 5
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using Core.Chunking.Threading;
 using Core.Math;
+using Core.Performance.Parallelisation;
 using Core.Player;
 using UnityEngine;
 using UnityEngine.TextCore.LowLevel;
@@ -24,7 +26,7 @@ namespace Core.Chunking
         public static void Init(int chunkSize, int _minHeight, int _maxHeight, int drawDistanceInChunks)
         {
             noiseJobManager = NoiseJobManager.NoiseJobManagerUpdaterInstance;
-            
+
             Dimension = 2 * drawDistanceInChunks + 3;
             DrawDistanceInChunks = drawDistanceInChunks;
             minHeight = _minHeight;
@@ -108,12 +110,12 @@ namespace Core.Chunking
 
                     data[Idx2D(x, Dimension - 1)] = column;
                     
+                    
                     NoiseJob noiseJob = new NoiseJob()
                     {
                         Column = column
                     };
-                    column.State = DrawingState.InNoiseQueue;
-
+                    
                     noiseJobManager.AddJob(noiseJob);
                 }
 
@@ -176,12 +178,11 @@ namespace Core.Chunking
                     }
 
                     data[Idx2D(x, 0)] = column;
-                    
+
                     NoiseJob noiseJob = new NoiseJob()
                     {
                         Column = column
                     };
-                    column.State = DrawingState.InNoiseQueue;
 
                     noiseJobManager.AddJob(noiseJob);
                 }
@@ -245,12 +246,11 @@ namespace Core.Chunking
                     }
 
                     data[Idx2D(0, y)] = column;
-                    
+
                     NoiseJob noiseJob = new NoiseJob()
                     {
                         Column = column
                     };
-                    column.State = DrawingState.InNoiseQueue;
 
                     noiseJobManager.AddJob(noiseJob);
                 }
@@ -313,13 +313,12 @@ namespace Core.Chunking
                     }
 
                     data[Idx2D(Dimension - 1, y)] = column;
-
+                    
                     NoiseJob noiseJob = new NoiseJob()
                     {
                         Column = column
                     };
-                    column.State = DrawingState.InNoiseQueue;
-
+                    
                     noiseJobManager.AddJob(noiseJob);
                 }
 
@@ -362,8 +361,9 @@ namespace Core.Chunking
             int xMax = playerPos.X + (DrawDistanceInChunks * chunkSize) + chunkSize;
             int zMax = playerPos.Y + (DrawDistanceInChunks * chunkSize) + chunkSize;
 
-            int x = MathHelper.MapToInt(gx, xMin, xMax, 1, Dimension);
-            int z = MathHelper.MapToInt(gz, zMin, zMax, 1, Dimension);
+            //Vielleicht -1 wieder weg??!??!?!
+            int x = MathHelper.MapToInt(gx, xMin, xMax, 1, Dimension - 1);
+            int z = MathHelper.MapToInt(gz, zMin, zMax, 1, Dimension - 1);
             
             int y = MathHelper.MapToInt(gy, minHeight, maxHeight, 0, YBound);
 

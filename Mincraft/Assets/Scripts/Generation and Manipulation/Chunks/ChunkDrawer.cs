@@ -1,6 +1,9 @@
-﻿using Core.Builder;
+﻿using System;
+using System.Threading.Tasks;
+using Core.Builder;
 using Core.Chunking;
 using Core.Chunking.Threading;
+using Core.Performance.Parallelisation;
 using Extensions;
 using UnityEngine;
 
@@ -26,14 +29,15 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
         {
             MeshJob task = _meshJobManager.DequeueFinishedJob();
 
-            if(task != null && task.Completed && task.MeshData.Vertices.Count != 0)
+            if(task.MeshData.Vertices.Count != 0)
             {
-                RenderCall(task);
+                RenderCall(ref task);
             }
         }
+
     }
 
-    private void RenderCall(MeshJob t)
+    private void RenderCall(ref MeshJob t)
     {
         var drawingChunk = t.Chunk;
 

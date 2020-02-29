@@ -5,6 +5,5 @@ namespace Core.StructureGeneration
 {
     public interface IStructureBuilder
     {
-        IEnumerable<Block> NextBlock();
     }
 }

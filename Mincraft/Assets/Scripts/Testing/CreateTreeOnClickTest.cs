@@ -34,28 +34,7 @@ namespace Testing
         {
             if (Input.GetKeyDown(KeyCode.H))
             {
-                GameObject chunkGameObject = GameObject.Find("(-16, 0, -16)");
                 
-                Chunk clickedChunk = ChunkBuffer.GetChunkFromGlobal((int) chunkGameObject.transform.position.x,
-                    (int) chunkGameObject.transform.position.y,
-                    (int) chunkGameObject.transform.position.z, playerPos);
-
-                TreeBuilder tb = new TreeBuilder(0, 0);
-                IStructureBuilder treeBuilder = new TreeBuilder(0, 0);
-                
-
-                MeshJob job = null;
-                foreach (Block block in treeBuilder.NextBlock())
-                {   
-                    clickedChunk.AddBlock(block);
-                    
-                    job = new MeshJob();
-                    var chunkColumn = ChunkBuffer.GetChunkColumn(clickedChunk.LocalPosition.X, clickedChunk.LocalPosition.Z);
-                    
-                    job.CreateChunkFromExisting(clickedChunk, chunkColumn);
-                }
-
-                _meshJobManager.AddJob(job, JobPriority.High);
             }
         }
     }

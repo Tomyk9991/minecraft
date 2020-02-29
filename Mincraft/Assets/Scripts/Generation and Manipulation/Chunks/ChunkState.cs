@@ -3,11 +3,6 @@
     public enum ChunkState
     {
         /// <summary>
-        /// Chunk is created and added to the Dictionaries
-        /// </summary>
-        Created,
-        
-        /// <summary>
         /// Chunk is displayed with a gameobject
         /// </summary>
         Drawn,

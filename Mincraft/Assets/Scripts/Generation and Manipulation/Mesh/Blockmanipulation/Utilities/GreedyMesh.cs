@@ -5,13 +5,12 @@ using Core.Chunking;
 
 namespace Core.Builder
 {
-    public class GreedyMesh
+    public static class GreedyMesh
     {
-        private int size;
-        public GreedyMesh() => size = 0x10;
-        public GreedyMesh(bool test) => size = 16;
+        private static int size;
+        static GreedyMesh() => size = 0x10;
 
-        public MeshData ReduceMesh(Chunk chunk)
+        public static MeshData ReduceMesh(Chunk chunk)
         {
             List<Vector3> vertices = new List<Vector3>();
             List<int> elements = new List<int>();

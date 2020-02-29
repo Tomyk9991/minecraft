@@ -1,12 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace Core.Performance.Parallelisation
 {
-    public abstract class AutoThreadCollection<T> where T : class
+    public abstract class AutoThreadCollection<T>
     {
-//        public ConcurrentQueue<T> FinishedJobs { get; private set; }
-        public List<T> FinishedJobs { get; private set; }
+        protected List<T> FinishedJobs { get; private set; }
 
         protected Queue<T> jobs;
         protected Queue<T> highPriorityJobs;
@@ -15,23 +15,34 @@ namespace Core.Performance.Parallelisation
         private object lockObject;
         private SemaphoreSlim semaphore;
 
+        private bool singleThreaded = false;
+
 
         protected AutoThreadCollection(int amountThreads)
         {
-            this.jobs = new Queue<T>();
-            this.highPriorityJobs = new Queue<T>();
-//            this.FinishedJobs = new ConcurrentQueue<T>();
-            this.FinishedJobs = new List<T>();
-            semaphore = new SemaphoreSlim(0);
-            this.lockObject = new object();
-
-            threads = new Thread[amountThreads];
-            for (int i = 0; i < amountThreads; i++)
+            if (amountThreads < 0)
+                throw new ArgumentOutOfRangeException("amountThreads has to be positive or zero");
+            if (amountThreads == 0) singleThreaded = true;
+            else
             {
-                threads[i] = new Thread(Run)
+                this.jobs = new Queue<T>();
+                this.highPriorityJobs = new Queue<T>();
+                //this.FinishedJobs = new List<T>();
+//                this.FinishedMeshJobs = new List<MeshJob>();
+//                this.FinishedNoiseJobs = new List<NoiseJob>();
+                this.FinishedJobs = new List<T>();
+                semaphore = new SemaphoreSlim(0);
+                this.lockObject = new object();
+                
+                
+                threads = new Thread[amountThreads];
+                for (int i = 0; i < amountThreads; i++)
                 {
-                    IsBackground = true
-                };
+                    threads[i] = new Thread(Run)
+                    {
+                        IsBackground = true
+                    };
+                }
             }
         }
 
@@ -57,10 +68,9 @@ namespace Core.Performance.Parallelisation
                         job = jobs.Dequeue();
                     }
                 }
-
+                
                 JobExecute(job);
-
-                lock (FinishedJobs) //Sorgt dafür, dass die Jobs mit hoher Priorität auch als erster aus der Liste genommen werden
+                lock (FinishedJobs) //Sorgt dafür, dass die Jobs mit hoher Priorität auch als erstes aus der Liste genommen werden
                 {
                     if (highPriority)
                         FinishedJobs.Insert(0, job);
@@ -70,35 +80,49 @@ namespace Core.Performance.Parallelisation
             }
         }
 
-        public void AddJob(T job, JobPriority priority = JobPriority.Normal)
+        public virtual void AddJob(T job, JobPriority priority = JobPriority.Normal)
         {
-            lock (lockObject)
+            if (!singleThreaded)
             {
-                if (priority == JobPriority.High)
-                    this.highPriorityJobs.Enqueue(job);
-                else
-                    this.jobs.Enqueue(job);
-            }
+                lock (lockObject)
+                {
+                    if (priority == JobPriority.High)
+                        this.highPriorityJobs.Enqueue(job);
+                    else
+                        this.jobs.Enqueue(job);
+                }
 
-            semaphore.Release();
+                semaphore.Release();
+            }
+            else
+            {
+                JobExecute(job);
+            }
         }
+        
 
         public void Start()
         {
-            this.running = true;
-            for (int i = 0; i < threads.Length; i++)
+            if (!singleThreaded)
             {
-                threads[i].Start();
+                this.running = true;
+                for (int i = 0; i < threads.Length; i++)
+                {
+                    threads[i].Start();
+                }
             }
         }
 
         public void Stop()
         {
-            this.running = false;
-            for (int i = 0; i < threads.Length; i++)
+            if (!singleThreaded)
             {
-                //threads[i].Join(30);
-                threads[i].Abort();
+                this.running = false;
+                for (int i = 0; i < threads.Length; i++)
+                {
+                    //threads[i].Join(30);
+                    threads[i].Abort();
+                }
             }
         }
     }

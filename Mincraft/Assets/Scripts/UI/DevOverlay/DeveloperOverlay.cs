@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Core.Chunking;
 using Core.Chunking.Threading;
+using Core.Performance.Parallelisation;
 using Core.Player;
 using Utilities;
 
@@ -39,7 +40,8 @@ namespace Core.UI.DeveloperOverlay
                 t.Add(transform.GetChild(i));
             }
 
-            timer = new Timer(WorldSettings.WorldTick);
+            //timer = new Timer(WorldSettings.WorldTick);
+            timer = new Timer(0.00001f);
             this.transforms = t.ToArray();
         }
 
@@ -68,7 +70,7 @@ namespace Core.UI.DeveloperOverlay
 
         private string GetNoiseJobCount()
         {
-            return NoiseJobManager.NoiseJobManagerUpdaterInstance.Count.ToString();
+            return (NoiseJobManager.NoiseJobManagerUpdaterInstance.Count * ChunkBuffer.YBound).ToString();
         }
 
         private string GetChunkJobCount()
@@ -82,7 +84,6 @@ namespace Core.UI.DeveloperOverlay
             return ChunkBuffer.Data.Length * ChunkBuffer.YBound;
         }
 
-        //Änderbar mit GameobjectPool
         private int GetAmountChunksInGameObjects()
         {
             return worldParent.transform.Cast<Transform>().Count(t => t.name != "Unused chunk");

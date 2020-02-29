@@ -1370,55 +1370,8 @@ MonoBehaviour:
   minMaxYHeight:
     X: -32
     Y: 272
-  bioms:
-  - Name: Default Biom
-    minValue: -1
-    maxValue: 0
-    topLayerBlock: 1
-    topLayerBaseHeight: 1
-    topLayerNoiseHeight: 1
-    topLayerNoise: 4.5
-    midLayerBlock: 3
-    midBaseHeight: 2
-    midBaseNoiseHeight: 2
-    midBaseNoise: 0.5
-    lowerLayerBlock: 2
-    lowerBaseHeight: -48
-    lowerBasNoisHeight: 4
-    lowerBaseNoise: 5
-    lowerMountainHeight: 128
-    lowerMinHeight: -128
-    lowerMountainFrequency: 0.8
-    caveFrequency: 5
-    caveSize: 2
-    treeTrunkBlock: 4
-    treeLeafBlock: 6
-    treeProbability: 0.11
-    treeZoomLevel: 1.08
-  - Name: Sand
-    minValue: 0
-    maxValue: 1
-    topLayerBlock: 8
-    topLayerBaseHeight: 1
-    topLayerNoiseHeight: 1
-    topLayerNoise: 4.5
-    midLayerBlock: 8
-    midBaseHeight: 2
-    midBaseNoiseHeight: 4
-    midBaseNoise: 0.05
-    lowerLayerBlock: 2
-    lowerBaseHeight: -24
-    lowerBasNoisHeight: 4
-    lowerBaseNoise: 5
-    lowerMountainHeight: 48
-    lowerMinHeight: -12
-    lowerMountainFrequency: 0.8
-    caveFrequency: 5
-    caveSize: 10
-    treeTrunkBlock: 9
-    treeLeafBlock: 0
-    treeProbability: 0.04
-    treeZoomLevel: 1.08
+  biomSaveable: {fileID: 11400000, guid: 84c14c8e3259ec14a9e41dfe9688adef, type: 2}
+  bioms: []
   smoothness: 2.5
   steepness: 40
 --- !u!114 &787175598
@@ -1449,7 +1402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a81e31946edd9a4783d5d33ef529847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawsPerUpdate: 15
+  drawsPerUpdate: 11000000
 --- !u!114 &787175601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1464,6 +1417,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveWithPlayer: 1
   drawDistanceInChunks: 5
+  calculateThreads: 0
+  meshJobThreadAmount: 8
+  noiseJobThreadAmount: 8
 --- !u!1 &802634826
 GameObject:
   m_ObjectHideFlags: 0
@@ -4364,7 +4320,7 @@ PrefabInstance:
     - target: {fileID: 3399322170810967719, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 32
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 3399322170810967719, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
@@ -4420,6 +4376,11 @@ PrefabInstance:
         type: 3}
       propertyPath: canMoveMouse
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399322170821168999, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: m_RunSpeed
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ada145dfe0b44a4e8985c27da1d88fb, type: 3}

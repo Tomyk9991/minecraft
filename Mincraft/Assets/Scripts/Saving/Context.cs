@@ -15,5 +15,13 @@
         {
             return default(T);
         }
+        
+        //Beispiel
+//        string path = chunkLoader.Path + job.Chunk.GlobalPosition.ToString() + chunkLoader.FileEnding<Chunk>();
+//                
+//                if (File.Exists(path))
+//                {
+//                    job.Chunk.LoadChunk(chunkLoader.LoadContext(path));
+//                }
     }
 }

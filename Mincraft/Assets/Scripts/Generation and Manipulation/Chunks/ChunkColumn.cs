@@ -32,6 +32,28 @@ namespace Core.Chunking
                 }
             }
         }
+
+        private int finishedChunksInColumn = 0;
+        private object mutexCool = new object();
+        
+        public int FinishedChunksCount
+        {
+            get
+            {
+                lock (mutexCool)
+                    return finishedChunksInColumn;
+            }
+            set
+            {
+                lock (mutexCool)
+                {
+                    finishedChunksInColumn = value;
+                    if (finishedChunksInColumn >= this.chunks.Length - 1)
+                        this.State = DrawingState.NoiseReady;
+                }
+            }
+        }
+
         public Chunk this[int index]
         {
             get
@@ -61,7 +83,7 @@ namespace Core.Chunking
             chunks = new Chunk[System.Math.Abs(minYHeight / 16) + System.Math.Abs(maxYHeight / 16)];
         }
 
-        public ChunkColumn[] Neighbours()
+        public ChunkColumn[] ChunkColumnNeighbours()
         {
             return new[] 
             {
@@ -83,7 +105,6 @@ namespace Core.Chunking
         None = 0,
         Drawn = 1,
         NoiseReady = 2,
-        InNoiseQueue = 4,
-        Dirty = 8
+        Dirty = 4
     }
 }

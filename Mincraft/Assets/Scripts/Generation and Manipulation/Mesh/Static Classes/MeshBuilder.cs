@@ -53,7 +53,7 @@ namespace Core.Builder
             Block[] neighbourBlocks = new Block[6];
             bool[] boolNeighbours = new bool[6];
 
-		    for (int i = 0; i < blocks.Length; i++)
+            for (int i = 0; i < blocks.Length; i++)
 	        {
 	            bool transparent = blocks[i].IsTransparent();
 
@@ -66,7 +66,7 @@ namespace Core.Builder
                 //Check, ob dieser Block transparent ist, oder nicht
                 // Wenn es so sein sollte, bleibt das neighbours-Array mit 6 false-Werten und jede Seite wird gezeichnet
 
-                neighbourBlocks = chunk.Neighbours(block.Position);
+                neighbourBlocks = chunk.GetBlockNeighbours(block.Position);
                 
                 if (!transparent)
                 {
