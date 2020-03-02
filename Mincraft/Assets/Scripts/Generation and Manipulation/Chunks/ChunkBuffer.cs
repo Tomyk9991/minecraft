@@ -13,8 +13,9 @@ namespace Core.Chunking
     {
         private static ChunkColumn[] data;
         private static object mutex = new object();
-        private static NoiseJobManager noiseJobManager;
-
+        //private static NoiseJobManager noiseJobManager;
+        private static JobManager jobManager;
+        
         public static int Dimension { get; private set; }
         public static int DrawDistanceInChunks { get; private set; }
         public static int YBound { get; private set; }
@@ -25,7 +26,8 @@ namespace Core.Chunking
         
         public static void Init(int chunkSize, int _minHeight, int _maxHeight, int drawDistanceInChunks)
         {
-            noiseJobManager = NoiseJobManager.NoiseJobManagerUpdaterInstance;
+            jobManager = JobManager.JobManagerUpdaterInstance;
+            //noiseJobManager = NoiseJobManager.NoiseJobManagerUpdaterInstance;
 
             Dimension = 2 * drawDistanceInChunks + 3;
             DrawDistanceInChunks = drawDistanceInChunks;
@@ -115,8 +117,9 @@ namespace Core.Chunking
                     {
                         Column = column
                     };
-                    
-                    noiseJobManager.AddJob(noiseJob);
+
+                    jobManager.Add(noiseJob);
+                    //noiseJobManager.AddJob(noiseJob);
                 }
 
                 for (int x = 0; x < Dimension; x++)
@@ -183,8 +186,8 @@ namespace Core.Chunking
                     {
                         Column = column
                     };
-
-                    noiseJobManager.AddJob(noiseJob);
+                    jobManager.Add(noiseJob);
+//                    noiseJobManager.AddJob(noiseJob);
                 }
 
                 for (int x = 0; x < Dimension; x++)
@@ -251,8 +254,8 @@ namespace Core.Chunking
                     {
                         Column = column
                     };
-
-                    noiseJobManager.AddJob(noiseJob);
+                    jobManager.Add(noiseJob);
+//                    noiseJobManager.AddJob(noiseJob);
                 }
 
                 for (int y = 0; y < Dimension; y++)
@@ -318,8 +321,8 @@ namespace Core.Chunking
                     {
                         Column = column
                     };
-                    
-                    noiseJobManager.AddJob(noiseJob);
+                    jobManager.Add(noiseJob);   
+//                    noiseJobManager.AddJob(noiseJob);
                 }
 
                 for (int y = 0; y < Dimension; y++)

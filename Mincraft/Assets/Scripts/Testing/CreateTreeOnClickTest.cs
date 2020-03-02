@@ -17,8 +17,9 @@ namespace Testing
         private int drawDistance;
         private const int CHUNKSIZE = 0x10;
         
-        private MeshJobManager _meshJobManager;
-
+        //private MeshJobManager _meshJobManager;
+        private JobManager _jobManager;
+        
         private void Start()
         {
             PlayerMovementTracker.OnChunkPositionChanged += (x, y) =>
@@ -27,7 +28,8 @@ namespace Testing
                 playerPos.Y = y;
             };
             
-            _meshJobManager = MeshJobManager.MeshJobManagerUpdaterInstance;
+            _jobManager = JobManager.JobManagerUpdaterInstance;
+            //_meshJobManager = MeshJobManager.MeshJobManagerUpdaterInstance;
         }
         
         private void Update()

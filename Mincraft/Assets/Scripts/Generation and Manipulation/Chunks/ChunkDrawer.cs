@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Core.Builder;
+﻿using Core.Builder;
 using Core.Chunking;
 using Core.Chunking.Threading;
-using Core.Performance.Parallelisation;
 using Extensions;
 using UnityEngine;
 
@@ -12,22 +9,24 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
     public ChunkGameObjectPool GoPool { get; set; }
     [SerializeField] private int drawsPerUpdate = 2;
     
-    private MeshJobManager _meshJobManager;
+    //private MeshJobManager _meshJobManager;
+    private JobManager _jobManager;
     private MeshModifier modifier;
 
     private void Start()
     {
         GoPool = ChunkGameObjectPool.Instance;
-        _meshJobManager = MeshJobManager.MeshJobManagerUpdaterInstance;
+        _jobManager = JobManager.JobManagerUpdaterInstance;
+        //_meshJobManager = MeshJobManager.MeshJobManagerUpdaterInstance;
 
         modifier = new MeshModifier();
     }
 
     private void Update()
     {
-        for (int i = 0; i < _meshJobManager.FinishedJobsCount && i < drawsPerUpdate; i++)
+        for (int i = 0; i < _jobManager.FinishedJobsCount && i < drawsPerUpdate; i++)
         {
-            MeshJob task = _meshJobManager.DequeueFinishedJob();
+            MeshJob task = _jobManager.DequeueFinishedJob();
 
             if(task.MeshData.Vertices.Count != 0)
             {

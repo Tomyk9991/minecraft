@@ -22,17 +22,6 @@ namespace Core.Chunking.Threading
             this.ColliderData = new MeshData();
         }
         
-//        /// <summary>
-//        /// Creates a new Chunkjob with an existing chunk, so the information is not getting lost
-//        /// </summary>
-//        /// <param name="chunkPos">Expects a local space coordinate </param>
-//        /// <returns></returns>
-//        public void CreateChunkFromExisting(Chunk chunk)
-//        {
-//            this.Chunk = chunk ?? throw new Exception("Chunk is null");
-//        }
-
-//        public override void ExecuteJob()
         public void ExecuteJob()
         {
             if (this.Chunk.GetBlocks().All(block => block.Equals(Block.Empty())))

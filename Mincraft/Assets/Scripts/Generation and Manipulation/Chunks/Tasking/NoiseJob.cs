@@ -12,7 +12,6 @@ namespace Core.Chunking.Threading
 
         public ChunkColumn Column { get; set; }
         
-//        public override void ExecuteJob()
         public void ExecuteJob()
         {
             foreach (var chunk in this.Column.chunks)

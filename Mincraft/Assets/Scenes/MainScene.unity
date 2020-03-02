@@ -1331,7 +1331,7 @@ GameObject:
   - component: {fileID: 787175601}
   - component: {fileID: 787175600}
   m_Layer: 0
-  m_Name: Chunks
+  m_Name: World
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1417,7 +1417,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveWithPlayer: 1
   drawDistanceInChunks: 5
-  calculateThreads: 0
+  calculateThreads: 1
   meshJobThreadAmount: 8
   noiseJobThreadAmount: 8
 --- !u!1 &802634826

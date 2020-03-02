@@ -5,7 +5,6 @@ using Core;
 using Core.Chunking;
 using Core.Chunking.Threading;
 using Core.Math;
-using Core.Performance.Parallelisation;
 using Core.Player;
 using Core.Saving;
 using Extensions;
@@ -30,8 +29,10 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     private int maxHeight;
     private int dimension;
 
-    private MeshJobManager _meshJobManager;
-    private NoiseJobManager noiseJobManager;
+//    private MeshJobManager _meshJobManager;
+//    private NoiseJobManager noiseJobManager;
+
+    private JobManager _jobManager;
 
     private SavingJob savingJob;
     private bool isChecking = false;
@@ -60,10 +61,12 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
             noiseJobThreadAmount = SystemInfo.processorCount - 2 <= 0 ? 1 : (SystemInfo.processorCount - 2) / 3;
         }
 
-        _meshJobManager = new MeshJobManager(meshJobThreadAmount, true);
-        _meshJobManager.Start();
-        noiseJobManager = new NoiseJobManager(noiseJobThreadAmount, true);
-        noiseJobManager.Start();
+        _jobManager = new JobManager(meshJobThreadAmount + noiseJobThreadAmount, true);
+        _jobManager.Start();
+//        _meshJobManager = new MeshJobManager(meshJobThreadAmount, true);
+//        _meshJobManager.Start();
+//        noiseJobManager = new NoiseJobManager(noiseJobThreadAmount, true);
+//        noiseJobManager.Start();
 
         chunkSize = 0x10;
         ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
@@ -95,7 +98,8 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
                     Column = column
                 };
 
-                noiseJobManager.AddJob(noiseJob);
+                _jobManager.Add(noiseJob);
+                //noiseJobManager.AddJob(noiseJob);
 
                 if (localx == 0 || localx == dimension - 1 || localz == 0 || localz == dimension - 1)
                 {
@@ -122,7 +126,8 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         
         if (timer.TimeElapsed(Time.deltaTime))
         {
-            if (shiftDirections.Count > 0 && _meshJobManager.JobsCount == 0)
+            //if (shiftDirections.Count > 0 && _meshJobManager.JobsCount == 0)
+            if (shiftDirections.Count > 0 && _jobManager.MeshJobsCount == 0)
             {
                 ChunkBuffer.Shift(shiftDirections.Dequeue());
             }
@@ -154,26 +159,12 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
                                     Chunk chunk = column[localy];
                                     
                                     MeshJob job = new MeshJob(chunk);
-                                    //job.CreateChunkFromExisting(chunk);
-                                    _meshJobManager.CreateChunkFromExistingAndAddJob(chunk);
+                                    _jobManager.CreateChunkFromExistingAndAddJob(chunk);
+                                    //_meshJobManager.CreateChunkFromExistingAndAddJob(chunk);
                                 }
                                 column.State = DrawingState.Drawn;
                             }
-//                            if (column.State == DrawingState.Dirty)
-//                            {
-//                                Debug.Log("Dirty ass bitch");
-//                                for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
-//                                {
-//                                    Chunk chunk = column[localy];
-//                                    if (chunk.ChunkState == ChunkState.Dirty)
-//                                    {
-//                                        _meshJobManager.CreateChunkFromExistingAndAddJob(chunk);
-//                                    }
-//                                }
-//                                
-//                                column.State = DrawingState.Drawn;
-//                            }
-//                            else
+
                         }
                     }
                 }
@@ -185,7 +176,7 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 
     private void OnDestroy()
     {
-//        _jobManager?.Dispose();
+        _jobManager?.Dispose();
 //        _meshJobManager?.Dispose();
 //        noiseJobManager?.Dispose();
     }

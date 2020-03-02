@@ -70,12 +70,15 @@ namespace Core.UI.DeveloperOverlay
 
         private string GetNoiseJobCount()
         {
-            return (NoiseJobManager.NoiseJobManagerUpdaterInstance.Count * ChunkBuffer.YBound).ToString();
+            return (JobManager.JobManagerUpdaterInstance.NoiseJobsCount * ChunkBuffer.YBound).ToString();
+            //return (NoiseJobManager.NoiseJobManagerUpdaterInstance.Count * ChunkBuffer.YBound).ToString();
         }
 
         private string GetChunkJobCount()
         {
-            return MeshJobManager.MeshJobManagerUpdaterInstance.JobsCount + " finished jobs: " + MeshJobManager.MeshJobManagerUpdaterInstance.FinishedJobsCount;
+            return JobManager.JobManagerUpdaterInstance.MeshJobsCount + " finished jobs: " +
+                   JobManager.JobManagerUpdaterInstance.FinishedJobsCount;
+            //return MeshJobManager.MeshJobManagerUpdaterInstance.JobsCount + " finished jobs: " + MeshJobManager.MeshJobManagerUpdaterInstance.FinishedJobsCount;
         }
         
 
