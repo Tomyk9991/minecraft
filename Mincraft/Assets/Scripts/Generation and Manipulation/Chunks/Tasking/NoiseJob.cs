@@ -1,6 +1,4 @@
-﻿using Core.Performance.Parallelisation;
-
-namespace Core.Chunking.Threading
+﻿namespace Core.Chunking.Threading
 {
     public class NoiseJob
     {
@@ -11,15 +9,5 @@ namespace Core.Chunking.Threading
         }
 
         public ChunkColumn Column { get; set; }
-        
-        public void ExecuteJob()
-        {
-            foreach (var chunk in this.Column.chunks)
-            {
-                chunk.GenerateBlocks();
-            }
-            
-            this.Column.State = DrawingState.NoiseReady;
-        }
     }
 }

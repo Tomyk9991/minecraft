@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4515187503092839610}
   - component: {fileID: 4515187503092839613}
   - component: {fileID: 8065466415312175269}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Chunk Streched Mat Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -12,8 +12,7 @@ namespace Core.Builder
         public List<Vector2> UVs { get; set; }
         public List<Color> Colors { get; set; }
         public GameObject GameObject { get; private set; }
-
-
+        
         public MeshData(List<Vector3> vertices, List<int> triangles, List<int> transparentTriangles, List<Vector2> uvs, List<Color> colors, GameObject go = null)
         {
             this.Vertices = vertices;

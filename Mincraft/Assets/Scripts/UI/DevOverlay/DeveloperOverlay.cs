@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using System.Text;
 using TMPro;
 using UnityEngine;
 
 using Core.Chunking;
 using Core.Chunking.Threading;
-using Core.Performance.Parallelisation;
 using Core.Player;
 using Utilities;
 
@@ -20,28 +18,27 @@ namespace Core.UI.DeveloperOverlay
         [Header("Outputs")]
         [SerializeField] private TextMeshProUGUI playerPositionOutput = null;
         [SerializeField] private TextMeshProUGUI chunksLoadedOutput = null;
-        [SerializeField] private TextMeshProUGUI chunksInGameObjectOutput = null;
-        [SerializeField] private TextMeshProUGUI cpuUsageOutput = null;
         [SerializeField] private TextMeshProUGUI amountNoiseJobsOutput = null;
         [SerializeField] private TextMeshProUGUI amountChunkJobsOutput = null;
 
-        [Header("Calculations")]
-        [SerializeField] private Transform worldParent = null;
-
         private Transform[] transforms = null;
-        private PerformanceCounter theCPUCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
         private Timer timer;
+        private JobManager jobmanager;
+
+        private StringBuilder stringbuilder;
 
         private void Start()
         {
+            jobmanager = JobManager.JobManagerUpdaterInstance;
+            stringbuilder = new StringBuilder();
+            
             List<Transform> t = new List<Transform>();
             for (int i = 0; i < transform.childCount; i++)
             {
                 t.Add(transform.GetChild(i));
             }
 
-            //timer = new Timer(WorldSettings.WorldTick);
-            timer = new Timer(0.00001f);
+            timer = new Timer(WorldSettings.WorldTick);
             this.transforms = t.ToArray();
         }
 
@@ -60,41 +57,29 @@ namespace Core.UI.DeveloperOverlay
             if (showingOverlay && timer.TimeElapsed(Time.deltaTime))
             {
                 playerPositionOutput.text = PlayerMovementTracker.Instance.PlayerPos();
-                chunksLoadedOutput.text = GetLoadedChunksAmount().ToString();
-                chunksInGameObjectOutput.text = GetAmountChunksInGameObjects().ToString();
-                cpuUsageOutput.text = GetCPUUsage();
-                amountNoiseJobsOutput.text = GetNoiseJobCount();
-                amountChunkJobsOutput.text = GetChunkJobCount();
+                chunksLoadedOutput.SetText(GetLoadedChunksAmount());
+                amountNoiseJobsOutput.SetText(GetNoiseJobCount());
+                amountChunkJobsOutput.SetText(GetChunkJobCount());
             }
         }
 
-        private string GetNoiseJobCount()
+        private StringBuilder GetNoiseJobCount()
         {
-            return (JobManager.JobManagerUpdaterInstance.NoiseJobsCount * ChunkBuffer.YBound).ToString();
-            //return (NoiseJobManager.NoiseJobManagerUpdaterInstance.Count * ChunkBuffer.YBound).ToString();
+            stringbuilder.Clear();
+            return stringbuilder.Append(jobmanager.NoiseJobsCount * ChunkBuffer.YBound);
         }
 
-        private string GetChunkJobCount()
+        private StringBuilder GetChunkJobCount()
         {
-            return JobManager.JobManagerUpdaterInstance.MeshJobsCount + " finished jobs: " +
-                   JobManager.JobManagerUpdaterInstance.FinishedJobsCount;
-            //return MeshJobManager.MeshJobManagerUpdaterInstance.JobsCount + " finished jobs: " + MeshJobManager.MeshJobManagerUpdaterInstance.FinishedJobsCount;
+            stringbuilder.Clear();
+            return stringbuilder.Append(jobmanager.MeshJobsCount).Append(" finished jobs: ").Append(jobmanager.FinishedJobsCount);
         }
         
 
-        private int GetLoadedChunksAmount()
+        private StringBuilder GetLoadedChunksAmount()
         {
-            return ChunkBuffer.Data.Length * ChunkBuffer.YBound;
-        }
-
-        private int GetAmountChunksInGameObjects()
-        {
-            return worldParent.transform.Cast<Transform>().Count(t => t.name != "Unused chunk");
-        }
-
-        private string GetCPUUsage()
-        {
-            return theCPUCounter.NextValue() + "%";
+            stringbuilder.Clear();
+            return stringbuilder.Append(ChunkBuffer.DataLength * ChunkBuffer.YBound);
         }
     }
 }

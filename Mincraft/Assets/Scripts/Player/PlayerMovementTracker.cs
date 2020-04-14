@@ -58,7 +58,7 @@ namespace Core.Player
                     d = Direction.Back;
                 
                 
-                OnDirectionModified(d);
+                OnDirectionModified?.Invoke(d);
                 prevXPlayerPos = xPlayerPos;
                 prevZPlayerPos = zPlayerPos;
                 OnChunkPositionChanged?.Invoke(xPlayerPos, zPlayerPos);

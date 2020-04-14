@@ -7,6 +7,9 @@ namespace Core.Player
 {
     public class SelectedBlockVisualizer : MonoBehaviour, IConsoleToggle
     {
+        [Header("References")]
+        [SerializeField] Camera cameraRef = null;
+        
         [SerializeField] private GameObject[] gameObjects = null;
         [SerializeField] private LayerMask layerMask = 0;
         public float RaycastHitable
@@ -22,14 +25,8 @@ namespace Core.Player
 
         [SerializeField] private float raycastHitable = 1000f;
         
-        private Camera cameraRef;
         private readonly Vector3 centerScreenNormalized = new Vector3(0.5f, 0.5f, 0f);
 
-        private void Start()
-        {
-            cameraRef = Camera.main;
-        }
-        
         private void Update()
         {
             Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);

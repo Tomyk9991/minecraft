@@ -3,6 +3,7 @@ using UnityEngine;
 
 using UnityInspector;
 using Extensions;
+using Utilities;
 
 
 namespace Core.Chunking
@@ -17,18 +18,18 @@ namespace Core.Chunking
 
         private const string unusedName = "Unused chunk";
 
-        private Queue<GameObject> gameObjectChunks;
-        
+        //private Queue<GameObject> gameObjectChunks;
+        private Pool<GameObject> gameObjectChunks;
         private Queue<GameObject> objectsToRelease;
         
         private void Start()
         {
             objectsToRelease = new Queue<GameObject>();
-            gameObjectChunks = new Queue<GameObject>();
+            gameObjectChunks = new Pool<GameObject>(chunksToInstantiate);
             
             for (int i = 0; i < chunksToInstantiate; i++)
             {
-                InstantiateChunkGameObject();
+                gameObjectChunks.Add(InstantiateChunkGameObject());
             }
         }
 
@@ -42,7 +43,7 @@ namespace Core.Chunking
                 {
                     go.name = unusedName;
                     go.SetActive(false);
-                    gameObjectChunks.Enqueue(go);
+                    gameObjectChunks.Add(go);
                 }
             }
         }
@@ -52,18 +53,22 @@ namespace Core.Chunking
         /// Gets the next unused GameObject in Pool
         /// </summary>
         /// <returns></returns>
-        public GameObject GetNextUnusedChunk() 
+        public GameObject GetNextUnusedChunk()
         {
+            GameObject g;
             if (gameObjectChunks.Count == 0)
             {
-                InstantiateChunkGameObject();
+                g = InstantiateChunkGameObject();
+                return g;
             }
-                
-            gameobjectCount = transform.childCount;
-            return gameObjectChunks.Dequeue();
+            else
+            {
+                gameobjectCount = transform.childCount;
+                return gameObjectChunks.GetNext();
+            }
         }
 
-        private void InstantiateChunkGameObject()
+        private GameObject InstantiateChunkGameObject()
         {
             GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
             g.name = unusedName;
@@ -74,8 +79,8 @@ namespace Core.Chunking
             g.GetComponent<MeshFilter>().sharedMesh = m1;
             g.GetComponent<MeshCollider>().sharedMesh = m2;
             
-            gameObjectChunks.Enqueue(g);
             gameobjectCount = transform.childCount;
+            return g;
         }
 
         public void SetGameObjectToUnsed(GameObject go)

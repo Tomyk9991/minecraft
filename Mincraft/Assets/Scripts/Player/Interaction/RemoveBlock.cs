@@ -7,7 +7,7 @@ using Core.Chunking;
 using Core.Math;
 using Core.UI.Console;
 
-namespace Core.Player
+namespace Core.Player.Interaction
 {
     public class RemoveBlock : MonoBehaviour, IMouseUsable, IRemoveChunk, IConsoleToggle
     {
@@ -37,7 +37,6 @@ namespace Core.Player
 
         private Camera cameraRef;
         
-        private MeshModifier modifier;
         private ConcurrentQueue<MeshData> meshDatas;
 
         private void Start()
@@ -46,7 +45,6 @@ namespace Core.Player
             chunkSize = 0x10;
 
             GoPool = ChunkGameObjectPool.Instance;
-            modifier = new MeshModifier();
             meshDatas = new ConcurrentQueue<MeshData>();
 
             //modifier.MeshAvailable += (s, data) => meshDatas.Enqueue(data);

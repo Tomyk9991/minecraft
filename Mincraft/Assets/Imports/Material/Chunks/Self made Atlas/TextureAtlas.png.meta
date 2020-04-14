@@ -6,15 +6,15 @@ TextureImporter:
   serializedVersion: 10
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
+    enableMipMap: 1
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
-    borderMipMap: 1
+    borderMipMap: 0
     mipMapsPreserveCoverage: 0
-    alphaTestReferenceValue: 3
-    mipMapFadeDistanceStart: 8
-    mipMapFadeDistanceEnd: 10
+    alphaTestReferenceValue: 0
+    mipMapFadeDistanceStart: 6
+    mipMapFadeDistanceEnd: 9
   bumpmap:
     convertToNormalMap: 0
     externalNormalMap: 0
@@ -31,8 +31,8 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
-    aniso: 0
+    filterMode: 1
+    aniso: 1
     mipBias: -100
     wrapU: 1
     wrapV: 1

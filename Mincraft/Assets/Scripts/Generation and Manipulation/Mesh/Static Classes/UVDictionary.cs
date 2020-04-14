@@ -54,7 +54,7 @@ namespace Core.Builder
             }
         }
 
-        public static float TransparencyLevelID(BlockUV id)
+        public static float TransparencyLevelID(in BlockUV id)
         {
             if (id < 0 || (int)id > transparancyLevel.Length - 1)
                 return 0f;
@@ -66,7 +66,7 @@ namespace Core.Builder
             dictionary = null;
         }
 
-        public static UVData[] GetValue(BlockUV id)
+        public static UVData[] GetValue(in BlockUV id)
         {
             if (id < 0 || (int) id > dictionary.Length - 1)
                 return notFoundData;
@@ -74,14 +74,14 @@ namespace Core.Builder
             return dictionary[(int) id];
         }
 
-        public static float MeshOffsetID(BlockUV id)
+        public static float MeshOffsetID(in BlockUV id)
         {
             if (id < 0 || (int)id > meshOffsetInformation.Length - 1)
                 return 0f;
             return meshOffsetInformation[(int)id];
         }
 
-        public static bool IsSolidID(BlockUV id)
+        public static bool IsSolidID(in BlockUV id)
         {
             if (id < 0 || (int)id > isSolidInformation.Length - 1)
                 return false;
@@ -89,7 +89,7 @@ namespace Core.Builder
             return isSolidInformation[(int) id];
         }
 
-        public static bool IsTransparentID(BlockUV id)
+        public static bool IsTransparentID(in BlockUV id)
         {
             if (id < 0 || (int)id > isTransparentInformation.Length - 1)
                 return false;

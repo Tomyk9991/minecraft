@@ -7,7 +7,7 @@ using Core.UI.Console;
 using Core.Managers;
 using Core.Math;
 
-namespace Core.Player
+namespace Core.Player.Interaction
 {
     public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
     {
@@ -31,9 +31,6 @@ namespace Core.Player
         private int chunkSize;
         
         private Camera cameraRef;
-
-        private MeshModifier modifier;
-
         private GameManager gameManager;
 
         public bool Enabled
@@ -49,7 +46,6 @@ namespace Core.Player
             cameraRef = Camera.main;
             gameManager = GameManager.Instance;
 
-            modifier = new MeshModifier();
         }
 
         public void SetBlock(BlockUV uv) => blockUV = uv;

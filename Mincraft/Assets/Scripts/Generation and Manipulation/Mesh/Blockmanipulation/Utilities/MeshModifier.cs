@@ -3,11 +3,12 @@ using UnityEngine.Rendering;
 
 namespace Core.Builder
 {
-    public class MeshModifier
+    public static class MeshModifier
     {
-        public void SetMesh(GameObject g, MeshData meshData, MeshData colliderData)
+        public static void SetMesh(GameObject g, in MeshData meshData, in MeshData colliderData)
         {
-            var refMesh = g.GetComponent<MeshFilter>().sharedMesh;
+            var meshReference = g.GetComponent<MeshFilter>();
+            var refMesh = meshReference.sharedMesh;
             
             refMesh.Clear();
             
@@ -21,16 +22,18 @@ namespace Core.Builder
             refMesh.SetTriangles(meshData.TransparentTriangles, 1);
             refMesh.RecalculateNormals();
 
+            meshReference.sharedMesh = refMesh;
+            
 
             var colliderReference = g.GetComponent<MeshCollider>();
             var collRefMesh = colliderReference.sharedMesh;
-            
+
             collRefMesh.Clear();
             
             collRefMesh.name = g.transform.position.ToString();
             collRefMesh.indexFormat = IndexFormat.UInt32;
-            collRefMesh.vertices = colliderData.Vertices.ToArray();
-            collRefMesh.triangles = colliderData.Triangles.ToArray();
+            collRefMesh.SetVertices(colliderData.Vertices);
+            collRefMesh.SetTriangles(colliderData.Triangles, 0);
 
             colliderReference.sharedMesh = collRefMesh;
         }

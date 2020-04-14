@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using Core.Builder;
 using Core.Chunking.Threading;
 using Core.Math;
-using Core.Performance.Parallelisation;
 using Core.Player;
-using UnityEngine;
-using UnityEngine.TextCore.LowLevel;
 
 namespace Core.Chunking
 {
     public static class ChunkBuffer
     {
+        public static bool UsingChunkBuffer { get; set; } = true;
+        
         private static ChunkColumn[] data;
-        private static object mutex = new object();
-        //private static NoiseJobManager noiseJobManager;
+        private static object globalMutex = new object();
         private static JobManager jobManager;
         
         public static int Dimension { get; private set; }
@@ -66,7 +64,7 @@ namespace Core.Chunking
 
         private static void MoveUp()
         {
-            lock (mutex)
+            lock (globalMutex)
             {
                 //Shift everything
                 for (int x = 0; x < Dimension; x++)
@@ -104,7 +102,9 @@ namespace Core.Chunking
                         Chunk chunk = new Chunk()
                         {
                             LocalPosition = new Int3(x, localy, Dimension - 1),
-                            GlobalPosition = new Int3(globalPosition.X, h, globalPosition.Y)
+                            GlobalPosition = new Int3(globalPosition.X, h, globalPosition.Y),
+                            
+                            ChunkColumn =  column
                         };
 
                         column[localy] = chunk;
@@ -119,13 +119,13 @@ namespace Core.Chunking
                     };
 
                     jobManager.Add(noiseJob);
-                    //noiseJobManager.AddJob(noiseJob);
                 }
 
                 for (int x = 0; x < Dimension; x++)
                 {
                     for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
                     {
+                        
                         data[Idx2D(x, 0)][localy].ReleaseGameObject();
                     }
                     
@@ -136,7 +136,7 @@ namespace Core.Chunking
 
         private static void MoveDown()
         {
-            lock (mutex)
+            lock (globalMutex)
             {
                 //Shift everything
                 for (int x = 0; x < Dimension; x++)
@@ -174,7 +174,9 @@ namespace Core.Chunking
                         Chunk chunk = new Chunk()
                         {
                             LocalPosition = new Int3(x, localy, 0),
-                            GlobalPosition = new Int3(globalPosition.X, h, globalPosition.Y)
+                            GlobalPosition = new Int3(globalPosition.X, h, globalPosition.Y),
+                            
+                            ChunkColumn =  column
                         };
 
                         column[localy] = chunk;
@@ -187,7 +189,6 @@ namespace Core.Chunking
                         Column = column
                     };
                     jobManager.Add(noiseJob);
-//                    noiseJobManager.AddJob(noiseJob);
                 }
 
                 for (int x = 0; x < Dimension; x++)
@@ -204,7 +205,7 @@ namespace Core.Chunking
 
         private static void MoveLeft()
         {
-            lock (mutex)
+            lock (globalMutex)
             {
                 //Shift everything
                 for (int x = Dimension - 1; x >= 1; x--)
@@ -242,7 +243,9 @@ namespace Core.Chunking
                         Chunk chunk = new Chunk()
                         {
                             LocalPosition = new Int3(0, localy, y),
-                            GlobalPosition = new Int3(globalPosition.X, h, globalPosition.Y)
+                            GlobalPosition = new Int3(globalPosition.X, h, globalPosition.Y),
+                            
+                            ChunkColumn =  column
                         };
 
                         column[localy] = chunk;
@@ -255,7 +258,6 @@ namespace Core.Chunking
                         Column = column
                     };
                     jobManager.Add(noiseJob);
-//                    noiseJobManager.AddJob(noiseJob);
                 }
 
                 for (int y = 0; y < Dimension; y++)
@@ -272,7 +274,7 @@ namespace Core.Chunking
 
         private static void MoveRight()
         {
-            lock (mutex)
+            lock (globalMutex)
             {
                 //Shift everything
                 for (int x = 0; x < Dimension - 1; x++)
@@ -309,7 +311,9 @@ namespace Core.Chunking
                         Chunk chunk = new Chunk()
                         {
                             LocalPosition = new Int3(Dimension - 1, localy, y),
-                            GlobalPosition = new Int3(globalPosition.X, h, globalPosition.Y)
+                            GlobalPosition = new Int3(globalPosition.X, h, globalPosition.Y),
+                            
+                            ChunkColumn =  column
                         };
 
                         column[localy] = chunk;
@@ -321,8 +325,7 @@ namespace Core.Chunking
                     {
                         Column = column
                     };
-                    jobManager.Add(noiseJob);   
-//                    noiseJobManager.AddJob(noiseJob);
+                    jobManager.Add(noiseJob);
                 }
 
                 for (int y = 0; y < Dimension; y++)
@@ -344,7 +347,7 @@ namespace Core.Chunking
             if (local.Y >= YBound || local.Y < 0)
                 return null;
 
-            lock (mutex)
+            lock (data[Idx2D(local.X, local.Z)])
             {
                 return data[Idx2D(local.X, local.Z)][local.Y];
             }
@@ -370,7 +373,7 @@ namespace Core.Chunking
             
             int y = MathHelper.MapToInt(gy, minHeight, maxHeight, 0, YBound);
 
-            lock (mutex)
+            lock (data[Idx2D(x, z)])
             {
                 return data[Idx2D(x, z)][y];
             }
@@ -381,7 +384,7 @@ namespace Core.Chunking
             if (y >= YBound || y < 0)
                 return null;
 
-            lock (mutex)
+            lock (data[Idx2D(x, z)])
             {
                 return data[Idx2D(x, z)][y];
             }
@@ -389,33 +392,27 @@ namespace Core.Chunking
         
         public static ChunkColumn GetChunkColumn(int x, int z)
         {
-            lock (mutex)
+            lock (data[Idx2D(x, z)])
             {
                 return data[Idx2D(x, z)];
             }
         }
 
-        public static void SetChunkColumn(int x, int z, ChunkColumn value)
+        public static void SetChunkColumnNonThreadSafe(int x, int z, ChunkColumn value)
         {
-            lock (mutex)
-            {
-                data[Idx2D(x, z)] = value;
-            }
+            data[Idx2D(x, z)] = value;
         }
 
 
-        public static ChunkColumn[] Data
-        {
-            get
-            {
-                lock (mutex)
-                {
-                    return data;
-                }
-            }
-        }
+        public static int DataLength => data.Length;
+
 
         private static int Idx2D(int x, int y)
             => ((2 * DrawDistanceInChunks + 3)) * x + y;
+
+        public static bool InLocalSpace(Int3 localPosition)
+            => localPosition.X >= 0 && localPosition.X <= Dimension - 1 &&
+               localPosition.Y >= 0 && localPosition.Y <= Dimension - 1 &&
+               localPosition.Z >= 0 && localPosition.Z <= Dimension - 1;
     }
 }

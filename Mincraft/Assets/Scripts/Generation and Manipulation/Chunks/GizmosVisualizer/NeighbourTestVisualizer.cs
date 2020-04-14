@@ -29,16 +29,16 @@ namespace Core.Chunking.Debugging
         [ContextMenu("Test")]
         private void Test()
         {
-            Chunk[] neighbours = chunk.GetChunkNeighbours();
-
-            points = new List<Vector3>();
-            for (int i = 0; i < neighbours.Length; i++)
-            {
-                if (neighbours[i] == null)
-                    continue;
-
-                points.Add(neighbours[i].GlobalPosition.ToVector3() + Vector3.one * 8);
-            }
+//            Chunk[] neighbours = chunk.GetChunkNeighbours();
+//
+//            points = new List<Vector3>();
+//            for (int i = 0; i < neighbours.Length; i++)
+//            {
+//                if (neighbours[i] == null)
+//                    continue;
+//
+//                points.Add(neighbours[i].GlobalPosition.ToVector3() + Vector3.one * 8);
+//            }
         }
     }
 }

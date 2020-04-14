@@ -8,53 +8,51 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
 {
     public ChunkGameObjectPool GoPool { get; set; }
     [SerializeField] private int drawsPerUpdate = 2;
+    [SerializeField] private Material standardMaterial = null;
     
-    //private MeshJobManager _meshJobManager;
+    
     private JobManager _jobManager;
-    private MeshModifier modifier;
+    
+    private int jobsDoneInFrame = 0;
 
     private void Start()
     {
         GoPool = ChunkGameObjectPool.Instance;
         _jobManager = JobManager.JobManagerUpdaterInstance;
-        //_meshJobManager = MeshJobManager.MeshJobManagerUpdaterInstance;
-
-        modifier = new MeshModifier();
     }
 
     private void Update()
     {
-        for (int i = 0; i < _jobManager.FinishedJobsCount && i < drawsPerUpdate; i++)
+        while (_jobManager.FinishedJobsCount > 0 && jobsDoneInFrame < drawsPerUpdate)
         {
             MeshJob task = _jobManager.DequeueFinishedJob();
 
-            if(task.MeshData.Vertices.Count != 0)
+            if (task.MeshData.Vertices != null && task.MeshData.Vertices.Count != 0)
             {
-                RenderCall(ref task);
+                jobsDoneInFrame++;
+                RenderCall(task);
             }
         }
 
+        jobsDoneInFrame = 0;
     }
 
-    private void RenderCall(ref MeshJob t)
+
+    private void RenderCall(MeshJob t)
     {
         var drawingChunk = t.Chunk;
-
+        
         if (drawingChunk.CurrentGO == null)
         {
-            drawingChunk.ChunkState = ChunkState.Drawn;
             drawingChunk.CurrentGO = GoPool.GetNextUnusedChunk();
             drawingChunk.CurrentGO.SetActive(true);
             drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
-            drawingChunk.CurrentGO.name = drawingChunk.GlobalPosition.ToString();
+        }
+        
+        MeshModifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
 
-            modifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
-        }
-        else
-        {
-            //These chunks are already drawn atm. and need a refresh
-            drawingChunk.ChunkState = ChunkState.Drawn;
-            modifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
-        }
+        drawingChunk.ChunkState = ChunkState.Drawn;
+        drawingChunk.ChunkColumn.State = DrawingState.Drawn;
     }
+
 }

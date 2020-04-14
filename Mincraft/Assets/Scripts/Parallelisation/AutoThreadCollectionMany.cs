@@ -1,124 +1,225 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Core.Builder;
+using Core.Chunking;
 using Core.Chunking.Threading;
-using UnityEngine;
-
 
 /// <summary>
 /// Represents a chunk of threads desired to to jobs concurrently
 /// </summary>
-/// <typeparam name="TJobResult">Where the result is used</typeparam>
-/// <typeparam name="KJob">Where the result is not in use</typeparam>
-public abstract class AutoThreadCollectionMany<TJobResult, KJob>
+public abstract class AutoThreadCollectionMany
 {
     public int FinishedJobsCount => finishedJobs.Count;
-    public int MeshJobsCount => meshJobs.Count;
     public int NoiseJobsCount => noiseJobs.Count;
-    
-    private Thread[] _threads;
+    public int MeshJobsCount => meshJobs.Count;
+
     private bool running = false;
-    private bool singleThreaded = false;
-
-    private ConcurrentQueue<TJobResult> meshJobs;
-    private ConcurrentQueue<KJob> noiseJobs;
-
-    private ConcurrentQueue<TJobResult> finishedJobs;
-    private SemaphoreSlim semaphore;
     
-    public AutoThreadCollectionMany(int amountThreads)
-    {
-        finishedJobs = new ConcurrentQueue<TJobResult>();
-        
-        if (amountThreads < 0)
-            throw new ArgumentOutOfRangeException("amountThreads has to be positive or zero");
-        if (amountThreads == 0) singleThreaded = true;
-        else
-        {
-            meshJobs = new ConcurrentQueue<TJobResult>();
-            noiseJobs = new ConcurrentQueue<KJob>();
-            
-            _threads = new Thread[amountThreads];
-            semaphore = new SemaphoreSlim(0);
+    private ConcurrentQueue<MeshJob> finishedJobs;
+    private ConcurrentQueue<IJob> meshJobs;
+    private ConcurrentQueue<IJobManyDependencies> noiseJobs;
+    
+    private SemaphoreSlim semaphore;
 
-            for (int i = 0; i < amountThreads; i++)
+    private Thread[] threads;
+
+    protected AutoThreadCollectionMany(int amountThreads)
+    {
+        finishedJobs = new ConcurrentQueue<MeshJob>();
+        semaphore = new SemaphoreSlim(0);
+        meshJobs = new ConcurrentQueue<IJob>();
+        noiseJobs = new ConcurrentQueue<IJobManyDependencies>();
+
+        threads = new Thread[amountThreads];
+
+        for (int i = 0; i < amountThreads; i++)
+        {
+            threads[i] = new Thread(Run)
             {
-                _threads[i] = new Thread(Run)
-                {
-                    IsBackground = true
-                };
-            }
+                IsBackground = true
+            };
         }
     }
-
-    public abstract void ExecuteMeshJob(TJobResult job);
-    public abstract void ExecuteNoiseJob(KJob job);
 
     public void Run()
     {
         while (running)
         {
             semaphore.Wait();
-            
-            if (meshJobs.TryDequeue(out TJobResult tjobresult))
+            if (meshJobs.TryDequeue(out IJob meshjob))
             {
-                ExecuteMeshJob(tjobresult);
-                finishedJobs.Enqueue(tjobresult);
-                continue;
+                if (!meshjob.Finished) // Ist dieser Job nicht erledigt, wird dieser nun gemacht
+                {
+                    meshjob.Execute();
+                }
+                
+                if (meshjob.NeedFinishToo.Finished) // Wenn der Dependencyjob fertig ist
+                {
+                    meshjob.Target.Chunk.ChunkState = ChunkState.Generated;
+                    finishedJobs.Enqueue(meshjob.Target);
+                    //continue;
+                }
             }
-            
-            if (noiseJobs.TryDequeue(out KJob kjob))
+
+            if (noiseJobs.TryDequeue(out IJobManyDependencies noiseJob))
             {
-                ExecuteNoiseJob(kjob);
+                if (!noiseJob.Finished)
+                {
+                    noiseJob.Execute();
+                }
+                
+                if (noiseJob.NeedFinishToo.All(n => n.Finished)) // Wenn alle dependencies fertig sind
+                {
+                    noiseJob.Target.ChunkColumn.State = DrawingState.NoiseReady;
+                }
             }
         }
     }
 
-    public TJobResult DequeueFinishedJob()
+    public MeshJob DequeueFinishedJob()
     {
-        if (finishedJobs.TryDequeue(out TJobResult result))
+        if (finishedJobs.TryDequeue(out MeshJob result))
         {
             return result;
         }
-        
+
         throw new Exception("Dequeuing but Queue is empty");
     }
 
-    public void Add(TJobResult job)
+    public void Add(in MeshJob item)
     {
-        this.meshJobs.Enqueue(job);
-        semaphore.Release();
-    }
+        item.Chunk.GenerateStructures();
+        IJob job1 = new MeshBuilderJob()
+        {
+            Target = item,
+            Finished = false,
+        };
+        
+        IJob job2 = new ReduceColliderJob()
+        {
+            Target = item,
+            Finished = false,
+        };
 
-    public void Add(KJob job)
+        job1.NeedFinishToo = job2;
+        job2.NeedFinishToo = job1;
+        
+
+        ScheduleMeshJob(job1);
+        ScheduleMeshJob(job2);
+    }
+    
+    public void Add(in NoiseJob item)
     {
-        this.noiseJobs.Enqueue(job);
-        semaphore.Release();
+        var jobs = new IJobManyDependencies[item.Column.chunks.Length];
+        int len = item.Column.chunks.Length;
+        
+        for (int i = 0; i < len; i++)
+        {
+            jobs[i] = new GenerateNoiseJob()
+            {
+                Finished = false,
+                Target = item.Column.chunks[i]
+            };
+        }
+
+        for (int i = 0; i < len; i++)
+        {
+            jobs[i].NeedFinishToo = jobs;
+        }
+
+        for (int i = 0; i < len; i++)
+        {
+            ScheduleNoiseJob(jobs[i]);
+        }
     }
 
     public void Start()
     {
-        if (!singleThreaded)
+        running = true;
+        for (int i = 0; i < threads.Length; i++)
         {
-            running = true;
-            for (int i = 0; i < _threads.Length; i++)
-            {
-                _threads[i].Start();
-            }
+            threads[i].Start();
         }
     }
 
     public void Stop()
     {
-        if (!singleThreaded)
+        running = false;
+        for (int i = 0; i < threads.Length; i++)
         {
-            this.running = false;
-            for (int i = 0; i < _threads.Length; i++)
-            {
-                _threads[i].Abort();
-            }
+            threads[i].Abort();
         }
+    }
+
+    private void ScheduleMeshJob(in IJob job)
+    {
+        meshJobs.Enqueue(job);
+        semaphore.Release();
+    }
+
+    private void ScheduleNoiseJob(in IJobManyDependencies job)
+    {
+        noiseJobs.Enqueue(job);
+        semaphore.Release();
+    }
+    
+    public struct ReduceColliderJob : IJob
+    {
+        public bool Finished { get; set; }
+        public IJob NeedFinishToo { get; set; }
+        public MeshJob Target { get; set; }
+        
+        public void Execute()
+        {
+            Target.ColliderData = GreedyMesh.ReduceMesh(Target.Chunk);
+            Finished = true;
+        }
+    }
+    
+    public struct MeshBuilderJob : IJob
+    {
+        public MeshJob Target { get; set; }
+        public bool Finished { get; set; }
+        public IJob NeedFinishToo { get; set; }
+        
+        public void Execute()
+        {
+            Target.MeshData = MeshBuilder.Combine(Target.Chunk);
+            Finished = true;
+        }
+    }
+    
+    
+    public struct GenerateNoiseJob : IJobManyDependencies
+    {
+        public IJobManyDependencies[] NeedFinishToo { get; set; }
+        public bool Finished { get; set; }
+        public Chunk Target { get; set; }
+        
+        public void Execute()
+        {
+            Target.GenerateBlocks();
+            Finished = true;
+        }
+    }
+    
+    public interface IJob
+    {
+        IJob NeedFinishToo { get; set; }
+        bool Finished { get; set; }
+        MeshJob Target { get; set; }
+        void Execute();
+    }
+    
+
+    public interface IJobManyDependencies
+    {
+        IJobManyDependencies[] NeedFinishToo { get; set; }
+        bool Finished { get; set; }
+        Chunk Target { get; set; }
+        void Execute();
     }
 }

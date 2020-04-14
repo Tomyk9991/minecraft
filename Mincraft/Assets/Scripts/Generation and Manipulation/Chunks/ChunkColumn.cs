@@ -11,75 +11,40 @@ namespace Core.Chunking
         public Chunk[] chunks;
         private DrawingState state;
 
+        private bool dirty = false;
+
+        private object _chunksMutex = new object();
+        private object _drawingstateMutex = new object();
+        private object _dirtyStateMutex = new object();
+        
+        
         /// <summary>
         /// Discribes the local position, which depends on the global player position 
         /// </summary>
         public Int2 LocalPosition { get; set; }
         public DrawingState State
         {
-            get
-            {
-                lock (_drawingstateMutex)
-                {
-                    return state;
-                }
-            }
-            set
-            {
-                lock (_drawingstateMutex)
-                {
-                    this.state = value;
-                }
-            }
+            get { lock (_drawingstateMutex) { return state; } }
+            set { lock (_drawingstateMutex) { this.state = value; } }
         }
 
-        private int finishedChunksInColumn = 0;
-        private object mutexCool = new object();
-        
-        public int FinishedChunksCount
+        public bool Dirty
         {
-            get
-            {
-                lock (mutexCool)
-                    return finishedChunksInColumn;
-            }
-            set
-            {
-                lock (mutexCool)
-                {
-                    finishedChunksInColumn = value;
-                    if (finishedChunksInColumn >= this.chunks.Length - 1)
-                        this.State = DrawingState.NoiseReady;
-                }
-            }
+            get { lock (_dirtyStateMutex) { return dirty; } }
+            set { lock (_dirtyStateMutex) { this.dirty = value; } }
         }
 
         public Chunk this[int index]
         {
-            get
-            {
-                lock (_mutex)
-                {
-                    return chunks[index];
-                }
-            }
-            set
-            {
-                lock (_mutex)
-                {
-                    chunks[index] = value;
-                }
-            }
+            get { lock (_chunksMutex) { return chunks[index]; } }
+            set { lock (_chunksMutex) { chunks[index] = value; } }
         }
-
-        private object _mutex = new object();
-        private object _drawingstateMutex = new object();
-
-
+        
         public ChunkColumn(Int2 globalPosition, Int2 localPosition, int minYHeight, int maxYHeight)
         {
             this.GlobalPosition = globalPosition;
             this.LocalPosition = localPosition;
+            this.State = DrawingState.None;
             chunks = new Chunk[System.Math.Abs(minYHeight / 16) + System.Math.Abs(maxYHeight / 16)];
         }
 
@@ -105,6 +70,6 @@ namespace Core.Chunking
         None = 0,
         Drawn = 1,
         NoiseReady = 2,
-        Dirty = 4
+        InDrawingQueue = 3
     }
 }

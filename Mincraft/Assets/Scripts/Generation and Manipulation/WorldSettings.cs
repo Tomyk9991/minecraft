@@ -7,6 +7,7 @@ using Core.Saving;
 using Extensions;
 using UnityEditor;
 using UnityEngine;
+using UnityInspector.PropertyAttributes;
 
 namespace Core
 {
@@ -25,6 +26,10 @@ namespace Core
 
         [Header("Chunksettings")]
         [SerializeField] private bool calculateShadows = true;
+        [SerializeField, DrawIfTrue(nameof(calculateShadows))] private Material affectedMaterial1 = null;
+        [SerializeField, DrawIfTrue(nameof(calculateShadows))] private Material affectedMaterial2 = null;
+        [Space]
+        
         [SerializeField] private int seed = -1;
         [SerializeField] private Int2 minMaxYHeight;
 
@@ -40,6 +45,9 @@ namespace Core
 
         private void Start()
         {
+            ChangeMaterialLightingProperty(affectedMaterial1);
+            ChangeMaterialLightingProperty(affectedMaterial2);
+            
             bioms = biomSaveable.bioms;
             
             noiseIO = GameManager.CurrentWorldName == "" ?
@@ -64,9 +72,17 @@ namespace Core
             }
         }
 
+        private void ChangeMaterialLightingProperty(Material material)
+        {
+            if (calculateShadows)
+                material.SetFloat("_maxGlobalLightLevel", 0.8f);
+            else
+                material.SetFloat("_maxGlobalLightLevel", 0.0f);
+        }
+
         private void OnDestroy()
         {
-            if (noiseIO.Path != ContextIO.DefaultPath)
+            if (noiseIO?.Path != ContextIO.DefaultPath)
             {
                 Debug.Log("Wird gespeichert");
                 noiseIO.SaveContext(NoiseSettings, "Noise");

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using Core;
 using Core.Chunking;
 using Core.Chunking.Threading;
@@ -10,7 +10,7 @@ using Core.Saving;
 using Extensions;
 using UnityEngine;
 using UnityInspector.PropertyAttributes;
-using Utilities;
+using Timer = Utilities.Timer;
 
 public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 {
@@ -18,10 +18,9 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     [SerializeField] private int drawDistanceInChunks = 12;
 
     [SerializeField] private bool calculateThreads = false;
+
     [DrawIfFalse(nameof(calculateThreads)), SerializeField]
-    private int meshJobThreadAmount = 0;
-    [DrawIfFalse(nameof(calculateThreads)), SerializeField]
-    private int noiseJobThreadAmount = 0;
+    private int amountThreads = 0;
 
     private int chunkSize;
 
@@ -29,19 +28,19 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     private int maxHeight;
     private int dimension;
 
-//    private MeshJobManager _meshJobManager;
-//    private NoiseJobManager noiseJobManager;
-
     private JobManager _jobManager;
 
     private SavingJob savingJob;
     private bool isChecking = false;
-    
+
     private Queue<Direction> shiftDirections = new Queue<Direction>();
     private Timer timer;
-    
+
     private readonly DrawingState drawingStateMask = DrawingState.NoiseReady | DrawingState.Drawn;
-    private readonly DrawingState unneededColumnState = DrawingState.Dirty | DrawingState.None;
+
+
+    private Thread worker;
+    private bool workerWorking = false;
 
     private void Start()
     {
@@ -57,16 +56,11 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 
         if (calculateThreads)
         {
-            meshJobThreadAmount = SystemInfo.processorCount - 2 <= 0 ? 1 :SystemInfo.processorCount / 2 - 5;
-            noiseJobThreadAmount = SystemInfo.processorCount - 2 <= 0 ? 1 : (SystemInfo.processorCount - 2) / 3;
+            amountThreads = SystemInfo.processorCount - 3 <= 0 ? 1 : SystemInfo.processorCount - 3;
         }
 
-        _jobManager = new JobManager(meshJobThreadAmount + noiseJobThreadAmount, true);
+        _jobManager = new JobManager(amountThreads, true);
         _jobManager.Start();
-//        _meshJobManager = new MeshJobManager(meshJobThreadAmount, true);
-//        _meshJobManager.Start();
-//        noiseJobManager = new NoiseJobManager(noiseJobThreadAmount, true);
-//        noiseJobManager.Start();
 
         chunkSize = 0x10;
         ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
@@ -74,13 +68,79 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         dimension = ChunkBuffer.Dimension;
         timer = new Timer(WorldSettings.WorldTick);
 
-        for (int x = xPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localx = 0; x <= xPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize; x += chunkSize, localx++)
+        SetupChunkBuffer(xPlayerPos, zPlayerPos);
+        SetupWorker();
+    }
+
+    private void SetupWorker()
+    {
+        worker = new Thread(() =>
         {
-            for (int z = zPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localz = 0; z <= zPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize; z += chunkSize, localz++)
+            while (workerWorking)
+            {
+                for (int x = 1; x < dimension - 1; x++)
+                {
+                    for (int z = 1; z < dimension - 1; z++)
+                    {
+                        ChunkColumn column = ChunkBuffer.GetChunkColumn(x, z);
+
+                        if (column.DesiredForVisualization && (column.State == DrawingState.NoiseReady))
+                        {
+                            ChunkColumn[] neighbours = column.ChunkColumnNeighbours();
+
+                            if (neighbours.All(c => (c.State & drawingStateMask) != 0))
+                            {
+                                if (column.State == DrawingState.NoiseReady)
+                                {
+                                    for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
+                                    {
+                                        Chunk chunk = column[localy];
+                                        _jobManager.CreateChunkFromExistingAndAddJob(chunk);
+                                    }
+
+                                    column.State = DrawingState.InDrawingQueue;
+                                }
+                            }
+                        }
+
+                        if (column.Dirty && column.State == DrawingState.Drawn)
+                        {
+                            for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
+                            {
+                                Chunk chunk = column[localy];
+                                if (chunk.ChunkState == ChunkState.Dirty)
+                                {
+                                    _jobManager.CreateChunkFromExistingAndAddJob(chunk);
+                                }
+                            }
+
+                            column.Dirty = false;
+                            column.State = DrawingState.InDrawingQueue;
+                        }
+                    }
+                }
+
+                isChecking = false;
+            }
+        });
+
+        workerWorking = true;
+        worker.Start();
+    }
+
+    private void SetupChunkBuffer(in int xPlayerPos, in int zPlayerPos)
+    {
+        for (int x = xPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localx = 0;
+            x <= xPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize;
+            x += chunkSize, localx++)
+        {
+            for (int z = zPlayerPos - (drawDistanceInChunks * chunkSize) - chunkSize, localz = 0;
+                z <= zPlayerPos + (drawDistanceInChunks * chunkSize) + chunkSize;
+                z += chunkSize, localz++)
             {
                 //Create chunkColumn
                 ChunkColumn column = new ChunkColumn(new Int2(x, z), new Int2(localx, localz), minHeight, maxHeight);
-                ChunkBuffer.SetChunkColumn(localx, localz, column);
+                ChunkBuffer.SetChunkColumnNonThreadSafe(localx, localz, column);
 
                 //Insert this created chunkColumn to the NoiseJobs 
                 for (int y = minHeight, localy = 0; y < maxHeight; y += chunkSize, localy++)
@@ -89,24 +149,19 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
                     {
                         LocalPosition = new Int3(localx, localy, localz),
                         GlobalPosition = new Int3(x, y, z),
+                        ChunkColumn = column
                     };
 
                     column[localy] = chunk;
                 }
-                NoiseJob noiseJob = new NoiseJob()
+
+                _jobManager.Add(new NoiseJob
                 {
                     Column = column
-                };
+                });
 
-                _jobManager.Add(noiseJob);
-                //noiseJobManager.AddJob(noiseJob);
-
-                if (localx == 0 || localx == dimension - 1 || localz == 0 || localz == dimension - 1)
-                {
-                    column.DesiredForVisualization = false;
-                }
-                else
-                    column.DesiredForVisualization = true;
+                column.DesiredForVisualization = localx != 0 && localx != dimension - 1 &&
+                                                 localz != 0 && localz != dimension - 1;
             }
         }
     }
@@ -120,64 +175,22 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     private void Update()
     {
         if (!isChecking)
-        {
-            CheckDrawReady();
-        }
-        
+            isChecking = true;
+
         if (timer.TimeElapsed(Time.deltaTime))
         {
-            //if (shiftDirections.Count > 0 && _meshJobManager.JobsCount == 0)
-            if (shiftDirections.Count > 0 && _jobManager.MeshJobsCount == 0)
+            if(shiftDirections.Count > 0 && _jobManager.MeshJobsCount == 0)
             {
                 ChunkBuffer.Shift(shiftDirections.Dequeue());
             }
         }
     }
 
-    private void CheckDrawReady()
-    {
-        isChecking = true;
-
-        Task.Run(() =>
-        {
-            for (int x = 1; x < dimension - 1; x++)
-            {
-                for (int y = 0; y < dimension - 1; y++)
-                {
-                    ChunkColumn column = ChunkBuffer.GetChunkColumn(x, y);
-
-                    if (column.DesiredForVisualization && column.State == DrawingState.NoiseReady || 
-                        column.DesiredForVisualization && column.State == DrawingState.Dirty)
-                    {
-                        ChunkColumn[] neighbours = column.ChunkColumnNeighbours();
-
-                        if (neighbours.All(c => (c.State & drawingStateMask) != 0))
-                        {
-                            {
-                                for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
-                                {
-                                    Chunk chunk = column[localy];
-                                    
-                                    MeshJob job = new MeshJob(chunk);
-                                    _jobManager.CreateChunkFromExistingAndAddJob(chunk);
-                                    //_meshJobManager.CreateChunkFromExistingAndAddJob(chunk);
-                                }
-                                column.State = DrawingState.Drawn;
-                            }
-
-                        }
-                    }
-                }
-            }
-        });
-        
-        isChecking = false;
-    }
-
     private void OnDestroy()
     {
+        workerWorking = false;
+        worker.Join();
+
         _jobManager?.Dispose();
-//        _meshJobManager?.Dispose();
-//        noiseJobManager?.Dispose();
     }
 }

@@ -24,6 +24,11 @@ namespace Core.Math
             n = n - (n % x);
             return isNegative ? -n : n;
         }
+        
+        public static bool InLocalSpace(in Int3 pos)
+            =>     pos.X >= 0 && pos.X < 16 &&
+                   pos.Y >= 0 && pos.Y < 16 &&
+                   pos.Z >= 0 && pos.Z < 16;
     
         public static int MultipleFloor(int n, int x)
             => Mathf.FloorToInt(n / (float)x) * x;

@@ -27,7 +27,7 @@ namespace Core.Builder
 
                 q[d] = 1;
 
-                for (x[d] = -1; x[d] < size;)
+                for (x[d] = 0; x[d] < size;)
                 {
 
                     // Compute the mask
@@ -80,8 +80,7 @@ namespace Core.Builder
                             if (c > -3)
                             {
                                 // Compute width
-                                for (w = 1; c == mask[n + w] && i + w < size; ++w)
-                                    ;
+                                for (w = 1; c == mask[n + w] && i + w < size; ++w);
 
                                 // Compute height
                                 bool done = false;
