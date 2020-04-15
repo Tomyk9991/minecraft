@@ -25,7 +25,6 @@ namespace Core.Chunking
         public static void Init(int chunkSize, int _minHeight, int _maxHeight, int drawDistanceInChunks)
         {
             jobManager = JobManager.JobManagerUpdaterInstance;
-            //noiseJobManager = NoiseJobManager.NoiseJobManagerUpdaterInstance;
 
             Dimension = 2 * drawDistanceInChunks + 3;
             DrawDistanceInChunks = drawDistanceInChunks;
@@ -88,6 +87,21 @@ namespace Core.Chunking
                         data[Idx2D(x, y)] = column;
                     } 
                 }
+                
+//                //Remove back to buffer
+//                for (int x = 0; x < Dimension; x++)
+//                {
+//                    ChunkColumn column = data[Idx2D(x, Dimension - 1)];
+//                    int len = column.chunks.Length;
+//
+//                    for (int i = 0; i < len; i++)
+//                    {
+//                        for (int j = 0; j < column.chunks[i].Blocks.Length; j++)
+//                        {
+//                            column.chunks[i].Blocks[j] = Block.Empty();
+//                        }
+//                    }
+//                }
 
                 //Create new
                 ChunkColumn rightNeighbour = data[Idx2D(0, Dimension - 2)];

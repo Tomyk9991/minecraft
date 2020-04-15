@@ -96,8 +96,8 @@ namespace Core.Chunking
             chunkSize = 0x10;
         }
         
-        public void AddBlock(in Block block)
-            => blocks[Idx3dTo1D(block.Position.X, block.Position.Y, block.Position.Z)] = block;
+        public void AddBlock(Block block, Int3 pos)
+            => blocks[Idx3dTo1D(pos.X, pos.Y, pos.Z)] = block;
 
         #region Context
 
@@ -132,7 +132,7 @@ namespace Core.Chunking
 
         public Block[] Blocks => blocks;
 
-        public bool IsNotEmpty(int x,int y, int z)
+        public bool IsNotEmpty(int x, int y, int z)
         {
             Block currentBlock = blocks[Idx3dTo1D(x, y, z)];
             return currentBlock.ID != (int) BlockUV.Air;
@@ -352,13 +352,15 @@ namespace Core.Chunking
                         nPos.Z > 0 && nPos.Z < 16)
                     {
                         Block neighbourBlock = GetBlockNeigbourAt(p, currentPosition);
+                        Int3 neighbourPos = currentPosition + directions[p];
+                        
                         if (neighbourBlock.GlobalLightPercent < currentBlock.GlobalLightPercent - lightFalloff)
                         {
                             float result = currentBlock.GlobalLightPercent - lightFalloff;
                             blocks[Idx3dTo1D(nPos.X, nPos.Y, nPos.Z)].GlobalLightPercent = result;
                             if (result > lightFalloff)
                             {
-                                litVoxels.Enqueue(neighbourBlock.Position);
+                                litVoxels.Enqueue(neighbourPos);
                             }
                         }
                     }
@@ -400,41 +402,46 @@ namespace Core.Chunking
                 int caveChance = GetNoise(x, y, z, biom.caveFrequency, caveSize * 5);
                 if (y <= lowerHeight && caveSize < caveChance)
                 {
-                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
-                        z - this.GlobalPosition.Z));
-                    block.SetID((int) biom.lowerLayerBlock);
-                    this.AddBlock(block);
+                    Int3 pos = new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
+                        z - this.GlobalPosition.Z);
+                    Block block = new Block();
+                    block.SetID((short) biom.lowerLayerBlock);
+                    this.AddBlock(block, pos);
                 }
                 else if (y <= midHeight && caveSize < caveChance)
                 {
-                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
-                        z - this.GlobalPosition.Z));
-                    block.SetID((int) biom.midLayerBlock);
-                    this.AddBlock(block);
+                    Int3 pos = new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
+                        z - this.GlobalPosition.Z);
+                    Block block = new Block();
+                    block.SetID((short) biom.midLayerBlock);
+                    this.AddBlock(block, pos);
                 }
                 else if (y <= topHeight && caveSize < caveChance)
                 {
-                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
-                        z - this.GlobalPosition.Z));
-                    block.SetID((int) biom.topLayerBlock);
-                    this.AddBlock(block);
+                    Int3 pos = new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
+                        z - this.GlobalPosition.Z);
+                    Block block = new Block();
+                    block.SetID((short) biom.topLayerBlock);
+                    this.AddBlock(block, pos);
                 }
                 else
                 {
-                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
-                        z - this.GlobalPosition.Z));
+                    Int3 pos = new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
+                        z - this.GlobalPosition.Z);
+                    Block block = new Block();
                     block.SetID((int) BlockUV.Air);
-                    this.AddBlock(block);
+                    this.AddBlock(block, pos);
                 }
 
                 if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
                 {
-                    Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
-                        z - this.GlobalPosition.Z));
-                    block.SetID((int) biom.treeTrunkBlock);
+                    Int3 pos = new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y,
+                        z - this.GlobalPosition.Z);
+                    Block block = new Block();
+                    block.SetID((short) biom.treeTrunkBlock);
 
-                    AddBlock(block);
-                    Int3 origin = new Int3(block.Position.X, block.Position.Y, block.Position.Z);
+                    AddBlock(block, pos);
+                    Int3 origin = new Int3(pos.X, pos.Y, pos.Z);
 
                     builders[0].StructureOrigin.Enqueue((origin, biom)); 
                 }
@@ -486,7 +493,7 @@ namespace Core.Chunking
             }
         }
 
-        public static int GetNoise(in int x, in int y, in int z, in float scale, in int max)
+        public static int GetNoise(int x, int y, int z, float scale, int max)
             => Mathf.FloorToInt((noise.GetSimplexFractal(x * scale, y * scale, z * scale) + 1f) * (max / 2f));
         
 
@@ -499,7 +506,7 @@ namespace Core.Chunking
         public void SaveChunk()
             => GameManager.Instance.SavingJob.AddToSavingQueue(this);
         
-        private int Idx3dTo1D(in int x, in int y, in int z)
+        private int Idx3dTo1D(int x, int y, int z)
             => x + chunkSize * (y + chunkSize * z);
 
         public override string ToString()

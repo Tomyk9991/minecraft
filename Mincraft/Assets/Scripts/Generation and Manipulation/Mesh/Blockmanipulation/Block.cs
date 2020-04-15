@@ -7,18 +7,19 @@ namespace Core.Builder
     [System.Serializable]
     public struct Block
     {
-        public Int3 Position; // Local position from [0, 0, 0] to [15, 15, 15]
-        public int ID { get; set; }// For UV-Setting
+        private static Block emptyBlock = new Block { ID = -1500, GlobalLightPercent = 0f };
+        //public Int3 Position; // Local position from [0, 0, 0] to [15, 15, 15]
+        public short ID { get; set; }// For UV-Setting
         public float GlobalLightPercent { get; set; }
 
-        public Block(Int3 position)
+        public Block(short ID = -1)
         {
-            this.ID = -1;
-            this.Position = position;
+            this.ID = ID;
+            //this.Position = position;
             this.GlobalLightPercent = 0f;
         }
 
-        public void SetID(int id)
+        public void SetID(short id)
         {
             this.ID = id;
         }
@@ -34,13 +35,14 @@ namespace Core.Builder
         public float MeshOffset()
             => UVDictionary.MeshOffsetID((BlockUV)this.ID);
 
-        public static Block Empty()
-        {
-            return new Block(new Int3(0, 0, 0))
-            {
-                ID = -15000
-            };
-        }
+        public static Block Empty() => emptyBlock;
+//        public static Block Empty()
+//        {
+//            return new Block(new Int3(0, 0, 0))
+//            {
+//                ID = -15000
+//            };
+//        }
 
         public float TransparentcyLevel()
             => UVDictionary.TransparencyLevelID((BlockUV)this.ID);

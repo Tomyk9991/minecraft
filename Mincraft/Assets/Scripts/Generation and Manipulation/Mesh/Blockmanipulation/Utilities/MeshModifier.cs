@@ -30,7 +30,6 @@ namespace Core.Builder
 
             collRefMesh.Clear();
             
-            collRefMesh.name = g.transform.position.ToString();
             collRefMesh.indexFormat = IndexFormat.UInt32;
             collRefMesh.SetVertices(colliderData.Vertices);
             collRefMesh.SetTriangles(colliderData.Triangles, 0);

@@ -31,35 +31,36 @@ namespace Core.Testing
 
             
             Block b = new Block();
+            Int3 pos = new Int3();
             for (int z = 0; z < 16; z++)
             {
                 for (int x = 0; x < 16; x++)
                 {
-                    b.Position = new Int3(x, 0, z);
-                    b.ID = (int) block;
-                    chunk.AddBlock(b);
+                    pos = new Int3(x, 0, z);
+                    b.ID = (short) block;
+                    chunk.AddBlock(b, pos);
                 }
             }
 
             b.ID = (int) BlockUV.Stone;
-            b.Position = new Int3(8, 1, 8);
-            chunk.AddBlock(b);
-            b.Position = new Int3(8, 2, 8);
-            chunk.AddBlock(b);
-            b.Position = new Int3(8, 3, 8);
-            chunk.AddBlock(b);
-            b.Position = new Int3(9, 3, 8);
-            chunk.AddBlock(b);
-            b.Position = new Int3(10, 3, 8);
-            chunk.AddBlock(b);
-            b.Position = new Int3(10, 2, 8);
-            chunk.AddBlock(b);
-            b.Position = new Int3(10, 1, 8);
-            chunk.AddBlock(b);
+            pos = new Int3(8, 1, 8);
+            chunk.AddBlock(b, pos);
+            pos = new Int3(8, 2, 8);
+            chunk.AddBlock(b, pos);
+            pos = new Int3(8, 3, 8);
+            chunk.AddBlock(b, pos);
+            pos = new Int3(9, 3, 8);
+            chunk.AddBlock(b, pos);
+            pos = new Int3(10, 3, 8);
+            chunk.AddBlock(b, pos);
+            pos = new Int3(10, 2, 8);
+            chunk.AddBlock(b, pos);
+            pos = new Int3(10, 1, 8);
+            chunk.AddBlock(b, pos);
 
-            b.ID = (int) BlockUV.Leaf;
-            b.Position = new Int3(13, 1, 12);
-            chunk.AddBlock(b);
+            b.ID = (short) BlockUV.Leaf;
+            pos = new Int3(13, 1, 12);
+            chunk.AddBlock(b, pos);
 
             MeshJob job = new MeshJob(chunk);
             _manager.Add(job);

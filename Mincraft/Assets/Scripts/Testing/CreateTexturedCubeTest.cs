@@ -28,12 +28,13 @@ public class CreateTexturedCubeTest : MonoBehaviour
         Chunk chunk = new Chunk("Test");
         Block b = new Block()
         {
-            Position =  new Int3(0, 0, 0),
             GlobalLightPercent = 1f,
-            ID = (int) uv
+            ID = (short) uv
         };
+        
+        Int3 pos = new Int3(0, 0, 0);
 
-        chunk.AddBlock(b);
+        chunk.AddBlock(b, pos);
 
         MeshData data = MeshBuilder.TestCombine(chunk);
         

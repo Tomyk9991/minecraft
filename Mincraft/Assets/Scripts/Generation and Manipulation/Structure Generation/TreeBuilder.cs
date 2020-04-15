@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Core.Builder;
 using Core.Builder.Generation;
@@ -21,57 +20,58 @@ namespace Core.StructureGeneration
         public void Build(Biom biom, Chunk callingChunk, in Int3 origin)
         {
             Block block = new Block();
-            block.SetID((int) biom.treeTrunkBlock);
-            block.Position = origin;
+            block.SetID((short) biom.treeTrunkBlock);
+            Int3 pos = origin;
+            //block.Position = origin;
 
 
             //Trunk
             for (int j = 1; j < 5; j++)
             {
-                block.Position.Y = origin.Y + j;
-                AddBlockToChunk(callingChunk, block);
+                pos.Y = origin.Y + j;
+                AddBlockToChunk(callingChunk, block, pos);
             }
 
-            Int3 leafOrigin = block.Position;
+            Int3 leafOrigin = pos;
             //Leaves
-            block.SetID((int) biom.treeLeafBlock);
+            block.SetID((short) biom.treeLeafBlock);
 
             for (int y = -1; y < 3; y++)
             {
-                block.Position.Y = leafOrigin.Y + y;
+                pos.Y = leafOrigin.Y + y;
                 for (int z = -2; z < 3; z++)
                 {
-                    block.Position.Z = leafOrigin.Z + z;
+                    pos.Z = leafOrigin.Z + z;
                     for (int x = -2; x < 3; x++)
                     {
-                        block.Position.X = leafOrigin.X + x;
-                        AddBlockToChunk(callingChunk, block);
+                        pos.X = leafOrigin.X + x;
+                        AddBlockToChunk(callingChunk, block, pos);
                     }
                 }
             }
         }
 
-        private static void AddBlockToChunk(Chunk callingChunk, Block block)
+        private static void AddBlockToChunk(Chunk callingChunk, Block block, Int3 pos)
         {
-            if (InLocalSpace(block.Position))
+            if (InLocalSpace(pos))
             {
-                callingChunk.AddBlock(block);
+                callingChunk.AddBlock(block, pos);
             }
             else
             {
                 Int3 neighbouringChunkDirection = new Int3(
-                    Mathf.FloorToInt(block.Position.X / 16.0f),
-                    Mathf.FloorToInt(block.Position.Y / 16.0f),
-                    Mathf.FloorToInt(block.Position.Z / 16.0f));
+                    Mathf.FloorToInt(pos.X / 16.0f),
+                    Mathf.FloorToInt(pos.Y / 16.0f),
+                    Mathf.FloorToInt(pos.Z / 16.0f));
 
-                block.Position.X -= 16 * neighbouringChunkDirection.X;
-                block.Position.Y -= 16 * neighbouringChunkDirection.Y;
-                block.Position.Z -= 16 * neighbouringChunkDirection.Z;
+                pos.X -= 16 * neighbouringChunkDirection.X;
+                pos.Y -= 16 * neighbouringChunkDirection.Y;
+                pos.Z -= 16 * neighbouringChunkDirection.Z;
 
                 if (ChunkBuffer.InLocalSpace(callingChunk.LocalPosition + neighbouringChunkDirection))
                 {
                     Chunk c = callingChunk.ChunkNeighbour(neighbouringChunkDirection);
-                    c.AddBlock(block);
+                    c.AddBlock(block, pos);
                     c.ChunkState = ChunkState.Dirty;
                     c.ChunkColumn.Dirty = true;
                 }

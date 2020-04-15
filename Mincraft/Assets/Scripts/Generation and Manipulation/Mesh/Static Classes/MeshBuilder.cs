@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 using Core.Chunking;
+using Core.Math;
 
 namespace Core.Builder
 {
@@ -16,6 +17,7 @@ namespace Core.Builder
 		private static int[] tri1 = {1, 0, 2, 1, 2, 3};
 		private static int[] tri2 = { 0, 1, 2, 2, 1, 3 };
 		private static int[] tris = { 1, 0, 0, 1, 1, 0 };
+		private static int chunkSize = 16;
 
 //        private static Int3[] directions =
 //{
@@ -42,6 +44,9 @@ namespace Core.Builder
 	        return blockPos;
 	    }
 
+        private static int Idx3dTo1D(in int x, in int y, in int z)
+	        => x + chunkSize * (y + chunkSize * z);
+        
         public static MeshData Combine(Chunk chunk)
 	    {
 		    List<Vector3> vertices = new List<Vector3>();
@@ -54,139 +59,148 @@ namespace Core.Builder
 
             Block[] neighbourBlocks = new Block[6];
             bool[] boolNeighbours = new bool[6];
+            
+		    for (int x = 0; x < 16; x++)
+		    {
+			    for (int y = 0; y < 16; y++)
+			    {
+				    for (int z = 0; z < 16; z++)
+				    {
+					    Block block = blocks[Idx3dTo1D(x, y, z)];
+					    Int3 pos = new Int3(x, y, z);
 
-            for (int i = 0; i < blocks.Length; i++)
-	        {
-                Block block = blocks[i];
+		                bool transparent = block.IsTransparent();
 
-                bool transparent = block.IsTransparent();
-
-                if (block.ID == (int) BlockUV.Air)
-                {
-	                continue;
-                }
-
-                //Check, ob dieser Block transparent ist, oder nicht
-                // Wenn es so sein sollte, bleibt das neighbours-Array mit 6 false-Werten und jede Seite wird gezeichnet
-	                
-                neighbourBlocks = chunk.GetBlockNeighbours(block.Position);
-					
-                if (!transparent)
-                {
-	                for (int j = 0; j < 6; j++)
-	                {
-		                Block currentNeighbour = neighbourBlocks[j];
-		                boolNeighbours[j] = currentNeighbour.ID != (int) BlockUV.Air &&
-		                                    !currentNeighbour.IsTransparent();
-	                }
-                }
-                else
-                {
-	                for (int j = 0; j < 6; j++)
-	                {
-		                boolNeighbours[j] = false;
-	                }
-                }
-
-                Vector3 blockPos = block.Position.ToVector3();
-
-                if (boolNeighbours.Any(state => state == false))
-                {
-	                UVData[] currentUVData = UVDictionary.GetValue((BlockUV) block.ID);
-	                float meshOffset = UVDictionary.MeshOffsetID((BlockUV) block.ID);
-
-	                for (int faceIndex = 0; faceIndex < 6; faceIndex++)
-	                {
-		                if (boolNeighbours[faceIndex] == false)
+		                if (block.ID == (int) BlockUV.Air)
 		                {
-			                int vc = vertices.Count;
-
-
-			                #region Meshoffsets
-
-			                Vector3 dir = directions[faceIndex];
-			                Vector3 off1 = offset1[faceIndex];
-			                Vector3 off2 = offset2[faceIndex];
-
-			                Vector3 meshOffsetForwardBack = new Vector3(0f, 0f, meshOffset);
-			                Vector3 meshOffsetLeftRight = new Vector3(meshOffset, 0f, 0f);
-			                
-			                switch (faceIndex)
-			                {
-				                case 0: //Forward
-					                vertices.Add(dir               + blockPos - meshOffsetForwardBack);
-					                vertices.Add(dir + off1        + blockPos - meshOffsetForwardBack);
-					                vertices.Add(dir        + off2 + blockPos - meshOffsetForwardBack);
-					                vertices.Add(dir + off1 + off2 + blockPos - meshOffsetForwardBack);
-					                break;
-				                case 1: //Back
-					                vertices.Add(dir               + blockPos + meshOffsetForwardBack);
-					                vertices.Add(dir + off1        + blockPos + meshOffsetForwardBack);
-					                vertices.Add(dir        + off2 + blockPos + meshOffsetForwardBack);
-					                vertices.Add(dir + off1 + off2 + blockPos + meshOffsetForwardBack);
-					                break;
-				                case 2: //Up
-					                vertices.Add(dir               + blockPos);
-					                vertices.Add(dir + off1        + blockPos);
-					                vertices.Add(dir        + off2 + blockPos);
-					                vertices.Add(dir + off1 + off2 + blockPos);
-					                break;
-				                case 3: // Down
-					                vertices.Add(dir               + blockPos);
-					                vertices.Add(dir + off1        + blockPos);
-					                vertices.Add(dir        + off2 + blockPos);
-					                vertices.Add(dir + off1 + off2 + blockPos);
-					                break;
-				                case 4: //Left
-					                vertices.Add(dir               + blockPos + meshOffsetLeftRight);
-					                vertices.Add(dir + off1        + blockPos + meshOffsetLeftRight);
-					                vertices.Add(dir        + off2 + blockPos + meshOffsetLeftRight);
-					                vertices.Add(dir + off1 + off2 + blockPos + meshOffsetLeftRight);
-					                break;
-				                case 5: //Right
-					                vertices.Add(dir               + blockPos - meshOffsetLeftRight);
-					                vertices.Add(dir + off1        + blockPos - meshOffsetLeftRight);
-					                vertices.Add(dir        + off2 + blockPos - meshOffsetLeftRight);
-					                vertices.Add(dir + off1 + off2 + blockPos - meshOffsetLeftRight);
-					                break;
-			                }
-
-			                #endregion
-
-			                Block neighbour = neighbourBlocks[faceIndex];
-			                float lightLevel = neighbour.GlobalLightPercent;
-
-			                Color color = new Color(0, 0, 0, lightLevel);
-			                colors.Add(color);
-			                colors.Add(color);
-			                colors.Add(color);
-			                colors.Add(color);
-
-			                if (!transparent)
-			                {
-				                for (int k = 0; k < 6; k++)
-				                {
-					                triangles.Add(vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
-				                }
-			                }
-			                else
-			                {
-				                for (int k = 0; k < 6; k++)
-				                {
-					                transparentTriangles.Add(vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
-				                }
-			                }
-
-			                UVData uvdata = currentUVData[faceIndex];
-			                
-			                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
-			                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
-			                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
-			                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY + uvdata.SizeY));
+			                continue;
 		                }
-	                }
-                }
-	        }
+
+		                //Int3 pos = new Int3(i / (16 * 16), (i / 16) % 16, i % 16);
+
+		                //Check, ob dieser Block transparent ist, oder nicht
+		                // Wenn es so sein sollte, bleibt das neighbours-Array mit 6 false-Werten und jede Seite wird gezeichnet
+			                
+		                neighbourBlocks = chunk.GetBlockNeighbours(pos);
+							
+		                if (!transparent)
+		                {
+			                for (int j = 0; j < 6; j++)
+			                {
+				                Block currentNeighbour = neighbourBlocks[j];
+				                boolNeighbours[j] = currentNeighbour.ID != (int) BlockUV.Air &&
+				                                    !currentNeighbour.IsTransparent();
+			                }
+		                }
+		                else
+		                {
+			                for (int j = 0; j < 6; j++)
+			                {
+				                boolNeighbours[j] = false;
+			                }
+		                }
+
+		                Vector3 blockPos = pos.ToVector3();
+
+		                if (boolNeighbours.Any(state => state == false))
+		                {
+			                UVData[] currentUVData = UVDictionary.GetValue((BlockUV) block.ID);
+			                float meshOffset = UVDictionary.MeshOffsetID((BlockUV) block.ID);
+
+			                for (int faceIndex = 0; faceIndex < 6; faceIndex++)
+			                {
+				                if (boolNeighbours[faceIndex] == false)
+				                {
+					                int vc = vertices.Count;
+
+
+					                #region Meshoffsets
+
+					                Vector3 dir = directions[faceIndex];
+					                Vector3 off1 = offset1[faceIndex];
+					                Vector3 off2 = offset2[faceIndex];
+
+					                Vector3 meshOffsetForwardBack = new Vector3(0f, 0f, meshOffset);
+					                Vector3 meshOffsetLeftRight = new Vector3(meshOffset, 0f, 0f);
+					                
+					                switch (faceIndex)
+					                {
+						                case 0: //Forward
+							                vertices.Add(dir               + blockPos - meshOffsetForwardBack);
+							                vertices.Add(dir + off1        + blockPos - meshOffsetForwardBack);
+							                vertices.Add(dir        + off2 + blockPos - meshOffsetForwardBack);
+							                vertices.Add(dir + off1 + off2 + blockPos - meshOffsetForwardBack);
+							                break;
+						                case 1: //Back
+							                vertices.Add(dir               + blockPos + meshOffsetForwardBack);
+							                vertices.Add(dir + off1        + blockPos + meshOffsetForwardBack);
+							                vertices.Add(dir        + off2 + blockPos + meshOffsetForwardBack);
+							                vertices.Add(dir + off1 + off2 + blockPos + meshOffsetForwardBack);
+							                break;
+						                case 2: //Up
+							                vertices.Add(dir               + blockPos);
+							                vertices.Add(dir + off1        + blockPos);
+							                vertices.Add(dir        + off2 + blockPos);
+							                vertices.Add(dir + off1 + off2 + blockPos);
+							                break;
+						                case 3: // Down
+							                vertices.Add(dir               + blockPos);
+							                vertices.Add(dir + off1        + blockPos);
+							                vertices.Add(dir        + off2 + blockPos);
+							                vertices.Add(dir + off1 + off2 + blockPos);
+							                break;
+						                case 4: //Left
+							                vertices.Add(dir               + blockPos + meshOffsetLeftRight);
+							                vertices.Add(dir + off1        + blockPos + meshOffsetLeftRight);
+							                vertices.Add(dir        + off2 + blockPos + meshOffsetLeftRight);
+							                vertices.Add(dir + off1 + off2 + blockPos + meshOffsetLeftRight);
+							                break;
+						                case 5: //Right
+							                vertices.Add(dir               + blockPos - meshOffsetLeftRight);
+							                vertices.Add(dir + off1        + blockPos - meshOffsetLeftRight);
+							                vertices.Add(dir        + off2 + blockPos - meshOffsetLeftRight);
+							                vertices.Add(dir + off1 + off2 + blockPos - meshOffsetLeftRight);
+							                break;
+					                }
+
+					                #endregion
+
+					                Block neighbour = neighbourBlocks[faceIndex];
+					                float lightLevel = neighbour.GlobalLightPercent;
+
+					                Color color = new Color(0, 0, 0, lightLevel);
+					                colors.Add(color);
+					                colors.Add(color);
+					                colors.Add(color);
+					                colors.Add(color);
+
+					                if (!transparent)
+					                {
+						                for (int k = 0; k < 6; k++)
+						                {
+							                triangles.Add(vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
+						                }
+					                }
+					                else
+					                {
+						                for (int k = 0; k < 6; k++)
+						                {
+							                transparentTriangles.Add(vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
+						                }
+					                }
+
+					                UVData uvdata = currentUVData[faceIndex];
+					                
+					                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
+					                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
+					                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
+					                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY + uvdata.SizeY));
+				                }
+			                }
+		                }
+				    }
+			    }
+		    }
 		    
 		    return new MeshData(vertices, triangles, transparentTriangles, uvs, colors, chunk.CurrentGO);
 	    }
@@ -211,7 +225,8 @@ namespace Core.Builder
 				    continue;
 			    }
 			    
-			    Vector3 blockPos = block.Position.ToVector3();
+			    Int3 pos = new Int3(i / (16 * 16), (i / 16) % 16, i % 16);
+			    Vector3 blockPos = pos.ToVector3();
 			    
 			    UVData[] currentUVData = UVDictionary.GetValue((BlockUV) block.ID);
                 float meshOffset = UVDictionary.MeshOffsetID((BlockUV)block.ID);

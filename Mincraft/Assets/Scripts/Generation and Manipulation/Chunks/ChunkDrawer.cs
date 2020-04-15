@@ -7,7 +7,7 @@ using UnityEngine;
 public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
 {
     public ChunkGameObjectPool GoPool { get; set; }
-    [SerializeField] private int drawsPerUpdate = 2;
+    [SerializeField] private int drawsPerFrame = 2;
     [SerializeField] private Material standardMaterial = null;
     
     
@@ -23,7 +23,7 @@ public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
 
     private void Update()
     {
-        while (_jobManager.FinishedJobsCount > 0 && jobsDoneInFrame < drawsPerUpdate)
+        while (_jobManager.FinishedJobsCount > 0 && jobsDoneInFrame < drawsPerFrame)
         {
             MeshJob task = _jobManager.DequeueFinishedJob();
 

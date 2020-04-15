@@ -74,10 +74,7 @@ namespace Core
 
         private void ChangeMaterialLightingProperty(Material material)
         {
-            if (calculateShadows)
-                material.SetFloat("_maxGlobalLightLevel", 0.8f);
-            else
-                material.SetFloat("_maxGlobalLightLevel", 0.0f);
+            material.SetFloat("_maxGlobalLightLevel", calculateShadows ? 0.8f : 0.0f);
         }
 
         private void OnDestroy()
