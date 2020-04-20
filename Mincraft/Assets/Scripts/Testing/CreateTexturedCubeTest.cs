@@ -25,7 +25,7 @@ public class CreateTexturedCubeTest : MonoBehaviour
 
     private void CreateChunkWith(BlockUV uv)
     {
-        Chunk chunk = new Chunk("Test");
+        Chunk chunk = new Chunk();
         Block b = new Block()
         {
             GlobalLightPercent = 1f,

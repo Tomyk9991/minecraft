@@ -27,13 +27,13 @@ namespace Core.Builder
 
             var colliderReference = g.GetComponent<MeshCollider>();
             var collRefMesh = colliderReference.sharedMesh;
-
+            
             collRefMesh.Clear();
             
             collRefMesh.indexFormat = IndexFormat.UInt32;
             collRefMesh.SetVertices(colliderData.Vertices);
             collRefMesh.SetTriangles(colliderData.Triangles, 0);
-
+            
             colliderReference.sharedMesh = collRefMesh;
         }
     }

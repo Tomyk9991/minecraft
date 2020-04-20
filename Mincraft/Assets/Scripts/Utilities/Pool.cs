@@ -16,13 +16,16 @@ namespace Utilities
         }
 
         public void Add(T item)
-            => pool.Enqueue(item);
+        {
+            // pool.Enqueue(item);
+            // Debug.Log("new Chunk");
+        }
 
 
         public T GetNext()
         {
-//            if (pool.Count == 0)
-//                return default;
+            if (pool.Count <= 0)
+                return default;
 
             return pool.Dequeue();
         }

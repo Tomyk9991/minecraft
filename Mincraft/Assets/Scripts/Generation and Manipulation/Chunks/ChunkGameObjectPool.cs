@@ -18,24 +18,23 @@ namespace Core.Chunking
 
         private const string unusedName = "Unused chunk";
 
-        //private Queue<GameObject> gameObjectChunks;
-        private Pool<GameObject> gameObjectChunks;
+        private Queue<GameObject> gameObjectChunks;
         private Queue<GameObject> objectsToRelease;
         
         private void Start()
         {
             objectsToRelease = new Queue<GameObject>();
-            gameObjectChunks = new Pool<GameObject>(chunksToInstantiate);
+            gameObjectChunks = new Queue<GameObject>();
             
             for (int i = 0; i < chunksToInstantiate; i++)
             {
-                gameObjectChunks.Add(InstantiateChunkGameObject());
+                gameObjectChunks.Enqueue(InstantiateChunkGameObject());
             }
         }
 
         private void Update()
         {
-            for (int i = 0; i < objectsToRelease.Count; i++)
+            while (objectsToRelease.Count > 0)
             {
                 GameObject go = objectsToRelease.Dequeue();
 
@@ -43,7 +42,7 @@ namespace Core.Chunking
                 {
                     go.name = unusedName;
                     go.SetActive(false);
-                    gameObjectChunks.Add(go);
+                    gameObjectChunks.Enqueue(go);
                 }
             }
         }
@@ -55,17 +54,13 @@ namespace Core.Chunking
         /// <returns></returns>
         public GameObject GetNextUnusedChunk()
         {
-            GameObject g;
             if (gameObjectChunks.Count == 0)
             {
-                g = InstantiateChunkGameObject();
-                return g;
+                return InstantiateChunkGameObject();
             }
-            else
-            {
-                gameobjectCount = transform.childCount;
-                return gameObjectChunks.GetNext();
-            }
+
+            gameobjectCount = transform.childCount;
+            return gameObjectChunks.Dequeue();
         }
 
         private GameObject InstantiateChunkGameObject()

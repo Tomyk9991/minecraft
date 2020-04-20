@@ -69,14 +69,14 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         timer = new Timer(WorldSettings.WorldTick);
 
         SetupChunkBuffer(xPlayerPos, zPlayerPos);
-        SetupWorker();
+        //SetupWorker();
     }
 
     private void SetupWorker()
     {
         worker = new Thread(() =>
         {
-            while (workerWorking)
+            while (workerWorking && !isChecking)
             {
                 for (int x = 1; x < dimension - 1; x++)
                 {
@@ -174,8 +174,51 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 
     private void Update()
     {
-        if (!isChecking)
-            isChecking = true;
+        // if (!isChecking)
+        //     isChecking = true;
+        
+        
+        for (int x = 1; x < dimension - 1; x++)
+        {
+            for (int z = 1; z < dimension - 1; z++)
+            {
+                ChunkColumn column = ChunkBuffer.GetChunkColumn(x, z);
+
+                if (column.DesiredForVisualization && (column.State == DrawingState.NoiseReady))
+                {
+                    ChunkColumn[] neighbours = column.ChunkColumnNeighbours();
+
+                    if (neighbours.All(c => (c.State & drawingStateMask) != 0))
+                    {
+                        if (column.State == DrawingState.NoiseReady)
+                        {
+                            for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
+                            {
+                                Chunk chunk = column[localy];
+                                _jobManager.CreateChunkFromExistingAndAddJob(chunk);
+                            }
+
+                            column.State = DrawingState.InDrawingQueue;
+                        }
+                    }
+                }
+
+                if (column.Dirty && column.State == DrawingState.Drawn)
+                {
+                    for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
+                    {
+                        Chunk chunk = column[localy];
+                        if (chunk.ChunkState == ChunkState.Dirty)
+                        {
+                            _jobManager.CreateChunkFromExistingAndAddJob(chunk);
+                        }
+                    }
+
+                    column.Dirty = false;
+                    column.State = DrawingState.InDrawingQueue;
+                }
+            }
+        }
 
         if (timer.TimeElapsed(Time.deltaTime))
         {
@@ -189,7 +232,7 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     private void OnDestroy()
     {
         workerWorking = false;
-        worker.Join();
+        worker?.Join();
 
         _jobManager?.Dispose();
     }

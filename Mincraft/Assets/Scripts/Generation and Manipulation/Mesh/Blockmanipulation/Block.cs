@@ -8,7 +8,6 @@ namespace Core.Builder
     public struct Block
     {
         private static Block emptyBlock = new Block { ID = -1500, GlobalLightPercent = 0f };
-        //public Int3 Position; // Local position from [0, 0, 0] to [15, 15, 15]
         public short ID { get; set; }// For UV-Setting
         public float GlobalLightPercent { get; set; }
 

@@ -87,21 +87,6 @@ namespace Core.Chunking
                         data[Idx2D(x, y)] = column;
                     } 
                 }
-                
-//                //Remove back to buffer
-//                for (int x = 0; x < Dimension; x++)
-//                {
-//                    ChunkColumn column = data[Idx2D(x, Dimension - 1)];
-//                    int len = column.chunks.Length;
-//
-//                    for (int i = 0; i < len; i++)
-//                    {
-//                        for (int j = 0; j < column.chunks[i].Blocks.Length; j++)
-//                        {
-//                            column.chunks[i].Blocks[j] = Block.Empty();
-//                        }
-//                    }
-//                }
 
                 //Create new
                 ChunkColumn rightNeighbour = data[Idx2D(0, Dimension - 2)];
