@@ -31,7 +31,6 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     private JobManager _jobManager;
 
     private SavingJob savingJob;
-    private bool isChecking = false;
 
     private Queue<Direction> shiftDirections = new Queue<Direction>();
     private Timer timer;
@@ -56,7 +55,7 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
 
         if (calculateThreads)
         {
-            amountThreads = SystemInfo.processorCount - 3 <= 0 ? 1 : SystemInfo.processorCount - 3;
+            amountThreads = SystemInfo.processorCount - 5 <= 0 ? 1 : SystemInfo.processorCount - 5;
         }
 
         _jobManager = new JobManager(amountThreads, true);
@@ -69,14 +68,14 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         timer = new Timer(WorldSettings.WorldTick);
 
         SetupChunkBuffer(xPlayerPos, zPlayerPos);
-        //SetupWorker();
+        SetupWorker();
     }
 
     private void SetupWorker()
     {
         worker = new Thread(() =>
         {
-            while (workerWorking && !isChecking)
+            while (workerWorking)
             {
                 for (int x = 1; x < dimension - 1; x++)
                 {
@@ -119,8 +118,6 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
                         }
                     }
                 }
-
-                isChecking = false;
             }
         });
 
@@ -178,47 +175,47 @@ public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
         //     isChecking = true;
         
         
-        for (int x = 1; x < dimension - 1; x++)
-        {
-            for (int z = 1; z < dimension - 1; z++)
-            {
-                ChunkColumn column = ChunkBuffer.GetChunkColumn(x, z);
-
-                if (column.DesiredForVisualization && (column.State == DrawingState.NoiseReady))
-                {
-                    ChunkColumn[] neighbours = column.ChunkColumnNeighbours();
-
-                    if (neighbours.All(c => (c.State & drawingStateMask) != 0))
-                    {
-                        if (column.State == DrawingState.NoiseReady)
-                        {
-                            for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
-                            {
-                                Chunk chunk = column[localy];
-                                _jobManager.CreateChunkFromExistingAndAddJob(chunk);
-                            }
-
-                            column.State = DrawingState.InDrawingQueue;
-                        }
-                    }
-                }
-
-                if (column.Dirty && column.State == DrawingState.Drawn)
-                {
-                    for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
-                    {
-                        Chunk chunk = column[localy];
-                        if (chunk.ChunkState == ChunkState.Dirty)
-                        {
-                            _jobManager.CreateChunkFromExistingAndAddJob(chunk);
-                        }
-                    }
-
-                    column.Dirty = false;
-                    column.State = DrawingState.InDrawingQueue;
-                }
-            }
-        }
+        // for (int x = 1; x < dimension - 1; x++)
+        // {
+        //     for (int z = 1; z < dimension - 1; z++)
+        //     {
+        //         ChunkColumn column = ChunkBuffer.GetChunkColumn(x, z);
+        //
+        //         if (column.DesiredForVisualization && (column.State == DrawingState.NoiseReady))
+        //         {
+        //             ChunkColumn[] neighbours = column.ChunkColumnNeighbours();
+        //
+        //             if (neighbours.All(c => (c.State & drawingStateMask) != 0))
+        //             {
+        //                 if (column.State == DrawingState.NoiseReady)
+        //                 {
+        //                     for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
+        //                     {
+        //                         Chunk chunk = column[localy];
+        //                         _jobManager.CreateChunkFromExistingAndAddJob(chunk);
+        //                     }
+        //
+        //                     column.State = DrawingState.InDrawingQueue;
+        //                 }
+        //             }
+        //         }
+        //
+        //         if (column.Dirty && column.State == DrawingState.Drawn)
+        //         {
+        //             for (int h = minHeight, localy = 0; h < maxHeight; h += chunkSize, localy++)
+        //             {
+        //                 Chunk chunk = column[localy];
+        //                 if (chunk.ChunkState == ChunkState.Dirty)
+        //                 {
+        //                     _jobManager.CreateChunkFromExistingAndAddJob(chunk);
+        //                 }
+        //             }
+        //
+        //             column.Dirty = false;
+        //             column.State = DrawingState.InDrawingQueue;
+        //         }
+        //     }
+        // }
 
         if (timer.TimeElapsed(Time.deltaTime))
         {

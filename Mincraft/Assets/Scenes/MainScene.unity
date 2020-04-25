@@ -1520,10 +1520,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad8dd1eafab0fc247bdd5380e1dac63a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveWithPlayer: 1
-  drawDistanceInChunks: 5
+  moveWithPlayer: 0
+  drawDistanceInChunks: 12
   calculateThreads: 1
-  amountThreads: 22
+  amountThreads: 8
 --- !u!1 &802634826
 GameObject:
   m_ObjectHideFlags: 0
