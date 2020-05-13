@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UnityInspector
+namespace Attributes
 {
     public class ShowOnlyAttribute : PropertyAttribute { }
 }

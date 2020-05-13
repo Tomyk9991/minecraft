@@ -1,10 +1,8 @@
-using Core.Builder;
-using Core.Chunking;
-using Core.Chunking.Threading;
+using System.Text;
+using Core.Chunks;
+using Core.Chunks.Threading;
 using Core.Math;
-using Core.Performance.Parallelisation;
 using Core.Player;
-using Core.StructureGeneration;
 using UnityEngine;
 
 namespace Testing
@@ -32,20 +30,21 @@ namespace Testing
             //_meshJobManager = MeshJobManager.MeshJobManagerUpdaterInstance;
         }
 
-//        private void Update()
-//        {
-//            if (Input.GetKeyDown(KeyCode.H))
-//            {
-//                Chunk c = ChunkBuffer.GetChunk(3, 5, 2);
-//
-//                c.AddBlock(new Block(new Int3(8, 8, 8))
-//                {
-//                    ID = (int) BlockUV.Dirt
-//                });
-//                c.ChunkState = ChunkState.Dirty;
-//
-//                ChunkBuffer.GetChunkColumn(c.LocalPosition.X, c.LocalPosition.Z).Dirty = true;
-//            }
-//        }
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                StringBuilder builder = new StringBuilder("{");
+                ChunkColumn column = ChunkBuffer.GetChunkColumn(0, 0);
+                for (int i = 0; i < column.chunks.Length; i++)
+                {
+                    builder.Append(i == column.chunks.Length - 1 ? column[i].GlobalPosition.ToString() : column[i].GlobalPosition + ", ");
+                }
+
+                builder.Append("}");
+
+                Debug.Log(builder.ToString());
+            }
+        }
     }
 }

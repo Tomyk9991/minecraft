@@ -1,4 +1,4 @@
-namespace Core.Chunking
+namespace Core.Chunks
 {
     public interface IRemoveChunk
     {

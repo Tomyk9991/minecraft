@@ -1,6 +1,6 @@
 using System;
+using Attributes;
 using UnityEngine;
-using UnityInspector.PropertyAttributes;
 
 namespace Core.Builder
 {

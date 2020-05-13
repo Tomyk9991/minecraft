@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityInspector;
+﻿using Attributes;
+using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {

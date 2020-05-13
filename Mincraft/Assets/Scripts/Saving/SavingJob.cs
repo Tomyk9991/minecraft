@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using Core.Chunking;
+using Core.Chunks;
 using Core.Managers;
 
 namespace Core.Saving

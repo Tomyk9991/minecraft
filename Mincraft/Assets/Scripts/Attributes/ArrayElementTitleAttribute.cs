@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UnityInspector.PropertyAttributes
+namespace Attributes
 {
     public class ArrayElementTitleAttribute : PropertyAttribute
     {

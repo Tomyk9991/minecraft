@@ -1,7 +1,6 @@
-﻿using UnityEditor;
+﻿using Attributes;
+using UnityEditor;
 using UnityEngine;
-
-using UnityInspector;
 
 [CustomPropertyDrawer(typeof(ShowOnlyAttribute))]
 public class ShowOnlyDrawer : PropertyDrawer

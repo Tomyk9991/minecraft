@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Core.Builder.Generation;
-using Core.Chunking;
+using Core.Chunks;
 using Core.Math;
 
 namespace Core.StructureGeneration

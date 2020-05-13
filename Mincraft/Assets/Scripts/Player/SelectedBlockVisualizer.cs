@@ -1,7 +1,6 @@
-﻿using UnityEngine;
-
-using Core.Builder;
+﻿using Core.Builder;
 using Core.UI.Console;
+using UnityEngine;
 
 namespace Core.Player
 {

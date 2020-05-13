@@ -1,20 +1,17 @@
 ﻿using System;
+using System.Runtime.Remoting.Messaging;
 using Core.Math;
 using UnityEngine;
 
-namespace Core.Chunking
+namespace Core.Chunks
 {
     public class ChunkColumn
     {
-        public bool DesiredForVisualization { get; set; }
         public Int2 GlobalPosition { get; set; }
         public Chunk[] chunks;
-        private DrawingState state;
+        // private DrawingState state;
 
         private bool dirty = false;
-
-        private object _chunksMutex = new object();
-        private object _drawingstateMutex = new object();
         private object _dirtyStateMutex = new object();
         
         
@@ -22,29 +19,30 @@ namespace Core.Chunking
         /// Discribes the local position, which depends on the global player position 
         /// </summary>
         public Int2 LocalPosition { get; set; }
-        public DrawingState State
-        {
-            get { lock (_drawingstateMutex) { return state; } }
-            set { lock (_drawingstateMutex) { this.state = value; } }
-        }
+        // public DrawingState State
+        // {
+        //     get => state;
+        //     set => this.state = value;
+        // }
 
         public bool Dirty
         {
             get { lock (_dirtyStateMutex) { return dirty; } }
             set { lock (_dirtyStateMutex) { this.dirty = value; } }
         }
-
+        
         public Chunk this[int index]
         {
-            get { lock (_chunksMutex) { return chunks[index]; } }
-            set { lock (_chunksMutex) { chunks[index] = value; } }
+            get => chunks[index];  
+            set => chunks[index] = value;
         }
         
         public ChunkColumn(Int2 globalPosition, Int2 localPosition, int minYHeight, int maxYHeight)
         {
             this.GlobalPosition = globalPosition;
             this.LocalPosition = localPosition;
-            this.State = DrawingState.None;
+            //TODO State
+            //this.State = DrawingState.None;
             chunks = new Chunk[System.Math.Abs(minYHeight / 16) + System.Math.Abs(maxYHeight / 16)];
         }
 

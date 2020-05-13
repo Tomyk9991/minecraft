@@ -18,13 +18,13 @@ MonoBehaviour:
     value: 1
   mode:
     overrideState: 1
-    value: 0
+    value: 1
   intensity:
     overrideState: 1
-    value: 1.22
+    value: 0.25
   color:
     overrideState: 1
-    value: {r: 1, g: 0, b: 0, a: 1}
+    value: {r: 0, g: 0, b: 0, a: 1}
   ambientOnly:
     overrideState: 1
     value: 0
@@ -39,7 +39,7 @@ MonoBehaviour:
     value: -12
   thicknessModifier:
     overrideState: 1
-    value: 1
+    value: 3
   directLightingStrength:
     overrideState: 0
     value: 0
@@ -1389,7 +1389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b94fcd11afffcb142908bfcb1e261fba, type: 3}
   m_Name: MotionBlur
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   enabled:
     overrideState: 1
     value: 1

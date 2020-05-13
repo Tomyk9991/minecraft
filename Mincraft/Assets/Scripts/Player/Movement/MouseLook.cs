@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityInspector;
+﻿using Attributes;
+using UnityEngine;
 
 namespace Core.Player.Movement
 {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 using System.Collections.Generic;
 
-namespace Core.Chunking.Debugging
+namespace Core.Chunks.Debugging
 {
     public class NeighbourTestVisualizer : MonoBehaviour
     {

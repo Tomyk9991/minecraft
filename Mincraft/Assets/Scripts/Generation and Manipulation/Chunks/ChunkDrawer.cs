@@ -1,58 +1,55 @@
 ﻿using Core.Builder;
-using Core.Chunking;
-using Core.Chunking.Threading;
+using Core.Chunks.Threading;
 using Extensions;
 using UnityEngine;
 
-public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
+namespace Core.Chunks
 {
-    public ChunkGameObjectPool GoPool { get; set; }
-    [SerializeField] private int drawsPerFrame = 2;
-    [SerializeField] private Material standardMaterial = null;
-    
-    
-    private JobManager _jobManager;
-    
-    private int jobsDoneInFrame = 0;
-
-    private void Start()
+    public class ChunkDrawer : SingletonBehaviour<ChunkDrawer>
     {
-        GoPool = ChunkGameObjectPool.Instance;
-        _jobManager = JobManager.JobManagerUpdaterInstance;
-    }
+        public ChunkGameObjectPool GoPool { get; set; }
+        [SerializeField] private int drawsPerFrame = 2;
+        
+        
+        private JobManager _jobManager;
+        
+        private int jobsDoneInFrame = 0;
 
-    private void Update()
-    {
-        while (_jobManager.FinishedJobsCount > 0 && jobsDoneInFrame < drawsPerFrame)
+        private void Start()
         {
-            MeshJob task = _jobManager.DequeueFinishedJob();
+            GoPool = ChunkGameObjectPool.Instance;
+            _jobManager = JobManager.JobManagerUpdaterInstance;
+        }
 
-            if (task.MeshData.Vertices != null && task.MeshData.Vertices.Count != 0)
+        private void Update()
+        {
+            while (_jobManager.FinishedJobsCount > 0 && jobsDoneInFrame < drawsPerFrame)
             {
-                jobsDoneInFrame++;
-                RenderCall(task);
+                MeshJob task = _jobManager.DequeueFinishedJob();
+
+                if (task.MeshData.Vertices != null && task.MeshData.Vertices.Count != 0)
+                {
+                    jobsDoneInFrame++;
+                    RenderCall(task);
+                }
             }
+
+            jobsDoneInFrame = 0;
         }
 
-        jobsDoneInFrame = 0;
-    }
 
-
-    private void RenderCall(MeshJob t)
-    {
-        var drawingChunk = t.Chunk;
-        
-        if (drawingChunk.CurrentGO == null)
+        private void RenderCall(MeshJob t)
         {
-            drawingChunk.CurrentGO = GoPool.GetNextUnusedChunk();
-            drawingChunk.CurrentGO.SetActive(true);
-            drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
+            var drawingChunk = t.Chunk;
+            
+            if (drawingChunk.CurrentGO == null)
+            {
+                drawingChunk.CurrentGO = GoPool.GetNextUnusedChunk();
+                drawingChunk.CurrentGO.SetActive(true);
+                drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
+            }
+            
+            MeshModifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
         }
-        
-        MeshModifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
-
-        drawingChunk.ChunkState = ChunkState.Drawn;
-        drawingChunk.ChunkColumn.State = DrawingState.Drawn;
     }
-
 }

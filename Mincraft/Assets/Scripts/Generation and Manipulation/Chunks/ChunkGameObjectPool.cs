@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
+using Attributes;
 using UnityEngine;
-
-using UnityInspector;
 using Extensions;
-using Utilities;
 
 
-namespace Core.Chunking
+namespace Core.Chunks
 {
     public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     {
@@ -15,9 +13,7 @@ namespace Core.Chunking
         [Range(1, 10000)]
         [SerializeField] private int chunksToInstantiate = 210;
         [SerializeField, ShowOnly] private int gameobjectCount;
-
-        private const string unusedName = "Unused chunk";
-
+        
         private Queue<GameObject> gameObjectChunks;
         private Queue<GameObject> objectsToRelease;
         
@@ -40,7 +36,6 @@ namespace Core.Chunking
 
                 if (go != null)
                 {
-                    go.name = unusedName;
                     go.SetActive(false);
                     gameObjectChunks.Enqueue(go);
                 }
@@ -66,7 +61,9 @@ namespace Core.Chunking
         private GameObject InstantiateChunkGameObject()
         {
             GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
-            g.name = unusedName;
+            //TODO isStatic might be an option
+            //g.isStatic = true;
+            g.name = "Chunk";
             g.SetActive(false);
 
             var m1 = new Mesh();
@@ -78,7 +75,7 @@ namespace Core.Chunking
             return g;
         }
 
-        public void SetGameObjectToUnsed(GameObject go)
+        public void SetGameObjectToUnused(GameObject go)
         {
             objectsToRelease.Enqueue(go);
             gameobjectCount = transform.childCount;

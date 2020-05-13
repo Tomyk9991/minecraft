@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Core.Managers;
+using UnityEngine;
 
-namespace Core.Chunking.Debugging
+namespace Core.Chunks.Debugging
 {
     public class ChunkGizmosDrawer : MonoBehaviour
     {

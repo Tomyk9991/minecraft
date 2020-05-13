@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Core.Managers;
+using Core.Saving;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-using Core.Managers;
-using Core.Saving;
-
-namespace Core.UI.Menu
+namespace Core.Managers.UI.Menu
 {
     public class PlayDialogUI : MonoBehaviour
     {

@@ -1,9 +1,8 @@
-﻿using Core.Chunking;
-using Core.Chunking.Threading;
+﻿using Core.Chunks.Threading;
 using UnityEditor;
 using UnityEngine;
 
-namespace Core.Performance.Occlusion
+namespace Core.Managers.Performance.Occlusion
 {
     public class OcclusionObject : MonoBehaviour
     {

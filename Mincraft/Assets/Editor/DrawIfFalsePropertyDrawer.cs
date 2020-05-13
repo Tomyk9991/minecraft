@@ -1,7 +1,6 @@
-﻿using UnityEditor;
+﻿using Attributes;
+using UnityEditor;
 using UnityEngine;
-
-using UnityInspector.PropertyAttributes;
 
 [CustomPropertyDrawer(typeof(DrawIfFalseAttribute))]
 public class DrawIfFalsePropertyDrawer : PropertyDrawer

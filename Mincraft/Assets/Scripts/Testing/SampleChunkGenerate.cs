@@ -1,6 +1,6 @@
 ﻿using Core.Builder;
-using Core.Chunking;
-using Core.Chunking.Threading;
+using Core.Chunks;
+using Core.Chunks.Threading;
 using Core.Math;
 using UnityEditor;
 using UnityEngine;
@@ -63,7 +63,7 @@ namespace Core.Testing
             chunk.AddBlock(b, pos);
 
             MeshJob job = new MeshJob(chunk);
-            _manager.Add(job);
+            // _manager.Add(job);
         }
 
 //        private void Update()

@@ -1,7 +1,7 @@
 ﻿using Unity.Collections;
 using UnityEngine;
 
-namespace Core.Performance.Occlusion
+namespace Core.Managers.Performance.Occlusion
 {
     public class OcclusionManager : MonoBehaviour
     {

@@ -1,7 +1,6 @@
-﻿using UnityEditor;
+﻿using Attributes;
+using UnityEditor;
 using UnityEngine;
-
-using UnityInspector.PropertyAttributes;
 
 [CustomPropertyDrawer(typeof(DrawIfTrueAttribute))]
 public class DrawIfTruePropertyDrawer : PropertyDrawer
@@ -38,5 +37,4 @@ public class DrawIfTruePropertyDrawer : PropertyDrawer
         }
         return activate;
     }
-
 }

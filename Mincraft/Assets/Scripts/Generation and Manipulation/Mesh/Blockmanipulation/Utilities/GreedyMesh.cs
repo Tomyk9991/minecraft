@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
+using Core.Chunks;
 using UnityEngine;
-
-using Core.Chunking;
 
 namespace Core.Builder
 {

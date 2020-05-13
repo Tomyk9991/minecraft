@@ -1,6 +1,5 @@
-﻿using Core.Chunking;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Core.Managers;
 using UnityEngine;
 
 namespace Core.Builder.Generation
@@ -19,7 +18,16 @@ namespace Core.Builder.Generation
             if (bioms == null)
                 bioms = WorldSettings.Instance.Bioms;
 
-            return bioms.Find(biom => biom.minValue <= value && value < biom.maxValue);
+            foreach (Biom b in bioms)
+            {
+                if (b.minValue <= value && value < b.maxValue)
+                    return b;
+            }
+
+            Debug.Log("Biom 0. Fehler?!");
+            return bioms[0];
+
+            // return bioms.Find(biom => biom.minValue <= value && value < biom.maxValue);
         }
     }
 }

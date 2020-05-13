@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using Core.Chunks;
 using TMPro;
 using UnityEngine;
-
-using Core.Chunking;
-using Core.Chunking.Threading;
+using Core.Chunks.Threading;
+using Core.Managers;
 using Core.Player;
 using Utilities;
 
@@ -30,7 +30,7 @@ namespace Core.UI.DeveloperOverlay
         private void Start()
         {
             jobmanager = JobManager.JobManagerUpdaterInstance;
-            stringbuilder = new StringBuilder();
+            stringbuilder = new StringBuilder(50);
             
             List<Transform> t = new List<Transform>();
             for (int i = 0; i < transform.childCount; i++)

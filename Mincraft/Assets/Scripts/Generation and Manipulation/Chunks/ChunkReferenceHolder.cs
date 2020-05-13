@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Core.Chunking
+namespace Core.Chunks
 {
     public class ChunkReferenceHolder : MonoBehaviour
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityInspector.PropertyAttributes
+namespace Attributes
 {
     public class DrawIfFalseAttribute : PropertyAttribute
     {

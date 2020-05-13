@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using Core.Builder;
 using Core.Builder.Generation;
 using Core.Managers;
@@ -8,10 +6,9 @@ using Core.Math;
 using Core.Saving;
 using Core.Saving.Serializers;
 using Core.StructureGeneration;
-using Test;
-using Utilities;
+using UnityEngine;
 
-namespace Core.Chunking
+namespace Core.Chunks
 {
     public class Chunk : Context<Chunk>
     {
@@ -27,10 +24,11 @@ namespace Core.Chunking
         public Int3 GlobalPosition { get; set; } //Zwischen [(-int, -int, -int) und (int, int, int)]
 
         //Chunkdata
-        private Block[] blocks;
+        private ExtendedArray3D<Block> blocks;
+        private Block[] blockNeighbours;
 
         //Helper properties
-        public ChunkState ChunkState { get; set; }
+        // public ChunkState ChunkState { get; set; }
         private static int chunkSize;
         
         //Structure Building
@@ -63,15 +61,18 @@ namespace Core.Chunking
             smoothness = WorldSettings.NoiseSettings.Smoothness;
             steepness = WorldSettings.NoiseSettings.Steepness;
             seed = WorldSettings.NoiseSettings.Seed;
-            
-            blocks = new Block[chunkSize * chunkSize * chunkSize];
+
+            blocks = new ExtendedArray3D<Block>(chunkSize, 1);
+            //blocks = new Array3D<Block>(chunkSize);
 
             if (noise == null)
                 noise = new FastNoise(seed);
+            
+            blockNeighbours = new Block[6];
         }
 
         public void AddBlock(Block block, Int3 pos) 
-             => blocks[Idx3dTo1D(pos.X, pos.Y, pos.Z)] = block;
+             => blocks[pos.X, pos.Y, pos.Z] = block;
 
         #region Context
 
@@ -80,7 +81,7 @@ namespace Core.Chunking
             return new ChunkSerializeHelper()
             {
                 ChunkPosition = this.GlobalPosition,
-                localBlocks = this.blocks,
+                localBlocks = this.blocks.RawData,
                 //local blocks auch!
                 //Later here we will continue with biom settings
             };
@@ -91,28 +92,23 @@ namespace Core.Chunking
             var helper = (ChunkSerializeHelper) data;
             this.LocalPosition = helper.ChunkPosition;
             //globalblocks auch
-            this.blocks = helper.localBlocks;
+            this.blocks = new ExtendedArray3D<Block>(helper.localBlocks);
+            //this.blocks = new Array3D<Block>(helper.localBlocks);
 
             return this;
         }
 
         #endregion
 
-
-        public Block GetBlock(int x, int y, int z)
-        {
-            return blocks[Idx3dTo1D(x, y, z)];
-        }
-
-        public Block[] Blocks
+        public ExtendedArray3D<Block> Blocks
         {
             get => blocks;
             set => blocks = value;
         }
-
+        
         public bool IsNotEmpty(int x, int y, int z)
         {
-            Block currentBlock = blocks[Idx3dTo1D(x, y, z)];
+            Block currentBlock = blocks[x, y, z];
             return currentBlock.ID != (int) BlockUV.Air;
         }
 
@@ -121,158 +117,34 @@ namespace Core.Chunking
         /// </summary>
         public void ReleaseGameObject()
         {
-            ChunkGameObjectPool.Instance.SetGameObjectToUnsed(this.CurrentGO);
+            ChunkGameObjectPool.Instance.SetGameObjectToUnused(this.CurrentGO);
             this.CurrentGO = null;
         }
 
         /// <summary>
-        /// Get block
+        /// Calculates the neighbouring block
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="blockPos"></param>
-        /// <returns></returns>
-        private Block GetBlockNeigbourAt(int index, Int3 blockPos)
+        /// <param name="index">Lookup index for the normalized 6 directions</param>
+        /// <param name="local">Local block position</param>
+        /// <returns>Block</returns>
+        private Block GetBlockNeigbourAt(int index, Int3 local)
         {
-            Int3 local = blockPos;
             Int3 direction = directions[index];
-            
-            if (ChunkBuffer.UsingChunkBuffer && !ChunkBuffer.InLocalSpace(direction + this.LocalPosition))
-                return Block.Empty();
-            
-            Chunk chunkNeighbour = ChunkNeighbour(index);
+            Int3 newBlockPos = local + direction;
 
-            Block block = new Block
-            {
-                ID = (int) BlockUV.Stone
-            };
-
-
-            switch (index)
-            {
-                case 0: //Forward
-                {
-                    if ((local + direction).Z < chunkSize)
-                    {
-                        block = blocks[
-                            Idx3dTo1D(local.X + direction.X, local.Y + direction.Y,
-                                local.Z + direction.Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeighbour != null)
-                        {
-                            block = chunkNeighbour.GetBlock(blockPos.X, blockPos.Y, 0);
-                        }
-                    }
-
-                    break;
-                }
-                case 1: //Back
-                {
-                    if ((local + direction).Z >= 0)
-                    {
-                        block = blocks[
-                            Idx3dTo1D(local.X + direction.X, local.Y + direction.Y,
-                                local.Z + direction.Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeighbour != null)
-                        {
-                            block = chunkNeighbour.GetBlock(blockPos.X, blockPos.Y, chunkSize - 1);
-                        }
-                    }
-
-                    break;
-                }
-                case 2: //Up
-                {
-                    if ((local + direction).Y < chunkSize)
-                    {
-                        block = blocks[
-                            Idx3dTo1D(local.X + direction.X, local.Y + direction.Y,
-                                local.Z + direction.Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeighbour != null)
-                        {
-                            block = chunkNeighbour.GetBlock(blockPos.X, 0, blockPos.Z);
-                        }
-                    }
-
-                    break;
-                }
-                case 3: //Down
-                {
-                    if ((local + direction).Y >= 0)
-                    {
-                        block = blocks[
-                            Idx3dTo1D(local.X + direction.X, local.Y + direction.Y,
-                                local.Z + direction.Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeighbour != null)
-                        {
-                            block = chunkNeighbour.GetBlock(blockPos.X, chunkSize - 1, blockPos.Z);
-                        }
-                    }
-
-                    break;
-                }
-                case 4: //Left
-                {
-                    if ((local + direction).X >= 0)
-                    {
-                        block = blocks[
-                            Idx3dTo1D(local.X + direction.X, local.Y + direction.Y,
-                                local.Z + direction.Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeighbour != null)
-                        {
-                            block = chunkNeighbour.GetBlock(chunkSize - 1, blockPos.Y, blockPos.Z);
-                        }
-                    }
-
-                    break;
-                }
-                case 5: //Right
-                {
-                    if ((local + direction).X < chunkSize)
-                    {
-                        block = blocks[
-                            Idx3dTo1D(local.X + direction.X, local.Y + direction.Y,
-                                local.Z + direction.Z)];
-                    }
-                    else
-                    {
-                        if (chunkNeighbour != null)
-                        {
-                            block = chunkNeighbour.GetBlock(0, blockPos.Y, blockPos.Z);
-                        }
-                    }
-
-                    break;
-                }
-            }
-
-            return block;
+            return blocks[newBlockPos.X, newBlockPos.Y, newBlockPos.Z];
         }
         
-        public Block[] GetBlockNeighbours(in Int3 blockPos)
+        public Block[] GetBlockNeighbours(Int3 blockPos)
         {
-            return new[]
-            {
-                GetBlockNeigbourAt(0, blockPos),
-                GetBlockNeigbourAt(1, blockPos),
-                GetBlockNeigbourAt(2, blockPos),
-                GetBlockNeigbourAt(3, blockPos),
-                GetBlockNeigbourAt(4, blockPos),
-                GetBlockNeigbourAt(5, blockPos)
-            };
+            blockNeighbours[0] = GetBlockNeigbourAt(0, blockPos);
+            blockNeighbours[1] = GetBlockNeigbourAt(1, blockPos);
+            blockNeighbours[2] = GetBlockNeigbourAt(2, blockPos);
+            blockNeighbours[3] = GetBlockNeigbourAt(3, blockPos);
+            blockNeighbours[4] = GetBlockNeigbourAt(4, blockPos);
+            blockNeighbours[5] = GetBlockNeigbourAt(5, blockPos);
+
+            return blockNeighbours;
         }
 
         /// <summary>
@@ -282,9 +154,9 @@ namespace Core.Chunking
         public void GenerateBlocks()
         {
             //Terrain generation
-            for (int x = this.GlobalPosition.X; x < this.GlobalPosition.X + chunkSize; x++)
+            for (int x = this.GlobalPosition.X - 1; x < this.GlobalPosition.X + chunkSize + 1; x++)
             {
-                for (int z = this.GlobalPosition.Z; z < this.GlobalPosition.Z + chunkSize; z++)
+                for (int z = this.GlobalPosition.Z - 1; z < this.GlobalPosition.Z + chunkSize + 1; z++)
                 {
                     Biom biom = BiomFinder.Find(noise.GetCellular(x * smoothness, z * smoothness));
                     ChunkColumnGen(x, z, biom);
@@ -303,12 +175,12 @@ namespace Core.Chunking
                     float lightRay = 1f;
                     for (int y = chunkSize - 1; y >= 0; y--)
                     {
-                        Block b = blocks[Idx3dTo1D(x, y, z)];
+                        Block b = blocks[x, y, z];
                         if (b.ID > 0 && b.TransparentcyLevel() < lightRay) //If it's not air
                             lightRay = b.TransparentcyLevel();
 
                         b.GlobalLightPercent = lightRay;
-                        blocks[Idx3dTo1D(x, y, z)] = b;
+                        blocks[x, y, z] = b;
 
                         if (lightRay > lightFalloff)
                             litVoxels.Enqueue(new Int3(x, y, z));
@@ -320,13 +192,13 @@ namespace Core.Chunking
             {
                 Int3 currentPosition = litVoxels.Dequeue();
                 Block currentBlock =
-                    blocks[Idx3dTo1D(currentPosition.X, currentPosition.Y, currentPosition.Z)];
+                    blocks[currentPosition.X, currentPosition.Y, currentPosition.Z];
 
                 for (int p = 0; p < 6; p++)
                 {
                     Int3 nPos = currentPosition + directions[p];
                     if (nPos.X > 0 && nPos.X < 16 &&
-                        nPos.Y > 0 && nPos.Y < 16 &&
+                        nPos.Y > 0 && nPos.Y < 16 && 
                         nPos.Z > 0 && nPos.Z < 16)
                     {
                         Block neighbourBlock = GetBlockNeigbourAt(p, currentPosition);
@@ -335,7 +207,9 @@ namespace Core.Chunking
                         if (neighbourBlock.GlobalLightPercent < currentBlock.GlobalLightPercent - lightFalloff)
                         {
                             float result = currentBlock.GlobalLightPercent - lightFalloff;
-                            blocks[Idx3dTo1D(nPos.X, nPos.Y, nPos.Z)].GlobalLightPercent = result;
+                            var block = blocks[nPos.X, nPos.Y, nPos.Z];
+                            block.GlobalLightPercent = result;
+                            blocks[nPos.X, nPos.Y, nPos.Z] = block;
                             if (result > lightFalloff)
                             {
                                 litVoxels.Enqueue(neighbourPos);
@@ -351,31 +225,31 @@ namespace Core.Chunking
         {
             //Mountains
             int lowerHeight = biom.lowerBaseHeight;
-
+            
             lowerHeight += GetNoise(x, 0, z, biom.lowerMountainFrequency, biom.lowerMountainHeight);
-
+            
             int lowerMinHeight = biom.lowerMinHeight;
-
+            
             //Stones
             if (lowerHeight < lowerMinHeight)
                 lowerHeight = lowerMinHeight;
-
+            
             lowerHeight += GetNoise(x, 0, z, biom.lowerBaseNoise, biom.lowerBasNoisHeight);
-
+            
             int midHeight = lowerHeight + biom.midBaseHeight;
             midHeight += GetNoise(x, 5, z, biom.midBaseNoise, biom.midBaseNoiseHeight);
-
+            
             //Dirt
             int topHeight = midHeight + biom.topLayerBaseHeight;
             
             topHeight += GetNoise(x, 10, z, biom.topLayerNoise, biom.topLayerNoiseHeight);
-
+            
             int caveSize = biom.caveSize;
             float treeZoomLevel = biom.treeZoomLevel;
             float treeValue = Mathf.PerlinNoise((x + seed) * treeZoomLevel, (z + seed) * treeZoomLevel);
-
             
-            for (int y = GlobalPosition.Y; y < GlobalPosition.Y + chunkSize; y++)
+            
+            for (int y = GlobalPosition.Y - 1; y < GlobalPosition.Y + chunkSize + 1; y++)
             {
                 int caveChance = GetNoise(x, y, z, biom.caveFrequency, caveSize * 5);
                 if (y <= lowerHeight && caveSize < caveChance)
@@ -406,56 +280,24 @@ namespace Core.Chunking
                     block.SetID((int) BlockUV.Air);
                     this.AddBlock(block, pos);
                 }
-
+            
                 if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
                 {
                     Int3 pos = new Int3(x - GlobalPosition.X, y - GlobalPosition.Y, z - GlobalPosition.Z);
+                    
+                    if (!InChunkSpace(pos)) continue;
+                    
                     Block block = new Block();
                     block.SetID((short) biom.treeTrunkBlock);
-
+                    
                     AddBlock(block, pos);
                     Int3 origin = new Int3(pos.X, pos.Y, pos.Z);
-
-                    builders[0].StructureOrigin.Enqueue((origin, biom)); 
+                    
+                    builders[0].StructureOrigin.Enqueue((origin, biom));
                 }
             }
-
-
-//            For flat
-
-//            if (this.GlobalPosition.Z % 32 == 0 && this.GlobalPosition.X % 32 != 0)
-//            {
-//                for (int y = this.GlobalPosition.Y; y < this.GlobalPosition.Y + 16; y++)
-//                {
-//                    if (y == 16)
-//                    {
-//                        Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z))
-//                        {
-//                            ID = (int) BlockUV.Grass
-//                        };
-//                        
-//                        this.AddBlock(block);
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                for (int y = this.GlobalPosition.Y; y < this.GlobalPosition.Y + 16; y++)
-//                {
-//                    if (y == 0)
-//                    {
-//                        Block block = new Block(new Int3(x - this.GlobalPosition.X, y - this.GlobalPosition.Y, z - this.GlobalPosition.Z))
-//                        {
-//                            ID = (int) BlockUV.Grass
-//                        };
-//                        
-//                        this.AddBlock(block);
-//                    }
-//                }
-//            }
         }
 
-        
         public void GenerateStructures()
         {
             var treeBuilder = builders[0];
@@ -465,6 +307,11 @@ namespace Core.Chunking
                 treeBuilder.Build(tuple.Biom, this, tuple.Origin);
             }
         }
+        
+        private bool InChunkSpace(Int3 pos)
+            => pos.X >= 0 && pos.X < 16 &&
+               pos.Y >= 0 && pos.Y < 16 &&
+               pos.Z >= 0 && pos.Z < 16;
 
         public static int GetNoise(int x, int y, int z, float scale, int max)
             => Mathf.FloorToInt((noise.GetSimplexFractal(x * scale, y * scale, z * scale) + 1f) * (max / 2f));
@@ -478,27 +325,11 @@ namespace Core.Chunking
 
         public void SaveChunk()
             => GameManager.Instance.SavingJob.AddToSavingQueue(this);
-        
-        private int Idx3dTo1D(int x, int y, int z)
-            => x + chunkSize * (y + chunkSize * z);
 
         public override string ToString()
             => GlobalPosition.ToString();
-
-        public Chunk ChunkNeighbour(in int i)
-            => ChunkBuffer.GetChunk(this.LocalPosition + directions[i]);
-
-        public Chunk ChunkNeighbour(in Int3 dir)
+        
+        public Chunk ChunkNeighbour(Int3 dir)
             => ChunkBuffer.GetChunk(this.LocalPosition + dir);
-    }
-
-    public enum ChunkDirection
-    {
-        Forward = 0, // 0
-        Back = 1, // 1
-        Up = 2, // 2
-        Down = 3, // 3
-        Left = 4, // 4
-        Right = 5 // 5
     }
 }

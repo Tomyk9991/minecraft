@@ -1,16 +1,16 @@
 ﻿using System;
-using Core.Builder;
-using Core.Chunking.Threading;
 using Core.Math;
+using Core.Chunks.Threading;
 using Core.Player;
+using Utilities;
 
-namespace Core.Chunking
+namespace Core.Chunks
 {
     public static class ChunkBuffer
     {
         public static bool UsingChunkBuffer { get; set; } = true;
         
-        private static ChunkColumn[] data;
+        private static Array2D<ChunkColumn> data;
         private static object globalMutex = new object();
         private static JobManager jobManager;
         
@@ -25,20 +25,20 @@ namespace Core.Chunking
         public static void Init(int chunkSize, int _minHeight, int _maxHeight, int drawDistanceInChunks)
         {
             jobManager = JobManager.JobManagerUpdaterInstance;
-
-            Dimension = 2 * drawDistanceInChunks + 3;
+            
+            Dimension = 2 * drawDistanceInChunks + 1;
             DrawDistanceInChunks = drawDistanceInChunks;
             minHeight = _minHeight;
             maxHeight = _maxHeight;
 
             YBound = (System.Math.Abs(minHeight) + System.Math.Abs(maxHeight)) / chunkSize;
 
-            data = new ChunkColumn[Dimension * Dimension]; // Um eins in jede Richtung größer, als renderColumns
+            data = new Array2D<ChunkColumn>(Dimension);
         }
         #region Move
         
         /// <summary>
-        /// Shift all entries inside the array in the given direction. Only one direction supported
+        /// Shift all entries inside the array in the given direction. Only one direction at a time supported
         /// </summary>
         /// <param name="direction">Desired direction you moved to</param>
         /// <exception cref="Exception">Throws an exception if enum is unidentified</exception>
@@ -53,43 +53,27 @@ namespace Core.Chunking
                     MoveLeft();
                     break;
                 case Direction.Forward:
-                    MoveUp();
+                    MoveForward();
                     break;
                 case Direction.Back:
-                    MoveDown();
+                    MoveBack();
                     break;
             }
         }
 
-        private static void MoveUp()
+        private static void MoveForward()
         {
+            const ShiftingOptionDirection dir = ShiftingOptionDirection.Forward;
+            DeleteChunkColumns(dir);
+            
             lock (globalMutex)
             {
-                //Shift everything
-                for (int x = 0; x < Dimension; x++)
-                {
-                    for (int y = 0; y < Dimension - 1; y++)
-                    {
-                        ChunkColumn column = data[Idx2D(x, y)];
-                        column = data[Idx2D(x, y + 1)];
-                        column.LocalPosition = new Int2(x, y);
+                ShiftBlock(ShiftingOptionDirection.Forward);
 
-                        for (int h = 0; h < column.chunks.Length; h++)
-                        {
-                            column[h].LocalPosition = new Int3(x, h, y);
-                        }
-                        
-                        column.DesiredForVisualization = x != 0 && 
-                                                         y != 0 && 
-                                                         x != Dimension - 1 &&
-                                                         y != Dimension - 1;
-                        
-                        data[Idx2D(x, y)] = column;
-                    } 
-                }
-
+                //TODO Creating is false
+                
                 //Create new
-                ChunkColumn rightNeighbour = data[Idx2D(0, Dimension - 2)];
+                ChunkColumn rightNeighbour = data[0, Dimension - 1];
                 for (int x = 0; x < Dimension; x++)
                 {
                     Int2 globalPosition = new Int2(rightNeighbour.GlobalPosition.X + (x * 16), rightNeighbour.GlobalPosition.Y + 16);
@@ -109,32 +93,16 @@ namespace Core.Chunking
                         column[localy] = chunk;
                     }
 
-                    data[Idx2D(x, Dimension - 1)] = column;
-                    
-                    
-                    NoiseJob noiseJob = new NoiseJob()
-                    {
-                        Column = column
-                    };
-
-                    jobManager.Add(noiseJob);
-                }
-
-                for (int x = 0; x < Dimension; x++)
-                {
-                    for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
-                    {
-                        
-                        data[Idx2D(x, 0)][localy].ReleaseGameObject();
-                    }
-                    
-                    data[Idx2D(x, 0)].State = DrawingState.NoiseReady;
+                    data[x, Dimension - 1] = column;
+                    jobManager.Add(new ChunkJob(column));
                 }
             }
         }
-
-        private static void MoveDown()
+        private static void MoveBack()
         {
+            const ShiftingOptionDirection dir = ShiftingOptionDirection.Back;
+            DeleteChunkColumns(dir);
+            
             lock (globalMutex)
             {
                 //Shift everything
@@ -142,26 +110,20 @@ namespace Core.Chunking
                 {
                     for (int y = Dimension - 1; y >= 1; y--)
                     {
-                        ChunkColumn column = data[Idx2D(x, y)];
-                        column = data[Idx2D(x, y - 1)];
+                        ChunkColumn column = data[x, y - 1];
                         column.LocalPosition = new Int2(x, y);
 
                         for (int h = 0; h < column.chunks.Length; h++)
                         {
                             column[h].LocalPosition = new Int3(x, h, y);
                         }
-                        
-                        column.DesiredForVisualization = x != 0 && 
-                                                         y != 0 && 
-                                                         x != Dimension - 1 &&
-                                                         y != Dimension - 1;
-                        
-                        data[Idx2D(x, y)] = column;
+
+                        data[x, y] = column;
                     } 
                 }
 
                 //Create new
-                ChunkColumn rightNeighbour = data[Idx2D(0, 1)];
+                ChunkColumn rightNeighbour = data[0, 1];
                 for (int x = 0; x < Dimension; x++)
                 {
                     Int2 globalPosition = new Int2(rightNeighbour.GlobalPosition.X + (x * 16), rightNeighbour.GlobalPosition.Y - 16);
@@ -181,29 +143,17 @@ namespace Core.Chunking
                         column[localy] = chunk;
                     }
 
-                    data[Idx2D(x, 0)] = column;
+                    data[x, 0] = column;
 
-                    NoiseJob noiseJob = new NoiseJob()
-                    {
-                        Column = column
-                    };
-                    jobManager.Add(noiseJob);
-                }
-
-                for (int x = 0; x < Dimension; x++)
-                {
-                    for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
-                    {
-                        data[Idx2D(x, Dimension - 1)][localy].ReleaseGameObject();
-                    }
-                    
-                    data[Idx2D(x, Dimension - 1)].State = DrawingState.NoiseReady;
+                    jobManager.Add(new ChunkJob(column));
                 }
             }
         }
-
         private static void MoveLeft()
         {
+            const ShiftingOptionDirection dir = ShiftingOptionDirection.Left;
+            DeleteChunkColumns(dir);
+            
             lock (globalMutex)
             {
                 //Shift everything
@@ -211,26 +161,20 @@ namespace Core.Chunking
                 {
                     for (int y = 0; y < Dimension; y++)
                     {
-                        ChunkColumn column = data[Idx2D(x, y)];
-                        column = data[Idx2D(x - 1, y)];
+                        var column = data[x - 1, y];
                         column.LocalPosition = new Int2(x, y);
 
                         for (int h = 0; h < column.chunks.Length; h++)
                         {
                             column[h].LocalPosition = new Int3(x, h, y);
                         }
-                        
-                        column.DesiredForVisualization = x != 0 && 
-                                                         y != 0 && 
-                                                         x != Dimension - 1 &&
-                                                         y != Dimension - 1;
-                        
-                        data[Idx2D(x, y)] = column;
+
+                        data[x, y] = column;
                     } 
                 }
 
                 //Create new
-                ChunkColumn rightNeighbour = data[Idx2D(1, 0)];
+                ChunkColumn rightNeighbour = data[1, 0];
                 for (int y = 0; y < Dimension; y++)
                 {
                     Int2 globalPosition = new Int2(rightNeighbour.GlobalPosition.X - 16, rightNeighbour.GlobalPosition.Y + (y * 16));
@@ -250,55 +194,22 @@ namespace Core.Chunking
                         column[localy] = chunk;
                     }
 
-                    data[Idx2D(0, y)] = column;
+                    data[0, y] = column;
 
-                    NoiseJob noiseJob = new NoiseJob()
-                    {
-                        Column = column
-                    };
-                    jobManager.Add(noiseJob);
-                }
-
-                for (int y = 0; y < Dimension; y++)
-                {
-                    for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
-                    {
-                        data[Idx2D(Dimension - 1, y)][localy].ReleaseGameObject();
-                    }
-                    
-                    data[Idx2D(Dimension - 1, y)].State = DrawingState.NoiseReady;
+                    jobManager.Add(new ChunkJob(column));
                 }
             }
         }
-
         private static void MoveRight()
         {
+            const ShiftingOptionDirection dir = ShiftingOptionDirection.Right;
+            DeleteChunkColumns(dir);
+            
             lock (globalMutex)
             {
-                //Shift everything
-                for (int x = 0; x < Dimension - 1; x++)
-                {
-                    for (int y = 0; y < Dimension; y++)
-                    {
-                        ChunkColumn column = data[Idx2D(x, y)];
-                        column = data[Idx2D(x + 1, y)];
-                        column.LocalPosition = new Int2(x, y);
-
-                        for (int h = 0; h < column.chunks.Length; h++)
-                        {
-                            column[h].LocalPosition = new Int3(x, h, y);
-                        }
-                        
-                        column.DesiredForVisualization = x != 0 && 
-                                                         y != 0 && 
-                                                         x != Dimension - 1 &&
-                                                         y != Dimension - 1;
-                        
-                        data[Idx2D(x, y)] = column;
-                    }
-                }
-
-                ChunkColumn leftNeighbour = data[Idx2D(Dimension - 2, 0)];
+                ShiftBlock(dir);
+                
+                ChunkColumn leftNeighbour = data[Dimension - 2, 0];
                 for (int y = 0; y < Dimension; y++)
                 {
                     Int2 globalPosition = new Int2(leftNeighbour.GlobalPosition.X + 16, leftNeighbour.GlobalPosition.Y + (y * 16));
@@ -318,100 +229,116 @@ namespace Core.Chunking
                         column[localy] = chunk;
                     }
 
-                    data[Idx2D(Dimension - 1, y)] = column;
+                    data[Dimension - 1, y] = column;
                     
-                    NoiseJob noiseJob = new NoiseJob()
-                    {
-                        Column = column
-                    };
-                    jobManager.Add(noiseJob);
-                }
-
-                for (int y = 0; y < Dimension; y++)
-                {
-                    for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
-                    {
-                        data[Idx2D(0, y)][localy].ReleaseGameObject();
-                    }
-
-                    data[Idx2D(0, y)].State = DrawingState.NoiseReady;
+                    jobManager.Add(new ChunkJob(column));
                 }
             }
         }
 
         #endregion
+
+        private static void ShiftBlock(ShiftingOptionDirection direction)
+        {
+            if (direction == ShiftingOptionDirection.Forward || direction == ShiftingOptionDirection.Right)
+            {
+                // Für forward =>
+                // yLimit = Dimension - 1;
+                // xLimit = Dimension;
+                bool boundingLimitBoolean = direction == ShiftingOptionDirection.Forward;
+                int yLimit = boundingLimitBoolean ? Dimension - 1 : Dimension;
+                int xLimit = boundingLimitBoolean ? Dimension : Dimension - 1;
+                
+                for (int x = 0; x < xLimit; x++)
+                {
+                    for (int y = 0; y < yLimit; y++)
+                    {
+                        //column = data[x, y + 1] 
+                        ChunkColumn column = boundingLimitBoolean ? data[x, y + 1] : data[x + 1, y];
+                        column.LocalPosition = new Int2(x, y);
+
+                        for (int h = 0; h < column.chunks.Length; h++)
+                        {
+                            column[h].LocalPosition = new Int3(x, h, y);
+                        }
+
+                        data[x, y] = column;
+                    } 
+                }
+            }
+        }
+
+        private static void DeleteChunkColumns(ShiftingOptionDirection direction)
+        {
+            int deleteHorizontal = direction == ShiftingOptionDirection.Forward ? 0 : Dimension - 1;
+            int deleteVertical   = direction == ShiftingOptionDirection.Right   ? 0 : Dimension - 1;
+
+            if (direction == ShiftingOptionDirection.Back || direction == ShiftingOptionDirection.Forward)
+            {
+                for (int x = 0; x < Dimension; x++)
+                {
+                    for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
+                    {
+                        // ReSharper disable once InconsistentlySynchronizedField
+                        data[x, deleteHorizontal][localy].ReleaseGameObject();
+                    }
+                }
+            }
+            else if (direction == ShiftingOptionDirection.Left || direction == ShiftingOptionDirection.Right)
+            {
+                for (int y = 0; y < Dimension; y++)
+                {
+                    for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
+                    {
+                        // ReSharper disable once InconsistentlySynchronizedField
+                        data[deleteVertical, y][localy].ReleaseGameObject();
+                    }
+                }
+            }
+        }
         
         public static Chunk GetChunk(Int3 local)
         {
             if (local.Y >= YBound || local.Y < 0)
                 return null;
 
-            lock (data[Idx2D(local.X, local.Z)])
+            lock (data[local.X, local.Z])
             {
-                return data[Idx2D(local.X, local.Z)][local.Y];
+                return data[local.X, local.Z][local.Y];
             }
         }
 
-        public static Chunk GetChunkFromGlobal(int gx, int gy, int gz, Int2 playerPos)
-        {
-            if (gy >= YBound || gy < 0)
-                return null;
-            
-            if (playerPos.X < 0) playerPos.X += 16;
-            if (playerPos.Y < 0) playerPos.Y += 16;
-            
-            int xMin = playerPos.X - (DrawDistanceInChunks * chunkSize) - chunkSize;
-            int zMin = playerPos.Y - (DrawDistanceInChunks * chunkSize) - chunkSize;
-            
-            int xMax = playerPos.X + (DrawDistanceInChunks * chunkSize) + chunkSize;
-            int zMax = playerPos.Y + (DrawDistanceInChunks * chunkSize) + chunkSize;
-
-            //Vielleicht -1 wieder weg??!??!?!
-            int x = MathHelper.MapToInt(gx, xMin, xMax, 1, Dimension - 1);
-            int z = MathHelper.MapToInt(gz, zMin, zMax, 1, Dimension - 1);
-            
-            int y = MathHelper.MapToInt(gy, minHeight, maxHeight, 0, YBound);
-
-            lock (data[Idx2D(x, z)])
-            {
-                return data[Idx2D(x, z)][y];
-            }
-        }
-        
-        public static Chunk GetChunk(int x, int y, int z)
-        {
-            if (y >= YBound || y < 0)
-                return null;
-
-            lock (data[Idx2D(x, z)])
-            {
-                return data[Idx2D(x, z)][y];
-            }
-        }
-        
         public static ChunkColumn GetChunkColumn(int x, int z)
         {
-            lock (data[Idx2D(x, z)])
+            lock (data[x, z])
             {
-                return data[Idx2D(x, z)];
+                return data[x, z];
             }
         }
 
-        public static void SetChunkColumnNonThreadSafe(int x, int z, ChunkColumn value)
+        /// <summary>
+        /// Set ChunkColumn NonThreadSafe
+        /// </summary>
+        /// <param name="x">local x position of the column</param>
+        /// <param name="z">local z position of the column</param>
+        /// <param name="value">The ChunkColumn</param>
+        public static void SetChunkColumnNTS(int x, int z, ChunkColumn value)
         {
-            data[Idx2D(x, z)] = value;
+            data[x, z] = value;
         }
-
-
+        
         public static int DataLength => data.Length;
-
-
-        private static int Idx2D(int x, int y)
-            => ((2 * DrawDistanceInChunks + 3)) * x + y;
 
         public static bool InLocalSpace(Int3 localPosition)
             => localPosition.X >= 0 && localPosition.X <= Dimension - 1 &&
                localPosition.Y >= 0 && localPosition.Y <= Dimension - 1 &&
                localPosition.Z >= 0 && localPosition.Z <= Dimension - 1;
+
+        private enum ShiftingOptionDirection
+        {
+            Forward, Back,
+            Left, Right
+        }
+        
     }
 }

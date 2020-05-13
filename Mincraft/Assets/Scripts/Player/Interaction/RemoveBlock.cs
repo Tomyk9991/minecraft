@@ -1,11 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using UnityEngine;
-
 using Core.Builder;
-using Core.Chunking;
+using Core.Chunks;
 using Core.Math;
 using Core.UI.Console;
+using UnityEngine;
 
 namespace Core.Player.Interaction
 {

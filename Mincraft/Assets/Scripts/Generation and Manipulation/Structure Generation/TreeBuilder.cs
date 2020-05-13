@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Core.Builder;
 using Core.Builder.Generation;
-using Core.Chunking;
+using Core.Chunks;
 using Core.Math;
 using UnityEngine;
 using static Core.Math.MathHelper;
@@ -72,7 +72,9 @@ namespace Core.StructureGeneration
                 {
                     Chunk c = callingChunk.ChunkNeighbour(neighbouringChunkDirection);
                     c.AddBlock(block, pos);
-                    c.ChunkState = ChunkState.Dirty;
+                    
+                    //TODO State
+                    //c.ChunkState = ChunkState.Dirty;
                     c.ChunkColumn.Dirty = true;
                 }
             }

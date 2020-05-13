@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Core.UI.Menu
+namespace Core.Managers.UI.Menu
 {
     public class OptionsDialogUI : MonoBehaviour
     {

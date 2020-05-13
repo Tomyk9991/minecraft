@@ -34,11 +34,10 @@ using FN_DECIMAL = System.Double;
 #else
 using FN_DECIMAL = System.Single;
 #endif
-
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Test
+namespace Core.Builder.Generation
 {
     public class FastNoise
     {
@@ -138,11 +137,11 @@ namespace Test
         // Both indicies must be >= 0, index1 must be < 4
         public void SetCellularDistance2Indicies(int cellularDistanceIndex0, int cellularDistanceIndex1)
         {
-            m_cellularDistanceIndex0 = Math.Min(cellularDistanceIndex0, cellularDistanceIndex1);
-            m_cellularDistanceIndex1 = Math.Max(cellularDistanceIndex0, cellularDistanceIndex1);
+            m_cellularDistanceIndex0 = System.Math.Min(cellularDistanceIndex0, cellularDistanceIndex1);
+            m_cellularDistanceIndex1 = System.Math.Max(cellularDistanceIndex0, cellularDistanceIndex1);
 
-            m_cellularDistanceIndex0 = Math.Min(Math.Max(m_cellularDistanceIndex0, 0), FN_CELLULAR_INDEX_MAX);
-            m_cellularDistanceIndex1 = Math.Min(Math.Max(m_cellularDistanceIndex1, 0), FN_CELLULAR_INDEX_MAX);
+            m_cellularDistanceIndex0 = System.Math.Min(System.Math.Max(m_cellularDistanceIndex0, 0), FN_CELLULAR_INDEX_MAX);
+            m_cellularDistanceIndex1 = System.Math.Min(System.Math.Max(m_cellularDistanceIndex1, 0), FN_CELLULAR_INDEX_MAX);
         }
 
         // Sets the maximum distance a cellular point can move from it's grid position
@@ -264,7 +263,7 @@ namespace Test
             new Float3(-0.7870349638f, 0.03447489231f, 0.6159443543f), new Float3(-0.2015596421f, 0.6859872284f, 0.6991389226f), new Float3(-0.08581082512f, -0.10920836f, -0.9903080513f), new Float3(0.5532693395f, 0.7325250401f, -0.396610771f), new Float3(-0.1842489331f, -0.9777375055f, -0.1004076743f), new Float3(0.0775473789f, -0.9111505856f, 0.4047110257f), new Float3(0.1399838409f, 0.7601631212f, -0.6344734459f), new Float3(0.4484419361f, -0.845289248f, 0.2904925424f),
         };
 
-        [MethodImplAttribute(FN_INLINE)]
+        [MethodImpl(FN_INLINE)]
         private static int FastFloor(FN_DECIMAL f) { return (f >= 0 ? (int)f : (int)f - 1); }
 
         [MethodImplAttribute(FN_INLINE)]
@@ -687,7 +686,7 @@ namespace Test
         private FN_DECIMAL SingleValueFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleValue(seed, x, y, z)) * 2 - 1;
+            FN_DECIMAL sum = System.Math.Abs(SingleValue(seed, x, y, z)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -697,7 +696,7 @@ namespace Test
                 z *= m_lacunarity;
 
                 amp *= m_gain;
-                sum += (Math.Abs(SingleValue(++seed, x, y, z)) * 2 - 1) * amp;
+                sum += (System.Math.Abs(SingleValue(++seed, x, y, z)) * 2 - 1) * amp;
             }
 
             return sum * m_fractalBounding;
@@ -706,7 +705,7 @@ namespace Test
         private FN_DECIMAL SingleValueFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleValue(seed, x, y, z));
+            FN_DECIMAL sum = 1 - System.Math.Abs(SingleValue(seed, x, y, z));
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -716,7 +715,7 @@ namespace Test
                 z *= m_lacunarity;
 
                 amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleValue(++seed, x, y, z))) * amp;
+                sum -= (1 - System.Math.Abs(SingleValue(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -807,7 +806,7 @@ namespace Test
         private FN_DECIMAL SingleValueFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleValue(seed, x, y)) * 2 - 1;
+            FN_DECIMAL sum = System.Math.Abs(SingleValue(seed, x, y)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -815,7 +814,7 @@ namespace Test
                 x *= m_lacunarity;
                 y *= m_lacunarity;
                 amp *= m_gain;
-                sum += (Math.Abs(SingleValue(++seed, x, y)) * 2 - 1) * amp;
+                sum += (System.Math.Abs(SingleValue(++seed, x, y)) * 2 - 1) * amp;
             }
 
             return sum * m_fractalBounding;
@@ -824,7 +823,7 @@ namespace Test
         private FN_DECIMAL SingleValueFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleValue(seed, x, y));
+            FN_DECIMAL sum = 1 - System.Math.Abs(SingleValue(seed, x, y));
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -833,7 +832,7 @@ namespace Test
                 y *= m_lacunarity;
 
                 amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleValue(++seed, x, y))) * amp;
+                sum -= (1 - System.Math.Abs(SingleValue(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -917,7 +916,7 @@ namespace Test
         private FN_DECIMAL SinglePerlinFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SinglePerlin(seed, x, y, z)) * 2 - 1;
+            FN_DECIMAL sum = System.Math.Abs(SinglePerlin(seed, x, y, z)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -927,7 +926,7 @@ namespace Test
                 z *= m_lacunarity;
 
                 amp *= m_gain;
-                sum += (Math.Abs(SinglePerlin(++seed, x, y, z)) * 2 - 1) * amp;
+                sum += (System.Math.Abs(SinglePerlin(++seed, x, y, z)) * 2 - 1) * amp;
             }
 
             return sum * m_fractalBounding;
@@ -936,7 +935,7 @@ namespace Test
         private FN_DECIMAL SinglePerlinFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SinglePerlin(seed, x, y, z));
+            FN_DECIMAL sum = 1 - System.Math.Abs(SinglePerlin(seed, x, y, z));
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -946,7 +945,7 @@ namespace Test
                 z *= m_lacunarity;
 
                 amp *= m_gain;
-                sum -= (1 - Math.Abs(SinglePerlin(++seed, x, y, z))) * amp;
+                sum -= (1 - System.Math.Abs(SinglePerlin(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -1044,7 +1043,7 @@ namespace Test
         private FN_DECIMAL SinglePerlinFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SinglePerlin(seed, x, y)) * 2 - 1;
+            FN_DECIMAL sum = System.Math.Abs(SinglePerlin(seed, x, y)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -1053,7 +1052,7 @@ namespace Test
                 y *= m_lacunarity;
 
                 amp *= m_gain;
-                sum += (Math.Abs(SinglePerlin(++seed, x, y)) * 2 - 1) * amp;
+                sum += (System.Math.Abs(SinglePerlin(++seed, x, y)) * 2 - 1) * amp;
             }
 
             return sum * m_fractalBounding;
@@ -1062,7 +1061,7 @@ namespace Test
         private FN_DECIMAL SinglePerlinFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SinglePerlin(seed, x, y));
+            FN_DECIMAL sum = 1 - System.Math.Abs(SinglePerlin(seed, x, y));
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -1071,7 +1070,7 @@ namespace Test
                 y *= m_lacunarity;
 
                 amp *= m_gain;
-                sum -= (1 - Math.Abs(SinglePerlin(++seed, x, y))) * amp;
+                sum -= (1 - System.Math.Abs(SinglePerlin(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -1160,7 +1159,7 @@ namespace Test
         private FN_DECIMAL SingleSimplexFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleSimplex(seed, x, y, z)) * 2 - 1;
+            FN_DECIMAL sum = System.Math.Abs(SingleSimplex(seed, x, y, z)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -1170,7 +1169,7 @@ namespace Test
                 z *= m_lacunarity;
 
                 amp *= m_gain;
-                sum += (Math.Abs(SingleSimplex(++seed, x, y, z)) * 2 - 1) * amp;
+                sum += (System.Math.Abs(SingleSimplex(++seed, x, y, z)) * 2 - 1) * amp;
             }
 
             return sum * m_fractalBounding;
@@ -1179,7 +1178,7 @@ namespace Test
         private FN_DECIMAL SingleSimplexFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleSimplex(seed, x, y, z));
+            FN_DECIMAL sum = 1 - System.Math.Abs(SingleSimplex(seed, x, y, z));
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -1189,7 +1188,7 @@ namespace Test
                 z *= m_lacunarity;
 
                 amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleSimplex(++seed, x, y, z))) * amp;
+                sum -= (1 - System.Math.Abs(SingleSimplex(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -1336,7 +1335,7 @@ namespace Test
         private FN_DECIMAL SingleSimplexFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleSimplex(seed, x, y)) * 2 - 1;
+            FN_DECIMAL sum = System.Math.Abs(SingleSimplex(seed, x, y)) * 2 - 1;
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -1345,7 +1344,7 @@ namespace Test
                 y *= m_lacunarity;
 
                 amp *= m_gain;
-                sum += (Math.Abs(SingleSimplex(++seed, x, y)) * 2 - 1) * amp;
+                sum += (System.Math.Abs(SingleSimplex(++seed, x, y)) * 2 - 1) * amp;
             }
 
             return sum * m_fractalBounding;
@@ -1354,7 +1353,7 @@ namespace Test
         private FN_DECIMAL SingleSimplexFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleSimplex(seed, x, y));
+            FN_DECIMAL sum = 1 - System.Math.Abs(SingleSimplex(seed, x, y));
             FN_DECIMAL amp = 1;
 
             for (int i = 1; i < m_octaves; i++)
@@ -1363,7 +1362,7 @@ namespace Test
                 y *= m_lacunarity;
 
                 amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleSimplex(++seed, x, y))) * amp;
+                sum -= (1 - System.Math.Abs(SingleSimplex(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -1592,7 +1591,7 @@ namespace Test
         private FN_DECIMAL SingleCubicFractalBillow(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleCubic(seed, x, y, z)) * 2 - 1;
+            FN_DECIMAL sum = System.Math.Abs(SingleCubic(seed, x, y, z)) * 2 - 1;
             FN_DECIMAL amp = 1;
             int i = 0;
 
@@ -1603,7 +1602,7 @@ namespace Test
                 z *= m_lacunarity;
 
                 amp *= m_gain;
-                sum += (Math.Abs(SingleCubic(++seed, x, y, z)) * 2 - 1) * amp;
+                sum += (System.Math.Abs(SingleCubic(++seed, x, y, z)) * 2 - 1) * amp;
             }
 
             return sum * m_fractalBounding;
@@ -1612,7 +1611,7 @@ namespace Test
         private FN_DECIMAL SingleCubicFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleCubic(seed, x, y, z));
+            FN_DECIMAL sum = 1 - System.Math.Abs(SingleCubic(seed, x, y, z));
             FN_DECIMAL amp = 1;
             int i = 0;
 
@@ -1623,7 +1622,7 @@ namespace Test
                 z *= m_lacunarity;
 
                 amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleCubic(++seed, x, y, z))) * amp;
+                sum -= (1 - System.Math.Abs(SingleCubic(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -1725,7 +1724,7 @@ namespace Test
         private FN_DECIMAL SingleCubicFractalBillow(FN_DECIMAL x, FN_DECIMAL y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = Math.Abs(SingleCubic(seed, x, y)) * 2 - 1;
+            FN_DECIMAL sum = System.Math.Abs(SingleCubic(seed, x, y)) * 2 - 1;
             FN_DECIMAL amp = 1;
             int i = 0;
 
@@ -1735,7 +1734,7 @@ namespace Test
                 y *= m_lacunarity;
 
                 amp *= m_gain;
-                sum += (Math.Abs(SingleCubic(++seed, x, y)) * 2 - 1) * amp;
+                sum += (System.Math.Abs(SingleCubic(++seed, x, y)) * 2 - 1) * amp;
             }
 
             return sum * m_fractalBounding;
@@ -1744,7 +1743,7 @@ namespace Test
         private FN_DECIMAL SingleCubicFractalRigidMulti(FN_DECIMAL x, FN_DECIMAL y)
         {
             int seed = m_seed;
-            FN_DECIMAL sum = 1 - Math.Abs(SingleCubic(seed, x, y));
+            FN_DECIMAL sum = 1 - System.Math.Abs(SingleCubic(seed, x, y));
             FN_DECIMAL amp = 1;
             int i = 0;
 
@@ -1754,7 +1753,7 @@ namespace Test
                 y *= m_lacunarity;
 
                 amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleCubic(++seed, x, y))) * amp;
+                sum -= (1 - System.Math.Abs(SingleCubic(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -1865,7 +1864,7 @@ namespace Test
                                 FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
                                 FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
+                                FN_DECIMAL newDistance = System.Math.Abs(vecX) + System.Math.Abs(vecY) + System.Math.Abs(vecZ);
 
                                 if (newDistance < distance)
                                 {
@@ -1891,7 +1890,7 @@ namespace Test
                                 FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
                                 FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+                                FN_DECIMAL newDistance = (System.Math.Abs(vecX) + System.Math.Abs(vecY) + System.Math.Abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
 
                                 if (newDistance < distance)
                                 {
@@ -1948,8 +1947,8 @@ namespace Test
                                 FN_DECIMAL newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
 
                                 for (int i = m_cellularDistanceIndex1; i > 0; i--)
-                                    distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
-                                distance[0] = Math.Min(distance[0], newDistance);
+                                    distance[i] = System.Math.Max(System.Math.Min(distance[i], newDistance), distance[i - 1]);
+                                distance[0] = System.Math.Min(distance[0], newDistance);
                             }
                         }
                     }
@@ -1967,11 +1966,11 @@ namespace Test
                                 FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
                                 FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
+                                FN_DECIMAL newDistance = System.Math.Abs(vecX) + System.Math.Abs(vecY) + System.Math.Abs(vecZ);
 
                                 for (int i = m_cellularDistanceIndex1; i > 0; i--)
-                                    distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
-                                distance[0] = Math.Min(distance[0], newDistance);
+                                    distance[i] = System.Math.Max(System.Math.Min(distance[i], newDistance), distance[i - 1]);
+                                distance[0] = System.Math.Min(distance[0], newDistance);
                             }
                         }
                     }
@@ -1989,11 +1988,11 @@ namespace Test
                                 FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
                                 FN_DECIMAL vecZ = zi - z + vec.z * m_cellularJitter;
 
-                                FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+                                FN_DECIMAL newDistance = (System.Math.Abs(vecX) + System.Math.Abs(vecY) + System.Math.Abs(vecZ)) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
 
                                 for (int i = m_cellularDistanceIndex1; i > 0; i--)
-                                    distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
-                                distance[0] = Math.Min(distance[0], newDistance);
+                                    distance[i] = System.Math.Max(System.Math.Min(distance[i], newDistance), distance[i - 1]);
+                                distance[0] = System.Math.Min(distance[0], newDistance);
                             }
                         }
                     }
@@ -2077,7 +2076,7 @@ namespace Test
                             FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
                             FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY));
+                            FN_DECIMAL newDistance = (System.Math.Abs(vecX) + System.Math.Abs(vecY));
 
                             if (newDistance < distance)
                             {
@@ -2098,7 +2097,7 @@ namespace Test
                             FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
                             FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY)) + (vecX * vecX + vecY * vecY);
+                            FN_DECIMAL newDistance = (System.Math.Abs(vecX) + System.Math.Abs(vecY)) + (vecX * vecX + vecY * vecY);
 
                             if (newDistance < distance)
                             {
@@ -2150,8 +2149,8 @@ namespace Test
                             FN_DECIMAL newDistance = vecX * vecX + vecY * vecY;
 
                             for (int i = m_cellularDistanceIndex1; i > 0; i--)
-                                distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
-                            distance[0] = Math.Min(distance[0], newDistance);
+                                distance[i] = System.Math.Max(System.Math.Min(distance[i], newDistance), distance[i - 1]);
+                            distance[0] = System.Math.Min(distance[0], newDistance);
                         }
                     }
                     break;
@@ -2165,11 +2164,11 @@ namespace Test
                             FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
                             FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = Math.Abs(vecX) + Math.Abs(vecY);
+                            FN_DECIMAL newDistance = System.Math.Abs(vecX) + System.Math.Abs(vecY);
 
                             for (int i = m_cellularDistanceIndex1; i > 0; i--)
-                                distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
-                            distance[0] = Math.Min(distance[0], newDistance);
+                                distance[i] = System.Math.Max(System.Math.Min(distance[i], newDistance), distance[i - 1]);
+                            distance[0] = System.Math.Min(distance[0], newDistance);
                         }
                     }
                     break;
@@ -2183,11 +2182,11 @@ namespace Test
                             FN_DECIMAL vecX = xi - x + vec.x * m_cellularJitter;
                             FN_DECIMAL vecY = yi - y + vec.y * m_cellularJitter;
 
-                            FN_DECIMAL newDistance = (Math.Abs(vecX) + Math.Abs(vecY)) + (vecX * vecX + vecY * vecY);
+                            FN_DECIMAL newDistance = (System.Math.Abs(vecX) + System.Math.Abs(vecY)) + (vecX * vecX + vecY * vecY);
 
                             for (int i = m_cellularDistanceIndex1; i > 0; i--)
-                                distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
-                            distance[0] = Math.Min(distance[0], newDistance);
+                                distance[i] = System.Math.Max(System.Math.Min(distance[i], newDistance), distance[i - 1]);
+                            distance[0] = System.Math.Min(distance[0], newDistance);
                         }
                     }
                     break;
