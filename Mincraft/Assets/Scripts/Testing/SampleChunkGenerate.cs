@@ -37,12 +37,12 @@ namespace Core.Testing
                 for (int x = 0; x < 16; x++)
                 {
                     pos = new Int3(x, 0, z);
-                    b.ID = (short) block;
+                    b.ID = block;
                     chunk.AddBlock(b, pos);
                 }
             }
 
-            b.ID = (int) BlockUV.Stone;
+            b.ID = BlockUV.Stone;
             pos = new Int3(8, 1, 8);
             chunk.AddBlock(b, pos);
             pos = new Int3(8, 2, 8);
@@ -58,7 +58,7 @@ namespace Core.Testing
             pos = new Int3(10, 1, 8);
             chunk.AddBlock(b, pos);
 
-            b.ID = (short) BlockUV.Leaf;
+            b.ID = BlockUV.Leaf;
             pos = new Int3(13, 1, 12);
             chunk.AddBlock(b, pos);
 

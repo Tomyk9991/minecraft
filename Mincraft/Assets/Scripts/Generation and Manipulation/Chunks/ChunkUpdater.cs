@@ -25,7 +25,6 @@ namespace Core.Chunks
 
         private int minHeight;
         private int maxHeight;
-        private int dimension;
 
         private JobManager _jobManager;
 
@@ -38,31 +37,33 @@ namespace Core.Chunks
 
         private void Start()
         {
+            chunkSize = 0x10;
             int xPlayerPos = PlayerMovementTracker.Instance.xPlayerPos;
             int zPlayerPos = PlayerMovementTracker.Instance.zPlayerPos;
 
             PlayerMovementTracker.OnDirectionModified += DirectionModified;
 
-            var minMaxYHeight = WorldSettings.MinMaxYHeight;
+            Int2 minMaxYHeight = WorldSettings.MinMaxYHeight;
             minHeight = minMaxYHeight.X;
             maxHeight = minMaxYHeight.Y;
 
 
             if (calculateThreads)
-            {
                 amountThreads = SystemInfo.processorCount - 5 <= 0 ? 1 : SystemInfo.processorCount - 5;
-            }
-
-            _jobManager = new JobManager(amountThreads, true);
-            _jobManager.Start();
-
-            chunkSize = 0x10;
+            
             ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
 
-            dimension = ChunkBuffer.Dimension;
-            timer = new Timer(WorldSettings.WorldTick);
-            
+            _jobManager = new JobManager(amountThreads, true);
+
+            _jobManager.PassBegin();
             SetupChunkBuffer(xPlayerPos, zPlayerPos);
+            _jobManager.PassEnd();
+            
+
+            _jobManager.Start();
+
+            timer = new Timer(WorldSettings.WorldTick);
+
         }
         
         private void SetupChunkBuffer(in int xPlayerPos, in int zPlayerPos)
@@ -75,7 +76,6 @@ namespace Core.Chunks
                     z <= zPlayerPos + (drawDistanceInChunks * chunkSize);
                     z += chunkSize, localz++)
                 {
-                    //Create chunkColumn
                     ChunkColumn column = new ChunkColumn(new Int2(x, z), new Int2(localx, localz), minHeight, maxHeight);
                     ChunkBuffer.SetChunkColumnNTS(localx, localz, column);
                     
@@ -105,18 +105,13 @@ namespace Core.Chunks
 
         private void Update()
         {
-            if (timer.TimeElapsed(Time.deltaTime))
-            {
-                if(shiftDirections.Count > 0 && _jobManager.MeshJobsCount == 0)
-                {
-                    ChunkBuffer.Shift(shiftDirections.Dequeue());
-                }
-            }
+            if (!timer.TimeElapsed(Time.deltaTime)) return;
+            
+            if(shiftDirections.Count > 0 && _jobManager.MeshJobsCount == 0)
+                ChunkBuffer.Shift(shiftDirections.Dequeue());
         }
 
         private void OnDestroy()
-        {
-            _jobManager?.Dispose();
-        }
+            => _jobManager?.Dispose();
     }
 }

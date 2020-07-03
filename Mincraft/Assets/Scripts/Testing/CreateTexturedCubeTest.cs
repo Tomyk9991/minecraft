@@ -28,8 +28,7 @@ public class CreateTexturedCubeTest : MonoBehaviour
         Chunk chunk = new Chunk();
         Block b = new Block()
         {
-            GlobalLightPercent = 1f,
-            ID = (short) uv
+            ID = uv
         };
         
         Int3 pos = new Int3(0, 0, 0);

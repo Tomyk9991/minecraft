@@ -74,6 +74,7 @@ namespace Core.Chunks
         public void AddBlock(Block block, Int3 pos) 
              => blocks[pos.X, pos.Y, pos.Z] = block;
 
+
         #region Context
 
         public override object Data()
@@ -164,62 +165,6 @@ namespace Core.Chunks
             }
         }
 
-        public void CalculateLight()
-        {
-            Queue<Int3> litVoxels = new Queue<Int3>();
-
-            for (int x = 0; x < chunkSize; x++)
-            {
-                for (int z = 0; z < chunkSize; z++)
-                {
-                    float lightRay = 1f;
-                    for (int y = chunkSize - 1; y >= 0; y--)
-                    {
-                        Block b = blocks[x, y, z];
-                        if (b.ID > 0 && b.TransparentcyLevel() < lightRay) //If it's not air
-                            lightRay = b.TransparentcyLevel();
-
-                        b.GlobalLightPercent = lightRay;
-                        blocks[x, y, z] = b;
-
-                        if (lightRay > lightFalloff)
-                            litVoxels.Enqueue(new Int3(x, y, z));
-                    }
-                }
-            }
-
-            while (litVoxels.Count > 0)
-            {
-                Int3 currentPosition = litVoxels.Dequeue();
-                Block currentBlock =
-                    blocks[currentPosition.X, currentPosition.Y, currentPosition.Z];
-
-                for (int p = 0; p < 6; p++)
-                {
-                    Int3 nPos = currentPosition + directions[p];
-                    if (nPos.X > 0 && nPos.X < 16 &&
-                        nPos.Y > 0 && nPos.Y < 16 && 
-                        nPos.Z > 0 && nPos.Z < 16)
-                    {
-                        Block neighbourBlock = GetBlockNeigbourAt(p, currentPosition);
-                        Int3 neighbourPos = currentPosition + directions[p];
-                        
-                        if (neighbourBlock.GlobalLightPercent < currentBlock.GlobalLightPercent - lightFalloff)
-                        {
-                            float result = currentBlock.GlobalLightPercent - lightFalloff;
-                            var block = blocks[nPos.X, nPos.Y, nPos.Z];
-                            block.GlobalLightPercent = result;
-                            blocks[nPos.X, nPos.Y, nPos.Z] = block;
-                            if (result > lightFalloff)
-                            {
-                                litVoxels.Enqueue(neighbourPos);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         // x z in global space
         private void ChunkColumnGen(int x, int z, Biom biom)
         {
@@ -247,8 +192,8 @@ namespace Core.Chunks
             int caveSize = biom.caveSize;
             float treeZoomLevel = biom.treeZoomLevel;
             float treeValue = Mathf.PerlinNoise((x + seed) * treeZoomLevel, (z + seed) * treeZoomLevel);
-            
-            
+
+
             for (int y = GlobalPosition.Y - 1; y < GlobalPosition.Y + chunkSize + 1; y++)
             {
                 int caveChance = GetNoise(x, y, z, biom.caveFrequency, caveSize * 5);
@@ -256,21 +201,21 @@ namespace Core.Chunks
                 {
                     Int3 pos = new Int3(x - GlobalPosition.X, y - GlobalPosition.Y, z - GlobalPosition.Z);
                     Block block = new Block();
-                    block.SetID((short) biom.lowerLayerBlock);
+                    block.SetID(biom.lowerLayerBlock);
                     this.AddBlock(block, pos);
                 }
                 else if (y <= midHeight && caveSize < caveChance)
                 {
                     Int3 pos = new Int3(x - GlobalPosition.X, y - GlobalPosition.Y, z - GlobalPosition.Z);
                     Block block = new Block();
-                    block.SetID((short) biom.midLayerBlock);
+                    block.SetID(biom.midLayerBlock);
                     this.AddBlock(block, pos);
                 }
                 else if (y <= topHeight && caveSize < caveChance)
                 {
                     Int3 pos = new Int3(x - GlobalPosition.X, y - GlobalPosition.Y, z - GlobalPosition.Z);
                     Block block = new Block();
-                    block.SetID((short) biom.topLayerBlock);
+                    block.SetID(biom.topLayerBlock);
                     this.AddBlock(block, pos);
                 }
                 else
@@ -280,19 +225,18 @@ namespace Core.Chunks
                     block.SetID((int) BlockUV.Air);
                     this.AddBlock(block, pos);
                 }
-            
-                if (treeValue > (1f - biom.treeProbability) && y == topHeight + 1)
+                
+                if (treeValue > 1f - biom.treeProbability && y == topHeight + 1)
                 {
                     Int3 pos = new Int3(x - GlobalPosition.X, y - GlobalPosition.Y, z - GlobalPosition.Z);
                     
-                    if (!InChunkSpace(pos)) continue;
+                    if (!MathHelper.InChunkSpace(pos)) continue;
                     
                     Block block = new Block();
-                    block.SetID((short) biom.treeTrunkBlock);
+                    block.SetID(biom.treeTrunkBlock);
                     
                     AddBlock(block, pos);
                     Int3 origin = new Int3(pos.X, pos.Y, pos.Z);
-                    
                     builders[0].StructureOrigin.Enqueue((origin, biom));
                 }
             }
@@ -300,18 +244,15 @@ namespace Core.Chunks
 
         public void GenerateStructures()
         {
-            var treeBuilder = builders[0];
-            while (treeBuilder.StructureOrigin.Count > 0)
+            foreach (var builder in builders)
             {
-                var tuple = treeBuilder.StructureOrigin.Dequeue();
-                treeBuilder.Build(tuple.Biom, this, tuple.Origin);
+                while (builder.StructureOrigin.Count > 0)
+                {
+                    (Int3 origin, Biom biom) = builder.StructureOrigin.Dequeue();
+                    builder.Build(biom, this, origin);
+                }
             }
         }
-        
-        private bool InChunkSpace(Int3 pos)
-            => pos.X >= 0 && pos.X < 16 &&
-               pos.Y >= 0 && pos.Y < 16 &&
-               pos.Z >= 0 && pos.Z < 16;
 
         public static int GetNoise(int x, int y, int z, float scale, int max)
             => Mathf.FloorToInt((noise.GetSimplexFractal(x * scale, y * scale, z * scale) + 1f) * (max / 2f));

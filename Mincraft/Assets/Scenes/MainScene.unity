@@ -1455,7 +1455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a81e31946edd9a4783d5d33ef529847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawsPerFrame: 3000
+  drawsPerFrame: 5
 --- !u!114 &787175601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1469,7 +1469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveWithPlayer: 0
-  drawDistanceInChunks: 5
+  drawDistanceInChunks: 12
   calculateThreads: 1
   amountThreads: 8
 --- !u!1 &802634826

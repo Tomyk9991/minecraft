@@ -3,6 +3,7 @@ using Core.Chunks;
 using Core.Chunks.Threading;
 using Core.Math;
 using Core.Player;
+using UnityEditor;
 using UnityEngine;
 
 namespace Testing
@@ -27,24 +28,78 @@ namespace Testing
             };
 
             _jobManager = JobManager.JobManagerUpdaterInstance;
-            //_meshJobManager = MeshJobManager.MeshJobManagerUpdaterInstance;
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.H))
             {
-                StringBuilder builder = new StringBuilder("{");
-                ChunkColumn column = ChunkBuffer.GetChunkColumn(0, 0);
-                for (int i = 0; i < column.chunks.Length; i++)
-                {
-                    builder.Append(i == column.chunks.Length - 1 ? column[i].GlobalPosition.ToString() : column[i].GlobalPosition + ", ");
-                }
-
-                builder.Append("}");
-
-                Debug.Log(builder.ToString());
+                
             }
+        }
+    }
+
+    [CustomEditor(typeof(CreateTreeOnClickTest))]
+    public class CreateTreeOnClickTestEditor : Editor
+    {
+        private StringBuilder stringbuilder;
+        private JobManager jobManager;
+        public override void OnInspectorGUI()
+        {
+            if (stringbuilder == null)
+                stringbuilder = new StringBuilder();
+            
+            if(jobManager == null)
+                jobManager = JobManager.JobManagerUpdaterInstance;
+            
+            base.OnInspectorGUI();
+
+
+            if (GUILayout.Button("Rerender"))
+            {
+                int len = ChunkBuffer.Dimension;
+
+                for (int i = 0; i < len; i++)
+                {
+                    for (int j = 0; j < len; j++)
+                    {
+                        ChunkColumn column = ChunkBuffer.GetChunkColumn(i, j);
+                        for (int k = 0; k < column.Chunks.Length; k++)
+                        {
+                            // jobManager.AddWithoutNoise(new MeshJob(column[k]));
+                        }
+                    }
+                }
+            }
+
+            if (Application.isPlaying)
+            {
+                GUILayout.Label("Active noisejobs: " + GetNoiseJobCount().ToString() + "\n" + 
+                                "Active meshjobs: " + GetChunkJobCount().ToString() + "\n" + 
+                                "Active Chunks: " + GetLoadedChunksAmount().ToString());
+                
+                Repaint();
+            }
+            
+        }
+        
+        private StringBuilder GetNoiseJobCount()
+        {
+            stringbuilder.Clear();
+            return stringbuilder.Append(jobManager.NoiseJobsCount * ChunkBuffer.YBound);
+        }
+
+        private StringBuilder GetChunkJobCount()
+        {
+            stringbuilder.Clear();
+            return stringbuilder.Append(jobManager.MeshJobsCount).Append(" finished jobs: ").Append(jobManager.FinishedJobsCount);
+        }
+        
+
+        private StringBuilder GetLoadedChunksAmount()
+        {
+            stringbuilder.Clear();
+            return stringbuilder.Append(ChunkBuffer.DataLength * ChunkBuffer.YBound);
         }
     }
 }

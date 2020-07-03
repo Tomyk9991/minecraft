@@ -4,7 +4,6 @@ using Core.Builder.Generation;
 using Core.Chunks;
 using Core.Math;
 using UnityEngine;
-using static Core.Math.MathHelper;
 
 namespace Core.StructureGeneration
 {
@@ -19,22 +18,22 @@ namespace Core.StructureGeneration
 
         public void Build(Biom biom, Chunk callingChunk, in Int3 origin)
         {
-            Block block = new Block();
-            block.SetID((short) biom.treeTrunkBlock);
-            Int3 pos = origin;
-            //block.Position = origin;
+            HashSet<Chunk> usedChunks = new HashSet<Chunk>();
 
+            Block block = new Block();
+            block.SetID(biom.treeTrunkBlock);
+            Int3 pos = origin;
 
             //Trunk
             for (int j = 1; j < 5; j++)
             {
                 pos.Y = origin.Y + j;
-                AddBlockToChunk(callingChunk, block, pos);
+                usedChunks.Add(AddBlockToChunk(callingChunk, block, pos));
             }
 
             Int3 leafOrigin = pos;
             //Leaves
-            block.SetID((short) biom.treeLeafBlock);
+            block.SetID(biom.treeLeafBlock);
 
             for (int y = -1; y < 3; y++)
             {
@@ -45,38 +44,57 @@ namespace Core.StructureGeneration
                     for (int x = -2; x < 3; x++)
                     {
                         pos.X = leafOrigin.X + x;
-                        AddBlockToChunk(callingChunk, block, pos);
+                        usedChunks.Add(AddBlockToChunk(callingChunk, block, pos));
                     }
                 }
             }
+
+            // foreach (Chunk chunk in usedChunks)
+            // {
+            //     chunk?.FinishUpStructures();
+            // }
         }
 
-        private static void AddBlockToChunk(Chunk callingChunk, Block block, Int3 pos)
+        private bool InChunkSpacePlusOne(Int3 pos)
+            => pos.X >= -1 && pos.X <= 16 &&
+               pos.Y >= -1 && pos.Y <= 16 &&
+               pos.Z >= -1 && pos.Z <= 16;
+
+        private Chunk AddBlockToChunk(Chunk callingChunk, Block block, Int3 pos)
         {
-            if (InLocalSpace(pos))
+            //Don't forget about the fact, that the ExtendedArray and the neighbouring Chunk are doing redundant block
+            //operations. So you have to add blocks twice. At the calling chunk in the not visible bounds and the
+            //neighbouring chunk at the visible bounds
+            if (InChunkSpacePlusOne(pos))
             {
                 callingChunk.AddBlock(block, pos);
+                //callingChunk.AddBlockLater(block, pos);
             }
-            else
+            
+            return _addToOtherChunk();
+
+            Chunk _addToOtherChunk()
             {
                 Int3 neighbouringChunkDirection = new Int3(
                     Mathf.FloorToInt(pos.X / 16.0f),
                     Mathf.FloorToInt(pos.Y / 16.0f),
                     Mathf.FloorToInt(pos.Z / 16.0f));
-
+            
                 pos.X -= 16 * neighbouringChunkDirection.X;
                 pos.Y -= 16 * neighbouringChunkDirection.Y;
                 pos.Z -= 16 * neighbouringChunkDirection.Z;
-
+            
                 if (ChunkBuffer.InLocalSpace(callingChunk.LocalPosition + neighbouringChunkDirection))
                 {
-                    Chunk c = callingChunk.ChunkNeighbour(neighbouringChunkDirection);
-                    c.AddBlock(block, pos);
-                    
-                    //TODO State
-                    //c.ChunkState = ChunkState.Dirty;
-                    c.ChunkColumn.Dirty = true;
+                    if (neighbouringChunkDirection != Int3.Zero)
+                    {
+                        Chunk c = callingChunk.ChunkNeighbour(neighbouringChunkDirection);
+                        c.AddBlock(block, pos);
+                        return c;
+                    }
                 }
+            
+                return null;
             }
         }
     }

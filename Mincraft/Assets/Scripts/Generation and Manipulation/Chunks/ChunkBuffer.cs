@@ -70,8 +70,6 @@ namespace Core.Chunks
             {
                 ShiftBlock(ShiftingOptionDirection.Forward);
 
-                //TODO Creating is false
-                
                 //Create new
                 ChunkColumn rightNeighbour = data[0, Dimension - 1];
                 for (int x = 0; x < Dimension; x++)
@@ -113,7 +111,7 @@ namespace Core.Chunks
                         ChunkColumn column = data[x, y - 1];
                         column.LocalPosition = new Int2(x, y);
 
-                        for (int h = 0; h < column.chunks.Length; h++)
+                        for (int h = 0; h < column.Chunks.Length; h++)
                         {
                             column[h].LocalPosition = new Int3(x, h, y);
                         }
@@ -164,7 +162,7 @@ namespace Core.Chunks
                         var column = data[x - 1, y];
                         column.LocalPosition = new Int2(x, y);
 
-                        for (int h = 0; h < column.chunks.Length; h++)
+                        for (int h = 0; h < column.Chunks.Length; h++)
                         {
                             column[h].LocalPosition = new Int3(x, h, y);
                         }
@@ -257,7 +255,7 @@ namespace Core.Chunks
                         ChunkColumn column = boundingLimitBoolean ? data[x, y + 1] : data[x + 1, y];
                         column.LocalPosition = new Int2(x, y);
 
-                        for (int h = 0; h < column.chunks.Length; h++)
+                        for (int h = 0; h < column.Chunks.Length; h++)
                         {
                             column[h].LocalPosition = new Int3(x, h, y);
                         }

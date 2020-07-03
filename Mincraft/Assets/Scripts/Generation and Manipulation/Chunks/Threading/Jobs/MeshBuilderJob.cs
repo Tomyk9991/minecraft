@@ -8,7 +8,7 @@ namespace Core.Chunks.Threading.Jobs
         public bool Finished { get; set; }
         public IJobCollectionItem[] OtherJobs { get; set; }
 
-        public MeshBuilderJob(in MeshJob item)
+        public MeshBuilderJob(MeshJob item)
         {
             this.OtherJobs = null;
             this.Finished = false;
@@ -17,7 +17,6 @@ namespace Core.Chunks.Threading.Jobs
 
         public void Execute()
         {
-            Target.Chunk.GenerateStructures();
             Target.MeshData = MeshBuilder.Combine(Target.Chunk);
         }
     }

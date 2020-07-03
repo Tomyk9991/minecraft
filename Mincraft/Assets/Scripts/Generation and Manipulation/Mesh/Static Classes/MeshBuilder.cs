@@ -15,7 +15,7 @@ namespace Core.Builder
 		private static int[] tri1 = {1, 0, 2, 1, 2, 3 };
 		private static int[] tri2 = { 0, 1, 2, 2, 1, 3 };
 		private static int[] tris = { 1, 0, 0, 1, 1, 0 };
-		private static int chunkSize = 16;
+		private static int chunkSize = 0x10;
 
 //        private static Int3[] directions =
 //{
@@ -66,16 +66,12 @@ namespace Core.Builder
 
 		                bool transparent = block.IsTransparent();
 
-		                if (block.ID == (int) BlockUV.Air)
+		                if (block.ID == (short)BlockUV.Air)
 		                {
 			                continue;
 		                }
-
-		                //Int3 pos = new Int3(i / (16 * 16), (i / 16) % 16, i % 16);
-
 		                //Check, ob dieser Block transparent ist, oder nicht
 		                // Wenn es so sein sollte, bleibt das neighbours-Array mit 6 false-Werten und jede Seite wird gezeichnet
-			                
 		                neighbourBlocks = chunk.GetBlockNeighbours(pos);
 							
 		                if (!transparent)
@@ -83,8 +79,7 @@ namespace Core.Builder
 			                for (int j = 0; j < 6; j++)
 			                {
 				                Block currentNeighbour = neighbourBlocks[j];
-				                boolNeighbours[j] = currentNeighbour.ID != (int) BlockUV.Air &&
-				                                    !currentNeighbour.IsTransparent();
+				                boolNeighbours[j] = currentNeighbour.ID != BlockUV.Air && !currentNeighbour.IsTransparent();
 			                }
 		                }
 		                else
@@ -99,8 +94,8 @@ namespace Core.Builder
 
 		                if (boolNeighbours.Any(state => state == false))
 		                {
-			                UVData[] currentUVData = UVDictionary.GetValue((BlockUV) block.ID);
-			                float meshOffset = UVDictionary.MeshOffsetID((BlockUV) block.ID);
+			                UVData[] currentUVData = UVDictionary.GetValue(block.ID);
+			                float meshOffset = UVDictionary.MeshOffsetID(block.ID);
 
 			                for (int faceIndex = 0; faceIndex < 6; faceIndex++)
 			                {
@@ -160,15 +155,6 @@ namespace Core.Builder
 
 					                #endregion
 
-					                Block neighbour = neighbourBlocks[faceIndex];
-					                float lightLevel = neighbour.GlobalLightPercent;
-
-					                // Color color = new Color(0, 0, 0, lightLevel);
-					                // colors.Add(color);
-					                // colors.Add(color);
-					                // colors.Add(color);
-					                // colors.Add(color);
-
 					                if (!transparent)
 					                {
 						                for (int k = 0; k < 6; k++)
@@ -218,7 +204,7 @@ namespace Core.Builder
 			            bool transparent = blocks[x, y, z].IsTransparent();
 
 		                Block block = blocks[x, y, z];
-					    if (block.ID == (int) BlockUV.Air)
+					    if (block.ID == (short) BlockUV.Air)
 					    {
 						    continue;
 					    }

@@ -1,7 +1,8 @@
 namespace Core.Builder
 {
-    public enum BlockUV
+    public enum BlockUV : short
     {
+        None = -32768,
         Air = 0,
         Grass = 1,
         Stone = 2,
