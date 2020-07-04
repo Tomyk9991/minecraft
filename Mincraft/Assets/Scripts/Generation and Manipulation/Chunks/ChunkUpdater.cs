@@ -105,7 +105,7 @@ namespace Core.Chunks
         {
             if (!timer.TimeElapsed(Time.deltaTime)) return;
             
-            if(shiftDirections.Count > 0 && _jobManager.MeshJobsCount == 0)
+            if(shiftDirections.Count > 0 && _jobManager.MeshJobsCount == 0 && _jobManager.FinishedJobsCount == 0 && _jobManager.NoiseJobsCount == 0)
                 ChunkBuffer.Shift(shiftDirections.Dequeue());
         }
 

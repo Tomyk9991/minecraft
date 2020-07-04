@@ -26,7 +26,7 @@ namespace Core.Chunks.Threading
 
         private ConcurrentQueue<MeshJob> finishedJobs;
         private ConcurrentQueue<IJobCollection<MeshJob>> meshJobs;
-        
+
         private SemaphoreSlim mutex;
         private Thread[] threads;
 
@@ -53,8 +53,7 @@ namespace Core.Chunks.Threading
 
         private bool showed = false;
 
-        
-        
+
         public void Run()
         {
             while (running)
@@ -64,7 +63,7 @@ namespace Core.Chunks.Threading
                 if (passes.CurrentPass != null)
                 {
                     Pass currentPass = passes.CurrentPass;
-                    
+
                     if (currentPass.Dequeue(out JobCollectionItemContainer job))
                     {
                         // In diesem Fall ist es der NoiseJob, der ausgeführt und verarbeitet wird
@@ -74,7 +73,7 @@ namespace Core.Chunks.Threading
                             seq[i].Execute();
                             seq[i].Finished = true;
                         }
-                        
+
                         //Für alle Jobs, die als parallel aktiviert wurden, werden diese einzeln in die Queue für Meshjobs
                         //hinzugefügt
                         IJobCollection<MeshJob>[] par = job.ParallelizedCollection;
@@ -90,7 +89,7 @@ namespace Core.Chunks.Threading
                         currentPass = passes.CurrentPass;
                         if (currentPass != null)
                         {
-                            mutex.Release(passes.CurrentPass.Jobs.Count + 1);
+                            mutex.Release(currentPass.Jobs.Count + 1);
                         }
                     }
                 }
@@ -133,7 +132,7 @@ namespace Core.Chunks.Threading
         public void PassBegin()
         {
             if (pass) throw new InvalidOperationException("Add Range can't begin twice");
-            
+
             noisePass = new Pass();
             strucutrePass = new Pass();
             meshPass = new Pass();
@@ -147,7 +146,7 @@ namespace Core.Chunks.Threading
         {
             if (!pass) throw new InvalidOperationException("Add Range can't end twice");
             pass = false;
-            
+
             passes.Add(noisePass);
             passes.Add(strucutrePass);
             passes.Add(meshPass);
@@ -156,14 +155,14 @@ namespace Core.Chunks.Threading
             // ist und den Pass dann entfernt
             mutex.Release(noisePass.Jobs.Count + 1);
         }
-        
+
         private void ScheduleMeshJob(IJobCollection<MeshJob> job)
         {
             meshJobs.Enqueue(job);
             mutex.Release();
         }
 
-        public void Add(ChunkJob item)
+        public void Add(ChunkJob item, bool runWithNoise = true)
         {
             if (pass)
             {
@@ -177,42 +176,25 @@ namespace Core.Chunks.Threading
                     IJobCollection<MeshJob> meshJob = new MeshBuilderJob(job);
                     IJobCollection<MeshJob> greedyJob = new ReduceColliderJob(job);
 
-                    //Noisejob
-                    var noiseJobContainer = new JobCollectionItemContainer(1, 0);
-                    noiseJobContainer.RunSequentially(noiseJob);
-                    
+                    if (runWithNoise)
+                    {
+                        //Noisejob
+                        var noiseJobContainer = new JobCollectionItemContainer(1, 0);
+                        noiseJobContainer.RunSequentially(noiseJob);
+                        noisePass.Add(noiseJobContainer);
+                    }
+
                     //Structurejob
-                    var structureJobContainer = new JobCollectionItemContainer(1, 0); 
+                    var structureJobContainer = new JobCollectionItemContainer(1, 0);
                     structureJobContainer.RunSequentially(structureJob);
 
-                    noisePass.Add(noiseJobContainer);
                     strucutrePass.Add(structureJobContainer);
-                    
+
                     //Meshjob
                     var meshJobContainer = new JobCollectionItemContainer(0, 2);
                     meshJobContainer.RunParallelized(meshJob, greedyJob);
                     meshPass.Add(meshJobContainer);
                 }
-            }
-        }
-        
-        public void AddForRedraw(Chunk usedChunk)
-        {
-            if (usedChunk != null)
-            {
-                Pass p = new Pass();
-                
-                MeshJob job = new MeshJob(usedChunk);
-                IJobCollection<MeshJob> meshJob = new MeshBuilderJob(job);
-                IJobCollection<MeshJob> greedyJob = new ReduceColliderJob(job);
-            
-                var meshJobContainer = new JobCollectionItemContainer(0, 2);
-                meshJobContainer.RunParallelized(meshJob, greedyJob);
-                
-                p.Add(meshJobContainer);
-                passes.Add(p);
-                
-                mutex.Release(p.Jobs.Count + 1);
             }
         }
 

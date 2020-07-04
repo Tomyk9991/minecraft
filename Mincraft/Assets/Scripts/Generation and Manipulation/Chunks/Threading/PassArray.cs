@@ -38,7 +38,10 @@ namespace Core.Chunks.Threading
         {
             lock (passes)
             {
-                this.passes.RemoveAt(0);
+                if (this.passes.Count != 0)
+                {
+                    this.passes.RemoveAt(0);
+                }
             }
         }
     }

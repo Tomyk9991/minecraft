@@ -2,6 +2,7 @@
 using Core.Math;
 using Core.Chunks.Threading;
 using Core.Player;
+using UnityEngine;
 using Utilities;
 
 namespace Core.Chunks
@@ -95,7 +96,9 @@ namespace Core.Chunks
                     }
 
                     data[x, Dimension - 1] = column;
+                    
                     jobManager.Add(new ChunkJob(column));
+                    jobManager.Add(new ChunkJob(data[x, Dimension - 2]), false);
                 }
 
                 jobManager.PassEnd();
@@ -151,6 +154,7 @@ namespace Core.Chunks
 
                     data[x, 0] = column;
 
+                    jobManager.Add(new ChunkJob(data[x, 1]), false);
                     jobManager.Add(new ChunkJob(column));
                 }
 
@@ -207,6 +211,7 @@ namespace Core.Chunks
 
                     data[0, y] = column;
 
+                    jobManager.Add(new ChunkJob(data[1, y]), false);
                     jobManager.Add(new ChunkJob(column));
                 }
 
@@ -247,6 +252,7 @@ namespace Core.Chunks
 
                     data[Dimension - 1, y] = column;
 
+                    jobManager.Add(new ChunkJob(data[Dimension - 2, y]), false);
                     jobManager.Add(new ChunkJob(column));
                 }
 
@@ -283,6 +289,7 @@ namespace Core.Chunks
             }
         }
 
+        #region Helperfunctions
         private static void DeleteChunkColumns(ShiftingOptionDirection direction)
         {
             int deleteHorizontal = direction == ShiftingOptionDirection.Forward ? 0 : Dimension - 1;
@@ -294,7 +301,6 @@ namespace Core.Chunks
                 {
                     for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
                     {
-                        // ReSharper disable once InconsistentlySynchronizedField
                         data[x, deleteHorizontal][localy].ReleaseGameObject();
                     }
                 }
@@ -305,7 +311,6 @@ namespace Core.Chunks
                 {
                     for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
                     {
-                        // ReSharper disable once InconsistentlySynchronizedField
                         data[deleteVertical, y][localy].ReleaseGameObject();
                     }
                 }
@@ -348,6 +353,8 @@ namespace Core.Chunks
             => localPosition.X >= 0 && localPosition.X < Dimension &&
                localPosition.Y >= 0 && localPosition.Y < Dimension &&
                localPosition.Z >= 0 && localPosition.Z < Dimension;
+        
+        #endregion
         
         private enum ShiftingOptionDirection
         {

@@ -72,8 +72,10 @@ namespace Core.Player
     
     public enum Direction
     {
-        None,
-        Left, Right,
-        Forward, Back,
+        None = 0b0000,
+        Left = 0b0001,
+        Right = 0b0010,
+        Forward = 0b0100,
+        Back = 0b1000,
     }
 }

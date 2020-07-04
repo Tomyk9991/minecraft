@@ -28,9 +28,10 @@ namespace Core.Chunks
         //Helper properties
         // public ChunkState ChunkState { get; set; }
         private static int chunkSize;
-        
+
         //Structure Building
-        private IStructureBuilder[] builders = {
+        private IStructureBuilder[] builders =
+        {
             new TreeBuilder()
         };
 
@@ -64,12 +65,12 @@ namespace Core.Chunks
 
             if (noise == null)
                 noise = new FastNoise(seed);
-            
+
             blockNeighbours = new Block[6];
         }
 
-        public void AddBlock(Block block, Int3 pos) 
-             => blocks[pos.X, pos.Y, pos.Z] = block;
+        public void AddBlock(Block block, Int3 pos)
+            => blocks[pos.X, pos.Y, pos.Z] = block;
 
 
         #region Context
@@ -103,7 +104,7 @@ namespace Core.Chunks
             get => blocks;
             set => blocks = value;
         }
-        
+
         public bool IsNotEmpty(int x, int y, int z)
         {
             Block currentBlock = blocks[x, y, z];
@@ -132,7 +133,7 @@ namespace Core.Chunks
 
             return blocks[newBlockPos.X, newBlockPos.Y, newBlockPos.Z];
         }
-        
+
         public Block[] GetBlockNeighbours(Int3 blockPos)
         {
             blockNeighbours[0] = GetBlockNeigbourAt(0, blockPos);
@@ -167,25 +168,25 @@ namespace Core.Chunks
         {
             //Mountains
             int lowerHeight = biom.lowerBaseHeight;
-            
+
             lowerHeight += GetNoise(x, 0, z, biom.lowerMountainFrequency, biom.lowerMountainHeight);
-            
+
             int lowerMinHeight = biom.lowerMinHeight;
-            
+
             //Stones
             if (lowerHeight < lowerMinHeight)
                 lowerHeight = lowerMinHeight;
-            
+
             lowerHeight += GetNoise(x, 0, z, biom.lowerBaseNoise, biom.lowerBasNoisHeight);
-            
+
             int midHeight = lowerHeight + biom.midBaseHeight;
             midHeight += GetNoise(x, 5, z, biom.midBaseNoise, biom.midBaseNoiseHeight);
-            
+
             //Dirt
             int topHeight = midHeight + biom.topLayerBaseHeight;
-            
+
             topHeight += GetNoise(x, 10, z, biom.topLayerNoise, biom.topLayerNoiseHeight);
-            
+
             int caveSize = biom.caveSize;
             float treeZoomLevel = biom.treeZoomLevel;
             float treeValue = Mathf.PerlinNoise((x + seed) * treeZoomLevel, (z + seed) * treeZoomLevel);
@@ -222,16 +223,16 @@ namespace Core.Chunks
                     block.SetID((int) BlockUV.Air);
                     this.AddBlock(block, pos);
                 }
-                
+
                 if (treeValue > 1f - biom.treeProbability && y == topHeight + 1)
                 {
                     Int3 pos = new Int3(x - GlobalPosition.X, y - GlobalPosition.Y, z - GlobalPosition.Z);
-                    
-                    if (!MathHelper.InChunkSpace(pos)) continue;
-                    
+
+                    //if (!MathHelper.InChunkSpace(pos)) continue;
+
                     Block block = new Block();
                     block.SetID(biom.treeTrunkBlock);
-                    
+
                     AddBlock(block, pos);
                     Int3 origin = new Int3(pos.X, pos.Y, pos.Z);
                     builders[0].StructureOrigin.Enqueue((origin, biom));
@@ -251,15 +252,15 @@ namespace Core.Chunks
                 }
             }
 
-            foreach (Chunk chunk in involedChunks)
-            {
-                JobManager.JobManagerUpdaterInstance.AddForRedraw(chunk);
-            }
+            // foreach (Chunk chunk in involedChunks)
+            // {
+            //     JobManager.JobManagerUpdaterInstance.AddForRedraw(chunk);
+            // }
         }
 
         public static int GetNoise(int x, int y, int z, float scale, int max)
             => Mathf.FloorToInt((noise.GetSimplexFractal(x * scale, y * scale, z * scale) + 1f) * (max / 2f));
-        
+
 
         public void LoadChunk(Chunk chunk)
         {
@@ -272,7 +273,7 @@ namespace Core.Chunks
 
         public override string ToString()
             => GlobalPosition.ToString();
-        
+
         public Chunk ChunkNeighbour(Int3 dir)
             => ChunkBuffer.GetChunk(this.LocalPosition + dir);
     }
