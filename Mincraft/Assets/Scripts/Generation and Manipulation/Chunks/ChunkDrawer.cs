@@ -26,7 +26,7 @@ namespace Core.Chunks
             while (_jobManager.FinishedJobsCount > 0 && jobsDoneInFrame < drawsPerFrame)
             {
                 MeshJob task = _jobManager.DequeueFinishedJob();
-                if (task != null && task.MeshData.Vertices != null && task.MeshData.Vertices.Count != 0)
+                if (task?.MeshData.Vertices != null && task.MeshData.Vertices.Count != 0)
                 {
                     RenderCall(task);
                     jobsDoneInFrame++;

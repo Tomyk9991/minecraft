@@ -9,7 +9,6 @@ namespace Core.Chunks
     {
         public Int2 GlobalPosition { get; set; }
         public Chunk[] Chunks { get; set; }
-        private bool dirty = false;
 
         /// <summary>
         /// Discribes the local position, which depends on the global player position 
@@ -43,14 +42,5 @@ namespace Core.Chunks
                 ChunkBuffer.GetChunkColumn(this.LocalPosition.X, this.LocalPosition.Y - 1)
             };
         }
-    }
-
-    [Flags]
-    public enum DrawingState
-    {
-        None = 0,
-        Drawn = 1,
-        NoiseReady = 2,
-        InDrawingQueue = 3
     }
 }

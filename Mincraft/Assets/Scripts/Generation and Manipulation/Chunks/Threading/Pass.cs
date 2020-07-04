@@ -10,9 +10,8 @@ namespace Core.Chunks.Threading
         public string Name { get; set; }
         public int Count => Jobs.Count;
 
-        public Pass(string name)
+        public Pass()
         {
-            this.Name = name;
             Jobs = new ConcurrentQueue<JobCollectionItemContainer>();
         }
 

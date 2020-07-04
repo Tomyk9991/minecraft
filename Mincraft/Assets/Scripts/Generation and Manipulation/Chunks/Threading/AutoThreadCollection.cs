@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using Core.Chunks.Threading.Jobs;
-using UnityEngine;
 
 namespace Core.Chunks.Threading
 {
@@ -89,12 +86,10 @@ namespace Core.Chunks.Threading
                     }
                     else // Der Pass is empty. There are no items available anymore
                     {
-                        string removePassString = "Removed pass: <color=red>" + currentPass.Name + "</color>";
                         passes.RemoveCurrent();
                         currentPass = passes.CurrentPass;
                         if (currentPass != null)
                         {
-                            Debug.Log(removePassString + " New current pass: <color=green>" + currentPass.Name + "</color>");
                             mutex.Release(passes.CurrentPass.Jobs.Count + 1);
                         }
                     }
@@ -139,9 +134,9 @@ namespace Core.Chunks.Threading
         {
             if (pass) throw new InvalidOperationException("Add Range can't begin twice");
             
-            noisePass = new Pass("Noise");
-            strucutrePass = new Pass("Structure");
-            meshPass = new Pass("Mesh");
+            noisePass = new Pass();
+            strucutrePass = new Pass();
+            meshPass = new Pass();
 
             passes = new PassArray(3);
 
@@ -150,9 +145,6 @@ namespace Core.Chunks.Threading
 
         public void PassEnd()
         {
-            //Manchmal zwei noise passes. Wieso?
-            //Offenbar stellt die concurrentbag nicht zwingend die inhalte in der reihenfolge, in der man sie hinzufügt
-            //schreibe eine ConcurrentList, die das bewerkstelligt
             if (!pass) throw new InvalidOperationException("Add Range can't end twice");
             pass = false;
             
@@ -163,7 +155,6 @@ namespace Core.Chunks.Threading
             // + 1 für irgendeinen Thread, der abfragt ob ein Item im pass ist, feststellt, dass dort kein Item enthalten
             // ist und den Pass dann entfernt
             mutex.Release(noisePass.Jobs.Count + 1);
-            Debug.Log("New current pass: <color=green>" + passes.CurrentPass.Name + "</color>");
         }
         
         private void ScheduleMeshJob(IJobCollection<MeshJob> job)
@@ -193,20 +184,35 @@ namespace Core.Chunks.Threading
                     //Structurejob
                     var structureJobContainer = new JobCollectionItemContainer(1, 0); 
                     structureJobContainer.RunSequentially(structureJob);
+
+                    noisePass.Add(noiseJobContainer);
+                    strucutrePass.Add(structureJobContainer);
                     
                     //Meshjob
                     var meshJobContainer = new JobCollectionItemContainer(0, 2);
                     meshJobContainer.RunParallelized(meshJob, greedyJob);
-
-
-                    noisePass.Add(noiseJobContainer);
-                    strucutrePass.Add(structureJobContainer);
                     meshPass.Add(meshJobContainer);
                 }
             }
-            else
+        }
+        
+        public void AddForRedraw(Chunk usedChunk)
+        {
+            if (usedChunk != null)
             {
-                //Add new Jobs without passes 
+                Pass p = new Pass();
+                
+                MeshJob job = new MeshJob(usedChunk);
+                IJobCollection<MeshJob> meshJob = new MeshBuilderJob(job);
+                IJobCollection<MeshJob> greedyJob = new ReduceColliderJob(job);
+            
+                var meshJobContainer = new JobCollectionItemContainer(0, 2);
+                meshJobContainer.RunParallelized(meshJob, greedyJob);
+                
+                p.Add(meshJobContainer);
+                passes.Add(p);
+                
+                mutex.Release(p.Jobs.Count + 1);
             }
         }
 

@@ -33,7 +33,7 @@ namespace Core.Builder
             collRefMesh.SetVertices(colliderData.Vertices);
             collRefMesh.SetTriangles(colliderData.Triangles, 0);
             
-            // colliderReference.sharedMesh = collRefMesh;
+            colliderReference.sharedMesh = collRefMesh;
         }
     }
 }

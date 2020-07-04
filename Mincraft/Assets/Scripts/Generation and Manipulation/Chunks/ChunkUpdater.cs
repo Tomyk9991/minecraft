@@ -33,8 +33,6 @@ namespace Core.Chunks
         private Queue<Direction> shiftDirections = new Queue<Direction>();
         private Timer timer;
 
-        private readonly DrawingState drawingStateMask = DrawingState.NoiseReady | DrawingState.Drawn;
-
         private void Start()
         {
             chunkSize = 0x10;
@@ -51,9 +49,9 @@ namespace Core.Chunks
             if (calculateThreads)
                 amountThreads = SystemInfo.processorCount - 5 <= 0 ? 1 : SystemInfo.processorCount - 5;
             
-            ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
-
             _jobManager = new JobManager(amountThreads, true);
+
+            ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
 
             _jobManager.PassBegin();
             SetupChunkBuffer(xPlayerPos, zPlayerPos);
@@ -68,12 +66,12 @@ namespace Core.Chunks
         
         private void SetupChunkBuffer(in int xPlayerPos, in int zPlayerPos)
         {
-            for (int x = xPlayerPos - (drawDistanceInChunks * chunkSize), localx = 0;
-                x <= xPlayerPos + (drawDistanceInChunks * chunkSize);
+            for (int x = xPlayerPos - drawDistanceInChunks * chunkSize, localx = 0;
+                x <= xPlayerPos + drawDistanceInChunks * chunkSize;
                 x += chunkSize, localx++)
             {
-                for (int z = zPlayerPos - (drawDistanceInChunks * chunkSize), localz = 0;
-                    z <= zPlayerPos + (drawDistanceInChunks * chunkSize);
+                for (int z = zPlayerPos - drawDistanceInChunks * chunkSize, localz = 0;
+                    z <= zPlayerPos + drawDistanceInChunks * chunkSize;
                     z += chunkSize, localz++)
                 {
                     ChunkColumn column = new ChunkColumn(new Int2(x, z), new Int2(localx, localz), minHeight, maxHeight);
@@ -112,6 +110,9 @@ namespace Core.Chunks
         }
 
         private void OnDestroy()
-            => _jobManager?.Dispose();
+        {
+            _jobManager?.Dispose();
+            PlayerMovementTracker.OnDirectionModified -= (Direction d) => { };
+        }
     }
 }

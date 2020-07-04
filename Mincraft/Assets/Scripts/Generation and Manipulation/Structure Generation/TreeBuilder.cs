@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Core.Builder;
 using Core.Builder.Generation;
 using Core.Chunks;
+using Core.Chunks.Threading;
 using Core.Math;
 using UnityEngine;
 
@@ -16,7 +17,7 @@ namespace Core.StructureGeneration
             StructureOrigin = new Queue<(Int3, Biom)>();
         }
 
-        public void Build(Biom biom, Chunk callingChunk, in Int3 origin)
+        public HashSet<Chunk> Build(Biom biom, Chunk callingChunk, in Int3 origin)
         {
             HashSet<Chunk> usedChunks = new HashSet<Chunk>();
 
@@ -49,10 +50,7 @@ namespace Core.StructureGeneration
                 }
             }
 
-            // foreach (Chunk chunk in usedChunks)
-            // {
-            //     chunk?.FinishUpStructures();
-            // }
+            return usedChunks;
         }
 
         private bool InChunkSpacePlusOne(Int3 pos)
@@ -68,9 +66,8 @@ namespace Core.StructureGeneration
             if (InChunkSpacePlusOne(pos))
             {
                 callingChunk.AddBlock(block, pos);
-                //callingChunk.AddBlockLater(block, pos);
             }
-            
+
             return _addToOtherChunk();
 
             Chunk _addToOtherChunk()
@@ -78,22 +75,23 @@ namespace Core.StructureGeneration
                 Int3 neighbouringChunkDirection = new Int3(
                     Mathf.FloorToInt(pos.X / 16.0f),
                     Mathf.FloorToInt(pos.Y / 16.0f),
-                    Mathf.FloorToInt(pos.Z / 16.0f));
-            
+                    Mathf.FloorToInt(pos.Z / 16.0f)
+                );
+
                 pos.X -= 16 * neighbouringChunkDirection.X;
                 pos.Y -= 16 * neighbouringChunkDirection.Y;
                 pos.Z -= 16 * neighbouringChunkDirection.Z;
-            
+
                 if (ChunkBuffer.InLocalSpace(callingChunk.LocalPosition + neighbouringChunkDirection))
                 {
                     if (neighbouringChunkDirection != Int3.Zero)
                     {
                         Chunk c = callingChunk.ChunkNeighbour(neighbouringChunkDirection);
-                        c.AddBlock(block, pos);
+                        c?.AddBlock(block, pos);
                         return c;
                     }
                 }
-            
+
                 return null;
             }
         }

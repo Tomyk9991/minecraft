@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Core.Builder;
 using Core.Builder.Generation;
+using Core.Chunks.Threading;
 using Core.Managers;
 using Core.Math;
 using Core.Saving;
@@ -12,9 +13,6 @@ namespace Core.Chunks
 {
     public class Chunk : Context<Chunk>
     {
-        //Lighting
-        private static float lightFalloff = 0.08f;
-
         //References
         public GameObject CurrentGO { get; set; }
         public ChunkColumn ChunkColumn { get; set; }
@@ -63,7 +61,6 @@ namespace Core.Chunks
             seed = WorldSettings.NoiseSettings.Seed;
 
             blocks = new ExtendedArray3D<Block>(chunkSize, 1);
-            //blocks = new Array3D<Block>(chunkSize);
 
             if (noise == null)
                 noise = new FastNoise(seed);
@@ -244,13 +241,19 @@ namespace Core.Chunks
 
         public void GenerateStructures()
         {
+            HashSet<Chunk> involedChunks = new HashSet<Chunk>();
             foreach (var builder in builders)
             {
                 while (builder.StructureOrigin.Count > 0)
                 {
                     (Int3 origin, Biom biom) = builder.StructureOrigin.Dequeue();
-                    builder.Build(biom, this, origin);
+                    involedChunks.UnionWith(builder.Build(biom, this, origin));
                 }
+            }
+
+            foreach (Chunk chunk in involedChunks)
+            {
+                JobManager.JobManagerUpdaterInstance.AddForRedraw(chunk);
             }
         }
 
