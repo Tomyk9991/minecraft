@@ -7,7 +7,7 @@ Basic terrain generation with bioms:
 
 ![](generation.gif)
 
-## Update 2 (4.7.2020)
+## Update 2 (4.July.2020)
 ---
 Current state includes __Cross Chunk Structures__ like trees:
 
