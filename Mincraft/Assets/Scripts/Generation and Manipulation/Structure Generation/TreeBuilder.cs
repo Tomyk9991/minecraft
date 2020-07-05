@@ -17,10 +17,8 @@ namespace Core.StructureGeneration
             StructureOrigin = new Queue<(Int3, Biom)>();
         }
 
-        public HashSet<Chunk> Build(Biom biom, Chunk callingChunk, in Int3 origin)
+        public void Build(Biom biom, Chunk callingChunk, in Int3 origin)
         {
-            HashSet<Chunk> usedChunks = new HashSet<Chunk>();
-
             Block block = new Block();
             block.SetID(biom.treeTrunkBlock);
             Int3 pos = origin;
@@ -29,7 +27,7 @@ namespace Core.StructureGeneration
             for (int j = 1; j < 5; j++)
             {
                 pos.Y = origin.Y + j;
-                usedChunks.Add(AddBlockToChunk(callingChunk, block, pos));
+                AddBlockToChunk(callingChunk, block, pos);
             }
 
             Int3 leafOrigin = pos;
@@ -45,12 +43,10 @@ namespace Core.StructureGeneration
                     for (int x = -2; x < 3; x++)
                     {
                         pos.X = leafOrigin.X + x;
-                        usedChunks.Add(AddBlockToChunk(callingChunk, block, pos));
+                        AddBlockToChunk(callingChunk, block, pos);
                     }
                 }
             }
-
-            return usedChunks;
         }
 
         private bool InChunkSpacePlusOne(Int3 pos)
@@ -58,7 +54,7 @@ namespace Core.StructureGeneration
                pos.Y >= -1 && pos.Y <= 16 &&
                pos.Z >= -1 && pos.Z <= 16;
 
-        private Chunk AddBlockToChunk(Chunk callingChunk, Block block, Int3 pos)
+        private void AddBlockToChunk(Chunk callingChunk, Block block, Int3 pos)
         {
             //Don't forget about the fact, that the ExtendedArray and the neighbouring Chunk are doing redundant block
             //operations. So you have to add blocks twice. At the calling chunk in the not visible bounds and the
@@ -68,31 +64,23 @@ namespace Core.StructureGeneration
                 callingChunk.AddBlock(block, pos);
             }
 
-            return _addToOtherChunk();
+            Int3 neighbouringChunkDirection = new Int3(
+                Mathf.FloorToInt(pos.X / 16.0f),
+                Mathf.FloorToInt(pos.Y / 16.0f),
+                Mathf.FloorToInt(pos.Z / 16.0f)
+            );
 
-            Chunk _addToOtherChunk()
+            pos.X -= 16 * neighbouringChunkDirection.X;
+            pos.Y -= 16 * neighbouringChunkDirection.Y;
+            pos.Z -= 16 * neighbouringChunkDirection.Z;
+
+            if (ChunkBuffer.InLocalSpace(callingChunk.LocalPosition + neighbouringChunkDirection))
             {
-                Int3 neighbouringChunkDirection = new Int3(
-                    Mathf.FloorToInt(pos.X / 16.0f),
-                    Mathf.FloorToInt(pos.Y / 16.0f),
-                    Mathf.FloorToInt(pos.Z / 16.0f)
-                );
-
-                pos.X -= 16 * neighbouringChunkDirection.X;
-                pos.Y -= 16 * neighbouringChunkDirection.Y;
-                pos.Z -= 16 * neighbouringChunkDirection.Z;
-
-                if (ChunkBuffer.InLocalSpace(callingChunk.LocalPosition + neighbouringChunkDirection))
+                if (neighbouringChunkDirection != Int3.Zero)
                 {
-                    if (neighbouringChunkDirection != Int3.Zero)
-                    {
-                        Chunk c = callingChunk.ChunkNeighbour(neighbouringChunkDirection);
-                        c?.AddBlock(block, pos);
-                        return c;
-                    }
+                    Chunk c1 = callingChunk.ChunkNeighbour(neighbouringChunkDirection);
+                    c1?.AddBlock(block, pos);
                 }
-
-                return null;
             }
         }
     }

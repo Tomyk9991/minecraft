@@ -66,7 +66,7 @@ namespace Core.UI.DeveloperOverlay
         private StringBuilder GetNoiseJobCount()
         {
             stringbuilder.Clear();
-            return stringbuilder.Append(jobmanager.NoiseJobsCount * ChunkBuffer.YBound);
+            return stringbuilder.Append(jobmanager.NoiseJobsCount * ChunkBuffer.ChunksVertically);
         }
 
         private StringBuilder GetChunkJobCount()
@@ -79,7 +79,7 @@ namespace Core.UI.DeveloperOverlay
         private StringBuilder GetLoadedChunksAmount()
         {
             stringbuilder.Clear();
-            return stringbuilder.Append(ChunkBuffer.DataLength * ChunkBuffer.YBound);
+            return stringbuilder.Append(ChunkBuffer.DataLength * ChunkBuffer.ChunksVertically);
         }
     }
 }

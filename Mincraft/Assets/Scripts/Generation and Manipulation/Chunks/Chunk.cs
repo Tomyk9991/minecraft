@@ -8,6 +8,7 @@ using Core.Saving;
 using Core.Saving.Serializers;
 using Core.StructureGeneration;
 using UnityEngine;
+using Utilities;
 
 namespace Core.Chunks
 {
@@ -24,6 +25,7 @@ namespace Core.Chunks
         //Chunkdata
         private ExtendedArray3D<Block> blocks;
         private Block[] blockNeighbours;
+        private static Pool<ExtendedArray3D<Block>> BlockArrayPool;
 
         //Helper properties
         // public ChunkState ChunkState { get; set; }
@@ -61,10 +63,15 @@ namespace Core.Chunks
             steepness = WorldSettings.NoiseSettings.Steepness;
             seed = WorldSettings.NoiseSettings.Seed;
 
-            blocks = new ExtendedArray3D<Block>(chunkSize, 1);
-
             if (noise == null)
+            {
                 noise = new FastNoise(seed);
+                BlockArrayPool = new Pool<ExtendedArray3D<Block>>(ChunkBuffer.ChunksInTotal, () => new ExtendedArray3D<Block>(chunkSize, 1));
+            }
+            
+            blocks = BlockArrayPool.GetNext();
+            
+
 
             blockNeighbours = new Block[6];
         }
@@ -91,8 +98,8 @@ namespace Core.Chunks
             var helper = (ChunkSerializeHelper) data;
             this.LocalPosition = helper.ChunkPosition;
             //globalblocks auch
+            
             this.blocks = new ExtendedArray3D<Block>(helper.localBlocks);
-            //this.blocks = new Array3D<Block>(helper.localBlocks);
 
             return this;
         }
@@ -117,6 +124,7 @@ namespace Core.Chunks
         public void ReleaseGameObject()
         {
             ChunkGameObjectPool.Instance.SetGameObjectToUnused(this.CurrentGO);
+            BlockArrayPool.Add(this.blocks);
             this.CurrentGO = null;
         }
 
@@ -242,20 +250,14 @@ namespace Core.Chunks
 
         public void GenerateStructures()
         {
-            HashSet<Chunk> involedChunks = new HashSet<Chunk>();
             foreach (var builder in builders)
             {
                 while (builder.StructureOrigin.Count > 0)
                 {
                     (Int3 origin, Biom biom) = builder.StructureOrigin.Dequeue();
-                    involedChunks.UnionWith(builder.Build(biom, this, origin));
+                    builder.Build(biom, this, origin);
                 }
             }
-
-            // foreach (Chunk chunk in involedChunks)
-            // {
-            //     JobManager.JobManagerUpdaterInstance.AddForRedraw(chunk);
-            // }
         }
 
         public static int GetNoise(int x, int y, int z, float scale, int max)

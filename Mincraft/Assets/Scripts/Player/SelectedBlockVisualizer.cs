@@ -11,6 +11,7 @@ namespace Core.Player
         
         [SerializeField] private GameObject[] gameObjects = null;
         [SerializeField] private LayerMask layerMask = 0;
+        
         public float RaycastHitable
         {
             get => raycastHitable;
@@ -25,16 +26,18 @@ namespace Core.Player
         [SerializeField] private float raycastHitable = 1000f;
         
         private readonly Vector3 centerScreenNormalized = new Vector3(0.5f, 0.5f, 0f);
+        private RaycastHit[] hitResults = new RaycastHit[1];
 
         private void Update()
         {
             Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
-            if (Physics.Raycast(ray, out RaycastHit hit, RaycastHitable, layerMask))
+            
+            if (Physics.RaycastNonAlloc(ray, hitResults, RaycastHitable, layerMask) > 0)
             {
                 for (int i = 0; i < gameObjects.Length; i++)
                     gameObjects[i].SetActive(true);
 
-                Vector3 blockPos = MeshBuilder.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;
+                Vector3 blockPos = MeshBuilder.CenteredClickPositionOutSide(hitResults[0].point, hitResults[0].normal) - hitResults[0].normal;
                 transform.position = blockPos + Vector3.one / 2;
             }
             else

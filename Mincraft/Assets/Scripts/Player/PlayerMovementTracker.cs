@@ -8,7 +8,6 @@ namespace Core.Player
     public class PlayerMovementTracker : SingletonBehaviour<PlayerMovementTracker>
     {
         public static event Action<Direction> OnDirectionModified;
-        public static event Action<int, int> OnChunkPositionChanged;
 
         public int xPlayerPos = 0;
         public int zPlayerPos = 0;
@@ -22,46 +21,74 @@ namespace Core.Player
 
         private void Start()
         {
-            latestPlayerPosition = transform.position.ToInt3();
+            UpdateLatestPlayerPosition();
+
             
-            xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
-            zPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
+            if (latestPlayerPosition.X > -chunkSize && latestPlayerPosition.X < chunkSize ||
+                latestPlayerPosition.Z > -chunkSize && latestPlayerPosition.Z < chunkSize)
+            {
+                xPlayerPos = (latestPlayerPosition.X + 48) / chunkSize;
+                zPlayerPos = (latestPlayerPosition.Z + 48) / chunkSize;
+            }
+            else
+            {
+                xPlayerPos = latestPlayerPosition.X / chunkSize;
+                zPlayerPos = latestPlayerPosition.Z / chunkSize;
+            }
+            
             prevXPlayerPos = xPlayerPos;
             prevZPlayerPos = zPlayerPos;
-            OnChunkPositionChanged?.Invoke(xPlayerPos, zPlayerPos);
         }
         
         private void Update()
         {
-            latestPlayerPosition = transform.position.ToInt3();
-            xPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.X, chunkSize);
-            zPlayerPos = MathHelper.ClosestMultiple(latestPlayerPosition.Z, chunkSize);
+            UpdateLatestPlayerPosition();
 
-            if (prevXPlayerPos != xPlayerPos || prevZPlayerPos != zPlayerPos)
+            if (latestPlayerPosition.X > -chunkSize && latestPlayerPosition.X < chunkSize ||
+                latestPlayerPosition.Z > -chunkSize && latestPlayerPosition.Z < chunkSize)
             {
-                Direction d = Direction.None;
-                if (xPlayerPos == 0 || zPlayerPos == 0)
-                    return;
-                
-                int resultX = xPlayerPos - prevXPlayerPos;
-                int resultY = zPlayerPos - prevZPlayerPos;
-
-                if (resultX > 0)
-                    d = Direction.Right;
-                else if (resultX < 0)
-                    d = Direction.Left;
-
-                if (resultY > 0)
-                    d = Direction.Forward;
-                else if (resultY < 0)
-                    d = Direction.Back;
-                
-                
-                OnDirectionModified?.Invoke(d);
-                prevXPlayerPos = xPlayerPos;
-                prevZPlayerPos = zPlayerPos;
-                OnChunkPositionChanged?.Invoke(xPlayerPos, zPlayerPos);
+                xPlayerPos = (latestPlayerPosition.X + 48) / chunkSize;
+                zPlayerPos = (latestPlayerPosition.Z + 48) / chunkSize;
             }
+            else
+            {
+                xPlayerPos = latestPlayerPosition.X / chunkSize;
+                zPlayerPos = latestPlayerPosition.Z / chunkSize;
+            }
+            
+
+            if (xPlayerPos != prevXPlayerPos || zPlayerPos != prevZPlayerPos)
+            {
+                CalcDirection();
+            }
+        }
+
+        private void CalcDirection()
+        {
+            var xDirection = System.Math.Sign(xPlayerPos - prevXPlayerPos);
+            var zDirection = System.Math.Sign(zPlayerPos - prevZPlayerPos);
+
+            if (xDirection != 0)
+            {
+                var hor = xDirection == -1 ? Direction.Left : Direction.Right;
+                OnDirectionModified?.Invoke(hor);
+            }
+
+            if (zDirection != 0)
+            {
+                var ver = zDirection == -1 ? Direction.Back : Direction.Forward;
+                OnDirectionModified?.Invoke(ver);
+            }
+            
+            prevXPlayerPos = xPlayerPos;
+            prevZPlayerPos = zPlayerPos;
+        }
+
+        private void UpdateLatestPlayerPosition()
+        {
+            latestPlayerPosition.X = Mathf.RoundToInt(transform.position.x);
+            latestPlayerPosition.Y = Mathf.RoundToInt(transform.position.y);
+            latestPlayerPosition.Z = Mathf.RoundToInt(transform.position.z);
         }
 
         public string PlayerPos()
@@ -70,12 +97,12 @@ namespace Core.Player
         }
     }
     
-    public enum Direction
+    public enum Direction : sbyte
     {
-        None = 0b0000,
-        Left = 0b0001,
-        Right = 0b0010,
-        Forward = 0b0100,
-        Back = 0b1000,
+        None = 0,
+        Left = 1,
+        Right = 2,
+        Forward = 4,
+        Back = 8,
     }
 }

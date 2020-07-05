@@ -17,8 +17,9 @@ namespace Core.Chunks
 
         public static int Dimension { get; private set; }
         public static int DrawDistanceInChunks { get; private set; }
-        public static int YBound { get; private set; }
-
+        public static int ChunksVertically { get; private set; }
+        public static int ChunksInTotal { get; private set; }
+        
         private static int minHeight;
         private static int maxHeight;
         private static int chunkSize = 0x10;
@@ -32,7 +33,8 @@ namespace Core.Chunks
             minHeight = _minHeight;
             maxHeight = _maxHeight;
 
-            YBound = (System.Math.Abs(minHeight) + System.Math.Abs(maxHeight)) / chunkSize;
+            ChunksVertically = (System.Math.Abs(minHeight) + System.Math.Abs(maxHeight)) / chunkSize;
+            ChunksInTotal = Dimension * Dimension * ChunksVertically;
 
             data = new Array2D<ChunkColumn>(Dimension);
         }
@@ -43,7 +45,6 @@ namespace Core.Chunks
         /// Shift all entries inside the array in the given direction. Only one direction at a time supported
         /// </summary>
         /// <param name="direction">Desired direction you moved to</param>
-        /// <exception cref="Exception">Throws an exception if enum is unidentified</exception>
         public static void Shift(Direction direction)
         {
             switch (direction)
@@ -319,7 +320,7 @@ namespace Core.Chunks
 
         public static Chunk GetChunk(Int3 local)
         {
-            if (local.Y >= YBound || local.Y < 0)
+            if (local.Y >= ChunksVertically || local.Y < 0)
                 return null;
 
             lock (data[local.X, local.Z])
@@ -362,6 +363,12 @@ namespace Core.Chunks
             Back,
             Left,
             Right
+        }
+
+        public static Int3 GlobalBlockPositionToLocalChunkPosition(Int3 globalCenterBlockPosition)
+        {
+            
+            return new Int3(0, 0, 0);
         }
     }
 }
