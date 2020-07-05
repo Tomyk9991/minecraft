@@ -11,6 +11,8 @@ namespace Core.Player
 
         public int xPlayerPos = 0;
         public int zPlayerPos = 0;
+        private int privateXPlayerPos = 0;
+        private int privateZPlayerPos = 0;
         [Space]
         public int prevXPlayerPos = 0;
         public int prevZPlayerPos = 0;
@@ -23,21 +25,23 @@ namespace Core.Player
         {
             UpdateLatestPlayerPosition();
 
-            
             if (latestPlayerPosition.X > -chunkSize && latestPlayerPosition.X < chunkSize ||
                 latestPlayerPosition.Z > -chunkSize && latestPlayerPosition.Z < chunkSize)
             {
-                xPlayerPos = (latestPlayerPosition.X + 48) / chunkSize;
-                zPlayerPos = (latestPlayerPosition.Z + 48) / chunkSize;
+                privateXPlayerPos = (latestPlayerPosition.X + 48) / chunkSize;
+                privateZPlayerPos = (latestPlayerPosition.Z + 48) / chunkSize;
             }
             else
             {
-                xPlayerPos = latestPlayerPosition.X / chunkSize;
-                zPlayerPos = latestPlayerPosition.Z / chunkSize;
+                privateXPlayerPos = latestPlayerPosition.X / chunkSize;
+                privateZPlayerPos = latestPlayerPosition.Z / chunkSize;
             }
-            
-            prevXPlayerPos = xPlayerPos;
-            prevZPlayerPos = zPlayerPos;
+
+            xPlayerPos = latestPlayerPosition.X / chunkSize;
+            zPlayerPos = latestPlayerPosition.Z / chunkSize;
+
+            prevXPlayerPos = privateXPlayerPos;
+            prevZPlayerPos = privateZPlayerPos;
         }
         
         private void Update()
@@ -47,26 +51,29 @@ namespace Core.Player
             if (latestPlayerPosition.X > -chunkSize && latestPlayerPosition.X < chunkSize ||
                 latestPlayerPosition.Z > -chunkSize && latestPlayerPosition.Z < chunkSize)
             {
-                xPlayerPos = (latestPlayerPosition.X + 48) / chunkSize;
-                zPlayerPos = (latestPlayerPosition.Z + 48) / chunkSize;
+                privateXPlayerPos = (latestPlayerPosition.X + 48) / chunkSize;
+                privateZPlayerPos = (latestPlayerPosition.Z + 48) / chunkSize;
             }
             else
             {
-                xPlayerPos = latestPlayerPosition.X / chunkSize;
-                zPlayerPos = latestPlayerPosition.Z / chunkSize;
+                privateXPlayerPos = latestPlayerPosition.X / chunkSize;
+                privateZPlayerPos = latestPlayerPosition.Z / chunkSize;
             }
             
 
-            if (xPlayerPos != prevXPlayerPos || zPlayerPos != prevZPlayerPos)
+            if (privateXPlayerPos != prevXPlayerPos || privateZPlayerPos != prevZPlayerPos)
             {
                 CalcDirection();
             }
+            
+            xPlayerPos = latestPlayerPosition.X / chunkSize;
+            zPlayerPos = latestPlayerPosition.Z / chunkSize;
         }
 
         private void CalcDirection()
         {
-            var xDirection = System.Math.Sign(xPlayerPos - prevXPlayerPos);
-            var zDirection = System.Math.Sign(zPlayerPos - prevZPlayerPos);
+            var xDirection = System.Math.Sign(privateXPlayerPos - prevXPlayerPos);
+            var zDirection = System.Math.Sign(privateZPlayerPos - prevZPlayerPos);
 
             if (xDirection != 0)
             {
@@ -80,8 +87,8 @@ namespace Core.Player
                 OnDirectionModified?.Invoke(ver);
             }
             
-            prevXPlayerPos = xPlayerPos;
-            prevZPlayerPos = zPlayerPos;
+            prevXPlayerPos = privateXPlayerPos;
+            prevZPlayerPos = privateZPlayerPos;
         }
 
         private void UpdateLatestPlayerPosition()

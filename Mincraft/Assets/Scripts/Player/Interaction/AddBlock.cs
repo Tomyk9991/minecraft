@@ -1,10 +1,11 @@
-﻿using Core.Builder;
+﻿using System;
+using Core.Builder;
 using Core.Chunks;
+using Core.Chunks.Threading;
 using Core.Managers;
 using Core.Math;
 using UnityEngine;
 using Core.UI.Console;
-using Core.Player;
 
 namespace Core.Player.Interaction
 {
@@ -59,13 +60,71 @@ namespace Core.Player.Interaction
 
                 if (Physics.RaycastNonAlloc(ray, hit, RaycastHitable) > 0)
                 {
-                    Int3 globalCenterBlockPosition =
-                        Int3.FloorToInt(MeshBuilder.CenteredClickPositionOutSide(hit[0].point, hit[0].normal));
-                    Int3 globalChunkPosition =
-                        ChunkBuffer.GlobalBlockPositionToLocalChunkPosition(globalCenterBlockPosition);
+                    Chunk currentChunk = hit[0].transform.GetComponent<ChunkReferenceHolder>().Chunk;
+
+                    Int3 localPos = GlobalToRelativeBlock(MeshBuilder.CenteredClickPositionOutSide(hit[0].point, hit[0].normal), currentChunk.GlobalPosition);
+                    
+                    if (MathHelper.InChunkSpace(localPos))
+                    {
+                        currentChunk.AddBlock(new Block(blockUV), localPos);
+                        JobManager.JobManagerUpdaterInstance.RecalculateChunk(currentChunk);
+                    }
+                    else
+                    {
+                        Chunk neighbourChunk = currentChunk.ChunkNeighbour(GetDirection(localPos));
+                        neighbourChunk.AddBlock(new Block(blockUV), RelativeToLocalBlock(localPos));
+                        Debug.Log(RelativeToLocalBlock(localPos));
+
+                        if (MathHelper.BorderBlockPlusOne(localPos))
+                        {
+                            Debug.Log("true");
+                            currentChunk.AddBlock(new Block(blockUV), localPos);
+                            ForceRedraw(neighbourChunk, currentChunk);
+                            return;
+                        }
+
+                        JobManager.JobManagerUpdaterInstance.RecalculateChunk(neighbourChunk);
+                    }
                 }
             }
         }
+
+        private void ForceRedraw(params Chunk[] chunks)
+        {
+            foreach (Chunk chunk in chunks)
+            {
+                JobManager.JobManagerUpdaterInstance.RecalculateChunk(chunk);
+            }
+        }
+
+        private Int3 GetDirection(in Int3 localPos)
+        {
+            if (localPos.X < 0) return Int3.Left;
+            if (localPos.X >= chunkSize) return Int3.Right;
+            
+            if (localPos.Y < 0) return Int3.Down;
+            if (localPos.Y >= chunkSize) return Int3.Up;
+            
+            if (localPos.Z < 0) return Int3.Back;
+            if (localPos.Z >= chunkSize) return Int3.Forward;
+
+            throw new Exception("Chunk not found");
+        }
+
+        private Int3 RelativeToLocalBlock(Int3 relativeBlockPos)
+        {
+            int x = relativeBlockPos.X % chunkSize;
+            int y = relativeBlockPos.Y % chunkSize;
+            int z = relativeBlockPos.Z % chunkSize;
+            if (x < 0) x += chunkSize;
+            if (y < 0) y += chunkSize;
+            if (z < 0) z += chunkSize;
+
+            return new Int3(x, y, z);
+        }
+
+        private Int3 GlobalToRelativeBlock(Vector3 globalBlockPos, Int3 globalChunkPos) 
+            => new Int3((int) globalBlockPos.x - globalChunkPos.X, (int) globalBlockPos.y - globalChunkPos.Y, (int) globalBlockPos.z - globalChunkPos.Z);
     }
 }
 

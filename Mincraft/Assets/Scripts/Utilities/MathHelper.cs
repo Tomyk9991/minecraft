@@ -24,25 +24,30 @@ namespace Core.Math
             n = n - (n % x);
             return isNegative ? -n : n;
         }
-        
+
         public static bool InChunkSpace(in Int3 pos)
-            =>     pos.X >= 0 && pos.X < 16 &&
-                   pos.Y >= 0 && pos.Y < 16 &&
-                   pos.Z >= 0 && pos.Z < 16;
-    
+            => pos.X >= 0 && pos.X < 16 &&
+               pos.Y >= 0 && pos.Y < 16 &&
+               pos.Z >= 0 && pos.Z < 16;
+
         public static int MultipleFloor(int n, int x)
-            => Mathf.FloorToInt(n / (float)x) * x;
-        
+            => Mathf.FloorToInt(n / (float) x) * x;
+
         /// <summary>
         /// Maps n from a range of [istart, istop] to [ostart, ostop]
         /// </summary>
         public static int MapToInt(float value, float istart, float istop, float ostart, float ostop)
-            => (int)(ostart + (ostop - ostart) * ((value - istart) / (istop - istart)));
-        
+            => (int) (ostart + (ostop - ostart) * ((value - istart) / (istop - istart)));
+
         /// <summary>
         /// Maps n from a range of [istart, istop] to [ostart, ostop]
         /// </summary>
         public static float Map(float value, float istart, float istop, float ostart, float ostop)
             => ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+
+        public static bool BorderBlockPlusOne(in Int3 pos)
+            => pos.X == -1 || pos.X == 16 ||
+               pos.Y == -1 || pos.Y == 16 ||
+               pos.Z == -1 || pos.Z == 16;
     }
 }

@@ -364,11 +364,5 @@ namespace Core.Chunks
             Left,
             Right
         }
-
-        public static Int3 GlobalBlockPositionToLocalChunkPosition(Int3 globalCenterBlockPosition)
-        {
-            
-            return new Int3(0, 0, 0);
-        }
     }
 }

@@ -198,6 +198,25 @@ namespace Core.Chunks.Threading
             }
         }
 
+        public void RecalculateChunk(Chunk item)
+        {
+            MeshJob job = new MeshJob(item);
+
+            IJobCollection<MeshJob> meshJob = new MeshBuilderJob(job);
+            IJobCollection<MeshJob> greedyJob = new ReduceColliderJob(job);
+
+            //Meshjob
+            var meshJobContainer = new JobCollectionItemContainer(0, 2);
+            meshJobContainer.RunParallelized(meshJob, greedyJob);
+            
+            IJobCollection<MeshJob>[] par = meshJobContainer.ParallelizedCollection;
+            for (int i = 0; i < par.Length; i++)
+            {
+                par[i].OtherJobs = par;
+                ScheduleMeshJob(par[i]);
+            }
+        }
+
         public void Stop()
         {
             running = false;

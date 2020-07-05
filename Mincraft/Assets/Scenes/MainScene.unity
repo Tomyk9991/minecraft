@@ -1423,7 +1423,7 @@ MonoBehaviour:
   minMaxYHeight:
     X: -32
     Y: 80
-  biomSaveable: {fileID: 11400000, guid: 68c511da0e973c14da123661fefab3fb, type: 2}
+  biomSaveable: {fileID: 11400000, guid: 577c9d961498a804298fd1a1fd4384d3, type: 2}
   bioms: []
   smoothness: 2.5
   steepness: 40
@@ -4113,7 +4113,7 @@ PrefabInstance:
     - target: {fileID: 3399322170810967719, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3399322170810967719, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
@@ -4123,7 +4123,7 @@ PrefabInstance:
     - target: {fileID: 3399322170810967719, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3399322170810967719, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}

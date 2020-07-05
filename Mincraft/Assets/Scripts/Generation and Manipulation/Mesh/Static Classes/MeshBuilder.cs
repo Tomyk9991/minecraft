@@ -8,25 +8,15 @@ namespace Core.Builder
 {
 	public static class MeshBuilder
 	{
-		private static Vector3[] directions = {Vector3.forward, Vector3.zero, Vector3.up, Vector3.zero, Vector3.zero, Vector3.right};
-		private static Vector3[] offset1 = {Vector3.right, Vector3.right, Vector3.right, Vector3.right, Vector3.forward, Vector3.forward};
-		private static Vector3[] offset2 = {Vector3.up, Vector3.up, Vector3.forward, Vector3.forward, Vector3.up, Vector3.up};
+		private static Vector3[] directions = { Vector3.forward, Vector3.zero, Vector3.up, Vector3.zero, Vector3.zero, Vector3.right };
+		private static Vector3[] offset1 = { Vector3.right, Vector3.right, Vector3.right, Vector3.right, Vector3.forward, Vector3.forward };
+		private static Vector3[] offset2 = { Vector3.up, Vector3.up, Vector3.forward, Vector3.forward, Vector3.up, Vector3.up };
 
-		private static int[] tri1 = {1, 0, 2, 1, 2, 3 };
+		private static int[] tri1 = { 1, 0, 2, 1, 2, 3 };
 		private static int[] tri2 = { 0, 1, 2, 2, 1, 3 };
 		private static int[] tris = { 1, 0, 0, 1, 1, 0 };
 		private static int chunkSize = 0x10;
-
-//        private static Int3[] directions =
-//{
-//            Int3.Forward, // 0
-//            Int3.Back, // 1
-//            Int3.Up, // 2
-//            Int3.Down, // 3
-//            Int3.Left, // 4
-//            Int3.Right // 5
-//        };
-
+		
 
         public static Vector3 CenteredClickPositionOutSide(Vector3 hitPoint, Vector3 hitNormal)
 	    {
@@ -36,9 +26,7 @@ namespace Core.Builder
 	        blockPos.x = Mathf.FloorToInt(blockPos.x);
 	        blockPos.y = Mathf.FloorToInt(blockPos.y);
 	        blockPos.z = Mathf.FloorToInt(blockPos.z);
-
-	        //Benötigt aber lokale Berechnung
-
+	        
 	        return blockPos;
 	    }
 
