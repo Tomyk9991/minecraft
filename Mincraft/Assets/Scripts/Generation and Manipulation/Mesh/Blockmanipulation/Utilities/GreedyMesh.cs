@@ -12,58 +12,52 @@ namespace Core.Builder
         public static MeshData ReduceMesh(Chunk chunk)
         {
             List<Vector3> vertices = new List<Vector3>();
-            List<int> elements = new List<int>();
+            List<int> triangles = new List<int>();
+
+            const int dim = 16;
 
             //Sweep over 3-axes
             for (int d = 0; d < 3; d++)
             {
+                int i, j, k, l, w, h;
 
-                int i, j, k, l, w, h, u = (d + 1) % 3, v = (d + 2) % 3;
+                int u = (d + 1) % 3;
+                int v = (d + 2) % 3;
 
-                int[] x = new int[3];
-                int[] q = new int[3];
-                int[] mask = new int[(size + 1) * (size + 1)];
+                int[] x = {0, 0, 0};
+                int[] q = {0, 0, 0};
+                int[] mask = new int[(dim + 1) * (dim + 1)];
+
 
                 q[d] = 1;
 
-                for (x[d] = 0; x[d] < size;)
+                for (x[d] = -1; x[d] < dim;)
                 {
-
                     // Compute the mask
                     int n = 0;
-                    for (x[v] = 0; x[v] < size; ++x[v])
+                    for (x[v] = 0; x[v] < dim; ++x[v])
                     {
-                        for (x[u] = 0; x[u] < size; ++x[u], ++n)
+                        for (x[u] = 0; x[u] < dim; ++x[u], ++n)
                         {
-                            int a = 0;
-                            if (0 <= x[d])
-                            {
-                                a = chunk.IsNotEmpty(x[0], x[1], x[2]) == true ? 1 : 0;
-                            }
-                            int b = 0;
-                            if (x[d] < size - 1)
-                            {
-                                b = chunk.IsNotEmpty(x[0] + q[0], x[1] + q[1], x[2] + q[2]) == true ? 1 : 0;
-                            }
-                            if (a != -1 && b != -1 && a == b)
+                            int vox1 = chunk.IsNotEmpty(x[0], x[1], x[2]) ? 1 : 0;
+                            int vox2 = chunk.IsNotEmpty(x[0] + q[0], x[1] + q[1], x[2] + q[2]) ? 1 : 0;
+
+                            int a = (0 <= x[d] ? vox1 : 0);
+                            int b = (x[d] < dim - 1 ? vox2 : 0);
+
+                            if ((a != 0) == (b != 0))
                             {
                                 mask[n] = 0;
                             }
-                            else if (a > 0)
+                            else if ((a != 0))
                             {
-                                a = 1;
                                 mask[n] = a;
                             }
-
                             else
                             {
-                                b = 1;
                                 mask[n] = -b;
                             }
-
                         }
-
-
                     }
 
                     // Increment x[d]
@@ -71,78 +65,75 @@ namespace Core.Builder
 
                     // Generate mesh for mask using lexicographic ordering
                     n = 0;
-                    for (j = 0; j < size; ++j)
+                    for (j = 0; j < dim; ++j)
                     {
-                        for (i = 0; i < size;)
+                        for (i = 0; i < dim;)
                         {
                             var c = mask[n];
-                            if (c > -3)
-                            {
-                                // Compute width
-                                for (w = 1; c == mask[n + w] && i + w < size; ++w);
 
-                                // Compute height
+                            if (c != 0)
+                            {
+                                // compute width
+                                for (w = 1; mask[n + w] == c && (i + w) < dim; ++w)
+                                {
+                                }
+
+                                // compute height
                                 bool done = false;
-                                for (h = 1; j + h < size; ++h)
+                                for (h = 1; (j + h) < dim; ++h)
                                 {
                                     for (k = 0; k < w; ++k)
                                     {
-                                        if (c != mask[n + k + h * size])
+                                        if (mask[n + k + h * dim] != c)
                                         {
                                             done = true;
                                             break;
                                         }
                                     }
+
                                     if (done)
+                                    {
                                         break;
+                                    }
                                 }
-                                // Add quad
-                                bool flip = false;
+
+                                // add quad
                                 x[u] = i;
                                 x[v] = j;
-                                int[] du = new int[3];
-                                int[] dv = new int[3];
-                                if (c > -1)
+
+                                int[] du = {0, 0, 0};
+                                int[] dv = {0, 0, 0};
+
+                                if (c > 0)
                                 {
-                                    du[u] = w;
                                     dv[v] = h;
+                                    du[u] = w;
                                 }
                                 else
                                 {
-                                    flip = true;
-                                    c = -c;
-                                    du[u] = w;
-                                    dv[v] = h;
+                                    du[v] = h;
+                                    dv[u] = w;
                                 }
-
 
                                 Vector3 v1 = new Vector3(x[0], x[1], x[2]);
                                 Vector3 v2 = new Vector3(x[0] + du[0], x[1] + du[1], x[2] + du[2]);
                                 Vector3 v3 = new Vector3(x[0] + du[0] + dv[0], x[1] + du[1] + dv[1], x[2] + du[2] + dv[2]);
                                 Vector3 v4 = new Vector3(x[0] + dv[0], x[1] + dv[1], x[2] + dv[2]);
 
-                                if (c > 0 && !flip)
-                                {
-                                    AddFace(v1, v2, v3, v4, vertices, elements, 0);
-                                }
+                                AddQuad(v1, v2, v3, v4, vertices, triangles);
 
-                                if (flip)
-                                {
-                                    AddFace(v4, v3, v2, v1, vertices, elements, 0);
-                                }
-
-                                // Zero-out mask
                                 for (l = 0; l < h; ++l)
+                                {
                                     for (k = 0; k < w; ++k)
                                     {
-                                        mask[n + k + l * size] = 0;
+                                        mask[n + k + l * dim] = 0;
                                     }
+                                }
 
-                                // Increment counters and continue
+                                // increment counters
                                 i += w;
                                 n += w;
                             }
-
                             else
                             {
                                 ++i;
@@ -153,45 +144,25 @@ namespace Core.Builder
                 }
             }
 
-            return new MeshData(vertices, elements, null, null, null);
+            MeshData data = new MeshData(vertices, triangles, null, null, null);
+
+            return data;
         }
-        private static void AddFace(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, List<Vector3> vertices, List<int> elements, int order)
+
+        private static void AddQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, List<Vector3> vertices, List<int> triangles)
         {
-            if (order == 0)
-            {
-                int index = vertices.Count;
+            int i = vertices.Count;
+            vertices.Add(v1);
+            vertices.Add(v2);
+            vertices.Add(v3);
+            vertices.Add(v4);
 
-                vertices.Add(v1);
-                vertices.Add(v2);
-                vertices.Add(v3);
-                vertices.Add(v4);
-
-                elements.Add(index);
-                elements.Add(index + 1);
-                elements.Add(index + 2);
-                elements.Add(index + 2);
-                elements.Add(index + 3);
-                elements.Add(index);
-
-            }
-
-            if (order == 1)
-            {
-                int index = vertices.Count;
-
-                vertices.Add(v1);
-                vertices.Add(v2);
-                vertices.Add(v3);
-                vertices.Add(v4);
-
-                elements.Add(index);
-                elements.Add(index + 3);
-                elements.Add(index + 2);
-                elements.Add(index + 2);
-                elements.Add(index + 1);
-                elements.Add(index);
-
-            }
+            triangles.Add(i + 0);
+            triangles.Add(i + 1);
+            triangles.Add(i + 2);
+            triangles.Add(i + 2);
+            triangles.Add(i + 3);
+            triangles.Add(i + 0);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Attributes;
 using Core.Chunks.Threading;
 using Core.Managers;
@@ -61,7 +62,6 @@ namespace Core.Chunks
             _jobManager.Start();
 
             timer = new Timer(WorldSettings.WorldTick);
-
         }
         
         private void SetupChunkBuffer(in int xPlayerPos, in int zPlayerPos)
@@ -100,14 +100,14 @@ namespace Core.Chunks
             if (moveWithPlayer)
                 shiftDirections.Enqueue(direction);
         }
-
+        
         private void Update()
         {
             if (!timer.TimeElapsed(Time.deltaTime)) return;
             
             if(shiftDirections.Count > 0 && _jobManager.MeshJobsCount == 0 && _jobManager.FinishedJobsCount == 0 && _jobManager.NoiseJobsCount == 0)
                 ChunkBuffer.Shift(shiftDirections.Dequeue());
-        }
+        } 
 
         private void OnDestroy()
         {

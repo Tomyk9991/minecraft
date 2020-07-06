@@ -49,5 +49,10 @@ namespace Core.Math
             => pos.X == -1 || pos.X == 16 ||
                pos.Y == -1 || pos.Y == 16 ||
                pos.Z == -1 || pos.Z == 16;
+
+        public static bool BorderBlock(in Int3 pos)
+            => pos.X == 0 || pos.X == 15 ||
+               pos.Y == 0 || pos.Y == 15 ||
+               pos.Z == 0 || pos.Z == 15;
     }
 }

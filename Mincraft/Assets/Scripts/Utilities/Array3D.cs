@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Core.Math;
-
-public class Array3D<T>
+﻿public class Array3D<T>
 {
     public int Length => data.Length;
     public T[] RawData => data; 
@@ -23,7 +19,7 @@ public class Array3D<T>
         set => data[Idx3D(x, y, z)] = value;
     }
 
-    private int Idx3D(int x, int y, int z)
+    private int Idx3D(int x, int y, int z) 
         => x + width * (y + width * z);
 }
 

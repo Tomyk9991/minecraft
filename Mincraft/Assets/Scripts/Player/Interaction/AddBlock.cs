@@ -29,7 +29,7 @@ namespace Core.Player.Interaction
         [SerializeField] private float raycastHitable = 1000f;
         [SerializeField] private BlockUV blockUV = BlockUV.Wood;
 
-        private int chunkSize;
+        private readonly int chunkSize = 0x10;
 
         private Camera cameraRef;
         private GameManager gameManager;
@@ -44,7 +44,6 @@ namespace Core.Player.Interaction
 
         private void Start()
         {
-            chunkSize = 0x10;
             GoPool = ChunkGameObjectPool.Instance;
             cameraRef = Camera.main;
             gameManager = GameManager.Instance;
@@ -67,20 +66,23 @@ namespace Core.Player.Interaction
                     if (MathHelper.InChunkSpace(localPos))
                     {
                         currentChunk.AddBlock(new Block(blockUV), localPos);
+
+                        if (MathHelper.BorderBlock(localPos))
+                        {
+                            Chunk neighbourChunk = currentChunk.ChunkNeighbour(GetDirection(localPos));
+                            JobManager.JobManagerUpdaterInstance.RecalculateChunk(neighbourChunk);
+                        }
                         JobManager.JobManagerUpdaterInstance.RecalculateChunk(currentChunk);
                     }
                     else
                     {
-                        Chunk neighbourChunk = currentChunk.ChunkNeighbour(GetDirection(localPos));
+                        Chunk neighbourChunk = currentChunk.ChunkNeighbour(GetDirectionPlusOne(localPos));
                         neighbourChunk.AddBlock(new Block(blockUV), RelativeToLocalBlock(localPos));
-                        Debug.Log(RelativeToLocalBlock(localPos));
 
                         if (MathHelper.BorderBlockPlusOne(localPos))
                         {
-                            Debug.Log("true");
                             currentChunk.AddBlock(new Block(blockUV), localPos);
-                            ForceRedraw(neighbourChunk, currentChunk);
-                            return;
+                            JobManager.JobManagerUpdaterInstance.RecalculateChunk(currentChunk);
                         }
 
                         JobManager.JobManagerUpdaterInstance.RecalculateChunk(neighbourChunk);
@@ -89,15 +91,7 @@ namespace Core.Player.Interaction
             }
         }
 
-        private void ForceRedraw(params Chunk[] chunks)
-        {
-            foreach (Chunk chunk in chunks)
-            {
-                JobManager.JobManagerUpdaterInstance.RecalculateChunk(chunk);
-            }
-        }
-
-        private Int3 GetDirection(in Int3 localPos)
+        private Int3 GetDirectionPlusOne(in Int3 localPos)
         {
             if (localPos.X < 0) return Int3.Left;
             if (localPos.X >= chunkSize) return Int3.Right;
@@ -110,7 +104,40 @@ namespace Core.Player.Interaction
 
             throw new Exception("Chunk not found");
         }
+        
+        private Int3 GetDirection(in Int3 localPos)
+        {
+            const int chunksizeMinusOne = 15;
+            if (localPos.X == 0) return Int3.Left;
+            if (localPos.X >= chunksizeMinusOne) return Int3.Right;
+            
+            if (localPos.Y == 0) return Int3.Down;
+            if (localPos.Y >= chunksizeMinusOne) return Int3.Up;
+            
+            if (localPos.Z == 0) return Int3.Back;
+            if (localPos.Z >= chunksizeMinusOne) return Int3.Forward;
 
+            throw new Exception("Chunk not found");
+        }
+
+        private Int3 RelativeToLocalBlockMinusOne(Int3 relativeBlockPos)
+        {
+            int x = relativeBlockPos.X;
+            int y = relativeBlockPos.Y;
+            int z = relativeBlockPos.Z;
+            
+            if (relativeBlockPos.X == 15) x = -1;
+            if (relativeBlockPos.X == 0)  x = 16;
+
+            if (relativeBlockPos.Y == 15) y = -1;
+            if (relativeBlockPos.Y == 0)  y = 16;
+            
+            if (relativeBlockPos.Z == 15) z = -1;
+            if (relativeBlockPos.Z == 0)  z = 16;
+
+            return new Int3(x, y, z);
+        }
+        
         private Int3 RelativeToLocalBlock(Int3 relativeBlockPos)
         {
             int x = relativeBlockPos.X % chunkSize;
@@ -127,17 +154,3 @@ namespace Core.Player.Interaction
             => new Int3((int) globalBlockPos.x - globalChunkPos.X, (int) globalBlockPos.y - globalChunkPos.Y, (int) globalBlockPos.z - globalChunkPos.Z);
     }
 }
-
-//Convert the global chunkposition (hit.transform.position.ToInt3() to local space
-//Chunk chunkOnClicked =  get chunk reference
-
-//Chunk chunk = chunkOnClicked.GetChunkFromGlobalBlock(block, out Int3 chunkPos);
-//if blocks over-ranges the chunk you have to add the block to the neighbourchunk
-//get the index for the neighbouringchunk
-//int idx = getNeighbourIndex(chunkOnClicked, globalCenterBlockPosition);
-//get the chunkposition
-//chunkOnClicked.CalculateNeighbour()
-//chunk != null ?!?!? notwendig? => chunk.addblock(createBlockWithGlobalPosToLocalPos)
-//chunk.save()
-//TODO add to chunkJobManager a priority so the chunks, that were manipulated get recalculated first
-//Do the same for the noisejobmanager, if necessary
