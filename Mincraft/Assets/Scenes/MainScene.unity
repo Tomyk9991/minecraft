@@ -1469,7 +1469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveWithPlayer: 0
-  drawDistanceInChunks: 3
+  drawDistanceInChunks: 12
   calculateThreads: 1
   amountThreads: 8
 --- !u!1 &802634826
