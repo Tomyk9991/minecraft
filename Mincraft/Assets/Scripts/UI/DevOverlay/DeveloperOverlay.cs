@@ -23,13 +23,13 @@ namespace Core.UI.DeveloperOverlay
 
         private Transform[] transforms = null;
         private Timer timer;
-        private JobManager jobmanager;
+        private ChunkJobManager jobmanager;
 
         private StringBuilder stringbuilder;
 
         private void Start()
         {
-            jobmanager = JobManager.JobManagerUpdaterInstance;
+            jobmanager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
             stringbuilder = new StringBuilder(50);
             
             List<Transform> t = new List<Transform>();

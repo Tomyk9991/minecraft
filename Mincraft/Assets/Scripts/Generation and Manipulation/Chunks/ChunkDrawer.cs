@@ -10,21 +10,21 @@ namespace Core.Chunks
         public ChunkGameObjectPool GoPool { get; set; }
         [SerializeField] private int drawsPerFrame = 0;
 
-        private JobManager _jobManager;
+        private ChunkJobManager _chunkJobManager;
 
         private int jobsDoneInFrame = 0;
 
         private void Start()
         {
             GoPool = ChunkGameObjectPool.Instance;
-            _jobManager = JobManager.JobManagerUpdaterInstance;
+            _chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
         }
 
         private void Update()
         {
-            while (_jobManager.FinishedJobsCount > 0 && jobsDoneInFrame < drawsPerFrame)
+            while (_chunkJobManager.FinishedJobsCount > 0 && jobsDoneInFrame < drawsPerFrame)
             {
-                MeshJob task = _jobManager.DequeueFinishedJob();
+                MeshJob task = _chunkJobManager.DequeueFinishedJob();
                 if (task?.MeshData.Vertices != null && task.MeshData.Vertices.Count != 0)
                 {
                     RenderCall(task);

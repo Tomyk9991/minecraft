@@ -43,7 +43,7 @@ namespace Core.Chunks
         private static float steepness = 0;
         private static int seed = -1;
 
-        private static Int3[] directions =
+        public static Int3[] Directions { get; } =
         {
             Int3.Forward, // 0
             Int3.Back, // 1
@@ -137,7 +137,7 @@ namespace Core.Chunks
         /// <returns>Block</returns>
         private Block GetBlockNeigbourAt(int index, Int3 local)
         {
-            Int3 direction = directions[index];
+            Int3 direction = Directions[index];
             Int3 newBlockPos = local + direction;
 
             return blocks[newBlockPos.X, newBlockPos.Y, newBlockPos.Z];

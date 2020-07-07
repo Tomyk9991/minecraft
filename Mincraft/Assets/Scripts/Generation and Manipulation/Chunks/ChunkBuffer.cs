@@ -13,7 +13,7 @@ namespace Core.Chunks
 
         private static Array2D<ChunkColumn> data;
         private static object globalMutex = new object();
-        private static JobManager jobManager;
+        private static ChunkJobManager chunkJobManager;
 
         public static int Dimension { get; private set; }
         public static int DrawDistanceInChunks { get; private set; }
@@ -26,7 +26,7 @@ namespace Core.Chunks
 
         public static void Init(int chunkSize, int _minHeight, int _maxHeight, int drawDistanceInChunks)
         {
-            jobManager = JobManager.JobManagerUpdaterInstance;
+            chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
 
             Dimension = 2 * drawDistanceInChunks + 1;
             DrawDistanceInChunks = drawDistanceInChunks;
@@ -73,7 +73,7 @@ namespace Core.Chunks
             {
                 ShiftBlock(ShiftingOptionDirection.Forward);
 
-                jobManager.PassBegin();
+                chunkJobManager.PassBegin();
                 //Create new
                 ChunkColumn rightNeighbour = data[0, Dimension - 1];
                 for (int x = 0; x < Dimension; x++)
@@ -98,11 +98,11 @@ namespace Core.Chunks
 
                     data[x, Dimension - 1] = column;
                     
-                    jobManager.Add(new ChunkJob(column));
-                    jobManager.Add(new ChunkJob(data[x, Dimension - 2]), false);
+                    chunkJobManager.Add(new ChunkJob(column));
+                    chunkJobManager.Add(new ChunkJob(data[x, Dimension - 2]), false);
                 }
 
-                jobManager.PassEnd();
+                chunkJobManager.PassEnd();
             }
         }
 
@@ -130,7 +130,7 @@ namespace Core.Chunks
                     }
                 }
 
-                jobManager.PassBegin();
+                chunkJobManager.PassBegin();
                 //Create new
                 ChunkColumn rightNeighbour = data[0, 1];
                 for (int x = 0; x < Dimension; x++)
@@ -155,11 +155,11 @@ namespace Core.Chunks
 
                     data[x, 0] = column;
 
-                    jobManager.Add(new ChunkJob(data[x, 1]), false);
-                    jobManager.Add(new ChunkJob(column));
+                    chunkJobManager.Add(new ChunkJob(data[x, 1]), false);
+                    chunkJobManager.Add(new ChunkJob(column));
                 }
 
-                jobManager.PassEnd();
+                chunkJobManager.PassEnd();
             }
         }
 
@@ -187,7 +187,7 @@ namespace Core.Chunks
                     }
                 }
 
-                jobManager.PassBegin();
+                chunkJobManager.PassBegin();
                 //Create new
                 ChunkColumn rightNeighbour = data[1, 0];
                 for (int y = 0; y < Dimension; y++)
@@ -212,11 +212,11 @@ namespace Core.Chunks
 
                     data[0, y] = column;
 
-                    jobManager.Add(new ChunkJob(data[1, y]), false);
-                    jobManager.Add(new ChunkJob(column));
+                    chunkJobManager.Add(new ChunkJob(data[1, y]), false);
+                    chunkJobManager.Add(new ChunkJob(column));
                 }
 
-                jobManager.PassEnd();
+                chunkJobManager.PassEnd();
             }
         }
 
@@ -229,7 +229,7 @@ namespace Core.Chunks
             {
                 ShiftBlock(dir);
 
-                jobManager.PassBegin();
+                chunkJobManager.PassBegin();
                 ChunkColumn leftNeighbour = data[Dimension - 2, 0];
                 for (int y = 0; y < Dimension; y++)
                 {
@@ -253,11 +253,11 @@ namespace Core.Chunks
 
                     data[Dimension - 1, y] = column;
 
-                    jobManager.Add(new ChunkJob(data[Dimension - 2, y]), false);
-                    jobManager.Add(new ChunkJob(column));
+                    chunkJobManager.Add(new ChunkJob(data[Dimension - 2, y]), false);
+                    chunkJobManager.Add(new ChunkJob(column));
                 }
 
-                jobManager.PassEnd();
+                chunkJobManager.PassEnd();
             }
         }
 

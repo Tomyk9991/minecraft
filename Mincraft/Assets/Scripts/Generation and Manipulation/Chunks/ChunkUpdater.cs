@@ -27,7 +27,7 @@ namespace Core.Chunks
         private int minHeight;
         private int maxHeight;
 
-        private JobManager _jobManager;
+        private ChunkJobManager _chunkJobManager;
 
         private SavingJob savingJob;
 
@@ -50,16 +50,16 @@ namespace Core.Chunks
             if (calculateThreads)
                 amountThreads = SystemInfo.processorCount - 5 <= 0 ? 1 : SystemInfo.processorCount - 5;
             
-            _jobManager = new JobManager(amountThreads, true);
+            _chunkJobManager = new ChunkJobManager(amountThreads, true);
 
             ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
 
-            _jobManager.PassBegin();
+            _chunkJobManager.PassBegin();
             SetupChunkBuffer(xPlayerPos, zPlayerPos);
-            _jobManager.PassEnd();
+            _chunkJobManager.PassEnd();
             
 
-            _jobManager.Start();
+            _chunkJobManager.Start();
 
             timer = new Timer(WorldSettings.WorldTick);
         }
@@ -90,7 +90,7 @@ namespace Core.Chunks
                         column[localy] = chunk;
                     }
                     
-                    _jobManager.Add(new ChunkJob(column));
+                    _chunkJobManager.Add(new ChunkJob(column));
                 }
             }
         }
@@ -105,13 +105,13 @@ namespace Core.Chunks
         {
             if (!timer.TimeElapsed(Time.deltaTime)) return;
             
-            if(shiftDirections.Count > 0 && _jobManager.MeshJobsCount == 0 && _jobManager.FinishedJobsCount == 0 && _jobManager.NoiseJobsCount == 0)
+            if(shiftDirections.Count > 0 && _chunkJobManager.MeshJobsCount == 0 && _chunkJobManager.FinishedJobsCount == 0 && _chunkJobManager.NoiseJobsCount == 0)
                 ChunkBuffer.Shift(shiftDirections.Dequeue());
         } 
 
         private void OnDestroy()
         {
-            _jobManager?.Dispose();
+            _chunkJobManager?.Dispose();
             PlayerMovementTracker.OnDirectionModified -= (Direction d) => { };
         }
     }
