@@ -34,8 +34,12 @@ namespace Core.Player.Interaction
         private Camera cameraRef;
         private ChunkJobManager chunkJobManager;
         private GameManager gameManager;
+        
         private RaycastHit hit;
         private Int3 dir;
+        private Int3 dirPlusOne;
+        private Int3 blockPos;
+        
         private readonly Vector3 centerScreenNormalized = new Vector3(0.5f, 0.5f, 0f);
         
         public bool Enabled
@@ -68,64 +72,69 @@ namespace Core.Player.Interaction
                     
                     if (MathHelper.InChunkSpace(localPos))
                     {
-                        currentChunk.AddBlock(new Block(blockUV), localPos);
-
-                        if (MathHelper.BorderBlock(localPos))
-                        {
-                            GetDirections(localPos, ref dir);
-
-                            if (dir.X != 0)
-                            {
-                                Chunk neighbourChunk = currentChunk.ChunkNeighbour(dir.X == -1 ? Chunk.Directions[4] : Chunk.Directions[5]);
-                                neighbourChunk.AddBlock(new Block(blockUV), RelativeToLocalBlockMinusOneX(localPos));
-                                chunkJobManager.RecalculateChunk(neighbourChunk);
-                            }
-
-                            if (dir.Y != 0)
-                            {
-                                Chunk neighbourChunk = currentChunk.ChunkNeighbour(dir.Y == -1 ? Chunk.Directions[3] : Chunk.Directions[2]);
-                                neighbourChunk.AddBlock(new Block(blockUV), RelativeToLocalBlockMinusOneY(localPos));
-                                chunkJobManager.RecalculateChunk(neighbourChunk);
-                            }
-
-                            if (dir.Z != 0)
-                            {
-                                Chunk neighbourChunk = currentChunk.ChunkNeighbour(dir.Z == -1 ? Chunk.Directions[1] : Chunk.Directions[0]);
-                                neighbourChunk.AddBlock(new Block(blockUV), RelativeToLocalBlockMinusOneZ(localPos));
-                                chunkJobManager.RecalculateChunk(neighbourChunk);
-                            }
-                        }
-                        chunkJobManager.RecalculateChunk(currentChunk);
+                        HandleAddBlock(currentChunk, localPos);
                     }
-                    // else
-                    // {
-                    //     Chunk neighbourChunk = currentChunk.ChunkNeighbour(GetDirectionPlusOne(localPos));
-                    //     neighbourChunk.AddBlock(new Block(blockUV), RelativeToLocalBlock(localPos));
-                    //
-                    //     if (MathHelper.BorderBlockPlusOne(localPos))
-                    //     {
-                    //         currentChunk.AddBlock(new Block(blockUV), localPos);
-                    //         JobManager.JobManagerUpdaterInstance.RecalculateChunk(currentChunk);
-                    //     }
-                    //
-                    //     JobManager.JobManagerUpdaterInstance.RecalculateChunk(neighbourChunk);
-                    // }
+                    else
+                    {
+                        GetDirectionPlusOne(localPos, ref dirPlusOne);
+                        currentChunk = currentChunk.ChunkNeighbour(dirPlusOne);
+                        localPos = GlobalToRelativeBlock(MeshBuilder.CenteredClickPositionOutSide(hit.point, hit.normal), currentChunk.GlobalPosition);
+
+                        HandleAddBlock(currentChunk, localPos);
+                    }
                 }
             }
         }
 
-        private Int3 GetDirectionPlusOne(in Int3 localPos)
+        private void HandleAddBlock(Chunk currentChunk, Int3 localPos)
         {
-            if (localPos.X < 0) return Int3.Left;
-            if (localPos.X >= chunkSize) return Int3.Right;
-            
-            if (localPos.Y < 0) return Int3.Down;
-            if (localPos.Y >= chunkSize) return Int3.Up;
-            
-            if (localPos.Z < 0) return Int3.Back;
-            if (localPos.Z >= chunkSize) return Int3.Forward;
+            currentChunk.AddBlock(new Block(blockUV), localPos);
 
-            throw new Exception("Chunk not found");
+            if (MathHelper.BorderBlock(localPos))
+            {
+                GetDirections(localPos, ref dir);
+
+                if (dir.X != 0)
+                {
+                    Chunk neighbourChunk = currentChunk.ChunkNeighbour(dir.X == -1 ? Chunk.Directions[4] : Chunk.Directions[5]);
+                    RelativeToLocalBlockMinusOneX(localPos, ref blockPos);
+                    neighbourChunk.AddBlock(new Block(blockUV), blockPos);
+                    chunkJobManager.RecalculateChunk(neighbourChunk);
+                }
+
+                if (dir.Y != 0)
+                {
+                    Chunk neighbourChunk = currentChunk.ChunkNeighbour(dir.Y == -1 ? Chunk.Directions[3] : Chunk.Directions[2]);
+                    RelativeToLocalBlockMinusOneY(localPos, ref blockPos);
+                    neighbourChunk.AddBlock(new Block(blockUV), blockPos);
+                    chunkJobManager.RecalculateChunk(neighbourChunk);
+                }
+
+                if (dir.Z != 0)
+                {
+                    Chunk neighbourChunk = currentChunk.ChunkNeighbour(dir.Z == -1 ? Chunk.Directions[1] : Chunk.Directions[0]);
+                    RelativeToLocalBlockMinusOneZ(localPos, ref blockPos);
+                    neighbourChunk.AddBlock(new Block(blockUV), blockPos);
+                    chunkJobManager.RecalculateChunk(neighbourChunk);
+                }
+            }
+
+            chunkJobManager.RecalculateChunk(currentChunk);
+        }
+
+        private void GetDirectionPlusOne(in Int3 localPos, ref Int3 dir)
+        {
+            dir.X = 0;
+            dir.Y = 0;
+            dir.Z = 0;
+            if (localPos.X < 0) dir.X = -1;
+            if (localPos.X >= chunkSize) dir.X = 1;
+            
+            if (localPos.Y < 0) dir.Y = -1;
+            if (localPos.Y >= chunkSize) dir.Y = 1;
+            
+            if (localPos.Z < 0) dir.Z = -1;
+            if (localPos.Z >= chunkSize) dir.Z = 1;
         }
         
         private void GetDirections(in Int3 localPos, ref Int3 dir)
@@ -144,52 +153,34 @@ namespace Core.Player.Interaction
             if (localPos.Z >= 15) dir.Z = 1;
         }
 
-        private Int3 RelativeToLocalBlockMinusOneX(Int3 relativeBlockPos)
+        private void RelativeToLocalBlockMinusOneX(Int3 relativeBlockPos, ref Int3 blockPos)
         {
-            int x = relativeBlockPos.X;
-            int y = relativeBlockPos.Y;
-            int z = relativeBlockPos.Z;
+            blockPos.X = relativeBlockPos.X;
+            blockPos.Y = relativeBlockPos.Y;
+            blockPos.Z = relativeBlockPos.Z;
             
-            if (relativeBlockPos.X == 15) x = -1;
-            if (relativeBlockPos.X == 0)  x = 16;
-            
-            return new Int3(x, y, z);
+            if (relativeBlockPos.X == 15) blockPos.X = -1;
+            if (relativeBlockPos.X == 0)  blockPos.X = 16;
         }
         
-        private Int3 RelativeToLocalBlockMinusOneY(Int3 relativeBlockPos)
+        private void RelativeToLocalBlockMinusOneY(Int3 relativeBlockPos, ref Int3 blockPos)
         {
-            int x = relativeBlockPos.X;
-            int y = relativeBlockPos.Y;
-            int z = relativeBlockPos.Z;
+            blockPos.X = relativeBlockPos.X;
+            blockPos.Y = relativeBlockPos.Y;
+            blockPos.Z = relativeBlockPos.Z;
             
-            if (relativeBlockPos.Y == 15) y = -1;
-            if (relativeBlockPos.Y == 0)  y = 16;
-            
-            return new Int3(x, y, z);
+            if (relativeBlockPos.Y == 15) blockPos.Y = -1;
+            if (relativeBlockPos.Y == 0)  blockPos.Y = 16;
         }
         
-        private Int3 RelativeToLocalBlockMinusOneZ(Int3 relativeBlockPos)
+        private void RelativeToLocalBlockMinusOneZ(Int3 relativeBlockPos, ref Int3 blockPos)
         {
-            int x = relativeBlockPos.X;
-            int y = relativeBlockPos.Y;
-            int z = relativeBlockPos.Z;
+            blockPos.X = relativeBlockPos.X;
+            blockPos.Y = relativeBlockPos.Y;
+            blockPos.Z = relativeBlockPos.Z;
             
-            if (relativeBlockPos.Z == 15) z = -1;
-            if (relativeBlockPos.Z == 0)  z = 16;
-            
-            return new Int3(x, y, z);
-        }
-        
-        private Int3 RelativeToLocalBlock(Int3 relativeBlockPos)
-        {
-            int x = relativeBlockPos.X % chunkSize;
-            int y = relativeBlockPos.Y % chunkSize;
-            int z = relativeBlockPos.Z % chunkSize;
-            if (x < 0) x += chunkSize;
-            if (y < 0) y += chunkSize;
-            if (z < 0) z += chunkSize;
-
-            return new Int3(x, y, z);
+            if (relativeBlockPos.Z == 15) blockPos.Z = -1;
+            if (relativeBlockPos.Z == 0)  blockPos.Z = 16;
         }
 
         private Int3 GlobalToRelativeBlock(Vector3 globalBlockPos, Int3 globalChunkPos) 
