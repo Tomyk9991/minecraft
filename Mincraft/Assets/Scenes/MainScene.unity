@@ -3626,6 +3626,11 @@ PrefabInstance:
       propertyPath: layerMask.m_Bits
       value: 1024
       objectReference: {fileID: 0}
+    - target: {fileID: 7879117001816977829, guid: e743fa6fe1a9bc448ae6ed4eae259852,
+        type: 3}
+      propertyPath: raycastDistance
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7879117001816977830, guid: e743fa6fe1a9bc448ae6ed4eae259852,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4243,8 +4248,18 @@ PrefabInstance:
     - target: {fileID: 3399322171508518115, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: raycastHitable
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 3399322171508518115, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399322171508518115, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: cameraRef
+      value: 
+      objectReference: {fileID: 3399322171762488874}
     - target: {fileID: 3399322171508518116, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: m_Enabled
@@ -4253,8 +4268,13 @@ PrefabInstance:
     - target: {fileID: 3399322171508518116, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: raycastHitable
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 3399322171508518116, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: cameraRef
+      value: 
+      objectReference: {fileID: 3399322171762488874}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ada145dfe0b44a4e8985c27da1d88fb, type: 3}
 --- !u!20 &3399322171762488874 stripped
