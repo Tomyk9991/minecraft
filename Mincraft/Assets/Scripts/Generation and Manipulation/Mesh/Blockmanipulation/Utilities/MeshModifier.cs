@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -12,7 +11,7 @@ namespace Core.Builder
             var refMesh = meshReference.sharedMesh;
             
             refMesh.Clear();
-
+        
             refMesh.indexFormat = meshData.Vertices.Count >= 65535 ? IndexFormat.UInt16 : IndexFormat.UInt32;
             
             refMesh.SetVertices(meshData.Vertices);
@@ -23,7 +22,7 @@ namespace Core.Builder
             refMesh.SetTriangles(meshData.TransparentTriangles, 1);
             
             refMesh.RecalculateNormals();
-
+        
             var colliderReference = g.GetComponent<MeshCollider>();
             var collRefMesh = colliderReference.sharedMesh;
             

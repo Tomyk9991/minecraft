@@ -36,7 +36,6 @@ namespace Core.Chunks
 
                 if (go != null)
                 {
-                    go.SetActive(false);
                     gameObjectChunks.Enqueue(go);
                 }
             }
@@ -64,7 +63,6 @@ namespace Core.Chunks
             //TODO isStatic might be an option
             //g.isStatic = true;
             g.name = "Chunk";
-            g.SetActive(false);
 
             var m1 = new Mesh();
             var m2 = new Mesh();

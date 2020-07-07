@@ -125,7 +125,13 @@ namespace Core.Chunks
         {
             ChunkGameObjectPool.Instance.SetGameObjectToUnused(this.CurrentGO);
             BlockArrayPool.Add(this.blocks);
-            this.CurrentGO.GetComponent<ChunkReferenceHolder>().Chunk = null;
+
+            if (CurrentGO != null)
+            {
+                if (this.CurrentGO.TryGetComponent(out ChunkReferenceHolder holder))
+                    holder.Chunk = null;
+            }
+            
             this.CurrentGO = null;
         }
 

@@ -31,24 +31,24 @@ namespace Core.Chunks
                     jobsDoneInFrame++;
                 }
             }
-
+            
             jobsDoneInFrame = 0;
         }
 
-        private void RenderCall(MeshJob t)
+        private void RenderCall(MeshJob task)
         {
-            var drawingChunk = t.Chunk;
+            var drawingChunk = task.Chunk;
 
             if (drawingChunk.CurrentGO == null)
             {
                 drawingChunk.CurrentGO = GoPool.GetNextUnusedChunk();
-                drawingChunk.CurrentGO.SetActive(true);
-                drawingChunk.CurrentGO.name = drawingChunk.GlobalPosition.ToString();
+                //TODO Debugging
+                //drawingChunk.CurrentGO.name = drawingChunk.GlobalPosition.ToString();
                 drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
                 drawingChunk.CurrentGO.GetComponent<ChunkReferenceHolder>().Chunk = drawingChunk;
             }
 
-            MeshModifier.SetMesh(drawingChunk.CurrentGO, t.MeshData, t.ColliderData);
+            MeshModifier.SetMesh(drawingChunk.CurrentGO, task.MeshData, task.ColliderData);
         }
     }
 }
