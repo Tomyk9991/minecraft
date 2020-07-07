@@ -1453,7 +1453,7 @@ MonoBehaviour:
   minMaxYHeight:
     X: -32
     Y: 80
-  biomSaveable: {fileID: 11400000, guid: 68c511da0e973c14da123661fefab3fb, type: 2}
+  biomSaveable: {fileID: 11400000, guid: 577c9d961498a804298fd1a1fd4384d3, type: 2}
   bioms: []
   smoothness: 2.5
   steepness: 40
@@ -1499,7 +1499,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveWithPlayer: 1
-  drawDistanceInChunks: 5
+  drawDistanceInChunks: 12
   calculateThreads: 1
   amountThreads: 8
 --- !u!1 &802634826

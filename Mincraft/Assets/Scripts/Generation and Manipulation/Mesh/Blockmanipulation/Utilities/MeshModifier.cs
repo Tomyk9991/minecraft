@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -25,8 +28,8 @@ namespace Core.Builder
         
             var colliderReference = g.GetComponent<MeshCollider>();
             var collRefMesh = colliderReference.sharedMesh;
-            
-            collRefMesh.Clear();
+
+            collRefMesh.Clear(false);
             
             collRefMesh.indexFormat = colliderData.Vertices.Count >= 65535 ? IndexFormat.UInt16 : IndexFormat.UInt32;
             collRefMesh.SetVertices(colliderData.Vertices);

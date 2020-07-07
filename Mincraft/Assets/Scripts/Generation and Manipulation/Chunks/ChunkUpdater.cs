@@ -15,7 +15,7 @@ namespace Core.Chunks
     public class ChunkUpdater : SingletonBehaviour<ChunkUpdater>
     {
         [SerializeField] private bool moveWithPlayer = true;
-        [SerializeField, Range(0, 12)] private int drawDistanceInChunks = 12;
+        [SerializeField, Range(0, 24)] private int drawDistanceInChunks = 12;
 
         [SerializeField] private bool calculateThreads = false;
 

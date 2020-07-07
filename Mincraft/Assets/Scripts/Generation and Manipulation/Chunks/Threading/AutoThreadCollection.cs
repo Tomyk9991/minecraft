@@ -63,7 +63,6 @@ namespace Core.Chunks.Threading
                 if (passes.CurrentPass != null)
                 {
                     Pass currentPass = passes.CurrentPass;
-
                     if (currentPass.Dequeue(out JobCollectionItemContainer job))
                     {
                         // In diesem Fall ist es der NoiseJob, der ausgeführt und verarbeitet wird
