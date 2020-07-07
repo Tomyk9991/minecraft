@@ -34,8 +34,8 @@ namespace Core.Player.Interaction
         private Camera cameraRef;
         private ChunkJobManager chunkJobManager;
         private GameManager gameManager;
-        private RaycastHit[] hit = new RaycastHit[1];
-        private Int3 dir = new Int3();
+        private RaycastHit hit;
+        private Int3 dir;
         private readonly Vector3 centerScreenNormalized = new Vector3(0.5f, 0.5f, 0f);
         
         public bool Enabled
@@ -61,10 +61,10 @@ namespace Core.Player.Interaction
             {
                 Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
 
-                if (Physics.RaycastNonAlloc(ray, hit, RaycastHitable) > 0)
+                if (Physics.Raycast(ray, out hit, RaycastHitable))
                 {
-                    Chunk currentChunk = hit[0].transform.GetComponent<ChunkReferenceHolder>().Chunk;
-                    Int3 localPos = GlobalToRelativeBlock(MeshBuilder.CenteredClickPositionOutSide(hit[0].point, hit[0].normal), currentChunk.GlobalPosition);
+                    Chunk currentChunk = hit.transform.GetComponent<ChunkReferenceHolder>().Chunk;
+                    Int3 localPos = GlobalToRelativeBlock(MeshBuilder.CenteredClickPositionOutSide(hit.point, hit.normal), currentChunk.GlobalPosition);
                     
                     if (MathHelper.InChunkSpace(localPos))
                     {

@@ -1,4 +1,5 @@
-﻿using Core.Builder;
+﻿using System;
+using Core.Builder;
 using Core.UI.Console;
 using UnityEngine;
 
@@ -12,10 +13,10 @@ namespace Core.Player
         [SerializeField] private GameObject[] gameObjects = null;
         [SerializeField] private LayerMask layerMask = 0;
         
-        public float RaycastHitable
+        public float RaycastDistance
         {
-            get => raycastHitable;
-            set => raycastHitable = value;
+            get => raycastDistance;
+            set => raycastDistance = value;
         }
         public bool Enabled
         {
@@ -23,21 +24,26 @@ namespace Core.Player
             set => this.enabled = value;
         }
 
-        [SerializeField] private float raycastHitable = 1000f;
+        [SerializeField] private float raycastDistance = 1000f;
         
         private readonly Vector3 centerScreenNormalized = new Vector3(0.5f, 0.5f, 0f);
-        private RaycastHit[] hitResults = new RaycastHit[1];
+        private RaycastHit hitResult;
+
+        private Vector3 blockPos;
+        private Vector3 rayHit;
+        private Ray ray;
 
         private void Update()
         {
-            Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
-            
-            if (Physics.RaycastNonAlloc(ray, hitResults, RaycastHitable, layerMask) > 0)
+            ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
+            if (Physics.Raycast(ray, out hitResult, RaycastDistance, layerMask))
             {
                 for (int i = 0; i < gameObjects.Length; i++)
                     gameObjects[i].SetActive(true);
 
-                Vector3 blockPos = MeshBuilder.CenteredClickPositionOutSide(hitResults[0].point, hitResults[0].normal) - hitResults[0].normal;
+                rayHit = hitResult.point;
+
+                blockPos = MeshBuilder.CenteredClickPositionOutSide(hitResult.point, hitResult.normal) - hitResult.normal;
                 transform.position = blockPos + Vector3.one / 2;
             }
             else
