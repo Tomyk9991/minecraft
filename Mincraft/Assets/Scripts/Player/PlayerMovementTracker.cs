@@ -20,6 +20,8 @@ namespace Core.Player
         private const int chunkSize = 0x10;
 
         private Int3 latestPlayerPosition;
+        private static Int3 latestStandingBlock; 
+        public static Int3 CurrentStandingBlock => latestStandingBlock;
 
         private void Start()
         {
@@ -93,6 +95,10 @@ namespace Core.Player
 
         private void UpdateLatestPlayerPosition()
         {
+            latestStandingBlock.X = (int) transform.position.x;
+            latestStandingBlock.Y = (int) transform.position.y;
+            latestStandingBlock.Z = (int) transform.position.z;
+
             latestPlayerPosition.X = Mathf.RoundToInt(transform.position.x);
             latestPlayerPosition.Y = Mathf.RoundToInt(transform.position.y);
             latestPlayerPosition.Z = Mathf.RoundToInt(transform.position.z);
