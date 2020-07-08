@@ -37,8 +37,8 @@ namespace Core.Chunks
         private void Start()
         {
             chunkSize = 0x10;
-            int xPlayerPos = PlayerMovementTracker.Instance.xPlayerPos;
-            int zPlayerPos = PlayerMovementTracker.Instance.zPlayerPos;
+            int xPlayerPos = 0;
+            int zPlayerPos = 0;
 
             PlayerMovementTracker.OnDirectionModified += DirectionModified;
 

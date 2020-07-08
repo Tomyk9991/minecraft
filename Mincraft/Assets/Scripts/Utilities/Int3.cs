@@ -9,7 +9,7 @@ namespace Core.Math
         public int X;
         public int Y;
         public int Z;
-        
+
         public Int3(int x, int y, int z)
         {
             this.X = x;
@@ -36,8 +36,8 @@ namespace Core.Math
         }
 
         public static bool operator ==(Int3 target1, Int3 target2)
-            => target1.X == target2.X && 
-               target1.Y == target2.Y && 
+            => target1.X == target2.X &&
+               target1.Y == target2.Y &&
                target1.Z == target2.Z;
 
         public static Int3 operator *(Int3 target, int scale)
@@ -73,7 +73,7 @@ namespace Core.Math
 
         public static Int3 ToInt3(Vector3 target)
             => new Int3(Mathf.RoundToInt(target.x), Mathf.RoundToInt(target.y), Mathf.RoundToInt(target.z));
-        
+
         public static Int3 ToInt3(Vector3Int target)
             => new Int3(target.x, target.y, target.z);
 
@@ -101,6 +101,11 @@ namespace Core.Math
             }
         }
 
+        public static float DistanceSqr(Int3 v1, Int3 v2)
+            => ((float) v1.X - v2.X) * ((float) v1.X - v2.X) +
+               ((float) v1.Y - v2.Y) * ((float) v1.Y - v2.Y) +
+               ((float) v1.Z - v2.Z) * ((float) v1.Z - v2.Z);
+
         public override string ToString()
             => $"({this.X}, {this.Y}, {this.Z})";
 
@@ -116,7 +121,7 @@ namespace Core.Math
             bool xResult = predicate(this.X); // wenn wahr, dann true z.b 16 > 15? true
             bool yResult = predicate(this.Y);
             bool zResult = predicate(this.Z);
-            
+
 
             if (xResult)
                 value = 0;

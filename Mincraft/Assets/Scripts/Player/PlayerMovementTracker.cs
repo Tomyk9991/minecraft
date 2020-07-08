@@ -1,96 +1,57 @@
 ﻿using System;
+using System.Collections.Generic;
 using Core.Math;
 using Extensions;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 namespace Core.Player
 {
     public class PlayerMovementTracker : SingletonBehaviour<PlayerMovementTracker>
     {
+        [SerializeField] private float DistanceThreshold = 256.0f;
         public static event Action<Direction> OnDirectionModified;
 
+        //Variablen für Initialisierung in ChunkUpdater
         public int xPlayerPos = 0;
         public int zPlayerPos = 0;
-        private int privateXPlayerPos = 0;
-        private int privateZPlayerPos = 0;
-        [Space]
-        public int prevXPlayerPos = 0;
-        public int prevZPlayerPos = 0;
-        
-        private const int chunkSize = 0x10;
+        [Space] private Int3 latestPlayerPosition;
+        private Int3 prevLatestPlayerPosition;
 
-        private Int3 latestPlayerPosition;
-        private static Int3 latestStandingBlock; 
+        private static Int3 latestStandingBlock;
         public static Int3 CurrentStandingBlock => latestStandingBlock;
+
+        private Int3 deltaResult;
 
         private void Start()
         {
             UpdateLatestPlayerPosition();
+            
+            xPlayerPos = latestPlayerPosition.X;
+            zPlayerPos = latestPlayerPosition.Z;
 
-            if (latestPlayerPosition.X > -chunkSize && latestPlayerPosition.X < chunkSize ||
-                latestPlayerPosition.Z > -chunkSize && latestPlayerPosition.Z < chunkSize)
-            {
-                privateXPlayerPos = (latestPlayerPosition.X + 48) / chunkSize;
-                privateZPlayerPos = (latestPlayerPosition.Z + 48) / chunkSize;
-            }
-            else
-            {
-                privateXPlayerPos = latestPlayerPosition.X / chunkSize;
-                privateZPlayerPos = latestPlayerPosition.Z / chunkSize;
-            }
 
-            xPlayerPos = latestPlayerPosition.X / chunkSize;
-            zPlayerPos = latestPlayerPosition.Z / chunkSize;
-
-            prevXPlayerPos = privateXPlayerPos;
-            prevZPlayerPos = privateZPlayerPos;
+            prevLatestPlayerPosition.X = latestPlayerPosition.X;
+            prevLatestPlayerPosition.Z = latestPlayerPosition.Z;
         }
-        
+
         private void Update()
         {
             UpdateLatestPlayerPosition();
-
-            if (latestPlayerPosition.X > -chunkSize && latestPlayerPosition.X < chunkSize ||
-                latestPlayerPosition.Z > -chunkSize && latestPlayerPosition.Z < chunkSize)
-            {
-                privateXPlayerPos = (latestPlayerPosition.X + 48) / chunkSize;
-                privateZPlayerPos = (latestPlayerPosition.Z + 48) / chunkSize;
-            }
-            else
-            {
-                privateXPlayerPos = latestPlayerPosition.X / chunkSize;
-                privateZPlayerPos = latestPlayerPosition.Z / chunkSize;
-            }
             
-
-            if (privateXPlayerPos != prevXPlayerPos || privateZPlayerPos != prevZPlayerPos)
-            {
-                CalcDirection();
-            }
+            deltaResult = latestPlayerPosition - prevLatestPlayerPosition;
             
-            xPlayerPos = latestPlayerPosition.X / chunkSize;
-            zPlayerPos = latestPlayerPosition.Z / chunkSize;
-        }
-
-        private void CalcDirection()
-        {
-            var xDirection = System.Math.Sign(privateXPlayerPos - prevXPlayerPos);
-            var zDirection = System.Math.Sign(privateZPlayerPos - prevZPlayerPos);
-
-            if (xDirection != 0)
+            if (System.Math.Abs(deltaResult.X) >= DistanceThreshold)
             {
-                var hor = xDirection == -1 ? Direction.Left : Direction.Right;
-                OnDirectionModified?.Invoke(hor);
+                OnDirectionModified?.Invoke(deltaResult.X > 0 ? Direction.Right : Direction.Left);
+                prevLatestPlayerPosition.X = latestPlayerPosition.X;
             }
 
-            if (zDirection != 0)
+            if (System.Math.Abs(deltaResult.Z) >= DistanceThreshold)
             {
-                var ver = zDirection == -1 ? Direction.Back : Direction.Forward;
-                OnDirectionModified?.Invoke(ver);
+                OnDirectionModified?.Invoke(deltaResult.Z > 0 ? Direction.Forward : Direction.Back);
+                prevLatestPlayerPosition.Z = latestPlayerPosition.Z;
             }
-            
-            prevXPlayerPos = privateXPlayerPos;
-            prevZPlayerPos = privateZPlayerPos;
         }
 
         private void UpdateLatestPlayerPosition()
@@ -98,6 +59,7 @@ namespace Core.Player
             latestStandingBlock.X = (int) transform.position.x;
             latestStandingBlock.Y = (int) transform.position.y;
             latestStandingBlock.Z = (int) transform.position.z;
+
 
             latestPlayerPosition.X = Mathf.RoundToInt(transform.position.x);
             latestPlayerPosition.Y = Mathf.RoundToInt(transform.position.y);
@@ -109,7 +71,7 @@ namespace Core.Player
             return latestPlayerPosition.ToString();
         }
     }
-    
+
     public enum Direction : sbyte
     {
         None = 0,

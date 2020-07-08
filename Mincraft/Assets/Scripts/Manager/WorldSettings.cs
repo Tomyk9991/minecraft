@@ -24,7 +24,7 @@ namespace Core.Managers
         [Space]
         
         [SerializeField] private int seed = -1;
-        [SerializeField] private Int2 minMaxYHeight;
+        [SerializeField] private Int2 minMaxYHeight = Int2.Zero;
 
         [Header("Biom settings")] 
         [SerializeField] private BiomScriptable biomSaveable = null;
