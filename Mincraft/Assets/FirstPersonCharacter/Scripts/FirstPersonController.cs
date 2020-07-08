@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
@@ -171,8 +172,7 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
         else if (Input.GetKey(KeyCode.LeftControl))
             m_CollisionFlags = m_CharacterController.Move(Vector3.down * (m_IsWalking ? 10 : 50) * Time.deltaTime);
     }
-
-
+    
     private void PlayLandingSound()
     {
         m_AudioSource.clip = m_LandSound;

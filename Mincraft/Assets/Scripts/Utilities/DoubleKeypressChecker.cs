@@ -34,7 +34,7 @@ namespace Utilities
             {
                 if (ButtonCooler > 0 && ButtonCount == 1 /*Number of Taps you want Minus One*/)
                 {
-                    ButtonCount = 0;
+                    ForceReset();
                     _result = true;
                 }
                 else
@@ -45,6 +45,7 @@ namespace Utilities
             }
 
             ButtonCooler = Mathf.Max(0, ButtonCooler - Time.deltaTime);
+            if (ButtonCooler == 0) ButtonCount = 0;
 
             return _result;
         }
