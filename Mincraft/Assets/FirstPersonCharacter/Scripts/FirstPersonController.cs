@@ -4,6 +4,7 @@ using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 
 using Core.UI.Console;
+using Utilities;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(AudioSource))]
@@ -53,6 +54,10 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
     private bool m_Jumping;
     private AudioSource m_AudioSource;
     private bool useGravity = false;
+    private Vector3 _desiredMove;
+    private RaycastHit _hitInfo;
+
+    private DoubleKeypressChecker doubleKeypressChecker;
 
     public bool Enabled
     {
@@ -73,26 +78,26 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
         m_Jumping = false;
         m_AudioSource = GetComponent<AudioSource>();
         m_MouseLook.Init(transform, m_Camera.transform);
+        
+        doubleKeypressChecker = new DoubleKeypressChecker(KeyCode.Space);
     }
 
 
     // Update is called once per frame
     private void Update()
     {
-        #region Originally from FixedUpdate
         float speed;
         GetInput(out speed);
         // always move along the camera forward as it is the direction that it being aimed at
-        Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
+        _desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
 
         // get a normal for the surface that is being touched to move along it
-        RaycastHit hitInfo;
-        Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
+        Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out _hitInfo,
             m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-        desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+        _desiredMove = Vector3.ProjectOnPlane(_desiredMove, _hitInfo.normal).normalized;
 
-        m_MoveDir.x = desiredMove.x * speed;
-        m_MoveDir.z = desiredMove.z * speed;
+        m_MoveDir.x = _desiredMove.x * speed;
+        m_MoveDir.z = _desiredMove.z * speed;
 
 
         if (m_CharacterController.isGrounded)
@@ -119,8 +124,6 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
 
         m_MouseLook.UpdateCursorLock();
 
-        #endregion
-
 
         RotateView();
         // the jump state needs to read here to make sure it is not missed
@@ -135,6 +138,10 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
             PlayLandingSound();
             m_MoveDir.y = 0f;
             m_Jumping = false;
+            
+            useGravity = true;
+            m_GravityMultiplier = useGravity ? 3 : 0;
+            doubleKeypressChecker.ForceReset();
         }
 
         if (!m_CharacterController.isGrounded && !m_Jumping && m_PreviouslyGrounded)
@@ -146,28 +153,23 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
 
         ControlInput();
     }
-
+    
     private void ControlInput()
     {
-        if (Input.GetKeyDown(KeyCode.V))
+        if (doubleKeypressChecker.Check())
         {
             m_MoveDir.y = 0;
             useGravity = !useGravity;
             m_GravityMultiplier = useGravity ? 3 : 0;
         }
 
+
+        if (useGravity) return;
         
-        if (!useGravity)
-        {
-            if (Input.GetKey(KeyCode.Space))
-            {
-                transform.Translate(Vector3.up * Time.deltaTime * 50);
-            }
-            else if (Input.GetKey(KeyCode.LeftControl))
-            {
-                transform.Translate(Vector3.down * Time.deltaTime * 50);
-            }
-        }
+        if (Input.GetKey(KeyCode.Space))
+            m_CollisionFlags = m_CharacterController.Move(Vector3.up * (m_IsWalking ? 10 : 50) * Time.deltaTime);
+        else if (Input.GetKey(KeyCode.LeftControl))
+            m_CollisionFlags = m_CharacterController.Move(Vector3.down * (m_IsWalking ? 10 : 50) * Time.deltaTime);
     }
 
 
