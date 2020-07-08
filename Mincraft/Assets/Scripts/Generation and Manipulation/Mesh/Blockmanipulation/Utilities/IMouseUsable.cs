@@ -2,7 +2,7 @@
 {
     public interface IMouseUsable
     {
-        float RaycastHitable { get; set; }
+        float RaycastDistance { get; set; }
         int MouseButtonIndex { get; set; }
     }
 }

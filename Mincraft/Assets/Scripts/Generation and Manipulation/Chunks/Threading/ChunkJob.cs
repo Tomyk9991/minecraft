@@ -8,5 +8,12 @@
         {
             this.Column = column;
         }
+
+    }
+    
+    public enum ChunkJobPriority
+    {
+        Normal,
+        High
     }
 }

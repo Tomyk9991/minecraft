@@ -14,7 +14,7 @@ namespace Core.Player.Interaction
     {
         public ChunkGameObjectPool GoPool { get; set; }
 
-        public float RaycastHitable
+        public float RaycastDistance
         {
             get => raycastHitable;
             set => raycastHitable = value;
@@ -72,7 +72,7 @@ namespace Core.Player.Interaction
             {
                 Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
 
-                if (Physics.Raycast(ray, out hit, RaycastHitable))
+                if (Physics.Raycast(ray, out hit, RaycastDistance))
                 {
                     ChunkReferenceHolder holder;
                     if (!hit.transform.TryGetComponent(out holder))
@@ -120,7 +120,7 @@ namespace Core.Player.Interaction
                         currentChunk.ChunkNeighbour(dir.X == -1 ? Chunk.Directions[4] : Chunk.Directions[5]);
                     RelativeToLocalBlockMinusOneX(localPos, ref blockPos);
                     neighbourChunk.AddBlock(currentBlock, blockPos);
-                    chunkJobManager.RecalculateChunk(neighbourChunk);
+                    chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }
 
                 if (dir.Y != 0)
@@ -129,7 +129,7 @@ namespace Core.Player.Interaction
                         currentChunk.ChunkNeighbour(dir.Y == -1 ? Chunk.Directions[3] : Chunk.Directions[2]);
                     RelativeToLocalBlockMinusOneY(localPos, ref blockPos);
                     neighbourChunk.AddBlock(currentBlock, blockPos);
-                    chunkJobManager.RecalculateChunk(neighbourChunk);
+                    chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }
 
                 if (dir.Z != 0)
@@ -138,11 +138,11 @@ namespace Core.Player.Interaction
                         currentChunk.ChunkNeighbour(dir.Z == -1 ? Chunk.Directions[1] : Chunk.Directions[0]);
                     RelativeToLocalBlockMinusOneZ(localPos, ref blockPos);
                     neighbourChunk.AddBlock(currentBlock, blockPos);
-                    chunkJobManager.RecalculateChunk(neighbourChunk);
+                    chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }
             }
 
-            chunkJobManager.RecalculateChunk(currentChunk);
+            chunkJobManager.RecalculateChunk(currentChunk, ChunkJobPriority.High);
         }
 
         private void GetDirectionPlusOne(in Int3 localPos, ref Int3 dir)

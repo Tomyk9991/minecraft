@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Core.Chunks.Threading.Jobs;
+using Core.Math;
 
 namespace Core.Chunks.Threading
 {
@@ -26,7 +28,8 @@ namespace Core.Chunks.Threading
 
         private ConcurrentQueue<MeshJob> finishedJobs;
         private ConcurrentQueue<IJobCollection<MeshJob>> meshJobs;
-
+        //private ConcurrentQueue<IJobCollection<MeshJob>> priorityMeshJobs;
+        private ConcurrentDictionary<Int3, MeshJob> priorityMeshJobs;
         private SemaphoreSlim mutex;
         private Thread[] threads;
 
@@ -36,6 +39,9 @@ namespace Core.Chunks.Threading
             mutex = new SemaphoreSlim(0);
 
             meshJobs = new ConcurrentQueue<IJobCollection<MeshJob>>();
+            //priorityMeshJobs = new ConcurrentQueue<IJobCollection<MeshJob>>();
+            priorityMeshJobs = new ConcurrentDictionary<Int3, MeshJob>();
+            
             threads = new Thread[amountThreads];
 
             for (int i = 0; i < amountThreads; i++)
@@ -92,10 +98,11 @@ namespace Core.Chunks.Threading
                         }
                     }
                 }
-
+                
+                IJobCollection<MeshJob> meshJob;
                 for (int i = 0; i < 50; i++)
                 {
-                    if (meshJobs.TryDequeue(out IJobCollection<MeshJob> meshJob))
+                    if (priorityMeshJobs.TryDequeue(out meshJob))
                     {
                         if (!meshJob.Finished)
                         {
@@ -104,6 +111,23 @@ namespace Core.Chunks.Threading
                         }
 
                         if (meshJob.OtherJobs.All((IJobCollectionItem other) => other.Finished))
+                        {
+                            finishedJobs.Enqueue(meshJob.Target);
+                            Interlocked.Increment(ref finishedJobsCounter);
+                        }
+
+                        continue;
+                    }
+                    
+                    if (meshJobs.TryDequeue(out meshJob))
+                    {
+                        if (!meshJob.Finished)
+                        {
+                            meshJob.Execute();
+                            meshJob.Finished = true;
+                        }
+
+                        if (meshJob.OtherJobs.All(other => other.Finished))
                         {
                             finishedJobs.Enqueue(meshJob.Target);
                             Interlocked.Increment(ref finishedJobsCounter);
@@ -155,10 +179,25 @@ namespace Core.Chunks.Threading
             mutex.Release(noisePass.Jobs.Count + 1);
         }
 
-        private void ScheduleMeshJob(IJobCollection<MeshJob> job)
+        private void ScheduleMeshJob(IJobCollection<MeshJob> job, ChunkJobPriority priority = ChunkJobPriority.Normal)
         {
-            meshJobs.Enqueue(job);
-            mutex.Release();
+            switch (priority)
+            {
+                case ChunkJobPriority.Normal:
+                {
+                    meshJobs.Enqueue(job);
+                    mutex.Release();
+                    break;
+                }
+                case ChunkJobPriority.High:
+                {
+                    priorityMeshJobs.Enqueue(job);
+                    mutex.Release();
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(priority), priority, null);
+            }
         }
 
         public void Add(ChunkJob item, bool runWithNoise = true)
@@ -197,7 +236,7 @@ namespace Core.Chunks.Threading
             }
         }
 
-        public void RecalculateChunk(Chunk item)
+        public void RecalculateChunk(Chunk item, ChunkJobPriority priority)
         {
             MeshJob job = new MeshJob(item);
 
@@ -212,7 +251,7 @@ namespace Core.Chunks.Threading
             for (int i = 0; i < par.Length; i++)
             {
                 par[i].OtherJobs = par;
-                ScheduleMeshJob(par[i]);
+                ScheduleMeshJob(par[i], priority);
             }
         }
 
