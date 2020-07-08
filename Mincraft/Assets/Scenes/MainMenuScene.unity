@@ -1338,7 +1338,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Minecraft
+  m_text: 'Minecraft as fuck
+
+    Dont''t judge me, ok?'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1a874c4d6a7a07349b0ff9d9ef63af63, type: 2}
   m_sharedMaterial: {fileID: 21914465062325520, guid: 1a874c4d6a7a07349b0ff9d9ef63af63,
@@ -1367,8 +1369,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 68.4
-  m_fontSizeBase: 68.4
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1408,12 +1410,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 463318969}
-    characterCount: 9
+    characterCount: 38
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 1
+    spaceCount: 6
+    wordCount: 7
     linkCount: 0
-    lineCount: 1
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -2133,8 +2135,10 @@ MonoBehaviour:
   playButton: {fileID: 1148281351}
   optionsButton: {fileID: 2007876055}
   exitButton: {fileID: 1281173484}
-  playDialogUI: {fileID: 1937115694}
-  optionsDialogUI: {fileID: 1972436417}
+  playDialogUI: {fileID: 0}
+  optionsDialogUI: {fileID: 0}
+  playDialogVisibility: 0
+  optionsDialogVisibility: 0
 --- !u!4 &1274644556
 Transform:
   m_ObjectHideFlags: 0
@@ -3156,7 +3160,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1937115693}
-  - component: {fileID: 1937115694}
   m_Layer: 0
   m_Name: ---PlayerDialog---
   m_TagString: Untagged
@@ -3180,33 +3183,6 @@ Transform:
   m_Father: {fileID: 1430834740}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1937115694
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1937115692}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: caa9f44289ddef544aeb3314d3daecfc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  backButton: {fileID: 313048812}
-  loadButton: {fileID: 1787435739}
-  createNewWorldButton: {fileID: 215172881}
-  deleteButton: {fileID: 2039019233}
-  dropdown: {fileID: 723340167}
-  ts:
-  - {fileID: 215172880}
-  - {fileID: 1787435738}
-  - {fileID: 2039019232}
-  - {fileID: 313048811}
-  - {fileID: 723340166}
-  transforms:
-  - {fileID: 1281173483}
-  - {fileID: 2007876054}
-  - {fileID: 1148281350}
 --- !u!1 &1938452646
 GameObject:
   m_ObjectHideFlags: 0
@@ -3304,7 +3280,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1972436416}
-  - component: {fileID: 1972436417}
   m_Layer: 0
   m_Name: ---OptionsDialog---
   m_TagString: Untagged
@@ -3332,26 +3307,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1972436417
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1972436415}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a662fd78bb9706542b7df5bf900c9dbd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  backButton: {fileID: 1500354783}
-  activeTransforms:
-  - {fileID: 1500354782}
-  - {fileID: 1869297280}
-  transforms:
-  - {fileID: 1281173483}
-  - {fileID: 2007876054}
-  - {fileID: 1148281350}
 --- !u!1 &2007876053
 GameObject:
   m_ObjectHideFlags: 0
@@ -3599,6 +3554,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Play_Button
+      objectReference: {fileID: 0}
+    - target: {fileID: 1770161714195390894, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1770161714195390894, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1770161714195390894, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1770161714195390895, guid: dab92edd184515c47ba313698177b988,
         type: 3}

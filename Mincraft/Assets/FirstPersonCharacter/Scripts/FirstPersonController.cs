@@ -73,9 +73,6 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
         m_Jumping = false;
         m_AudioSource = GetComponent<AudioSource>();
         m_MouseLook.Init(transform, m_Camera.transform);
-
-//        Cursor.lockState = CursorLockMode.Locked;
-//        Cursor.visible = false;
     }
 
 
@@ -112,7 +109,7 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
         }
         else
         {
-            m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.deltaTime;
+            m_MoveDir += Physics.gravity * (m_GravityMultiplier * Time.deltaTime);
         }
 
         m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.deltaTime);

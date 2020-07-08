@@ -1471,7 +1471,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 4515187503092839614, guid: c3cce87b456a61148a0b25526be6fb68,
     type: 3}
-  chunksToInstantiate: 1
+  chunksToInstantiate: 300
   gameobjectCount: 0
 --- !u!114 &787175600
 MonoBehaviour:
@@ -4124,6 +4124,11 @@ PrefabInstance:
       propertyPath: DistanceThreshold
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 3399322170807572967, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3399322170810940037, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: m_Layer
@@ -4133,6 +4138,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399322170810940039, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3399322170810967717, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
@@ -4237,7 +4247,22 @@ PrefabInstance:
     - target: {fileID: 3399322170815418183, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: m_Radius
-      value: 0.45
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399322170815418183, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: m_StepOffset
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399322170815418183, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: m_SkinWidth
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399322170815418183, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: m_SlopeLimit
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3399322170821168999, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
@@ -4279,7 +4304,8 @@ PrefabInstance:
       propertyPath: cameraRef
       value: 
       objectReference: {fileID: 3399322171762488874}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3399322170807572967, guid: 7ada145dfe0b44a4e8985c27da1d88fb, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7ada145dfe0b44a4e8985c27da1d88fb, type: 3}
 --- !u!20 &3399322171762488874 stripped
 Camera:
