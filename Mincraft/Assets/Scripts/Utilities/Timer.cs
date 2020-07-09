@@ -17,7 +17,7 @@ namespace Utilities
             
             if (this.ElapsedTime >= this.DesiredTime)
             {
-                if (resetTimer == true)
+                if (resetTimer)
                 {
                     Reset();
                 }

@@ -123,8 +123,6 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle
         ProgressStepCycle(speed);
         UpdateCameraPosition(speed);
 
-        m_MouseLook.UpdateCursorLock();
-
 
         RotateView();
         // the jump state needs to read here to make sure it is not missed

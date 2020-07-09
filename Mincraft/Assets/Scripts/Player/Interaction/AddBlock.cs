@@ -7,12 +7,20 @@ using Core.Managers;
 using Core.Math;
 using UnityEngine;
 using Core.UI.Console;
+using Utilities;
 
 namespace Core.Player.Interaction
 {
     public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
     {
         public ChunkGameObjectPool GoPool { get; set; }
+
+        public float DesiredTimeUntilAction
+        {
+            get => timeBetweenRemove;
+            set => timeBetweenRemove = value;
+
+        }
 
         public float RaycastDistance
         {
@@ -29,8 +37,10 @@ namespace Core.Player.Interaction
         [Header("References")] [SerializeField]
         private Camera cameraRef;
 
-        [Space] [SerializeField] private int mouseButtonIndex = 1;
+        [Space] 
+        [SerializeField] private int mouseButtonIndex = 1;
         [SerializeField] private float raycastHitable = 1000f;
+        [SerializeField] private float timeBetweenRemove = 0.1f;
         [SerializeField] private BlockUV blockUV = BlockUV.Wood;
 
         private readonly int chunkSize = 0x10;
@@ -38,6 +48,8 @@ namespace Core.Player.Interaction
         private ChunkJobManager chunkJobManager;
         private GameManager gameManager;
 
+        private Timer timer;
+        
         private RaycastHit hit;
         private Int3 dir;
         private Int3 dirPlusOne;
@@ -58,48 +70,62 @@ namespace Core.Player.Interaction
 
         private void Start()
         {
-            GoPool = ChunkGameObjectPool.Instance;
+            timer = new Timer(DesiredTimeUntilAction);
             chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
             gameManager = GameManager.Instance;
             currentBlock.ID = blockUV;
         }
 
+        private void OnValidate()
+            => timer.HardReset(timeBetweenRemove);
+
         public void SetBlock(BlockUV uv) => blockUV = uv;
 
         private void Update()
         {
+            if (Input.GetMouseButton(mouseButtonIndex) && timer.TimeElapsed(Time.deltaTime))
+            {
+                DoRaycast();
+            }
+
             if (Input.GetMouseButtonDown(mouseButtonIndex))
             {
-                Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
+                DoRaycast();
+                timer.Reset();
+            }
+        }
 
-                if (Physics.Raycast(ray, out hit, RaycastDistance))
+        private void DoRaycast()
+        {
+            Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
+
+            if (Physics.Raycast(ray, out hit, RaycastDistance))
+            {
+                ChunkReferenceHolder holder;
+                if (!hit.transform.TryGetComponent(out holder))
+                    return;
+
+                Chunk currentChunk = holder.Chunk;
+
+                latestGlobalClick = MeshBuilder.CenteredClickPositionOutSide(hit.point, hit.normal);
+
+                latestGlobalClickInt.X = (int) latestGlobalClick.x;
+                latestGlobalClickInt.Y = (int) latestGlobalClick.y;
+                latestGlobalClickInt.Z = (int) latestGlobalClick.z;
+
+                GlobalToRelativeBlock(latestGlobalClick, currentChunk.GlobalPosition, ref lp);
+
+                if (MathHelper.InChunkSpace(lp))
                 {
-                    ChunkReferenceHolder holder;
-                    if (!hit.transform.TryGetComponent(out holder))
-                        return;
-
-                    Chunk currentChunk = holder.Chunk;
-
-                    latestGlobalClick = MeshBuilder.CenteredClickPositionOutSide(hit.point, hit.normal);
-
-                    latestGlobalClickInt.X = (int) latestGlobalClick.x;
-                    latestGlobalClickInt.Y = (int) latestGlobalClick.y;
-                    latestGlobalClickInt.Z = (int) latestGlobalClick.z;
-
+                    HandleAddBlock(currentChunk, lp);
+                }
+                else
+                {
+                    GetDirectionPlusOne(lp, ref dirPlusOne);
+                    currentChunk = currentChunk.ChunkNeighbour(dirPlusOne);
                     GlobalToRelativeBlock(latestGlobalClick, currentChunk.GlobalPosition, ref lp);
 
-                    if (MathHelper.InChunkSpace(lp))
-                    {
-                        HandleAddBlock(currentChunk, lp);
-                    }
-                    else
-                    {
-                        GetDirectionPlusOne(lp, ref dirPlusOne);
-                        currentChunk = currentChunk.ChunkNeighbour(dirPlusOne);
-                        GlobalToRelativeBlock(latestGlobalClick, currentChunk.GlobalPosition, ref lp);
-
-                        HandleAddBlock(currentChunk, lp);
-                    }
+                    HandleAddBlock(currentChunk, lp);
                 }
             }
         }

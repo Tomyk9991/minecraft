@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Core.Chunks.Threading.Jobs;
 using Core.Math;
+using UnityEngine;
 
 namespace Core.Chunks.Threading
 {
@@ -28,8 +29,8 @@ namespace Core.Chunks.Threading
 
         private ConcurrentQueue<MeshJob> finishedJobs;
         private ConcurrentQueue<IJobCollection<MeshJob>> meshJobs;
-        //private ConcurrentQueue<IJobCollection<MeshJob>> priorityMeshJobs;
-        private ConcurrentDictionary<Int3, MeshJob> priorityMeshJobs;
+
+        private ConcurrentQueue<IJobCollection<MeshJob>> priorityMeshJobs;
         private SemaphoreSlim mutex;
         private Thread[] threads;
 
@@ -39,9 +40,8 @@ namespace Core.Chunks.Threading
             mutex = new SemaphoreSlim(0);
 
             meshJobs = new ConcurrentQueue<IJobCollection<MeshJob>>();
-            //priorityMeshJobs = new ConcurrentQueue<IJobCollection<MeshJob>>();
-            priorityMeshJobs = new ConcurrentDictionary<Int3, MeshJob>();
-            
+            priorityMeshJobs = new ConcurrentQueue<IJobCollection<MeshJob>>();
+
             threads = new Thread[amountThreads];
 
             for (int i = 0; i < amountThreads; i++)
@@ -98,7 +98,7 @@ namespace Core.Chunks.Threading
                         }
                     }
                 }
-                
+
                 IJobCollection<MeshJob> meshJob;
                 for (int i = 0; i < 50; i++)
                 {
@@ -118,7 +118,7 @@ namespace Core.Chunks.Threading
 
                         continue;
                     }
-                    
+
                     if (meshJobs.TryDequeue(out meshJob))
                     {
                         if (!meshJob.Finished)
@@ -246,7 +246,7 @@ namespace Core.Chunks.Threading
             //Meshjob
             var meshJobContainer = new JobCollectionItemContainer(0, 2);
             meshJobContainer.RunParallelized(meshJob, greedyJob);
-            
+
             IJobCollection<MeshJob>[] par = meshJobContainer.ParallelizedCollection;
             for (int i = 0; i < par.Length; i++)
             {

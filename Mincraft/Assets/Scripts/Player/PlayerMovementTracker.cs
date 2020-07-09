@@ -9,7 +9,7 @@ namespace Core.Player
 {
     public class PlayerMovementTracker : SingletonBehaviour<PlayerMovementTracker>
     {
-        [SerializeField] private float DistanceThreshold = 256.0f;
+        [SerializeField] private float DistanceThreshold = 16.0f;
         public static event Action<Direction> OnDirectionModified;
 
         //Variablen für Initialisierung in ChunkUpdater
