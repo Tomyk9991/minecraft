@@ -1,37 +1,40 @@
 ﻿using Core.UI.Console;
 using UnityEngine;
 
-public class InventorySelectionUI : MonoBehaviour, IConsoleToggle
+namespace Core.UI.Ingame
 {
-    [SerializeField] private RectTransform[] slots;
-    [SerializeField] private RectTransform selectedSlotItem;
-
-    private int slotIndex = 0;
-
-    public bool Enabled
+    public class InventorySelectionUI : MonoBehaviour, IConsoleToggle
     {
-        get => this.enabled;
-        set
+        [SerializeField] private RectTransform[] slots;
+        [SerializeField] private RectTransform selectedSlotItem;
+
+        private int slotIndex = 0;
+
+        public bool Enabled
         {
-            foreach (var slot in slots)
-                slot.gameObject.SetActive(value);
-            
-            selectedSlotItem.gameObject.SetActive(value);
-            this.enabled = value;
+            get => this.enabled;
+            set
+            {
+                foreach (var slot in slots)
+                    slot.gameObject.SetActive(value);
+                
+                selectedSlotItem.gameObject.SetActive(value);
+                this.enabled = value;
+            }
         }
-    }
 
-    private void Update()
-    {
-        float scrollDirection = Input.mouseScrollDelta.y;
-
-        if (scrollDirection != 0)
+        private void Update()
         {
-            slotIndex += scrollDirection > 0 ? +1 : -1;
-            slotIndex %= slots.Length;
+            float scrollDirection = Input.mouseScrollDelta.y;
 
-            slotIndex = slotIndex < 0 ? slots.Length - 1 : slotIndex;
-            selectedSlotItem.position = slots[slotIndex].position;
+            if (scrollDirection != 0)
+            {
+                slotIndex += scrollDirection > 0 ? +1 : -1;
+                slotIndex %= slots.Length;
+
+                slotIndex = slotIndex < 0 ? slots.Length - 1 : slotIndex;
+                selectedSlotItem.position = slots[slotIndex].position;
+            }
         }
     }
 }

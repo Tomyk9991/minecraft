@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using Attributes;
 using Core.Chunks.Threading;
 using Core.Managers;
 using Core.Math;
 using Core.Player;
-using Core.Saving;
 using Extensions;
 using UnityEngine;
 using Timer = Utilities.Timer;
@@ -28,8 +26,6 @@ namespace Core.Chunks
         private int maxHeight;
 
         private ChunkJobManager _chunkJobManager;
-
-        private SavingJob savingJob;
 
         private Queue<Direction> shiftDirections = new Queue<Direction>();
         private Timer timer;

@@ -72,7 +72,6 @@ namespace Core.Player.Interaction
         {
             timer = new Timer(DesiredTimeUntilAction);
             chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
-            gameManager = GameManager.Instance;
             currentBlock.ID = blockUV;
         }
 

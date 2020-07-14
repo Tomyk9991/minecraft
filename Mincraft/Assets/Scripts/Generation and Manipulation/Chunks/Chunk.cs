@@ -1,18 +1,14 @@
-﻿using System.Collections.Generic;
-using Core.Builder;
+﻿using Core.Builder;
 using Core.Builder.Generation;
-using Core.Chunks.Threading;
 using Core.Managers;
 using Core.Math;
-using Core.Saving;
-using Core.Saving.Serializers;
 using Core.StructureGeneration;
 using UnityEngine;
 using Utilities;
 
 namespace Core.Chunks
 {
-    public class Chunk : Context<Chunk>
+    public class Chunk
     {
         //References
         public GameObject CurrentGO { get; set; }
@@ -78,33 +74,7 @@ namespace Core.Chunks
 
         public void AddBlock(Block block, Int3 pos)
             => blocks[pos.X, pos.Y, pos.Z] = block;
-
-
-        #region Context
-
-        public override object Data()
-        {
-            return new ChunkSerializeHelper()
-            {
-                ChunkPosition = this.GlobalPosition,
-                localBlocks = this.blocks.RawData,
-                //local blocks auch!
-                //Later here we will continue with biom settings
-            };
-        }
-
-        public override Chunk Caster(object data)
-        {
-            var helper = (ChunkSerializeHelper) data;
-            this.LocalPosition = helper.ChunkPosition;
-            //globalblocks auch
-            
-            this.blocks = new ExtendedArray3D<Block>(helper.localBlocks);
-
-            return this;
-        }
-
-        #endregion
+        
 
         public ExtendedArray3D<Block> Blocks
         {
@@ -276,10 +246,7 @@ namespace Core.Chunks
             this.LocalPosition = chunk.LocalPosition;
             this.blocks = chunk.blocks;
         }
-
-        public void SaveChunk()
-            => GameManager.Instance.SavingJob.AddToSavingQueue(this);
-
+        
         public override string ToString()
             => GlobalPosition.ToString();
 

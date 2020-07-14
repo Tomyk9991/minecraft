@@ -43,7 +43,7 @@ namespace Core.Chunks
             {
                 drawingChunk.CurrentGO = GoPool.GetNextUnusedChunk();
                 //TODO Debugging
-                //drawingChunk.CurrentGO.name = drawingChunk.GlobalPosition.ToString();
+                drawingChunk.CurrentGO.name = drawingChunk.GlobalPosition.ToString();
                 drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
                 drawingChunk.CurrentGO.GetComponent<ChunkReferenceHolder>().Chunk = drawingChunk;
             }

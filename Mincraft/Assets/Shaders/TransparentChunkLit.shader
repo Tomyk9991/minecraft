@@ -9,8 +9,8 @@
             "RenderType" = "Transparent"
         }
         
-        //ZWrite Off
-        //Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite Off
+        Blend SrcAlpha OneMinusSrcAlpha
 
         CGPROGRAM
         #pragma surface surf Standard fullforwardshadows alpha:fade
@@ -28,7 +28,7 @@
         UNITY_INSTANCING_BUFFER_END(Props)
 
         void surf (Input IN, inout SurfaceOutputStandard o)
-        {
+        {   
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
             
             o.Albedo = c.rgb;
