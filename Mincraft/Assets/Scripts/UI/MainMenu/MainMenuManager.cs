@@ -6,8 +6,8 @@ namespace Core.UI.MainMenu
 {
     public class MainMenuManager : MonoBehaviour
     {
-        [SerializeField] private GameObject title;
-        [SerializeField] private GameObject[] buttons;
+        [SerializeField] private GameObject mainMenuParent = null;
+        [SerializeField] private GameObject settingsParent = null;
         
         
         
@@ -26,11 +26,8 @@ namespace Core.UI.MainMenu
         //Called by Unity
         public void OnSettingsClick()
         {
-            title.SetActive(false);
-            foreach (var button in buttons)
-            {
-                button.SetActive(false);
-            }
+            mainMenuParent.SetActive(false);
+            settingsParent.SetActive(true);
         }
     }
 }
