@@ -8,13 +8,13 @@ namespace Core.UI.MainMenu
     {
         [SerializeField] private GameObject mainMenuParent = null;
         [SerializeField] private GameObject settingsParent = null;
-        
-        
+        [SerializeField] private GameObject playMenuParent = null;
         
         //Called by Unity
         public void OnPlayClick()
         {
-            
+            mainMenuParent.SetActive(false);
+            playMenuParent.SetActive(true);
         }
         
         //Called by Unity
