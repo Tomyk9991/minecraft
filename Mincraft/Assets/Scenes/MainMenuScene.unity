@@ -258,6 +258,11 @@ PrefabInstance:
       propertyPath: m_Colors.m_PressedColor.b
       value: 0.20784314
       objectReference: {fileID: 0}
+    - target: {fileID: 5117277923856337400, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_IntArgument
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5624179751880445906, guid: dab92edd184515c47ba313698177b988,
         type: 3}
       propertyPath: m_Color.r
@@ -619,13 +624,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 372599781}
-  m_LocalRotation: {x: 0.083011925, y: -0.4974741, z: 0.047928106, w: 0.86216676}
-  m_LocalPosition: {x: -10.50611, y: 19.38206, z: -39.29934}
+  m_LocalRotation: {x: 0.38157773, y: 0.0019359567, z: -0.00079918903, w: 0.9243344}
+  m_LocalPosition: {x: -29.90962, y: 36.73223, z: -27.36182}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 11.001, y: -59.97, z: 0.003}
+  m_LocalEulerAnglesHint: {x: 44.863, y: 0.24, z: 0}
 --- !u!114 &372599785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -699,8 +704,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cameraRoutineInformation:
-  - Position: {x: -10.50611, y: 19.38206, z: -39.29934}
-    Rotation: {x: 11.001, y: -60.093, z: 0.003}
+  - Position: {x: -29.90962, y: 36.73223, z: -27.36182}
+    Rotation: {x: 44.863, y: 0.24, z: 0}
+  - Position: {x: -8.390116, y: 18.15152, z: -36.06049}
+    Rotation: {x: 8.766001, y: -81.75101, z: 0}
   - Position: {x: 27.4016, y: 14.25183, z: 9.289927}
     Rotation: {x: 12.891, y: 45.103, z: 0}
 --- !u!1 &391606929
@@ -2152,7 +2159,7 @@ PrefabInstance:
     - target: {fileID: 5117277923856337400, guid: dab92edd184515c47ba313698177b988,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5117277923856337400, guid: dab92edd184515c47ba313698177b988,
         type: 3}
@@ -2913,6 +2920,26 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 5117277923856337400, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnQuitClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 5117277923856337400, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5117277923856337400, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5117277923856337400, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 692966456}
     - target: {fileID: 5624179751880445906, guid: dab92edd184515c47ba313698177b988,
         type: 3}
       propertyPath: m_Sprite
@@ -3683,6 +3710,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 692966456}
+    - target: {fileID: 5117277923856337400, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8147816192124480592, guid: dab92edd184515c47ba313698177b988,
         type: 3}
       propertyPath: m_LocalPosition.x
