@@ -7,17 +7,16 @@ namespace Core.UI.MainMenu
 {
     public class SettingsMenuManager : MonoBehaviour
     {
-        [Header("References")] 
+        [Header("Visibility References")] 
         [SerializeField] private GameObject settingsParent = null;
         [SerializeField] private GameObject mainMenuParent = null;
-        
-
+        [Header("UI Elements")]
         [SerializeField] private Slider fovSlider;
         [SerializeField] private Slider renderDistanceSlider;
 
         private void Start()
         {
-            var data = SavingManager.Load<SettingsData>(DataContextFinder.Settings);
+            var data = MainMenuSavingManager.Load<SettingsData>(DataContextFinder.Settings);
             this.fovSlider.value = data.fovSlider;
             this.renderDistanceSlider.value = data.renderDistance;
         }
@@ -32,7 +31,7 @@ namespace Core.UI.MainMenu
 
         private void Save()
         {
-            SavingManager.Save(new SettingsData((int) fovSlider.value, (int) renderDistanceSlider.value));
+            MainMenuSavingManager.Save(new SettingsData((int) fovSlider.value, (int) renderDistanceSlider.value));
         }
     }
 

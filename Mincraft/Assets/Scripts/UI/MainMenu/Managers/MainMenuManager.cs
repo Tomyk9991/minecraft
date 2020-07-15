@@ -6,6 +6,7 @@ namespace Core.UI.MainMenu
 {
     public class MainMenuManager : MonoBehaviour
     {
+        [Header("Visibility References")]
         [SerializeField] private GameObject mainMenuParent = null;
         [SerializeField] private GameObject settingsParent = null;
         [SerializeField] private GameObject playMenuParent = null;

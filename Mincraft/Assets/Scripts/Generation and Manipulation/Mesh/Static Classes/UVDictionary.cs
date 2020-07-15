@@ -6,9 +6,8 @@ namespace Core.Builder
 {
     public class UVDictionary : MonoBehaviour
     {
-        [ArrayElementTitle("EnumType")]
-        [SerializeField] private BlockInformation[] data = null;
-
+        [SerializeField] private UVDataScriptable scriptable = null;
+        
         private static readonly UVData[] notFoundData = 
         {
             new UVData(7f / 16f, 1f / 16f, 1f / 16f, 1f / 16f),
@@ -28,13 +27,14 @@ namespace Core.Builder
 
         private void Awake()
         {
-            dictionary = new UVData[data.Length][];
-            isSolidInformation = new bool[data.Length];
-            isTransparentInformation = new bool[data.Length];
-            meshOffsetInformation = new float[data.Length];
-            transparancyLevel = new float[data.Length];
+            var data = scriptable.blockInformation;
+            dictionary = new UVData[data.Count][];
+            isSolidInformation = new bool[data.Count];
+            isTransparentInformation = new bool[data.Count];
+            meshOffsetInformation = new float[data.Count];
+            transparancyLevel = new float[data.Count];
 
-            for (int i = 0; i < data.Length; i++)
+            for (int i = 0; i < data.Count; i++)
             {
                 dictionary[(int)data[i].EnumType] = new []
                 {
