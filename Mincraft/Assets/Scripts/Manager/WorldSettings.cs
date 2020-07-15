@@ -19,7 +19,8 @@ namespace Core.Managers
         [Header("General settings")] [SerializeField]
         private float worldTick = 0.3333f;
 
-        [Space] [SerializeField] private int seed = -1;
+        [Space] 
+        [SerializeField] private int seed = -1;
         [SerializeField] private Int2 minMaxYHeight = Int2.Zero;
 
         [Header("Biom settings")] [SerializeField]
@@ -27,20 +28,26 @@ namespace Core.Managers
 
         [SerializeField] private List<Biom> bioms;
 
-        [Header("Biom Noise Settings")] [SerializeField]
-        public float smoothness = 40;
-
-        [SerializeField] public float steepness = 2;
+        [Header("Biom Noise Settings")] 
+        [SerializeField] public float smoothness = 40;
+        
         private NoiseSettings biomNoiseSettings;
 
         private void Start()
         {
             bioms = biomSaveable.bioms;
 
+            if (GameManager.WorldSelected)
+            {
+                this.seed = GameManager.Instance.NoiseSettings.Seed;
+                this.smoothness = GameManager.Instance.NoiseSettings.Smoothness;
+                biomNoiseSettings = GameManager.Instance.NoiseSettings;
+                return;
+            }
             if (seed == -1)
                 seed = UnityEngine.Random.Range(-100_000, 100_000);
 
-            biomNoiseSettings = new NoiseSettings(smoothness, steepness, seed);
+            biomNoiseSettings = new NoiseSettings(smoothness, seed);
         }
     }
 }

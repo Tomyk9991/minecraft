@@ -24,7 +24,6 @@ namespace Core.Chunks
         private static Pool<ExtendedArray3D<Block>> BlockArrayPool;
 
         //Helper properties
-        // public ChunkState ChunkState { get; set; }
         private static int chunkSize;
 
         //Structure Building
@@ -36,7 +35,6 @@ namespace Core.Chunks
 
         //Simplex noise
         private static float smoothness = 0;
-        private static float steepness = 0;
         private static int seed = -1;
 
         public static Int3[] Directions { get; } =
@@ -56,7 +54,6 @@ namespace Core.Chunks
             chunkSize = 0x10;
 
             smoothness = WorldSettings.NoiseSettings.Smoothness;
-            steepness = WorldSettings.NoiseSettings.Steepness;
             seed = WorldSettings.NoiseSettings.Seed;
 
             if (noise == null)

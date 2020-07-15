@@ -1,17 +1,18 @@
-﻿namespace Core.Builder.Generation
+﻿using System;
+
+namespace Core.Builder.Generation
 {
+    [Serializable]
     public class NoiseSettings
     {
-        public float Smoothness { get; set; }
-        public float Steepness { get; set; }
-        public int Seed { get; set; }
+        public float Smoothness;
+        public int Seed;
 
         public NoiseSettings() { }
 
-        public NoiseSettings(float smoothness, float steepness, int seed)
+        public NoiseSettings(float smoothness, int seed)
         {
             this.Smoothness = smoothness;
-            this.Steepness = steepness;
             this.Seed = seed;
         }
     }

@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Core.Builder.Generation;
+using UnityEditor;
 using UnityEngine;
 
 namespace Core.Managers
@@ -7,6 +8,17 @@ namespace Core.Managers
     {
         public static bool WorldSelected { get; set; }
         private static GameManager instance;
+
+        private NoiseSettings _noiseSettings;
+        public NoiseSettings NoiseSettings
+        {
+            get => _noiseSettings;
+            set
+            {
+                WorldSelected = true;
+                _noiseSettings = value;
+            }
+        }
 
         public static GameManager Instance
         {
@@ -33,13 +45,6 @@ namespace Core.Managers
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = 500;
             Screen.SetResolution(1920, 1080, FullScreenMode.MaximizedWindow);
-
-
-            // Debug.Log(Application.persistentDataPath);
-
-            if (WorldSelected)
-            {
-            }
         }
     }
 }

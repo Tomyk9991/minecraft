@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Builder.Generation;
+using Core.Managers;
 using Core.Saving;
 using TMPro;
 using UnityEngine;
@@ -12,32 +14,39 @@ namespace Core.UI.MainMenu
 {
     public class PlayMenuManager : MonoBehaviour
     {
-        [Header("Visibility References")] 
-        [SerializeField] private GameObject mainMenuParent = null;
+        [Header("Visibility References")] [SerializeField]
+        private GameObject mainMenuParent = null;
+
         [SerializeField] private GameObject playMenuParent = null;
-        [Header("Instantiation")] 
-        [SerializeField] private GameObject viewPortParent = null;
+
+        [Header("Instantiation")] [SerializeField]
+        private GameObject viewPortParent = null;
+
         [SerializeField] private int subTitleFontSize = 13;
         [SerializeField] private GameObject itemPrefab = null;
-        [Header("Scrollbar visibility")] 
-        [SerializeField] private int visibilityThreshold = 3;
+
+        [Header("Scrollbar visibility")] [SerializeField]
+        private int visibilityThreshold = 3;
+
         [SerializeField] private ScrollRect scrollRect = null;
         [SerializeField] private GameObject slidingArea = null;
         [SerializeField] private RectTransform contentHeightAdjustable = null;
-        [Header("Create Game settings")] 
-        [SerializeField] private GameObject toggleCreateGameDialog = null;
+
+        [Header("Create Game settings")] [SerializeField]
+        private GameObject toggleCreateGameDialog = null;
+
         [SerializeField] private TMP_Text createGameButtonText = null;
         [SerializeField] private TMP_Text invalidWorldNameLabel = null;
+        [SerializeField] private TMP_InputField seedInputField = null;
         [SerializeField] private TMP_InputField inputText = null;
         [SerializeField] private int maxCharsInputWorld = 15;
-        
+
 
         private WaitForSeconds waiter = new WaitForSeconds(2.0f);
 
         private List<string> currentAvailableMaps = new List<string>();
 
 
-        
         private void Start()
         {
             ConstructAvailableMaps();
@@ -63,13 +72,13 @@ namespace Core.UI.MainMenu
                     g.GetComponentInChildren<TMP_Text>().text = $"{t.WorldName.Split('\\').Last()}\n" +
                                                                 $"<color=#EEEEEE><size={subTitleFontSize}>World Size: {t.Size:F}MB</size></color>";
 
-                    Button[] buttons = g.GetComponentsInChildren<Button>(); 
+                    Button[] buttons = g.GetComponentsInChildren<Button>();
                     buttons[1].onClick.AddListener(() =>
                     {
-                        ChangeSceneToGame();
+                        GameManager.Instance.NoiseSettings = t.NoiseSettings;
                         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1, LoadSceneMode.Single);
                     });
-                    
+
                     buttons[2].onClick.AddListener(() =>
                     {
                         MainMenuSavingManager.Delete(t);
@@ -92,14 +101,17 @@ namespace Core.UI.MainMenu
                 return;
             }
 
-            MainMenuSavingManager.Save(new WorldInformation(0, inputText.text), inputText.text);
+            NoiseSettings settings = new NoiseSettings(2.5f, seedInputField.text == "" ? 
+                UnityEngine.Random.Range(-100_000, 100_000) : 
+                (seedInputField.text.GetHashCode() % 100_000)
+            );
+            MainMenuSavingManager.Save(new WorldInformation(0, inputText.text, settings), inputText.text);
+            
             inputText.text = "";
+            seedInputField.text = "";
+            
             ToggleCreateGameDialog();
             ConstructAvailableMaps();
-        }
-
-        private void ChangeSceneToGame()
-        {
         }
 
         private IEnumerator ShowInvalidName2Sec()
@@ -112,7 +124,9 @@ namespace Core.UI.MainMenu
         //Called from Unity
         public void InputFieldValueChanged(string newValue)
         {
-            if (newValue.Any(c => c == '\\' || c == '/' || c == ':' || c == '*' || c == '?' || c == '<' || c == '>' || c == '|' || c == '.'))
+            if (newValue.Any(c =>
+                c == '\\' || c == '/' || c == ':' || c == '*' || c == '?' || c == '<' || c == '>' || c == '|' ||
+                c == '.'))
             {
                 StopAllCoroutines();
                 StartCoroutine(nameof(ShowInvalidName2Sec));
@@ -131,7 +145,7 @@ namespace Core.UI.MainMenu
             toggleCreateGameDialog.SetActive(!toggleCreateGameDialog.activeSelf);
             createGameButtonText.SetText(toggleCreateGameDialog.activeSelf ? "Hide Dialog" : "Create Game");
         }
-        
+
         //Called from Unity
         public void OnBackClick()
         {
@@ -146,17 +160,20 @@ namespace Core.UI.MainMenu
         public DataContextFinder Finder => DataContextFinder.WorldInformation;
         [field: NonSerialized] public float Size;
         public string WorldName;
+        public NoiseSettings NoiseSettings;
 
         public WorldInformation()
         {
             this.Size = 0;
             this.WorldName = "";
+            this.NoiseSettings = null;
         }
 
-        public WorldInformation(float size, string worldName)
+        public WorldInformation(float size, string worldName, NoiseSettings settings)
         {
-            Size = size;
-            WorldName = worldName;
+            this.Size = size;
+            this.WorldName = worldName;
+            this.NoiseSettings = settings;
         }
     }
 }
