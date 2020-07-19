@@ -1,5 +1,6 @@
 ﻿using Core.UI.Console;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Core.UI.Ingame
 {
@@ -7,6 +8,8 @@ namespace Core.UI.Ingame
     {
         [SerializeField] private RectTransform[] slots;
         [SerializeField] private RectTransform selectedSlotItem;
+        [SerializeField] private Image image = null;
+        
 
         private int slotIndex = 0;
 
@@ -19,6 +22,7 @@ namespace Core.UI.Ingame
                     slot.gameObject.SetActive(value);
                 
                 selectedSlotItem.gameObject.SetActive(value);
+                image.enabled = value;
                 this.enabled = value;
             }
         }

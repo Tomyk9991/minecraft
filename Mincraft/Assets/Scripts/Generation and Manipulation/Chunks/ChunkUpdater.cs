@@ -4,6 +4,7 @@ using Core.Chunks.Threading;
 using Core.Managers;
 using Core.Math;
 using Core.Player;
+using Core.UI.Console;
 using Extensions;
 using UnityEngine;
 using Timer = Utilities.Timer;
@@ -58,6 +59,12 @@ namespace Core.Chunks
             _chunkJobManager.Start();
 
             timer = new Timer(WorldSettings.WorldTick);
+        }
+
+        [ConsoleMethod(nameof(TestMethod))]
+        private void TestMethod(int a)
+        {
+            Debug.Log($"TestMethod::a={a}");
         }
         
         private void SetupChunkBuffer(in int xPlayerPos, in int zPlayerPos)

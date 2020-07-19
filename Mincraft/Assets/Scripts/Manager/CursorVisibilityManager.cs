@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Extensions;
 using UnityEngine;
 
 namespace Core.Managers
 {
-    public class CursorVisibilityManager : MonoBehaviour
+    public class CursorVisibilityManager : SingletonBehaviour<CursorVisibilityManager>
     {
         private void Start()
         {
