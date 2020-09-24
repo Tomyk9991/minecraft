@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -16,13 +17,13 @@ namespace Core.UI.Console
     {
         [Header("Enable / Disable")] [SerializeField]
         private GameObject consoleParent = null;
-        //[SerializeField] private SelectedBlockVisualizer selectedBockVisualizer;
 
         [SerializeField] private IConsoleToggle[] disableOnConsoleAppear = null;
 
-
         [Header("UI")] [SerializeField] private TMP_InputField inputfield = null;
         [SerializeField] private TextMeshProUGUI consoleOutput = null;
+        [SerializeField] private TMP_Text previewText = null;
+
 
         private Dictionary<string, MethodInfo> dictionary;
         private string currentMessage = "";
@@ -47,6 +48,11 @@ namespace Core.UI.Console
                 if (!dictionary.ContainsKey(methodName))
                 {
                     dictionary.Add(methodName, methods[i]);
+
+                    string toLowerMethodName = methodName.ToLower();
+
+                    if (toLowerMethodName != methodName)
+                        dictionary.Add(toLowerMethodName, methods[i]);
                 }
             }
 
@@ -61,7 +67,6 @@ namespace Core.UI.Console
             }
 
             builder.Append("}");
-            Debug.Log(builder.ToString());
 
             disableOnConsoleAppear = FindObjectsOfType<MonoBehaviour>().OfType<IConsoleToggle>().ToArray();
 
@@ -79,6 +84,38 @@ namespace Core.UI.Console
 
         private void ProcessMessage(string message)
         {
+            if (String.IsNullOrEmpty(message))
+            {
+                EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
+                inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
+                previewText.gameObject.SetActive(false);
+                return;
+            }
+            
+            if (currentMessage.Contains("+") || currentMessage.Contains("-") || currentMessage.Contains("*") ||
+                currentMessage.Contains("/"))
+            {
+                try
+                {
+                    var loDataTable = new DataTable(); 
+                    var loDataColumn = new DataColumn("Eval", typeof (double), currentMessage); 
+                    loDataTable.Columns.Add(loDataColumn); 
+                    loDataTable.Rows.Add(0); 
+                    double d = (double) loDataTable.Rows[0]["Eval"];
+                    previewText.gameObject.SetActive(true);
+                    consoleOutput.text = currentMessage + " = " + d;
+                }
+                catch (SyntaxErrorException e)
+                {
+                    
+                }
+                
+                inputfield.text = "";
+                EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
+                inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
+                return;
+            }
+
             string[] substrings = message.Split(' ');
             message = substrings[0];
             object[] para;
@@ -91,6 +128,8 @@ namespace Core.UI.Console
                 {
                     consoleOutput.text += message + " Parameters not correct\n";
                     inputfield.text = "";
+                    EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
+                    inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
                     return;
                 }
 
@@ -138,29 +177,30 @@ namespace Core.UI.Console
             {
                 consoleOutput.text += message + "\n";
             }
+
             EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
             inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
         }
 
-        private string ClosestString(string cmpString, string[] strings)
+        private (string searchResult, bool hasFound) ClosestString(string cmpString, string[] strings)
         {
             string cmptmpLwr = cmpString.ToLower();
             foreach (var t in strings)
             {
                 string tmpLwr = t.ToLower();
                 bool eval = tmpLwr.StartsWith(cmptmpLwr) && !string.IsNullOrEmpty(cmptmpLwr);
-                
+
                 if (eval)
                 {
                     tabCounter = 0;
-                    return t;
+                    return (t, true);
                 }
             }
 
             int idx = tabCounter % strings.Length;
             string s = strings[idx];
             tabCounter++;
-            return s;
+            return (s, false);
         }
 
         private void Update()
@@ -184,16 +224,61 @@ namespace Core.UI.Console
                 inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
             }
 
+            if (showingConsole && !String.IsNullOrEmpty(currentMessage))
+            {
+                string currentMessageWithoutStringsAfterFirstSpace = currentMessage.Split(' ')[0];
+                var tuple = ClosestString(currentMessageWithoutStringsAfterFirstSpace, dictionary.Keys.ToArray());
+                string closestMessage = tuple.searchResult;
+
+                
+                if (tuple.hasFound)
+                {
+                    previewText.gameObject.SetActive(true);
+                    string parameterString = ParameterString(dictionary[closestMessage].GetParameters());
+                    previewText.text = closestMessage + parameterString;
+                }
+                else
+                {
+                    previewText.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                previewText.gameObject.SetActive(false);
+            }
+
             if (showingConsole && Input.GetKeyDown(KeyCode.Tab))
             {
-                string closestMessage = ClosestString(currentMessage, dictionary.Keys.ToArray());
+                string closestMessage = ClosestString(currentMessage, dictionary.Keys.ToArray()).searchResult;
                 string tempCurMessage = currentMessage;
                 inputfield.text = closestMessage;
 
                 currentMessage = tempCurMessage;
                 EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
                 inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
+                inputfield.caretPosition = closestMessage.Length;
             }
+        }
+
+        private string ParameterString(ParameterInfo[] infos)
+        {
+            StringBuilder builder = new StringBuilder("{");
+
+            for (int i = 0; i < infos.Length; i++)
+            {
+                builder
+                    .Append(infos[i].ParameterType.Name)
+                    .Append(" ")
+                    .Append(infos[i].Name)
+                    .Append((i + 1) != infos.Length
+                        ? ", "
+                        : ""
+                    );
+            }
+
+            builder.Append("}");
+
+            return builder.ToString();
         }
 
         [ConsoleMethod(nameof(Clear))]
@@ -204,6 +289,11 @@ namespace Core.UI.Console
             currentMessage = "";
             EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
             inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
+        }
+
+        public static void Write(string buffer)
+        {
+            Instance.consoleOutput.text += buffer + "\n";
         }
     }
 }

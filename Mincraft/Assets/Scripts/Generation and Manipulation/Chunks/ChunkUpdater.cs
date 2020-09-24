@@ -4,7 +4,6 @@ using Core.Chunks.Threading;
 using Core.Managers;
 using Core.Math;
 using Core.Player;
-using Core.UI.Console;
 using Extensions;
 using UnityEngine;
 using Timer = Utilities.Timer;
@@ -46,7 +45,7 @@ namespace Core.Chunks
 
             if (calculateThreads)
                 amountThreads = SystemInfo.processorCount - 5 <= 0 ? 1 : SystemInfo.processorCount - 5;
-            
+
             _chunkJobManager = new ChunkJobManager(amountThreads, true);
 
             ChunkBuffer.Init(chunkSize, minHeight, maxHeight, drawDistanceInChunks);
@@ -54,19 +53,13 @@ namespace Core.Chunks
             _chunkJobManager.PassBegin();
             SetupChunkBuffer(xPlayerPos, zPlayerPos);
             _chunkJobManager.PassEnd();
-            
+
 
             _chunkJobManager.Start();
 
             timer = new Timer(WorldSettings.WorldTick);
         }
 
-        [ConsoleMethod(nameof(TestMethod))]
-        private void TestMethod(int a)
-        {
-            Debug.Log($"TestMethod::a={a}");
-        }
-        
         private void SetupChunkBuffer(in int xPlayerPos, in int zPlayerPos)
         {
             for (int x = xPlayerPos - drawDistanceInChunks * chunkSize, localx = 0;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Core.Math;
+using Core.UI.Console;
 using Extensions;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
@@ -69,6 +70,12 @@ namespace Core.Player
         public string PlayerPos()
         {
             return latestPlayerPosition.ToString();
+        }
+
+        [ConsoleMethod(nameof(MovePlayer))]
+        private void MovePlayer(int x, int y, int z)
+        {
+            transform.position = new Vector3(x, y, z);
         }
     }
 
