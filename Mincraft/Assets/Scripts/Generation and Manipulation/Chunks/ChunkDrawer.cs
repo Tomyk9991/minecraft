@@ -38,7 +38,7 @@ namespace Core.Chunks
         private void RenderCall(MeshJob task)
         {
             var drawingChunk = task.Chunk;
-
+            
             if (drawingChunk.CurrentGO == null)
             {
                 drawingChunk.CurrentGO = GoPool.GetNextUnusedChunk();
@@ -47,7 +47,7 @@ namespace Core.Chunks
                 drawingChunk.CurrentGO.transform.position = drawingChunk.GlobalPosition.ToVector3();
                 drawingChunk.CurrentGO.GetComponent<ChunkReferenceHolder>().Chunk = drawingChunk;
             }
-
+            
             MeshModifier.SetMesh(drawingChunk.CurrentGO, task.MeshData, task.ColliderData);
         }
     }

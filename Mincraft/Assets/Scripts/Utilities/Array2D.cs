@@ -18,6 +18,11 @@
             set => data[Idx2D(x, y)] = value;
         }
 
+        public void Clear()
+        {
+            this.data = new T[width * width];
+        }
+
         private int Idx2D(int x, int y)
             => width * x + y;
     }

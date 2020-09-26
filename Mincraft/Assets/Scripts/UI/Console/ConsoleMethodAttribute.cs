@@ -6,9 +6,17 @@ namespace Core.UI.Console
     sealed class ConsoleMethodAttribute : Attribute
     {
         public string stringName;
-        public ConsoleMethodAttribute(string method)
+        public string description;
+        
+        public ConsoleMethodAttribute(string methodName)
         {
-            stringName = method;
+            this.stringName = methodName;
+        }
+        
+        public ConsoleMethodAttribute(string methodName, string description)
+        {
+            stringName = methodName;
+            this.description = description;
         }
     }
 }

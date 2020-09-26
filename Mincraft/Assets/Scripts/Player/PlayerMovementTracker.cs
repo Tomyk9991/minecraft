@@ -72,10 +72,12 @@ namespace Core.Player
             return latestPlayerPosition.ToString();
         }
 
-        [ConsoleMethod(nameof(MovePlayer))]
+        [ConsoleMethod(nameof(MovePlayer), "Teleports the player to the given x, y, z location")]
         private void MovePlayer(int x, int y, int z)
         {
+            UpdateLatestPlayerPosition();
             transform.position = new Vector3(x, y, z);
+            OnDirectionModified?.Invoke(Direction.Teleported);
         }
     }
 
@@ -86,5 +88,6 @@ namespace Core.Player
         Right = 2,
         Forward = 4,
         Back = 8,
+        Teleported = 16
     }
 }

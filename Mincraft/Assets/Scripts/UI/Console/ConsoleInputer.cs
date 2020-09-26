@@ -3,63 +3,73 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Core.Managers;
 using Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Utilities;
 
 namespace Core.UI.Console
 {
     public class ConsoleInputer : SingletonBehaviour<ConsoleInputer>
     {
         [Header("Enable / Disable")] [SerializeField]
-        private GameObject consoleParent = null;
+        private Transform[] consoleToggleTransforms = null;
 
         [SerializeField] private IConsoleToggle[] disableOnConsoleAppear = null;
 
         [Header("UI")] [SerializeField] private TMP_InputField inputfield = null;
         [SerializeField] private TextMeshProUGUI consoleOutput = null;
         [SerializeField] private TMP_Text previewText = null;
-
-
-        private Dictionary<string, MethodInfo> dictionary;
+        
+        //private Dictionary<string, MethodInfo> dictionary;
+        private Dictionary<string, ReflectionMethodInfo> dictionary;
         private string currentMessage = "";
         private int tabCounter = 0;
+        private int inputHistoryClickCounter = 0;
+        private int lineCounter = 0;
         private bool showingConsole = false;
 
+        private string inputHistory;
+        
         private void Start()
         {
-            dictionary = new Dictionary<string, MethodInfo>();
-
-            var methods = Assembly.GetAssembly(typeof(ConsoleInputer)).GetTypes()
-                .SelectMany(t =>
+            //dictionary = new Dictionary<string, MethodInfo>();
+            dictionary = new Dictionary<string, ReflectionMethodInfo>();
+            inputHistory = "";
+            
+            MethodInfo[] methods = Assembly.GetAssembly(typeof(ConsoleInputer)).GetTypes()
+                .SelectMany((Type t) =>
                     t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
                                  BindingFlags.Static))
-                .Where(m => m.GetCustomAttributes(typeof(ConsoleMethodAttribute), false).Length > 0)
+                .Where((MethodInfo m) => m.GetCustomAttributes(typeof(ConsoleMethodAttribute), false).Length > 0)
                 .ToArray();
 
             for (int i = 0; i < methods.Length; i++)
             {
-                string methodName = methods[i].GetCustomAttribute<ConsoleMethodAttribute>().stringName;
+                ConsoleMethodAttribute currentAttribute = methods[i].GetCustomAttribute<ConsoleMethodAttribute>();
+                
+                string methodName = currentAttribute.stringName;
+                string methodDescription = currentAttribute.description ?? "";
 
                 if (!dictionary.ContainsKey(methodName))
                 {
-                    dictionary.Add(methodName, methods[i]);
+                    dictionary.Add(methodName, new ReflectionMethodInfo(methods[i], methodDescription));
 
                     string toLowerMethodName = methodName.ToLower();
 
                     if (toLowerMethodName != methodName)
-                        dictionary.Add(toLowerMethodName, methods[i]);
+                        dictionary.Add(toLowerMethodName, new ReflectionMethodInfo(methods[i], methodDescription));
                 }
             }
 
-            //Welche Consolenmethoden wurden erkannt?
+            // Welche Consolenmethoden wurden erkannt?
+            // DEBUGGING: Wird nicht genutzt
             StringBuilder builder = new StringBuilder("{");
             int index = 0;
-            foreach (KeyValuePair<string, MethodInfo> entry in dictionary)
+            foreach (KeyValuePair<string, ReflectionMethodInfo> entry in dictionary)
             {
                 builder.Append(entry.Key);
                 builder.Append(index == dictionary.Count - 1 ? "" : ", ");
@@ -70,21 +80,48 @@ namespace Core.UI.Console
 
             disableOnConsoleAppear = FindObjectsOfType<MonoBehaviour>().OfType<IConsoleToggle>().ToArray();
 
-            var s = new TMP_InputField.SubmitEvent();
-            inputfield.onSubmit = s;
-
-            s.AddListener(ProcessMessage);
+            var s0 = new TMP_InputField.SubmitEvent();
+            inputfield.onSubmit = s0;
+            s0.AddListener(ProcessMessage);
+            OnValueChanged("");
         }
 
         //Called from Unity
         public void OnValueChanged(string message)
         {
             currentMessage = message;
+
+            if(!String.IsNullOrEmpty(currentMessage))
+            {
+                string currentMessageWithoutStringsAfterFirstSpace = currentMessage.Split(' ')[0];
+                var tuple = ClosestString(currentMessageWithoutStringsAfterFirstSpace, dictionary.Keys.ToArray());
+                string closestMessage = tuple.searchResult;
+
+
+                if (tuple.hasFound)
+                {
+                    ReflectionMethodInfo info = dictionary[closestMessage];
+                    
+                    previewText.gameObject.SetActive(true);
+                    string parameterString = ParameterString(info.Info.GetParameters());
+                    previewText.text = closestMessage + parameterString + " " + RichTextCodedDescription(info.Description);
+                }
+                else
+                {
+                    previewText.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                previewText.gameObject.SetActive(false);
+            }
         }
 
         private void ProcessMessage(string message)
         {
-            if (String.IsNullOrEmpty(message))
+            inputHistory = message;
+            inputHistoryClickCounter = 0;
+            if (String.IsNullOrEmpty(message) || inputfield.wasCanceled)
             {
                 EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
                 inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
@@ -103,11 +140,11 @@ namespace Core.UI.Console
                     loDataTable.Rows.Add(0); 
                     double d = (double) loDataTable.Rows[0]["Eval"];
                     previewText.gameObject.SetActive(true);
-                    consoleOutput.text = currentMessage + " = " + d;
+                    Write(currentMessage + " = " + d);
                 }
                 catch (SyntaxErrorException e)
                 {
-                    
+                    WriteToOutput(e.Message);
                 }
                 
                 inputfield.text = "";
@@ -120,13 +157,13 @@ namespace Core.UI.Console
             message = substrings[0];
             object[] para;
 
-            if (dictionary.TryGetValue(message, out MethodInfo method))
+            if (dictionary.TryGetValue(message, out ReflectionMethodInfo method))
             {
-                var parameters = method.GetParameters();
+                var parameters = method.Info.GetParameters();
 
                 if (substrings.Length - 1 != parameters.Length)
                 {
-                    consoleOutput.text += message + " Parameters not correct\n";
+                    Write(message + " Parameters not correct");
                     inputfield.text = "";
                     EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
                     inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
@@ -148,35 +185,34 @@ namespace Core.UI.Console
                     }
                 }
 
-                if (method.IsStatic)
+                if (method.Info.IsStatic)
                 {
-                    method.Invoke(null, null);
+                    method.Info.Invoke(null, null);
                 }
                 else
                 {
-                    var objects = FindObjectsOfType(method.ReflectedType);
+                    var objects = FindObjectsOfType(method.Info.ReflectedType);
 
                     for (int i = 0; i < objects.Length; i++)
                     {
                         if (!wrongParas)
-                            method.Invoke(objects[i], method.GetParameters().Length > 0 ? para : null);
+                            method.Info.Invoke(objects[i], method.Info.GetParameters().Length > 0 ? para : null);
                     }
                 }
             }
             else
             {
-                consoleOutput.text += message + " has not been found\n";
+                Write(message + " has not been found");
                 inputfield.text = "";
                 EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
                 inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
                 return;
             }
 
-            inputfield.text = "";
             if (message.ToLower() != "clear")
-            {
-                consoleOutput.text += message + "\n";
-            }
+                Write(inputfield.text);
+
+            inputfield.text = "";
 
             EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
             inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
@@ -206,58 +242,51 @@ namespace Core.UI.Console
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.F1))
-            {
-                showingConsole = !showingConsole;
-                CursorVisibilityManager.Instance.ToggleMouseVisibility();
-
-                foreach (Transform child in consoleParent.transform)
-                {
-                    child.gameObject.SetActive(showingConsole);
-                }
-
-                foreach (IConsoleToggle toggleObject in disableOnConsoleAppear)
-                {
-                    toggleObject.Enabled = !showingConsole;
-                }
-
-                EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
-                inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
-            }
-
-            if (showingConsole && !String.IsNullOrEmpty(currentMessage))
-            {
-                string currentMessageWithoutStringsAfterFirstSpace = currentMessage.Split(' ')[0];
-                var tuple = ClosestString(currentMessageWithoutStringsAfterFirstSpace, dictionary.Keys.ToArray());
-                string closestMessage = tuple.searchResult;
-
-                
-                if (tuple.hasFound)
-                {
-                    previewText.gameObject.SetActive(true);
-                    string parameterString = ParameterString(dictionary[closestMessage].GetParameters());
-                    previewText.text = closestMessage + parameterString;
-                }
-                else
-                {
-                    previewText.gameObject.SetActive(false);
-                }
-            }
-            else
-            {
-                previewText.gameObject.SetActive(false);
-            }
+                ToggleConsole();
 
             if (showingConsole && Input.GetKeyDown(KeyCode.Tab))
-            {
-                string closestMessage = ClosestString(currentMessage, dictionary.Keys.ToArray()).searchResult;
-                string tempCurMessage = currentMessage;
-                inputfield.text = closestMessage;
+                CalculateClosestString();
 
-                currentMessage = tempCurMessage;
-                EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
-                inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
-                inputfield.caretPosition = closestMessage.Length;
+            if (showingConsole && (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) && inputHistory != "")
+                ToggleInputHistory();
+        }
+
+        private void ToggleInputHistory()
+        {
+            inputHistoryClickCounter += 1;
+            inputfield.text = inputHistoryClickCounter % 2 == 0 ? inputHistory : "";
+            inputfield.caretPosition = inputHistory.Length;
+        }
+
+        private void CalculateClosestString()
+        {
+            string closestMessage = ClosestString(currentMessage, dictionary.Keys.ToArray()).searchResult;
+            string tempCurMessage = currentMessage;
+            inputfield.text = closestMessage;
+
+            currentMessage = tempCurMessage;
+            EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
+            inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
+            inputfield.caretPosition = closestMessage.Length;
+        }
+
+        private void ToggleConsole()
+        {
+            showingConsole = !showingConsole;
+            CursorVisibilityManager.Instance.ToggleMouseVisibility();
+
+            foreach (Transform child in consoleToggleTransforms)
+            {
+                child.gameObject.SetActive(showingConsole);
             }
+
+            foreach (IConsoleToggle toggleObject in disableOnConsoleAppear)
+            {
+                toggleObject.Enabled = !showingConsole;
+            }
+
+            EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
+            inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
         }
 
         private string ParameterString(ParameterInfo[] infos)
@@ -280,8 +309,26 @@ namespace Core.UI.Console
 
             return builder.ToString();
         }
+        
+        private string RichTextCodedDescription(string infoDescription) 
+            => "<b><i><size=12><color=#ffffffaa>" + infoDescription + "</color></size></i></b>";
 
-        [ConsoleMethod(nameof(Clear))]
+
+        public void Write(string buffer)
+        {
+            lineCounter++;
+            if (lineCounter >= 16)
+            {
+                string currentOutputString = consoleOutput.text;
+                int index = currentOutputString.IndexOf('\n');
+                consoleOutput.text = currentOutputString.Remove(0, index + 1);
+            }
+            consoleOutput.text += buffer + "\n";
+        }
+
+        public static void WriteToOutput(string buffer) => Instance.Write(buffer);
+
+        [ConsoleMethod(nameof(Clear), "Clears the console")]
         private void Clear()
         {
             consoleOutput.text = "";
@@ -289,11 +336,19 @@ namespace Core.UI.Console
             currentMessage = "";
             EventSystem.current.SetSelectedGameObject(inputfield.gameObject, null);
             inputfield.OnPointerClick(new PointerEventData(EventSystem.current));
+            lineCounter = 0;
         }
-
-        public static void Write(string buffer)
+        
+        private class ReflectionMethodInfo
         {
-            Instance.consoleOutput.text += buffer + "\n";
+            public MethodInfo Info;
+            public string Description;
+            
+            public ReflectionMethodInfo(MethodInfo info, string description)
+            {
+                Info = info;
+                Description = description;
+            }
         }
     }
 }

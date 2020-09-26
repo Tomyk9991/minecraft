@@ -1,8 +1,6 @@
-﻿using System;
-using Core.Math;
+﻿using Core.Math;
 using Core.Chunks.Threading;
 using Core.Player;
-using UnityEngine;
 using Utilities;
 
 namespace Core.Chunks
@@ -63,7 +61,7 @@ namespace Core.Chunks
                     break;
             }
         }
-
+        
         private static void MoveForward()
         {
             const ShiftingOptionDirection dir = ShiftingOptionDirection.Forward;
@@ -363,6 +361,22 @@ namespace Core.Chunks
             Back,
             Left,
             Right
+        }
+
+        public static void Clear()
+        {
+            for (int x = 0; x < Dimension; x++)
+            {
+                for (int y = 0; y < Dimension; y++)
+                {
+                    Chunk[] chunks = data[x, y].Chunks;
+                    
+                    for (int i = 0; i < chunks.Length; i++)
+                    {
+                        chunks[i].ReleaseGameObject();
+                    }
+                }
+            }
         }
     }
 }

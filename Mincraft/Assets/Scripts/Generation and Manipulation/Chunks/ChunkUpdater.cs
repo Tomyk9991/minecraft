@@ -30,11 +30,13 @@ namespace Core.Chunks
         private Queue<Direction> shiftDirections = new Queue<Direction>();
         private Timer timer;
 
+        private int xPlayerPos, zPlayerPos;
+
         private void Start()
         {
             chunkSize = 0x10;
-            int xPlayerPos = 0;
-            int zPlayerPos = 0;
+            xPlayerPos = 0;
+            zPlayerPos = 0;
 
             PlayerMovementTracker.OnDirectionModified += DirectionModified;
 
@@ -70,9 +72,10 @@ namespace Core.Chunks
                     z <= zPlayerPos + drawDistanceInChunks * chunkSize;
                     z += chunkSize, localz++)
                 {
-                    ChunkColumn column = new ChunkColumn(new Int2(x, z), new Int2(localx, localz), minHeight, maxHeight);
+                    ChunkColumn column =
+                        new ChunkColumn(new Int2(x, z), new Int2(localx, localz), minHeight, maxHeight);
                     ChunkBuffer.SetChunkColumnNTS(localx, localz, column);
-                    
+
                     //Insert this created chunkColumn to the NoiseJobs 
                     for (int y = minHeight, localy = 0; y < maxHeight; y += chunkSize, localy++)
                     {
@@ -82,10 +85,10 @@ namespace Core.Chunks
                             GlobalPosition = new Int3(x, y, z),
                             ChunkColumn = column
                         };
-                    
+
                         column[localy] = chunk;
                     }
-                    
+
                     _chunkJobManager.Add(new ChunkJob(column));
                 }
             }
@@ -94,16 +97,34 @@ namespace Core.Chunks
         private void DirectionModified(Direction direction)
         {
             if (moveWithPlayer)
-                shiftDirections.Enqueue(direction);
+            {
+                if (direction == Direction.Teleported)
+                {
+                    ChunkBuffer.Clear();
+
+
+                    xPlayerPos = MathHelper.MultipleFloor((int) PlayerMovementTracker.Instance.transform.position.x - 16, 16);
+                    zPlayerPos = MathHelper.MultipleFloor((int) PlayerMovementTracker.Instance.transform.position.z - 16, 16);
+                    
+                    _chunkJobManager.PassBegin();
+                    SetupChunkBuffer(xPlayerPos, zPlayerPos);
+                    _chunkJobManager.PassEnd();
+                }
+                else
+                {
+                    shiftDirections.Enqueue(direction);
+                }
+            }
         }
-        
+
         private void Update()
         {
             if (!timer.TimeElapsed(Time.deltaTime)) return;
-            
-            if(shiftDirections.Count > 0 && _chunkJobManager.MeshJobsCount == 0 && _chunkJobManager.FinishedJobsCount == 0 && _chunkJobManager.NoiseJobsCount == 0)
+
+            if (shiftDirections.Count > 0 && _chunkJobManager.MeshJobsCount == 0 &&
+                _chunkJobManager.FinishedJobsCount == 0 && _chunkJobManager.NoiseJobsCount == 0)
                 ChunkBuffer.Shift(shiftDirections.Dequeue());
-        } 
+        }
 
         private void OnDestroy()
         {
