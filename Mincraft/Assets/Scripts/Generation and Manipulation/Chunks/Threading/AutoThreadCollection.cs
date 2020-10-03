@@ -19,7 +19,7 @@ namespace Core.Chunks.Threading
         public int MeshJobsCount => meshJobs.Count;
 
         private bool running = false;
-        private bool pass = false;
+        private bool passOpen = false;
         private int finishedJobsCounter = 0;
 
         private Pass noisePass;
@@ -154,7 +154,7 @@ namespace Core.Chunks.Threading
 
         public void PassBegin()
         {
-            if (pass) throw new InvalidOperationException("Add Range can't begin twice");
+            if (passOpen) throw new InvalidOperationException("Add Range can't begin twice");
 
             noisePass = new Pass();
             structurePass = new Pass();
@@ -162,13 +162,13 @@ namespace Core.Chunks.Threading
 
             passes = new PassArray(3);
 
-            pass = true;
+            passOpen = true;
         }
 
         public void PassEnd()
         {
-            if (!pass) throw new InvalidOperationException("Add Range can't end twice");
-            pass = false;
+            if (!passOpen) throw new InvalidOperationException("Add Range can't end twice");
+            passOpen = false;
 
             passes.Add(noisePass);
             passes.Add(structurePass);
@@ -202,7 +202,7 @@ namespace Core.Chunks.Threading
 
         public void Add(ChunkJob item, bool runWithNoise = true)
         {
-            if (pass)
+            if (passOpen)
             {
                 int len = item.Column.Chunks.Length;
                 for (int i = 0; i < len; i++)

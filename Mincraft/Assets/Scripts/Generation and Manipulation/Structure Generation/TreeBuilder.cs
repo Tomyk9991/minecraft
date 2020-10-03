@@ -61,7 +61,10 @@ namespace Core.StructureGeneration
             //neighbouring chunk at the visible bounds
             if (InChunkSpacePlusOne(pos))
             {
-                callingChunk.AddBlock(block, pos);
+                if (callingChunk.Blocks[pos.X, pos.Y, pos.Z].ID == BlockUV.Air)
+                {
+                    callingChunk.AddBlock(block, pos);
+                }
             }
 
             Int3 neighbouringChunkDirection = new Int3(
@@ -79,7 +82,10 @@ namespace Core.StructureGeneration
                 if (neighbouringChunkDirection != Int3.Zero)
                 {
                     Chunk c1 = callingChunk.ChunkNeighbour(neighbouringChunkDirection);
-                    c1?.AddBlock(block, pos);
+                    if (c1?.Blocks[pos.X, pos.Y, pos.Z].ID == BlockUV.Air)
+                    {
+                        c1.AddBlock(block, pos);
+                    }
                 }
             }
         }

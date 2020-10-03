@@ -22,6 +22,11 @@ namespace Core.Chunks
 
         //Chunkdata
         private ExtendedArray3D<Block> blocks;
+        
+        /// <summary>
+        /// Determines, if the current chunk is generated or loaded from the disk
+        /// </summary>
+        private bool loaded = false;
         private Block[] blockNeighbours;
         private static Pool<ExtendedArray3D<Block>> BlockArrayPool;
 
@@ -139,6 +144,12 @@ namespace Core.Chunks
         /// <returns>Returns a state, if the chunk has only air in it, or not</returns>
         public void GenerateBlocks()
         {
+            if (ChunkSavingManager.Load(this.GlobalPosition, out ChunkData chunk))
+            {
+                this.blocks.RawData = chunk.Blocks;
+                loaded = true;
+                return;
+            }
             
             //Terrain generation
             for (int x = this.GlobalPosition.X - 1; x < this.GlobalPosition.X + chunkSize + 1; x++)
@@ -148,12 +159,6 @@ namespace Core.Chunks
                     Biom biom = BiomFinder.Find(noise.GetCellular(x * smoothness, z * smoothness));
                     ChunkColumnGen(x, z, biom);
                 }
-            }
-            
-            if (ChunkSavingManager.Load(this.GlobalPosition, out ChunkData chunk))
-            {
-                this.blocks.RawData = chunk.Blocks;
-                return;
             }
         }
 
@@ -236,12 +241,15 @@ namespace Core.Chunks
 
         public void GenerateStructures()
         {
-            foreach (var builder in builders)
+            if (loaded == false)
             {
-                while (builder.StructureOrigin.Count > 0)
+                foreach (var builder in builders)
                 {
-                    (Int3 origin, Biom biom) = builder.StructureOrigin.Dequeue();
-                    builder.Build(biom, this, origin);
+                    while (builder.StructureOrigin.Count > 0)
+                    {
+                        (Int3 origin, Biom biom) = builder.StructureOrigin.Dequeue();
+                        builder.Build(biom, this, origin);
+                    }
                 }
             }
         }
