@@ -1,16 +1,15 @@
-﻿using System;
-using Core.Builder;
-using Core.UI.Console;
+﻿using Core.Builder;
+using Core.UI;
 using UnityEngine;
 
 namespace Core.Player
 {
-    public class SelectedBlockVisualizer : MonoBehaviour, IConsoleToggle
+    public class SelectedBlockVisualizer : MonoBehaviour, IConsoleToggle, IFullScreenUIToggle
     {
         [Header("References")]
         [SerializeField] Camera cameraRef = null;
         
-        [SerializeField] private GameObject[] gameObjects = null;
+        [SerializeField] private GameObject[] outlineGameGameObjects = null;
         [SerializeField] private LayerMask layerMask = 0;
         
         public float RaycastDistance
@@ -38,8 +37,8 @@ namespace Core.Player
             ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
             if (Physics.Raycast(ray, out hitResult, RaycastDistance, layerMask))
             {
-                for (int i = 0; i < gameObjects.Length; i++)
-                    gameObjects[i].SetActive(true);
+                for (int i = 0; i < outlineGameGameObjects.Length; i++)
+                    outlineGameGameObjects[i].SetActive(true);
 
                 rayHit = hitResult.point;
 
@@ -48,8 +47,8 @@ namespace Core.Player
             }
             else
             {
-                for (int i = 0; i < gameObjects.Length; i++)
-                    gameObjects[i].SetActive(false);
+                for (int i = 0; i < outlineGameGameObjects.Length; i++)
+                    outlineGameGameObjects[i].SetActive(false);
             }
         }
     }

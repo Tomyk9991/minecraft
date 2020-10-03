@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Core.UI.MainMenu;
 using UnityEngine;
@@ -17,13 +16,18 @@ namespace Core.Saving
             "Worlds"
         };
 
-        public static void Save(IDataContext context)
+        static MainMenuSavingManager()
+        {
+            Directory.CreateDirectory(Application.persistentDataPath);
+        }
+
+        public static void SaveSettings(SettingsData context)
         {
             File.WriteAllBytes(Path.Combine(Application.persistentDataPath, paths[(int) context.Finder]),
                 Encoding.UTF8.GetBytes(JsonUtility.ToJson(context, true)));
         }
         
-        public static void Save(IDataContext context, string worldDirectory = "")
+        public static void SaveWorldInformation(WorldInformation context, string worldDirectory)
         {
             if (worldDirectory == "")
             {
@@ -39,22 +43,22 @@ namespace Core.Saving
             }
         }
 
-        public static T Load<T>(DataContextFinder finder) where T : new()
+        public static SettingsData LoadSettings()
         {
             string json = "";
             try
             {
-                json = File.ReadAllText(Path.Combine(Application.persistentDataPath, paths[(int) finder]));
+                json = File.ReadAllText(Path.Combine(Application.persistentDataPath, paths[(int) DataContextFinder.Settings]));
             }
             catch (FileNotFoundException e)
             {
                 Debug.Log(e);
-                return new T();
+                return new SettingsData(60, 5);
             }
-            return JsonUtility.FromJson<T>(json);
+            return JsonUtility.FromJson<SettingsData>(json);
         }
         
-        public static void Delete(WorldInformation worldInformation)
+        public static void DeleteWorldInformation(WorldInformation worldInformation)
         {
             string path = Path.Combine(Application.persistentDataPath, paths[(int) worldInformation.Finder], worldInformation.WorldName);
             if (Directory.Exists(path))
@@ -125,7 +129,7 @@ namespace Core.Saving
                 size += (long) DirSize(di);   
             }
 
-            float result = (float) size / 1_048_576l;
+            float result = (float) size / 0x100000;
             return result;
         }
     }

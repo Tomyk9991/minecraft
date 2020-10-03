@@ -1,4 +1,4 @@
-using System;
+using Core.UI;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
@@ -9,7 +9,7 @@ using Utilities;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(AudioSource))]
-public class FirstPersonController : MonoBehaviour, IConsoleToggle
+public class FirstPersonController : MonoBehaviour, IConsoleToggle, IFullScreenUIToggle
 {
     [Header("General information")]
     [SerializeField] private bool m_IsWalking;

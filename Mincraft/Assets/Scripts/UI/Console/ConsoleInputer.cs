@@ -9,7 +9,6 @@ using Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Utilities;
 
 namespace Core.UI.Console
 {
@@ -128,12 +127,13 @@ namespace Core.UI.Console
                 previewText.gameObject.SetActive(false);
                 return;
             }
-            
-            if (currentMessage.Contains("+") || currentMessage.Contains("-") || currentMessage.Contains("*") ||
-                currentMessage.Contains("/"))
+
+            currentMessage.Trim();
+            if (currentMessage.StartsWith("="))
             {
                 try
                 {
+                    currentMessage = currentMessage.TrimStart('=');
                     var loDataTable = new DataTable(); 
                     var loDataColumn = new DataColumn("Eval", typeof (double), currentMessage); 
                     loDataTable.Columns.Add(loDataColumn); 
@@ -253,8 +253,8 @@ namespace Core.UI.Console
 
         private void ToggleInputHistory()
         {
-            inputHistoryClickCounter += 1;
             inputfield.text = inputHistoryClickCounter % 2 == 0 ? inputHistory : "";
+            inputHistoryClickCounter += 1;
             inputfield.caretPosition = inputHistory.Length;
         }
 

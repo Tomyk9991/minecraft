@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using Core.Math;
 using Core.UI.Console;
 using Extensions;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
 
 namespace Core.Player
 {
@@ -77,6 +75,14 @@ namespace Core.Player
         {
             UpdateLatestPlayerPosition();
             transform.position = new Vector3(x, y, z);
+            OnDirectionModified?.Invoke(Direction.Teleported);
+        }
+        
+        [ConsoleMethod(nameof(MovePlayerRelative), "Teleports the player relative to the current position")]
+        private void MovePlayerRelative(int x, int y, int z)
+        {
+            UpdateLatestPlayerPosition();
+            transform.position += new Vector3(x, y, z);
             OnDirectionModified?.Invoke(Direction.Teleported);
         }
     }

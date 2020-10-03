@@ -26,5 +26,11 @@ namespace Core.Managers
             Cursor.visible = !Cursor.visible;
             Cursor.lockState = Cursor.visible ? CursorLockMode.None : CursorLockMode.Locked;
         }
+        
+        public void ToggleMouseVisibility(bool state)
+        {
+            Cursor.visible = state;
+            Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
+        }
     }
 }

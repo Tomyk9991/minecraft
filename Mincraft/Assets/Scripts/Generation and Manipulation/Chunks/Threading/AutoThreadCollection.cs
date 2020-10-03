@@ -23,7 +23,7 @@ namespace Core.Chunks.Threading
         private int finishedJobsCounter = 0;
 
         private Pass noisePass;
-        private Pass strucutrePass;
+        private Pass structurePass;
         private Pass meshPass;
         private PassArray passes;
 
@@ -157,7 +157,7 @@ namespace Core.Chunks.Threading
             if (pass) throw new InvalidOperationException("Add Range can't begin twice");
 
             noisePass = new Pass();
-            strucutrePass = new Pass();
+            structurePass = new Pass();
             meshPass = new Pass();
 
             passes = new PassArray(3);
@@ -171,7 +171,7 @@ namespace Core.Chunks.Threading
             pass = false;
 
             passes.Add(noisePass);
-            passes.Add(strucutrePass);
+            passes.Add(structurePass);
             passes.Add(meshPass);
 
             // + 1 für irgendeinen Thread, der abfragt ob ein Item im pass ist, feststellt, dass dort kein Item enthalten
@@ -226,7 +226,7 @@ namespace Core.Chunks.Threading
                     var structureJobContainer = new JobCollectionItemContainer(1, 0);
                     structureJobContainer.RunSequentially(structureJob);
 
-                    strucutrePass.Add(structureJobContainer);
+                    structurePass.Add(structureJobContainer);
 
                     //Meshjob
                     var meshJobContainer = new JobCollectionItemContainer(0, 2);

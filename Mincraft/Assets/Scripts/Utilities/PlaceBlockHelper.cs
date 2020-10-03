@@ -30,8 +30,7 @@ namespace Utilities
         public void HandleAddBlock(Chunk currentChunk, Int3 localPos)
         {
             if (PlayerMovementTracker.CurrentStandingBlock == latestGlobalClickInt) return;
-
-            currentChunk.AddBlock(new Block(), localPos);
+            currentChunk.AddBlockPersistent(currentBlock, localPos);
 
             if (MathHelper.BorderBlock(localPos))
             {
@@ -42,7 +41,7 @@ namespace Utilities
                     Chunk neighbourChunk =
                         currentChunk.ChunkNeighbour(dir.X == -1 ? Chunk.Directions[4] : Chunk.Directions[5]);
                     RelativeToLocalBlockMinusOneX(localPos, ref blockPos);
-                    neighbourChunk.AddBlock(currentBlock, blockPos);
+                    neighbourChunk.AddBlockPersistent(currentBlock, blockPos);
                     chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }
 
@@ -51,7 +50,7 @@ namespace Utilities
                     Chunk neighbourChunk =
                         currentChunk.ChunkNeighbour(dir.Y == -1 ? Chunk.Directions[3] : Chunk.Directions[2]);
                     RelativeToLocalBlockMinusOneY(localPos, ref blockPos);
-                    neighbourChunk.AddBlock(currentBlock, blockPos);
+                    neighbourChunk.AddBlockPersistent(currentBlock, blockPos);
                     chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }
 
@@ -60,7 +59,7 @@ namespace Utilities
                     Chunk neighbourChunk =
                         currentChunk.ChunkNeighbour(dir.Z == -1 ? Chunk.Directions[1] : Chunk.Directions[0]);
                     RelativeToLocalBlockMinusOneZ(localPos, ref blockPos);
-                    neighbourChunk.AddBlock(currentBlock, blockPos);
+                    neighbourChunk.AddBlockPersistent(currentBlock, blockPos);
                     chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }
             }

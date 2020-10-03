@@ -35,7 +35,6 @@ namespace Utilities
         {
             if (pool.Count <= 0)
             {
-                Debug.Log("New instantiation in pool");
                 return newInstanceFunc();
             }
 

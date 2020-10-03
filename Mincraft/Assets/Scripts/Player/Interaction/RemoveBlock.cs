@@ -1,13 +1,15 @@
 ﻿using Core.Builder;
 using Core.Chunks;
 using Core.Math;
+using Core.Saving;
+using Core.UI;
 using Core.UI.Console;
 using UnityEngine;
 using Utilities;
 
 namespace Core.Player.Interaction
 {
-    public class RemoveBlock : MonoBehaviour, IMouseUsable, IConsoleToggle
+    public class RemoveBlock : MonoBehaviour, IMouseUsable, IConsoleToggle, IFullScreenUIToggle
     {
         private int chunkSize;
 
@@ -38,7 +40,7 @@ namespace Core.Player.Interaction
         [Header("References")] 
         [SerializeField] private Camera cameraRef;
 
-        [Space] 
+        [Space]
         [SerializeField] private float raycastHitable = 1000f;
         [SerializeField] private float timeBetweenRemove = 0.1f;
         [SerializeField] private int mouseButtonIndex = 0;

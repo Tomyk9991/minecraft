@@ -6,9 +6,22 @@ namespace Core.Managers
     public class GameManager : MonoBehaviour
     {
         public static bool WorldSelected { get; set; }
+
+        private static readonly string currentPathWorldDefault =
+            @"C:\Users\thoma\AppData\LocalLow\DefaultCompany\Minecraft\Worlds\_debug_world_";
+
+        private static string currentWorldPath = "";
+
+        public static string CurrentWorldPath
+        {
+            get => currentWorldPath == "" ? currentPathWorldDefault : currentWorldPath;
+            set => currentWorldPath = value;
+        }
+
         private static GameManager instance;
 
         private NoiseSettings _noiseSettings;
+
         public NoiseSettings NoiseSettings
         {
             get => _noiseSettings;

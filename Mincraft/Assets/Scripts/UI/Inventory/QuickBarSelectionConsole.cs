@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Core.UI.Ingame
 {
-    public class InventorySelectionUI : MonoBehaviour, IConsoleToggle
+    public class QuickBarSelectionConsole : MonoBehaviour, IConsoleToggle
     {
         [SerializeField] private RectTransform[] slots;
         [SerializeField] private RectTransform selectedSlotItem;
@@ -33,7 +33,7 @@ namespace Core.UI.Ingame
 
             if (scrollDirection != 0)
             {
-                slotIndex += scrollDirection > 0 ? +1 : -1;
+                slotIndex += System.Math.Sign(scrollDirection);
                 slotIndex %= slots.Length;
 
                 slotIndex = slotIndex < 0 ? slots.Length - 1 : slotIndex;

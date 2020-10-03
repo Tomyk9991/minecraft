@@ -1,7 +1,4 @@
-﻿using System;
-using UnityEngine;
-
-namespace Utilities
+﻿namespace Utilities
 {
     public class RingArray<T> where T : class
     {

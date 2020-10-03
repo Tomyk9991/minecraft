@@ -1,7 +1,16 @@
-﻿public class Array3D<T>
+﻿using System;
+using System.Linq;
+using Core.Builder;
+
+[Serializable]
+public class Array3D<T>
 {
     public int Length => data.Length;
-    public T[] RawData => data; 
+    public T[] RawData
+    {
+        get => data;
+        set => data = value;
+    } 
 
     protected T[] data;
     protected readonly int width;
@@ -36,4 +45,6 @@ public class ExtendedArray3D<T> : Array3D<T>
         get => base[x + 1, y + 1, z + 1];
         set => base[x + 1, y + 1, z + 1] = value;
     }
+
+    public bool Contains(Predicate<T> predicate) => data.Any(t => predicate(t));
 }

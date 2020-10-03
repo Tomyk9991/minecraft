@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-namespace Core.UI.Console
+namespace Core.UI
 {
     /// <summary>
-    /// Use this interface to declare, what game-monobehaviours to turn off / on, when the Console is displayed
+    /// Use this interface to declare, what game-monobehaviours to turn off / on, when the console is displayed
     /// </summary>
     public interface IConsoleToggle
     {

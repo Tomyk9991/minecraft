@@ -7,7 +7,7 @@ namespace Core.Builder
     public struct Block
     {
         private static Block emptyBlock = new Block { ID = BlockUV.None };
-        public BlockUV ID { get; set; }// For UV-Setting
+        public BlockUV ID;// For UV-Setting
 
         public Block(BlockUV ID = BlockUV.None)
         {

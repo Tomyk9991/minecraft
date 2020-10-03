@@ -1,5 +1,8 @@
+using System;
+
 namespace Core.Builder
 {
+    [Serializable]
     public enum BlockUV : short
     {
         None = -32768,

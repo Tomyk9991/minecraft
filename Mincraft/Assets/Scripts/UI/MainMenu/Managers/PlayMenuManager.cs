@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Core.Builder.Generation;
 using Core.Managers;
@@ -14,6 +15,8 @@ namespace Core.UI.MainMenu
 {
     public class PlayMenuManager : MonoBehaviour
     {
+        //TODO
+        //C:\Users\thoma\AppData\LocalLow\DefaultCompany\Minecraft
         [Header("Visibility References")] [SerializeField]
         private GameObject mainMenuParent = null;
 
@@ -76,12 +79,13 @@ namespace Core.UI.MainMenu
                     buttons[1].onClick.AddListener(() =>
                     {
                         GameManager.Instance.NoiseSettings = t.NoiseSettings;
+                        GameManager.CurrentWorldPath = Path.Combine(Application.persistentDataPath, "Worlds", t.WorldName);
                         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1, LoadSceneMode.Single);
                     });
 
                     buttons[2].onClick.AddListener(() =>
                     {
-                        MainMenuSavingManager.Delete(t);
+                        MainMenuSavingManager.DeleteWorldInformation(t);
                         ConstructAvailableMaps();
                     });
                 }
@@ -105,7 +109,7 @@ namespace Core.UI.MainMenu
                 UnityEngine.Random.Range(-100_000, 100_000) : 
                 (seedInputField.text.GetHashCode() % 100_000)
             );
-            MainMenuSavingManager.Save(new WorldInformation(0, inputText.text, settings), inputText.text);
+            MainMenuSavingManager.SaveWorldInformation(new WorldInformation(0, inputText.text, settings), inputText.text);
             
             inputText.text = "";
             seedInputField.text = "";
@@ -151,29 +155,6 @@ namespace Core.UI.MainMenu
         {
             playMenuParent.SetActive(false);
             mainMenuParent.SetActive(true);
-        }
-    }
-
-    [Serializable]
-    public class WorldInformation : IDataContext
-    {
-        public DataContextFinder Finder => DataContextFinder.WorldInformation;
-        [field: NonSerialized] public float Size;
-        public string WorldName;
-        public NoiseSettings NoiseSettings;
-
-        public WorldInformation()
-        {
-            this.Size = 0;
-            this.WorldName = "";
-            this.NoiseSettings = null;
-        }
-
-        public WorldInformation(float size, string worldName, NoiseSettings settings)
-        {
-            this.Size = size;
-            this.WorldName = worldName;
-            this.NoiseSettings = settings;
         }
     }
 }

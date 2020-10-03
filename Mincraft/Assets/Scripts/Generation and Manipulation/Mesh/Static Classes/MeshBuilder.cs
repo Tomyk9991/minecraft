@@ -61,7 +61,7 @@ namespace Core.Builder
 		                //Check, ob dieser Block transparent ist, oder nicht
 		                // Wenn es so sein sollte, bleibt das neighbours-Array mit 6 false-Werten und jede Seite wird gezeichnet
 		                neighbourBlocks = chunk.GetBlockNeighbours(pos);
-							
+
 		                if (!transparent)
 		                {
 			                for (int j = 0; j < 6; j++)

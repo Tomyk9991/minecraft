@@ -1,7 +1,9 @@
-﻿using Core.Builder;
+﻿using System;
+using Core.Builder;
 using Core.Builder.Generation;
 using Core.Managers;
 using Core.Math;
+using Core.Saving;
 using Core.StructureGeneration;
 using UnityEngine;
 using Utilities;
@@ -52,7 +54,7 @@ namespace Core.Chunks
         public Chunk()
         {
             chunkSize = 0x10;
-
+            
             smoothness = WorldSettings.NoiseSettings.Smoothness;
             seed = WorldSettings.NoiseSettings.Seed;
 
@@ -63,14 +65,17 @@ namespace Core.Chunks
             }
             
             blocks = BlockArrayPool.GetNext();
-            
-
-
             blockNeighbours = new Block[6];
         }
 
         public void AddBlock(Block block, Int3 pos)
             => blocks[pos.X, pos.Y, pos.Z] = block;
+
+        public void AddBlockPersistent(Block block, Int3 pos)
+        {
+            AddBlock(block, pos);
+            ChunkSavingManager.Save(this);
+        }
         
 
         public ExtendedArray3D<Block> Blocks
@@ -134,6 +139,7 @@ namespace Core.Chunks
         /// <returns>Returns a state, if the chunk has only air in it, or not</returns>
         public void GenerateBlocks()
         {
+            
             //Terrain generation
             for (int x = this.GlobalPosition.X - 1; x < this.GlobalPosition.X + chunkSize + 1; x++)
             {
@@ -142,6 +148,12 @@ namespace Core.Chunks
                     Biom biom = BiomFinder.Find(noise.GetCellular(x * smoothness, z * smoothness));
                     ChunkColumnGen(x, z, biom);
                 }
+            }
+            
+            if (ChunkSavingManager.Load(this.GlobalPosition, out ChunkData chunk))
+            {
+                this.blocks.RawData = chunk.Blocks;
+                return;
             }
         }
 

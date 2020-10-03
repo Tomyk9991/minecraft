@@ -11,7 +11,7 @@ namespace Core.Managers
     {
         public static float WorldTick => Instance.worldTick;
         public static Int2 MinMaxYHeight => Instance.minMaxYHeight;
-        public static NoiseSettings NoiseSettings => Instance.biomNoiseSettings;
+        public static NoiseSettings NoiseSettings => new NoiseSettings(2.5f, 123);
         public bool drawGizmosChunks = false;
 
         public List<Biom> Bioms => bioms;
@@ -31,7 +31,7 @@ namespace Core.Managers
         [Header("Biom Noise Settings")] 
         [SerializeField] public float smoothness = 40;
         
-        private NoiseSettings biomNoiseSettings;
+        private NoiseSettings noiseSettings;
 
         private void Start()
         {
@@ -39,15 +39,16 @@ namespace Core.Managers
 
             if (GameManager.WorldSelected)
             {
+                noiseSettings = GameManager.Instance.NoiseSettings;
                 this.seed = GameManager.Instance.NoiseSettings.Seed;
                 this.smoothness = GameManager.Instance.NoiseSettings.Smoothness;
-                biomNoiseSettings = GameManager.Instance.NoiseSettings;
                 return;
             }
+            
             if (seed == -1)
                 seed = UnityEngine.Random.Range(-100_000, 100_000);
 
-            biomNoiseSettings = new NoiseSettings(smoothness, seed);
+            noiseSettings = new NoiseSettings(smoothness, seed);
         }
     }
 }
