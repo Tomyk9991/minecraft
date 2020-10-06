@@ -35,9 +35,10 @@ namespace Core.Chunks
         private void Start()
         {
             chunkSize = 0x10;
-            xPlayerPos = 0;
-            zPlayerPos = 0;
-
+            
+            xPlayerPos = MathHelper.MultipleFloor(PlayerMovementTracker.Instance.xPlayerPos, chunkSize);
+            zPlayerPos = MathHelper.MultipleFloor(PlayerMovementTracker.Instance.zPlayerPos, chunkSize);
+            
             PlayerMovementTracker.OnDirectionModified += DirectionModified;
 
             Int2 minMaxYHeight = WorldSettings.MinMaxYHeight;
@@ -62,7 +63,7 @@ namespace Core.Chunks
             timer = new Timer(WorldSettings.WorldTick);
         }
 
-        private void SetupChunkBuffer(in int xPlayerPos, in int zPlayerPos)
+        private void SetupChunkBuffer(int xPlayerPos, int zPlayerPos)
         {
             for (int x = xPlayerPos - drawDistanceInChunks * chunkSize, localx = 0;
                 x <= xPlayerPos + drawDistanceInChunks * chunkSize;

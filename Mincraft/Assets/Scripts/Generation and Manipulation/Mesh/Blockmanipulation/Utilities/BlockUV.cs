@@ -5,7 +5,7 @@ namespace Core.Builder
     [Serializable]
     public enum BlockUV : short
     {
-        None = -32768,
+        None = short.MinValue,
         Air = 0,
         Grass = 1,
         Stone = 2,

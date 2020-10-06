@@ -92,7 +92,7 @@ namespace Core.Chunks
         public bool IsNotEmpty(int x, int y, int z)
         {
             Block currentBlock = blocks[x, y, z];
-            return currentBlock.ID != (int) BlockUV.Air;
+            return currentBlock.ID != BlockUV.Air && currentBlock.ID != BlockUV.None;
         }
 
         /// <summary>

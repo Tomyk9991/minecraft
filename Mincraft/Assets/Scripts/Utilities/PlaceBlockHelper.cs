@@ -27,9 +27,12 @@ namespace Utilities
             chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
         }
         
-        public void HandleAddBlock(Chunk currentChunk, Int3 localPos)
+        public Block HandleAddBlock(Chunk currentChunk, Int3 localPos)
         {
-            if (PlayerMovementTracker.CurrentStandingBlock == latestGlobalClickInt) return;
+            Block removedBlock;
+            if (PlayerMovementTracker.CurrentStandingBlock == latestGlobalClickInt) return Block.Empty();
+
+            removedBlock = currentChunk.Blocks[localPos.X, localPos.Y, localPos.Z];
             currentChunk.AddBlockPersistent(currentBlock, localPos);
 
             if (MathHelper.BorderBlock(localPos))
@@ -65,6 +68,8 @@ namespace Utilities
             }
 
             chunkJobManager.RecalculateChunk(currentChunk, ChunkJobPriority.High);
+
+            return removedBlock;
         }
 
         public void GetDirectionPlusOne(in Int3 localPos, ref Int3 dir)
