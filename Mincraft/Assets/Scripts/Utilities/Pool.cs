@@ -11,16 +11,16 @@ namespace Utilities
         public int Count => pool.Count;
         
         private Queue<T> pool;
-        private Func<T> newInstanceFunc;
+        private Func<T> _newInstanceInstantiateFunc;
         
-        public Pool(int capacity, Func<T> func)
+        public Pool(int capacity, Func<T> instantiateFunc)
         {
-            this.newInstanceFunc = func;
+            this._newInstanceInstantiateFunc = instantiateFunc;
             pool = new Queue<T>(capacity);
 
             for (int i = 0; i < capacity; i++)
             {
-                this.Add(newInstanceFunc());
+                this.Add(_newInstanceInstantiateFunc());
             }
             
         }
@@ -35,7 +35,7 @@ namespace Utilities
         {
             if (pool.Count <= 0)
             {
-                return newInstanceFunc();
+                return _newInstanceInstantiateFunc();
             }
 
             return pool.Dequeue();

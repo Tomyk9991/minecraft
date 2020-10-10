@@ -6,8 +6,8 @@ namespace Core.UI.Ingame
 {
     public class QuickBarSelectionConsole : MonoBehaviour, IConsoleToggle
     {
-        [SerializeField] private RectTransform[] slots;
-        [SerializeField] private RectTransform selectedSlotItem;
+        [SerializeField] private RectTransform[] slots = null;
+        [SerializeField] private RectTransform selectedSlotItem = null;
         [SerializeField] private Image image = null;
         
 

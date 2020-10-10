@@ -11,8 +11,8 @@ namespace Core.UI.MainMenu
         [SerializeField] private GameObject settingsParent = null;
         [SerializeField] private GameObject mainMenuParent = null;
         [Header("UI Elements")]
-        [SerializeField] private Slider fovSlider;
-        [SerializeField] private Slider renderDistanceSlider;
+        [SerializeField] private Slider fovSlider = null;
+        [SerializeField] private Slider renderDistanceSlider = null;
 
         private void Start()
         {

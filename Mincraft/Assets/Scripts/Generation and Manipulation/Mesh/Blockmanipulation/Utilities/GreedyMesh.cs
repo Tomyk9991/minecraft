@@ -6,9 +6,6 @@ namespace Core.Builder
 {
     public static class GreedyMesh
     {
-        private static int size;
-        static GreedyMesh() => size = 0x10;
-
         public static MeshData ReduceMesh(Chunk chunk)
         {
             List<Vector3> vertices = new List<Vector3>();

@@ -27,7 +27,7 @@ namespace Core.Saving
                 {
                     json = File.ReadAllText(chunkPath);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Debug.Log($"Could not load {globalPos.ToString()} from {chunkPath}");
                 }
@@ -39,7 +39,7 @@ namespace Core.Saving
                         chunk = JsonUtility.FromJson<ChunkData>(json);
                         return true;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Debug.Log("Formatting went wrong");
                     }

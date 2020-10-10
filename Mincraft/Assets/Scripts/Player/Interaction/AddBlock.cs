@@ -39,18 +39,16 @@ namespace Core.Player.Interaction
             set => this.enabled = value;
         }
         
-        [Header("References")] [SerializeField]
-        private Camera cameraRef;
+        [Header("References")] 
+        [SerializeField]
+        private Camera cameraRef = null;
 
         [Space] 
         [SerializeField] private int mouseButtonIndex = 1;
         [SerializeField] private float raycastHitable = 1000f;
         [SerializeField] private float timeBetweenRemove = 0.1f;
+        [SerializeField] private LayerMask hitMask = 0;
         [SerializeField] private BlockUV blockUV = BlockUV.Wood;
-
-        private readonly int chunkSize = 0x10;
-
-        private ChunkJobManager chunkJobManager;
         private GameManager gameManager;
 
         
@@ -66,7 +64,6 @@ namespace Core.Player.Interaction
         private void Start()
         {
             timer = new Timer(DesiredTimeUntilAction);
-            chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
 
             placer = new PlaceBlockHelper
             {
@@ -104,7 +101,7 @@ namespace Core.Player.Interaction
         {
             Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
 
-            if (Physics.Raycast(ray, out hit, RaycastDistance))
+            if (Physics.Raycast(ray, out hit, RaycastDistance, hitMask))
             {
                 ChunkReferenceHolder holder;
                 if (!hit.transform.TryGetComponent(out holder))

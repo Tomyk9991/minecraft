@@ -27,12 +27,6 @@ namespace Core.UI.MainMenu
 
         [SerializeField] private int subTitleFontSize = 13;
         [SerializeField] private GameObject itemPrefab = null;
-
-        [Header("Scrollbar visibility")] [SerializeField]
-        private int visibilityThreshold = 3;
-
-        [SerializeField] private ScrollRect scrollRect = null;
-        [SerializeField] private GameObject slidingArea = null;
         [SerializeField] private RectTransform contentHeightAdjustable = null;
 
         [Header("Create Game settings")] [SerializeField]

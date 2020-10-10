@@ -150,357 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31eeb4846ebf4e6b81105a44117efef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
-  - EnumType: 0
-    Forward:
-      TileX: 4
-      TileY: 4
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 4
-      TileY: 4
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 4
-      TileY: 4
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 4
-      TileY: 4
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 4
-      TileY: 4
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 4
-      TileY: 4
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 0
-    isTransparent: 1
-  - EnumType: 1
-    Forward:
-      TileX: 3
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 3
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 12
-      TileY: 3
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 2
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 3
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 3
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 1
-    isTransparent: 0
-  - EnumType: 2
-    Forward:
-      TileX: 1
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 1
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 1
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 1
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 1
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 1
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 1
-    isTransparent: 0
-  - EnumType: 3
-    Forward:
-      TileX: 2
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 2
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 2
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 2
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 2
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 2
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 1
-    isTransparent: 0
-  - EnumType: 4
-    Forward:
-      TileX: 4
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 4
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 5
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 5
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 4
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 4
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 1
-    isTransparent: 0
-  - EnumType: 5
-    Forward:
-      TileX: 4
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 4
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 4
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 4
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 4
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 4
-      TileY: 15
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 1
-    isTransparent: 0
-  - EnumType: 6
-    Forward:
-      TileX: 11
-      TileY: 1
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 11
-      TileY: 1
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 11
-      TileY: 1
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 11
-      TileY: 1
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 11
-      TileY: 1
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 11
-      TileY: 1
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0.5
-    isSolid: 1
-    isTransparent: 1
-  - EnumType: 7
-    Forward:
-      TileX: 1
-      TileY: 12
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 1
-      TileY: 12
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 1
-      TileY: 12
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 1
-      TileY: 12
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 1
-      TileY: 12
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 1
-      TileY: 12
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 100
-    isSolid: 1
-    isTransparent: 1
-  - EnumType: 8
-    Forward:
-      TileX: 2
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 2
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 2
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 2
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 2
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 2
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 1
-    isTransparent: 0
-  - EnumType: 9
-    Forward:
-      TileX: 6
-      TileY: 11
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 6
-      TileY: 11
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 5
-      TileY: 11
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 5
-      TileY: 11
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 6
-      TileY: 11
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 6
-      TileY: 11
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0.0625
-    transparencyLevel: 100
-    isSolid: 1
-    isTransparent: 1
+  scriptable: {fileID: 11400000, guid: 53c5e7c64113c1248a1e06d75642b8a6, type: 2}
 --- !u!4 &949181627
 Transform:
   m_ObjectHideFlags: 0
@@ -541,7 +191,7 @@ Camera:
   m_GameObject: {fileID: 1387138198}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.23584908, g: 0.23584908, b: 0.23584908, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -626,7 +276,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1249fdc78b7ec4c4f80bd7896c67fe09, type: 2}
+  - {fileID: 2100000, guid: a2a080302a595fb43a1d5c3da227c371, type: 2}
+  - {fileID: 2100000, guid: fde75d5583f191041a37ce5cfeaecbc6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -681,7 +332,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 802a60d1c3a221e428583b758fe2c068, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cube: {fileID: 1453365010}
   width: 128
   height: 128
 --- !u!1 &1618379820
@@ -708,12 +358,12 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1618379820}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -723,8 +373,8 @@ Light:
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
+    m_Bias: 2
+    m_NormalBias: 0.05
     m_NearPlane: 0.2
     m_CullingMatrixOverride:
       e00: 1
@@ -747,7 +397,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 2
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295

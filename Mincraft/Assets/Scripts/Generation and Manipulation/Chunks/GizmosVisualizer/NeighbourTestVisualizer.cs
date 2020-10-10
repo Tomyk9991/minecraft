@@ -9,7 +9,7 @@ namespace Core.Chunks.Debugging
     {
         public Chunk chunk;
 
-        private List<Vector3> points;
+        private List<Vector3> points = null;
 
         private void OnDrawGizmosSelected()
         {

@@ -36,13 +36,13 @@ namespace Core.Player.Interaction
         }
 
         [Header("References")] 
-        [SerializeField] private Camera cameraRef;
-        [SerializeField] private GameObject littleBlockPrefab = null;
+        [SerializeField] private Camera cameraRef = null;
         
         [Space]
         [SerializeField] private float raycastHitable = 1000f;
         [SerializeField] private float timeBetweenRemove = 0.1f;
         [SerializeField] private int mouseButtonIndex = 0;
+        [SerializeField] private LayerMask hitMask = 0;
         
         private readonly Vector3 centerScreenNormalized = new Vector3(0.5f, 0.5f, 0f);
         private readonly Vector3 littleBlockSpawnOffset = new Vector3(0.5f, 0.5f, 0.5f);
@@ -88,7 +88,7 @@ namespace Core.Player.Interaction
         {
             Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
 
-            if (Physics.Raycast(ray, out hit, RaycastDistance))
+            if (Physics.Raycast(ray, out hit, RaycastDistance, hitMask))
             {
                 ChunkReferenceHolder holder;
                 if (!hit.transform.TryGetComponent(out holder))
@@ -119,9 +119,14 @@ namespace Core.Player.Interaction
                     removedBlock = placer.HandleAddBlock(currentChunk, placer.lp);
                 }
 
-                GameObject go = Instantiate(littleBlockPrefab, placer.latestGlobalClickInt.ToVector3() + littleBlockSpawnOffset, Quaternion.identity, hit.transform);
-                go.GetComponent<DroppedItemUVSetter>().FromBlock(removedBlock);
-                droppedItemsManager.Add(go);
+                if (droppedItemsManager == null) droppedItemsManager = DroppedItemsManager.Instance;
+                
+                GameObject go = droppedItemsManager.GetNextBlock();
+                
+                go.transform.position = placer.latestGlobalClickInt.ToVector3() + littleBlockSpawnOffset;
+                go.GetComponent<DroppedItemInformation>().FromBlock(removedBlock);
+                
+                droppedItemsManager.AddNewItem(go);
             }
         }
     }

@@ -57,9 +57,6 @@ namespace Core.Chunks.Threading
                 t.Start();
         }
 
-        private bool showed = false;
-
-
         public void Run()
         {
             while (running)

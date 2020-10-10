@@ -70,10 +70,8 @@ namespace Core.Saving
         public static List<WorldInformation> LoadWorldInformation()
         {
             string targetDirectory = Path.Combine(Application.persistentDataPath, paths[(int) DataContextFinder.WorldInformation]);
-
             List<WorldInformation> info = new List<WorldInformation>();
             
-            string tempJson = "";
             if (Directory.Exists(targetDirectory))
             {
                 string[] directories = Directory.GetDirectories(targetDirectory);
@@ -85,7 +83,7 @@ namespace Core.Saving
                     {
                         json = File.ReadAllText(Path.Combine(directory, WORLDJSON));
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Debug.Log($"Could not load {WORLDJSON} from {directory}");
                     }
@@ -98,7 +96,7 @@ namespace Core.Saving
                             w.Size = DirSize(new DirectoryInfo(directory));
                             info.Add(w);
                         }
-                        catch (ArgumentException e)
+                        catch (ArgumentException)
                         {
                             Debug.Log($"<color=#ff5555>Warning: \"{WORLDJSON}\" in directory: {directory} is corrupted</color>");
                         }

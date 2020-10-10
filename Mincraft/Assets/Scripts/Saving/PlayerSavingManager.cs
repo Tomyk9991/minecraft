@@ -28,7 +28,7 @@ namespace Core.Saving
                 {
                     json = File.ReadAllText(inventoryPath);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Debug.Log($"Could not load inventory from {inventoryPath}");
                 }
@@ -41,7 +41,7 @@ namespace Core.Saving
                         items = wrapper.items;
                         return true;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Debug.Log("Formatting went wrong");
                     }

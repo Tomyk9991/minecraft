@@ -12,10 +12,10 @@ using UnityEngine.EventSystems;
 
 namespace Core.UI.Console
 {
-    public class ConsoleInputer : SingletonBehaviour<ConsoleInputer>
+    public class ConsoleInputer : SingletonBehaviour<ConsoleInputer>, IFullScreenUIToggle
     {
-        [Header("Enable / Disable")] [SerializeField]
-        private Transform[] consoleToggleTransforms = null;
+        [Header("Enable / Disable")] 
+        [SerializeField] private Transform[] consoleToggleTransforms = null;
 
         [SerializeField] private IConsoleToggle[] disableOnConsoleAppear = null;
 
@@ -32,6 +32,12 @@ namespace Core.UI.Console
         private bool showingConsole = false;
 
         private string inputHistory;
+        
+        public bool Enabled
+        {
+            get => this.enabled;
+            set => this.enabled = value;
+        }
         
         private void Start()
         {
@@ -134,15 +140,15 @@ namespace Core.UI.Console
                 try
                 {
                     currentMessage = currentMessage.TrimStart('=');
-                    var loDataTable = new DataTable(); 
+                    var loDataTable = new DataTable();
                     var loDataColumn = new DataColumn("Eval", typeof (double), currentMessage); 
-                    loDataTable.Columns.Add(loDataColumn); 
+                    loDataTable.Columns.Add(loDataColumn);
                     loDataTable.Rows.Add(0); 
                     double d = (double) loDataTable.Rows[0]["Eval"];
                     previewText.gameObject.SetActive(true);
                     Write(currentMessage + " = " + d);
                 }
-                catch (SyntaxErrorException e)
+                catch (Exception e)
                 {
                     WriteToOutput(e.Message);
                 }
@@ -179,7 +185,7 @@ namespace Core.UI.Console
                     {
                         para[i] = Convert.ChangeType(substrings[i + 1], parameters[i].ParameterType);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         wrongParas = true;
                     }
@@ -350,5 +356,6 @@ namespace Core.UI.Console
                 Description = description;
             }
         }
+
     }
 }

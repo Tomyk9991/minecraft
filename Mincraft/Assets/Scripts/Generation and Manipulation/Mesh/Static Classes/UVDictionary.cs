@@ -1,6 +1,7 @@
 using System;
 using Attributes;
 using UnityEngine;
+using Utilities;
 
 namespace Core.Builder
 {
@@ -18,8 +19,8 @@ namespace Core.Builder
             new UVData(7f / 16f, 1f / 16f, 1f / 16f, 1f / 16f),
         };
 
-        private static UVData[][] dictionary;
-
+        private static Array2D<UVData[]> dictionary;
+        
         private static bool[] isSolidInformation;
         private static bool[] isTransparentInformation;
         private static float[] meshOffsetInformation;
@@ -28,7 +29,7 @@ namespace Core.Builder
         private void Awake()
         {
             var data = scriptable.blockInformation;
-            dictionary = new UVData[data.Count][];
+            dictionary = new Array2D<UVData[]>(data.Count);
             isSolidInformation = new bool[data.Count];
             isTransparentInformation = new bool[data.Count];
             meshOffsetInformation = new float[data.Count];

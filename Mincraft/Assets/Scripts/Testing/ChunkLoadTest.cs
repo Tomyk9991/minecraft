@@ -61,7 +61,7 @@ namespace Core.Testing
                 {
                     json = File.ReadAllText(chunkPath);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Debug.Log($"Could not load Testchunk from {chunkPath}");
                 }
@@ -73,7 +73,7 @@ namespace Core.Testing
                         chunk = JsonUtility.FromJson<ChunkData>(json);
                         return true;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Debug.Log("Formatting went wrong");
                     }

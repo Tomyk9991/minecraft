@@ -15,12 +15,14 @@ public class RigidbodyFirstPersonController : MonoBehaviour
         public float RunMultiplier = 2.0f;   // Speed when sprinting
         public KeyCode RunKey = KeyCode.LeftShift;
         public float JumpForce = 30f;
+        public float rigidbodyDrag = 5.0f;
         public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 0.0f));
         [HideInInspector] public float CurrentTargetSpeed = 8f;
 
-        #if !MOBILE_INPUT
+
+#if !MOBILE_INPUT
         private bool m_Running;
-        #endif
+#endif
 
         public void UpdateDesiredTargetSpeed(Vector2 input)
         {
@@ -85,6 +87,7 @@ public class RigidbodyFirstPersonController : MonoBehaviour
     private CapsuleCollider m_Capsule;
     private float m_YRotation;
     private Vector3 m_GroundContactNormal;
+    private Vector2 input;
     private bool m_Jump, m_PreviouslyGrounded, m_Jumping, m_IsGrounded;
 
 
@@ -126,19 +129,24 @@ public class RigidbodyFirstPersonController : MonoBehaviour
 
     private void Update()
     {
-        RotateView();
+        //RotateView();
 
         if (CrossPlatformInputManager.GetButtonDown("Jump") && !m_Jump)
         {
             m_Jump = true;
         }
+        input = GetInput();
+    }
+
+    private void LateUpdate()
+    {
+        RotateView();
     }
 
 
     private void FixedUpdate()
     {
         GroundCheck();
-        Vector2 input = GetInput();
 
         if ((Mathf.Abs(input.x) > float.Epsilon || Mathf.Abs(input.y) > float.Epsilon) && (advancedSettings.airControl || m_IsGrounded))
         {
@@ -146,9 +154,9 @@ public class RigidbodyFirstPersonController : MonoBehaviour
             Vector3 desiredMove = cam.transform.forward*input.y + cam.transform.right*input.x;
             desiredMove = Vector3.ProjectOnPlane(desiredMove, m_GroundContactNormal).normalized;
 
-            desiredMove.x = desiredMove.x*movementSettings.CurrentTargetSpeed;
-            desiredMove.z = desiredMove.z*movementSettings.CurrentTargetSpeed;
-            desiredMove.y = desiredMove.y*movementSettings.CurrentTargetSpeed;
+            desiredMove.x *= movementSettings.CurrentTargetSpeed;
+            desiredMove.z *= movementSettings.CurrentTargetSpeed;
+            desiredMove.y *= movementSettings.CurrentTargetSpeed;
             if (m_RigidBody.velocity.sqrMagnitude <
                 (movementSettings.CurrentTargetSpeed*movementSettings.CurrentTargetSpeed))
             {
@@ -158,7 +166,7 @@ public class RigidbodyFirstPersonController : MonoBehaviour
 
         if (m_IsGrounded)
         {
-            m_RigidBody.drag = 5f;
+            m_RigidBody.drag = movementSettings.rigidbodyDrag;
 
             if (m_Jump)
             {

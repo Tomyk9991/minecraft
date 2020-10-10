@@ -6,6 +6,8 @@ namespace Utilities
     public class Array2D<T>
     {
         public int Length => data.Length;
+        public int Width => width;
+        public int Height => height;
         public T[] Data => data;
         
         private T[] data;

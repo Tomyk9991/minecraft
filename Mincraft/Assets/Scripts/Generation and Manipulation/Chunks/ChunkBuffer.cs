@@ -20,7 +20,6 @@ namespace Core.Chunks
         
         private static int minHeight;
         private static int maxHeight;
-        private static int chunkSize = 0x10;
 
         public static void Init(int chunkSize, int _minHeight, int _maxHeight, int drawDistanceInChunks)
         {

@@ -10,16 +10,10 @@ namespace Core.Testing
     public class SampleChunkGenerate : MonoBehaviour
     {
         [SerializeField] private BlockUV block = BlockUV.Air;
-        [SerializeField] private GameObject meshToSave = null;
-        
-        
-        private ChunkJobManager _manager;
-        
+
         private void Start()
         {
             ChunkBuffer.UsingChunkBuffer = false;
-            
-            _manager = new ChunkJobManager(0, true);
 
             ChunkColumn column = new ChunkColumn(Int2.Zero, Int2.Zero, -32, 2);
             Chunk chunk = new Chunk
