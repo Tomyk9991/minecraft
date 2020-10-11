@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Core.Builder;
 using Core.UI.Console;
 using Extensions;
@@ -116,8 +117,11 @@ namespace Core.Player.Interaction
         [ConsoleMethod(nameof(SpawnItem), "Spawns an item with the given id")]
         private void SpawnItem(int itemID, int amount)
         {
-            if (amount < 0)
+            if (itemID < 0 || itemID >= Enum.GetValues(typeof(BlockUV)).Length || amount <= 0)
+            {
+                ConsoleInputer.WriteToOutput("not valid arguments");
                 return;
+            }
             
             ConsoleInputer.WriteToOutput(amount == 1
                 ? $"Spawning {amount} {(BlockUV) itemID}block"

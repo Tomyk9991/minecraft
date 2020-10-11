@@ -23,14 +23,26 @@ namespace Core.Player.Systems.Inventory
         private void Start()
         {
             items = new Array2D<ItemData>(width, height);
+            if (PlayerSavingManager.Load(out ItemData[] itemData))
+            {
+                items.Data = itemData;
+            }
+
+            if (OnInventoryChanged == null)
+                Debug.Log("ist noch null :sadge:");
             OnInventoryChanged?.Invoke(new ItemChangedEventArgs(items, ItemData.Empty, false, false, true));
         }
 
+        private void OnApplicationQuit()
+        {
+            PlayerSavingManager.Save(items.Data);
+        }
+        
         public void AddBlockToInventory(Block block)
         {
             AddToInventory((int) block.ID, 1);
         }
-
+        
         public void MoveItemFromTo(int oldX, int oldY, int newX, int newY)
         {
             items[newX, newY] = items[oldX, oldY];
@@ -97,6 +109,10 @@ namespace Core.Player.Systems.Inventory
             ItemData itm = new ItemData(itemID, firstEmptyX, firstEmptyY, amount);
             items[firstEmptyX, firstEmptyY] = new ItemData(itemID, firstEmptyX, firstEmptyY, amount);
             OnInventoryChanged?.Invoke(new ItemChangedEventArgs(items, itm, false, true, false));
+        }
+
+        private void Load()
+        {
         }
 
         public ItemData this[int x, int y] => items[x, y];

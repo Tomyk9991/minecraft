@@ -8,7 +8,12 @@ namespace Utilities
         public int Length => data.Length;
         public int Width => width;
         public int Height => height;
-        public T[] Data => data;
+
+        public T[] Data
+        {
+            get => data;
+            set => data = value;
+        }
         
         private T[] data;
         private readonly int width;

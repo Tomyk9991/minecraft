@@ -4,6 +4,7 @@ using Core.Managers;
 using Core.Math;
 using Core.Player.Interaction;
 using Core.Player.Systems.Inventory;
+using Core.Saving;
 using Extensions;
 using TMPro;
 using UnityEngine;
@@ -56,24 +57,13 @@ namespace Core.UI.Ingame
 
             if (args.RequestRedraw)
             {
-                RedrawInventoryCompletely();
+                RedrawInventoryCompletely(args);
                 return;
             }
 
             if (args.ItemSlotRequest)
             {
-                Vector3 position = new Vector3((40.0f * args.Item.x) - 120.0f, (40.0f * args.Item.y) + 140.0f, 0f);
-
-                GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, uiItemsParent);
-                go.GetComponent<RectTransform>().localPosition = position;
-
-                Sprite itemSprite = ItemDictionary.GetValue((BlockUV) args.Items[args.Item.x, args.Item.y].ItemID);
-                go.GetComponent<Image>().sprite = itemSprite;
-
-                TMP_Text text = go.GetComponentInChildren<TMP_Text>();
-                text.text = args.Item.Amount.ToString();
-
-                items[args.Item.x, args.Item.y] = go;
+                CreateItem(args.Item.x, args.Item.y, args.Item.ItemID, args.Item.Amount);
             }
 
             if (args.ItemSlotModified)
@@ -82,28 +72,36 @@ namespace Core.UI.Ingame
             }
         }
 
-        private void RedrawInventoryCompletely()
+        private void CreateItem(int x, int y, int id, int amount)
         {
-            // foreach (Transform child in uiItemsParent)
-            //     Destroy(child.gameObject);
-            //
-            // for (int x = 0; x < items.Width; x++)
-            // {
-            //     for (int y = 0; y < items.Height; y++)
-            //     {
-            //         if (items[x, y].ItemID != 0)
-            //         {
-            //             ItemData data = items[x, y];
-            //             Vector3 position = new Vector3((40.0f * data.x) - 120.0f, (40.0f * data.y) + 140.0f, 0f);
-            //             
-            //             GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, uiItemsParent);
-            //             go.GetComponent<RectTransform>().localPosition = position;
-            //             
-            //             Sprite itemSprite = ItemDictionary.GetValue((BlockUV) items[x, y].ItemID);
-            //             go.GetComponent<Image>().sprite = itemSprite;
-            //         }
-            //     }
-            // }
+            Vector3 position = new Vector3((40.0f * x) - 120.0f, (40.0f * y) + 140.0f, 0f);
+
+            GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, uiItemsParent);
+            go.GetComponent<RectTransform>().localPosition = position;
+
+            Sprite itemSprite = ItemDictionary.GetValue((BlockUV) id);
+            go.GetComponent<Image>().sprite = itemSprite;
+
+            TMP_Text text = go.GetComponentInChildren<TMP_Text>();
+            text.text = amount.ToString();
+
+            items[x, y] = go;
+        }
+
+        private void RedrawInventoryCompletely(ItemChangedEventArgs args)
+        {
+            foreach (Transform child in uiItemsParent)
+                Destroy(child.gameObject);
+
+            for (int i = 0; i < args.Items.Length; i++)
+            {
+                ItemData data = args.Items[i];
+                
+                if (data.ItemID == 0 || data.ItemID == (int) BlockUV.None || data.Amount == 0)
+                    continue;
+                
+                CreateItem(data.x, data.y, data.ItemID, data.Amount);
+            }
         }
 
         public Int2 IndexFromGameObject(GameObject go)
