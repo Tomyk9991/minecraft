@@ -1,45 +1,32 @@
 ﻿using Core.Builder;
+using UnityEngine;
 
 namespace Core.Saving
 {
     [System.Serializable]
-    public struct ItemData
+    public class ItemData
     {
         public int x;
         public int y;
         public int ItemID;
         public int Amount;
 
-        public ItemData(int itemId, int x, int y, int amount)
+        public GameObject CurrentGameObject { get; set; }
+        
+        public ItemData(int itemId, int x, int y, int amount, GameObject go)
         {
-            ItemID = itemId;
+            this.ItemID = itemId;
             this.x = x;
             this.y = y;
             this.Amount = amount;
+            this.CurrentGameObject = go;
         }
 
-        public static ItemData Empty => new ItemData(-1, -1, -1, -1);
-
-        public static bool operator ==(ItemData i1, ItemData i2)
-            => i1.x == i2.x &&
-               i1.y == i2.y &&
-               i1.Amount == i2.Amount &&
-               i1.ItemID == i2.ItemID;
-
-        public static bool operator !=(ItemData i1, ItemData i2) => !(i1 == i2);
-
-        public override bool Equals(object obj) => base.Equals(obj);
-        public override int GetHashCode() => base.GetHashCode();
+        public static ItemData Empty => new ItemData(0, 0, 0, 0, null);
 
         public override string ToString()
         {
             return $"itemID: {(BlockUV) ItemID}, Pos({x} | {y}), amount: {Amount}";
-        }
-
-        public void SetXY(int newX, int newY)
-        {
-            this.x = x;
-            this.y = y;
         }
     }
 }

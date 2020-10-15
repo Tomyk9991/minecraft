@@ -8,7 +8,6 @@ using Core.Saving;
 using Core.UI.Ingame;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Utilities;
 
 namespace Core.UI
 {
@@ -16,9 +15,9 @@ namespace Core.UI
     {
         // private CanvasGroup canvasGroup = null;
         private static int inventoryWidth, inventoryHeight = 0;
-        private static InventoryUI inventoryUI;
         private static DroppedItemsManager droppedItemsManager;
         private static PlayerMovementTracker playerMovementTracker;
+        private static InventoryUI inventoryUI;
         private static Inventory inventory;
         private Int2 multiIndex;
         private Vector3 localDragStartPosition;
@@ -31,14 +30,14 @@ namespace Core.UI
                 inventoryHeight = Inventory.Instance.Height;
             }
 
-            if (inventoryUI == null)
-                inventoryUI = InventoryUI.Instance;
-            
             if (droppedItemsManager == null) 
                 droppedItemsManager = DroppedItemsManager.Instance;
             
             if (playerMovementTracker == null) 
                 playerMovementTracker = PlayerMovementTracker.Instance;
+
+            if (inventoryUI == null)
+                inventoryUI = InventoryUI.Instance;
             
             if (inventory == null) 
                 inventory = Inventory.Instance;
@@ -46,19 +45,10 @@ namespace Core.UI
         
         public void OnBeginDrag(PointerEventData eventData)
         {
-            // if (!canvasGroup)
-            //     canvasGroup = GetComponent<CanvasGroup>();
-
             SetRaycastBlock(false);
-            
-            multiIndex = inventoryUI.IndexFromGameObject(gameObject);
-            localDragStartPosition = transform.localPosition;
-            // canvasGroup.blocksRaycasts = false;
-        }
 
-        private void Update()
-        {
-            
+            multiIndex = inventory.IndexFromGameObject(gameObject);
+            localDragStartPosition = transform.localPosition;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -68,8 +58,8 @@ namespace Core.UI
         }
 
         public void OnEndDrag(PointerEventData eventData)
-        {
-            bool hitResult = eventData.pointerCurrentRaycast.gameObject.CompareTag("Inventory Slot");
+        { 
+            bool hitResult = eventData.pointerCurrentRaycast.gameObject != null && eventData.pointerCurrentRaycast.gameObject.CompareTag("Inventory Slot");
 
             if (hitResult) // Hit something, so inside the grid
             {
@@ -80,45 +70,34 @@ namespace Core.UI
                 int targetX = targetIndex % inventoryWidth;
                 int targetY = targetIndex / inventoryWidth;
 
-                if (inventoryUI.SlotAvailable(targetX, targetY))
+                if (inventory[targetX, targetY] != null)
                 {
-                    transform.position = hitTransform.position;
-                    inventoryUI.MoveGameObjectFromTo(multiIndex.X, multiIndex.Y, targetX, targetY);
+                    //inventory.Swap(multiIndex.X, multiIndex.Y, targetX, targetY);
                 }
-                else // Slot is obviously not available, since there's already on object on it
+                else
                 {
-                    //Moved back to its own position
-                    if (multiIndex.X == targetX && multiIndex.Y == targetY)
-                    {
-                        SetRaycastBlock(true);
-                    }
-                    else
-                    {
-                        inventoryUI.Swap(multiIndex.X, multiIndex.Y, targetX, targetY, localDragStartPosition);
-                        
-                        multiIndex.X = 0;
-                        multiIndex.Y = 0;
-                    }
+                    inventory.MoveItem(multiIndex.X, multiIndex.Y, targetX, targetY);
                 }
             }
             else // outside the grid
             {
-                ItemData item = inventory[multiIndex.X, multiIndex.Y];
-                
-                for (int i = 0; i < item.Amount; i++)
-                {
-                    GameObject go = droppedItemsManager.GetNextBlock();
-                    
-                    go.transform.position = playerMovementTracker.transform.position + playerMovementTracker.transform.forward;
+                inventory.Drop(multiIndex.X, multiIndex.Y);
+                // ItemData item = inventory[multiIndex.X, multiIndex.Y];
+                //
+                // for (int i = 0; i < item.Amount; i++)
+                // {
+                //     GameObject go = droppedItemsManager.GetNextBlock();
+                //     
+                //     go.transform.position = playerMovementTracker.transform.position + playerMovementTracker.transform.forward;
+                //
+                //     go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) item.ItemID));
+                //     go.GetComponent<Rigidbody>().AddForce(playerMovementTracker.transform.forward, ForceMode.Impulse);
+                //
+                //     droppedItemsManager.AddNewItem(go);
+                //     droppedItemsManager.AddBoxColliderHandle(go.transform.GetChild(0).GetComponent<BoxCollider>());
+                // }
 
-                    go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) item.ItemID));
-                    go.GetComponent<Rigidbody>().AddForce(playerMovementTracker.transform.forward, ForceMode.Impulse);
-
-                    droppedItemsManager.AddNewItem(go);
-                    droppedItemsManager.AddBoxColliderHandle(go.transform.GetChild(0).GetComponent<BoxCollider>());
-                }
-
-                inventoryUI.Delete(multiIndex.X, multiIndex.Y);
+                // inventoryUI.Delete(multiIndex.X, multiIndex.Y);
             }
             
             SetRaycastBlock(true);

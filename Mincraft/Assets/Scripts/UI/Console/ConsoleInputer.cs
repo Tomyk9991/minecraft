@@ -317,7 +317,7 @@ namespace Core.UI.Console
         }
         
         private string RichTextCodedDescription(string infoDescription) 
-            => "<b><i><size=12><color=#ffffffaa>" + infoDescription + "</color></size></i></b>";
+            => "<b><i><size=20><color=#ffffffaa>" + infoDescription + "</color></size></i></b>";
 
 
         public void Write(string buffer)

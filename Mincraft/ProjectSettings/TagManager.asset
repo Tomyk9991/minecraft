@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Inventory Slot
   - InventoryItem
+  - Quick Bar Slot
   layers:
   - Default
   - TransparentFX

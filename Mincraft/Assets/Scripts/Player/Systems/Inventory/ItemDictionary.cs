@@ -1,4 +1,5 @@
-﻿using Core.Builder;
+﻿using System;
+using Core.Builder;
 using UnityEngine;
 using Utilities;
 
@@ -23,6 +24,9 @@ namespace Core.Player.Interaction
 
         public static Sprite GetValue(BlockUV itemId)
         {
+            if (itemId <= 0 || (int) itemId >= Enum.GetNames(typeof(BlockUV)).Length)
+                Debug.LogError("item id kinda strange");
+            
             return dictionary[(int) itemId];
         }
     }

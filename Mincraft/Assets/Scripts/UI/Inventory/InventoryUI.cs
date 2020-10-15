@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Core.Builder;
 using Core.Managers;
-using Core.Math;
 using Core.Player.Interaction;
 using Core.Player.Systems.Inventory;
 using Core.Saving;
@@ -9,7 +8,7 @@ using Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Utilities;
+using Debug = UnityEngine.Debug;
 
 namespace Core.UI.Ingame
 {
@@ -22,13 +21,17 @@ namespace Core.UI.Ingame
         [SerializeField] private GameObject uiItemPrefab = null;
         [SerializeField] private Transform uiItemsParent = null;
 
-        [Header("Debugging")] [SerializeField] private bool debugging = false;
+        [Header("Positioning")] 
+        [SerializeField] private Vector2 intialGridPosition = Vector2.zero;
+        [SerializeField] private Vector2 gridSize = Vector2.zero;
+
+        [Header("Debugging")] 
+        [SerializeField] private bool debugging = false;
 
 
         private IFullScreenUIToggle[] disableOnInventoryAppear = null;
         private bool showingInventory = false;
 
-        private Array2D<GameObject> items;
 
         public bool Enabled
         {
@@ -39,43 +42,77 @@ namespace Core.UI.Ingame
         private void Start()
         {
             disableOnInventoryAppear = FindObjectsOfType<MonoBehaviour>().OfType<IFullScreenUIToggle>().ToArray();
-            inventory.OnInventoryChanged += OnInventoryChanged;
-            items = new Array2D<GameObject>(inventory.Width, inventory.Height);
+            
+            inventory.OnRequestRedraw += OnRequestRedraw;
+            inventory.OnItemAmountChanged += OnItemAmountChanged;
+            inventory.OnNewItem += OnNewItem;
+            inventory.OnSwapItems += OnSwapItems;
+            inventory.OnItemMoved += OnItemMoved;
+            inventory.OnItemDeleted += OnItemDeleted;
         }
 
-        private void OnInventoryChanged(ItemChangedEventArgs args)
+        private void OnItemDeleted(ItemChangedEventArgs args)
+        {
+            
+        }
+
+        private void OnItemMoved(ItemMovedEventArgs args)
+        {
+            
+        }
+
+        private void OnSwapItems(ItemSwappedEventArgs args)
+        {
+            
+        }
+
+        private void OnNewItem(ItemChangedEventArgs args)
+        {
+            ItemData data = args.Item;
+            if (!(data.Amount <= 0 || data.ItemID == (int) BlockUV.Air || data.ItemID == (int) BlockUV.None))
+            {
+                GameObject go = CreateItem(data.x, data.y, data.ItemID, data.Amount);
+                data.CurrentGameObject = go;
+                args.Items[data.x, data.y] = data;
+            }
+        }
+
+        private void OnItemAmountChanged(ItemChangedEventArgs args)
+        {
+            args.Items[args.Item.x, args.Item.y].CurrentGameObject.transform.GetChild(0).GetComponent<TMP_Text>().text =
+                args.Item.Amount.ToString();
+        }
+
+        public void OnRequestRedraw(InventoryRedrawEventArgs args)
         {
             if (debugging)
-            {
-                string kindOfRequest = "";
-                if (args.RequestRedraw) kindOfRequest += "Request new ";
-                if (args.ItemSlotModified) kindOfRequest += "Itemslot modified ";
-                if (args.ItemSlotRequest) kindOfRequest += "ItemSlot requested ";
+                Debug.Log("Creating inventory");
+            
+            foreach (Transform child in uiItemsParent)
+                Destroy(child.gameObject);
 
-                Debug.Log(kindOfRequest + args.Item);
-            }
-
-            if (args.RequestRedraw)
+            for (int i = 0; i < args.Items.Length; i++)
             {
-                RedrawInventoryCompletely(args);
-                return;
-            }
+                ItemData data = args.Items[i];
 
-            if (args.ItemSlotRequest)
-            {
-                CreateItem(args.Item.x, args.Item.y, args.Item.ItemID, args.Item.Amount);
-            }
-
-            if (args.ItemSlotModified)
-            {
-                items[args.Item.x, args.Item.y].GetComponentInChildren<TMP_Text>().text = args.Item.Amount.ToString();
+                if (data != null)
+                {
+                    GameObject go = CreateItem(data.x, data.y, data.ItemID, data.Amount);
+                    data.CurrentGameObject = go;
+                    
+                    args.Items[data.x, data.y] = data;
+                }
             }
         }
 
-        private void CreateItem(int x, int y, int id, int amount)
+        private GameObject CreateItem(int x, int y, int id, int amount)
         {
-            Vector3 position = new Vector3((40.0f * x) - 120.0f, (40.0f * y) + 140.0f, 0f);
-
+            Vector3 position = new Vector3(
+                gridSize.x * x + intialGridPosition.x,
+                -gridSize.y * y + intialGridPosition.y,
+                0f);
+            
+            
             GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, uiItemsParent);
             go.GetComponent<RectTransform>().localPosition = position;
 
@@ -85,85 +122,7 @@ namespace Core.UI.Ingame
             TMP_Text text = go.GetComponentInChildren<TMP_Text>();
             text.text = amount.ToString();
 
-            items[x, y] = go;
-        }
-
-        private void RedrawInventoryCompletely(ItemChangedEventArgs args)
-        {
-            foreach (Transform child in uiItemsParent)
-                Destroy(child.gameObject);
-
-            for (int i = 0; i < args.Items.Length; i++)
-            {
-                ItemData data = args.Items[i];
-                
-                if (data.ItemID == 0 || data.ItemID == (int) BlockUV.None || data.Amount == 0)
-                    continue;
-                
-                CreateItem(data.x, data.y, data.ItemID, data.Amount);
-            }
-        }
-
-        public Int2 IndexFromGameObject(GameObject go)
-        {
-            for (int y = 0; y < items.Height; y++)
-            {
-                for (int x = 0; x < items.Width; x++)
-                {
-                    if (items[x, y] == go)
-                    {
-                        return new Int2(x, y);
-                    }
-                }
-            }
-
-            return new Int2(-1, -1);
-        }
-
-        public bool SlotAvailable(int x, int y)
-        {
-            return items[x, y] == null;
-        }
-
-        public void Swap(int oldX, int oldY, int newX, int newY, Vector3 oldDragStartPosition)
-        {
-            if (debugging)
-                Debug.Log("Swap");
-            //Change in UI-Stage
-            Vector3 tempPos = items[newX, newY].transform.localPosition;
-
-            GameObject temp = items[newX, newY];
-            items[newX, newY] = items[oldX, oldY];
-            items[oldX, oldY] = temp;
-
-            items[newX, newY].transform.localPosition = tempPos;
-            items[oldX, oldY].transform.localPosition = oldDragStartPosition;
-
-            //Change in data-Stage
-            inventory.Swap(oldX, oldY, newX, newY);
-        }
-
-        public void MoveGameObjectFromTo(int oldX, int oldY, int newX, int newY)
-        {
-            if (debugging)
-                Debug.Log("Moved gameObject from: (" + oldX + " | " + oldY + ") to (" + newX + " | " + newY + ")");
-            //Change in UI-Stage
-            items[newX, newY] = items[oldX, oldY];
-            items[oldX, oldY] = null;
-
-            //Change in data-Stage
-            inventory.MoveItemFromTo(oldX, oldY, newX, newY);
-        }
-        
-        public void Delete(int x, int y)
-        {
-            if (debugging)
-                Debug.Log("Remove gameObject at: (" + x + " | " + y +  ")");
-            
-            Destroy(items[x, y]);
-            items[x, y] = null;
-
-            inventory.Remove(x, y);
+            return go;
         }
 
         private void Update()

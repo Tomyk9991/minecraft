@@ -117,7 +117,7 @@ namespace Core.Player.Interaction
         [ConsoleMethod(nameof(SpawnItem), "Spawns an item with the given id")]
         private void SpawnItem(int itemID, int amount)
         {
-            if (itemID < 0 || itemID >= Enum.GetValues(typeof(BlockUV)).Length || amount <= 0)
+            if (itemID <= 0 || itemID >= Enum.GetValues(typeof(BlockUV)).Length || amount <= 0)
             {
                 ConsoleInputer.WriteToOutput("not valid arguments");
                 return;
