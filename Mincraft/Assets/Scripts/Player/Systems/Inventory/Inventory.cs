@@ -26,9 +26,11 @@ namespace Core.Player.Systems.Inventory
         [SerializeField] private int maxStackSize = 128;
 
         private Array2D<ItemData> items;
-
+        private InventoryUI inventoryUI;
+        
         private void Start()
         {
+            inventoryUI = InventoryUI.Instance;
             items = new Array2D<ItemData>(width, height);
             if (PlayerSavingManager.LoadInventory(out ItemData[] itemData))
             {
@@ -64,7 +66,8 @@ namespace Core.Player.Systems.Inventory
 
         public void Swap(int oldX, int oldY, int newX, int newY)
         {
-            Debug.Log("Swapping: old: (" + oldX + " | " + oldY + ") new: (" + newX + " | " + newY + ")");
+            if (inventoryUI.Logs)
+                Debug.Log("Swapping: old: (" + oldX + " | " + oldY + ") new: (" + newX + " | " + newY + ")");
 
             if (!ValidPosition(oldX, oldY))
             {
@@ -99,7 +102,8 @@ namespace Core.Player.Systems.Inventory
 
         public void MoveItem(int oldX, int oldY, int newX, int newY)
         {
-            Debug.Log("Moving: old: (" + oldX + " | " + oldY + ") new: (" + newX + " | " + newY + ")");
+            if (inventoryUI.Logs)
+                Debug.Log("Moving: old: (" + oldX + " | " + oldY + ") new: (" + newX + " | " + newY + ")");
 
             if (!ValidPosition(oldX, oldY))
             {
@@ -117,7 +121,13 @@ namespace Core.Player.Systems.Inventory
 
         public void Drop(int x, int y)
         {
-            Debug.Log("Dropping: " + x + " " + y);
+            if (inventoryUI.Logs)
+                Debug.Log("Dropping: (" + x + " " + y + ")");
+
+            OnItemDeleted?.Invoke(new ItemChangedEventArgs(items, items[x, y]));
+
+            Destroy(items[x, y].CurrentGameObject);
+            items[x, y] = null;
         }
 
         private void AddToInventory(int itemID, int amount)

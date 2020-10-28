@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Core.Builder;
 using Core.Managers;
+using Core.Player;
 using Core.Player.Interaction;
 using Core.Player.Systems.Inventory;
 using Core.Saving;
@@ -21,17 +23,21 @@ namespace Core.UI.Ingame
         [SerializeField] private GameObject uiItemPrefab = null;
         [SerializeField] private Transform uiItemsParent = null;
 
-        [Header("Positioning")] 
-        [SerializeField] private Vector2 intialGridPosition = Vector2.zero;
+        [Header("Positioning")] [SerializeField]
+        private Vector2 intialGridPosition = Vector2.zero;
+
         [SerializeField] private Vector2 gridSize = Vector2.zero;
 
-        [Header("Debugging")] 
-        [SerializeField] private bool debugging = false;
+        [Header("Debugging")] [SerializeField] private bool logs = false;
 
 
         private IFullScreenUIToggle[] disableOnInventoryAppear = null;
         private bool showingInventory = false;
+        
+        private DroppedItemsManager droppedItemsManager;
+        private PlayerMovementTracker playerMovementTracker;
 
+        public bool Logs => logs;
 
         public bool Enabled
         {
@@ -42,7 +48,9 @@ namespace Core.UI.Ingame
         private void Start()
         {
             disableOnInventoryAppear = FindObjectsOfType<MonoBehaviour>().OfType<IFullScreenUIToggle>().ToArray();
-            
+            droppedItemsManager = DroppedItemsManager.Instance;
+            playerMovementTracker = PlayerMovementTracker.Instance;
+
             inventory.OnRequestRedraw += OnRequestRedraw;
             inventory.OnItemAmountChanged += OnItemAmountChanged;
             inventory.OnNewItem += OnNewItem;
@@ -53,19 +61,31 @@ namespace Core.UI.Ingame
 
         private void OnItemDeleted(ItemChangedEventArgs args)
         {
+            ItemData item = args.Item;
             
+            for (int i = 0; i < item.Amount; i++)
+            {
+                GameObject go = droppedItemsManager.GetNextBlock();
+                go.transform.position =
+                    playerMovementTracker.transform.position + playerMovementTracker.transform.forward;
+
+                go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) item.ItemID));
+                go.GetComponent<Rigidbody>().AddForce(playerMovementTracker.transform.forward, ForceMode.Impulse);
+
+                droppedItemsManager.AddNewItem(go);
+                droppedItemsManager.AddBoxColliderHandle(go.transform.GetChild(0).GetComponent<BoxCollider>());
+            }
         }
 
-        private void OnItemMoved(ItemMovedEventArgs args)
+        private void OnItemMoved(ItemMovedEventArgs args) // not used
         {
-            
         }
 
         private void OnSwapItems(ItemSwappedEventArgs args)
         {
             int oldX = args.OldItem.x;
             int oldY = args.OldItem.y;
-            
+
             args.NewItem.CurrentGameObject.transform.localPosition = CalculatePosition(oldX, oldY);
         }
 
@@ -88,9 +108,9 @@ namespace Core.UI.Ingame
 
         public void OnRequestRedraw(InventoryRedrawEventArgs args)
         {
-            if (debugging)
+            if (logs)
                 Debug.Log("Creating inventory");
-            
+
             foreach (Transform child in uiItemsParent)
                 Destroy(child.gameObject);
 
@@ -102,7 +122,7 @@ namespace Core.UI.Ingame
                 {
                     GameObject go = CreateItem(data.x, data.y, data.ItemID, data.Amount);
                     data.CurrentGameObject = go;
-                    
+
                     args.Items[data.x, data.y] = data;
                 }
             }
