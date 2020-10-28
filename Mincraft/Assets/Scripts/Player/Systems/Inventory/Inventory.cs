@@ -65,13 +65,43 @@ namespace Core.Player.Systems.Inventory
         public void Swap(int oldX, int oldY, int newX, int newY)
         {
             Debug.Log("Swapping: old: (" + oldX + " | " + oldY + ") new: (" + newX + " | " + newY + ")");
+
+            if (!ValidPosition(oldX, oldY))
+            {
+                Debug.Log("Invalid position");
+                return;
+            }
+
+            if (SamePosition(oldX, oldY, newX, newY))
+            {
+                Debug.Log("Same position");
+                return;
+            }
+
+            ItemData oldItem = items[oldX, oldY];
+            ItemData newItem = items[newX, newY];
+
+            OnSwapItems.Invoke(new ItemSwappedEventArgs(items, oldItem, newItem));
+
+            // Swap
+            ItemData temp = oldItem;
+            
+            items[oldX, oldY] = items[newX, newY];
+            items[oldX, oldY].SetXY(oldX, oldY);
+            
+            items[newX, newY] = temp;
+            items[newX, newY].SetXY(newX, newY);
         }
+
+        private bool SamePosition(int oldX, int oldY, int newX, int newY) => oldX == newX && oldY == newY;
+        
+        private bool ValidPosition(int oldX, int oldY) => oldX != -1 && oldY != -1;
 
         public void MoveItem(int oldX, int oldY, int newX, int newY)
         {
             Debug.Log("Moving: old: (" + oldX + " | " + oldY + ") new: (" + newX + " | " + newY + ")");
 
-            if (oldX == -1 || oldY == -1)
+            if (!ValidPosition(oldX, oldY))
             {
                 Debug.Log("Invalid position");
                 return;
@@ -156,58 +186,5 @@ namespace Core.Player.Systems.Inventory
         }
 
         public ItemData this[int x, int y] => items[x, y];
-    }
-    
-    public class InventoryRedrawEventArgs : EventArgs
-    {
-        public Array2D<ItemData> Items { get; private set; }
-
-        public InventoryRedrawEventArgs(Array2D<ItemData> items)
-        {
-            this.Items = items;
-        }
-    }
-
-    public class ItemSwappedEventArgs : EventArgs
-    {
-        public Array2D<ItemData> Items { get; private set; }
-        public ItemData OldItem { get; private set; }
-        public ItemData NewData { get; private set; }
-
-        public ItemSwappedEventArgs(Array2D<ItemData> items, ItemData oldItem, ItemData newData)
-        {
-            this.Items = items;
-            this.OldItem = oldItem;
-            this.NewData = newData;
-        }
-    }
-
-    public class ItemChangedEventArgs : EventArgs
-    {
-        public Array2D<ItemData> Items { get; private set; }
-        public ItemData Item { get; private set; }
-
-        public ItemChangedEventArgs(Array2D<ItemData> items, ItemData item)
-        {
-            this.Items = items;
-            this.Item = item;
-        }
-    }
-    
-    public class ItemMovedEventArgs : EventArgs
-    {
-        public Array2D<ItemData> Items { get; private set; }
-        public ItemData Item { get; private set; }
-        
-        public int X { get; private set; }
-        public int Y { get; private set; }
-
-        public ItemMovedEventArgs(Array2D<ItemData> items, ItemData item, int newX, int newY)
-        {
-            this.Items = items;
-            this.Item = item;
-            this.X = newX;
-            this.Y = newY;
-        }
     }
 }

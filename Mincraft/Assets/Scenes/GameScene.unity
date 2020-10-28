@@ -4176,7 +4176,7 @@ MonoBehaviour:
   moveWithPlayer: 1
   drawDistanceInChunks: 5
   calculateThreads: 1
-  amountThreads: 8
+  amountThreads: 6
 --- !u!1 &791852882
 GameObject:
   m_ObjectHideFlags: 0
@@ -4921,7 +4921,7 @@ PrefabInstance:
     - target: {fileID: 7390413634547144688, guid: a403c3c48ff24db429c1e01a46e89721,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 23.05
+      value: 23.050049
       objectReference: {fileID: 0}
     - target: {fileID: 7390413634547144688, guid: a403c3c48ff24db429c1e01a46e89721,
         type: 3}

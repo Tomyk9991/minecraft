@@ -63,7 +63,10 @@ namespace Core.UI.Ingame
 
         private void OnSwapItems(ItemSwappedEventArgs args)
         {
+            int oldX = args.OldItem.x;
+            int oldY = args.OldItem.y;
             
+            args.NewItem.CurrentGameObject.transform.localPosition = CalculatePosition(oldX, oldY);
         }
 
         private void OnNewItem(ItemChangedEventArgs args)
@@ -107,12 +110,8 @@ namespace Core.UI.Ingame
 
         private GameObject CreateItem(int x, int y, int id, int amount)
         {
-            Vector3 position = new Vector3(
-                gridSize.x * x + intialGridPosition.x,
-                -gridSize.y * y + intialGridPosition.y,
-                0f);
-            
-            
+            Vector3 position = CalculatePosition(x, y);
+
             GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, uiItemsParent);
             go.GetComponent<RectTransform>().localPosition = position;
 
@@ -123,6 +122,14 @@ namespace Core.UI.Ingame
             text.text = amount.ToString();
 
             return go;
+        }
+
+        private Vector3 CalculatePosition(int x, int y)
+        {
+            return new Vector3(
+                gridSize.x * x + intialGridPosition.x,
+                -gridSize.y * y + intialGridPosition.y,
+                0f);
         }
 
         private void Update()

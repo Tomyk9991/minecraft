@@ -72,7 +72,7 @@ namespace Core.UI
 
                 if (inventory[targetX, targetY] != null)
                 {
-                    //inventory.Swap(multiIndex.X, multiIndex.Y, targetX, targetY);
+                    inventory.Swap(multiIndex.X, multiIndex.Y, targetX, targetY);
                 }
                 else
                 {

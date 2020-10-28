@@ -28,5 +28,11 @@ namespace Core.Saving
         {
             return $"itemID: {(BlockUV) ItemID}, Pos({x} | {y}), amount: {Amount}";
         }
+
+        public void SetXY(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
     }
 }
