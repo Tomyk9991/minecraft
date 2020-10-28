@@ -3760,6 +3760,7 @@ MonoBehaviour:
   - {fileID: 341256809}
   - {fileID: 1262160813}
   - {fileID: 1998707535}
+  - {fileID: 1275232240}
   inputfield: {fileID: 1262160814}
   consoleOutput: {fileID: 1998707536}
   previewText: {fileID: 1275232241}
@@ -4236,7 +4237,7 @@ MonoBehaviour:
   uiItemsParent: {fileID: 522185715}
   intialGridPosition: {x: -249, y: 290.5}
   gridSize: {x: 83, y: 83}
-  debugging: 1
+  logs: 0
 --- !u!1 &802634826
 GameObject:
   m_ObjectHideFlags: 0
@@ -7802,7 +7803,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 10.171955, y: -29.595531, z: -450.0719, w: 0}
+  m_margin: {x: 10.171955, y: -29.595531, z: -1568.721, w: 0}
   m_textInfo:
     textComponent: {fileID: 1275232241}
     characterCount: 0

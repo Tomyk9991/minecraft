@@ -17,7 +17,7 @@ namespace Core.Player.Systems.Inventory
         public event Action<InventoryRedrawEventArgs> OnRequestRedraw;
         public event Action<ItemChangedEventArgs> OnItemAmountChanged;
         public event Action<ItemChangedEventArgs> OnNewItem;
-        public event Action<ItemChangedEventArgs> OnItemDeleted;
+        public event Action<ItemChangedEventArgs> OnItemDropped;
         public event Action<ItemSwappedEventArgs> OnSwapItems;
         public event Action<ItemMovedEventArgs> OnItemMoved;
 
@@ -124,7 +124,7 @@ namespace Core.Player.Systems.Inventory
             if (inventoryUI.Logs)
                 Debug.Log("Dropping: (" + x + " " + y + ")");
 
-            OnItemDeleted?.Invoke(new ItemChangedEventArgs(items, items[x, y]));
+            OnItemDropped?.Invoke(new ItemChangedEventArgs(items, items[x, y]));
 
             Destroy(items[x, y].CurrentGameObject);
             items[x, y] = null;

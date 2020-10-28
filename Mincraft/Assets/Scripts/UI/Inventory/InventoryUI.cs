@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using Core.Builder;
 using Core.Managers;
 using Core.Player;
@@ -56,10 +55,10 @@ namespace Core.UI.Ingame
             inventory.OnNewItem += OnNewItem;
             inventory.OnSwapItems += OnSwapItems;
             inventory.OnItemMoved += OnItemMoved;
-            inventory.OnItemDeleted += OnItemDeleted;
+            inventory.OnItemDropped += OnItemDropped;
         }
 
-        private void OnItemDeleted(ItemChangedEventArgs args)
+        private void OnItemDropped(ItemChangedEventArgs args)
         {
             ItemData item = args.Item;
             

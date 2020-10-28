@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Core.Managers;
 using Core.Player.Systems;
+using Core.UI.Ingame;
 using UnityEngine;
 using Utilities;
 
@@ -22,7 +23,6 @@ namespace Core.Saving
 
         public static bool LoadInventory(out ItemData[] items)
         {
-            Debug.Log("Loading inventory");
             string inventoryPath = Path.Combine(GameManager.CurrentWorldPath, "Inventory.json");
             if (File.Exists(inventoryPath))
             {
