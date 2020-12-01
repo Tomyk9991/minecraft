@@ -15,11 +15,11 @@ namespace Core.Player.Systems.Inventory
         public int Height => height;
         
         public event Action<InventoryRedrawEventArgs> OnRequestRedraw;
-        public event Action<ItemChangedEventArgs> OnItemAmountChanged;
-        public event Action<ItemChangedEventArgs> OnNewItem;
-        public event Action<ItemChangedEventArgs> OnItemDropped;
-        public event Action<ItemSwappedEventArgs> OnSwapItems;
-        public event Action<ItemMovedEventArgs> OnItemMoved;
+        public event Action<InventoryItemChangedEventArgs> OnItemAmountChanged;
+        public event Action<InventoryItemChangedEventArgs> OnNewItem;
+        public event Action<InventoryItemChangedEventArgs> OnItemDropped;
+        public event Action<InventoryItemSwappedEventArgs> OnSwapItems;
+        public event Action<InventoryItemMovedEventArgs> OnItemMoved;
 
         [SerializeField] private int width = 7;
         [SerializeField] private int height = 8;
@@ -28,10 +28,13 @@ namespace Core.Player.Systems.Inventory
         private Array2D<ItemData> items;
         private InventoryUI inventoryUI;
         
+        public QuickBar QuickBar { get; private set; }
+
         private void Start()
         {
             inventoryUI = InventoryUI.Instance;
             items = new Array2D<ItemData>(width, height);
+            
             if (PlayerSavingManager.LoadInventory(out ItemData[] itemData))
             {
                 if (itemData != null && itemData.Length != 0)
@@ -42,20 +45,34 @@ namespace Core.Player.Systems.Inventory
                     }
                 }
             }
-            
+
             OnRequestRedraw?.Invoke(new InventoryRedrawEventArgs(items));
+        }
+        
+        public void InitQuickbar()
+        {
+            if (PlayerSavingManager.LoadQuickBar(out ItemData[] quickBarItemData))
+            {
+                if (quickBarItemData != null && quickBarItemData.Length != 0)
+                    QuickBar = new QuickBar(this, quickBarItemData);
+                else
+                    QuickBar = new QuickBar(this);
+            }
+            else
+                QuickBar = new QuickBar(this);
         }
 
         private void OnApplicationQuit()
         {
             PlayerSavingManager.SaveInventory(items.Data);
+            PlayerSavingManager.SaveQuickbar(QuickBar.items);
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.I))
             {
-                InventoryUI.Instance.OnRequestRedraw(new InventoryRedrawEventArgs(items));
+                InventoryUI.Instance.OnInventoryRequestRedraw(new InventoryRedrawEventArgs(items));
             }
         }
         
@@ -84,7 +101,7 @@ namespace Core.Player.Systems.Inventory
             ItemData oldItem = items[oldX, oldY];
             ItemData newItem = items[newX, newY];
 
-            OnSwapItems.Invoke(new ItemSwappedEventArgs(items, oldItem, newItem));
+            OnSwapItems.Invoke(new InventoryItemSwappedEventArgs(items, oldItem, newItem));
 
             // Swap
             ItemData temp = oldItem;
@@ -111,9 +128,9 @@ namespace Core.Player.Systems.Inventory
                 return;
             }
             
-            OnItemMoved?.Invoke(new ItemMovedEventArgs(items, items[oldX, oldY], newX, newY));
+            OnItemMoved?.Invoke(new InventoryItemMovedEventArgs(items, items[oldX, oldY], newX, newY));
 
-            items[newX, newY] = new ItemData(items[oldX, oldY].ItemID, newX, newY,
+            items[newX, newY] = new ItemData(items[oldX, oldY].ItemID, newX, newY, -1,
                 items[oldX, oldY].Amount, items[oldX, oldY].CurrentGameObject);
 
             items[oldX, oldY] = null;
@@ -124,7 +141,7 @@ namespace Core.Player.Systems.Inventory
             if (inventoryUI.Logs)
                 Debug.Log("Dropping: (" + x + " " + y + ")");
 
-            OnItemDropped?.Invoke(new ItemChangedEventArgs(items, items[x, y]));
+            OnItemDropped?.Invoke(new InventoryItemChangedEventArgs(items, items[x, y]));
 
             Destroy(items[x, y].CurrentGameObject);
             items[x, y] = null;
@@ -160,10 +177,10 @@ namespace Core.Player.Systems.Inventory
 
                         if (amountDelta >= 0) //Enough space in this slot
                         {
-                            ItemData item = new ItemData(currentID, x, y, currentAmount + amount, items[x, y].CurrentGameObject);
+                            ItemData item = new ItemData(currentID, x, y, -1, currentAmount + amount, items[x, y].CurrentGameObject);
                             items[x, y] = item;
 
-                            OnItemAmountChanged?.Invoke(new ItemChangedEventArgs(items, item));
+                            OnItemAmountChanged?.Invoke(new InventoryItemChangedEventArgs(items, item));
                             return;
                         }
                         else // Current slot is full now. Creating new slot + modifying existing one
@@ -177,11 +194,11 @@ namespace Core.Player.Systems.Inventory
 
             
             //Creating new item
-            ItemData itm = new ItemData(itemID, firstEmptyX, firstEmptyY, amount, null);
+            ItemData itm = new ItemData(itemID, firstEmptyX, firstEmptyY, -1, amount, null);
             items[firstEmptyX, firstEmptyY] = itm;
-            OnNewItem?.Invoke(new ItemChangedEventArgs(items, itm));
+            OnNewItem?.Invoke(new InventoryItemChangedEventArgs(items, itm));
         }
-
+        
         public Int2 IndexFromGameObject(GameObject go)
         {
             for (int i = 0; i < items.Length; i++)
@@ -195,6 +212,10 @@ namespace Core.Player.Systems.Inventory
             return new Int2(-1, -1);
         }
 
-        public ItemData this[int x, int y] => items[x, y];
+        public ItemData this[int x, int y]
+        {
+            get => items[x, y];
+            set => items[x, y] = value;
+        }
     }
 }

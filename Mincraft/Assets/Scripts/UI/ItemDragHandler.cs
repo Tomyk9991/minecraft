@@ -20,7 +20,7 @@ namespace Core.UI
         private static InventoryUI inventoryUI;
         private static Inventory inventory;
         private Int2 multiIndex;
-        private Vector3 localDragStartPosition;
+        private int index;
 
         private void Start()
         {
@@ -48,7 +48,7 @@ namespace Core.UI
             SetRaycastBlock(false);
 
             multiIndex = inventory.IndexFromGameObject(gameObject);
-            localDragStartPosition = transform.localPosition;
+            index = inventory.QuickBar.IndexFromGameObject(gameObject);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -58,10 +58,16 @@ namespace Core.UI
         }
 
         public void OnEndDrag(PointerEventData eventData)
-        { 
-            bool hitResult = eventData.pointerCurrentRaycast.gameObject != null && eventData.pointerCurrentRaycast.gameObject.CompareTag("Inventory Slot");
+        {
+            bool gridHitResult = eventData.pointerCurrentRaycast.gameObject != null &&
+                                 eventData.pointerCurrentRaycast.gameObject.CompareTag("Inventory Slot");
+            bool quickbarHitResult = eventData.pointerCurrentRaycast.gameObject != null &&
+                                     eventData.pointerCurrentRaycast.gameObject.CompareTag("Quick Bar Slot");
+            
+            Int2 invalidMultiIndex = new Int2(-1, -1);
+            int invalidIndex = -1;
 
-            if (hitResult) // Hit something, so inside the grid
+            if (gridHitResult) // Hit something, so inside the grid
             {
                 Transform hitTransform = eventData.pointerCurrentRaycast.gameObject.transform;
                 transform.position = hitTransform.position;
@@ -79,9 +85,45 @@ namespace Core.UI
                     inventory.MoveItem(multiIndex.X, multiIndex.Y, targetX, targetY);
                 }
             }
+            else if (quickbarHitResult) // Quick bar
+            {
+                Transform hitTransform = eventData.pointerCurrentRaycast.gameObject.transform;
+                transform.position = hitTransform.position;
+
+                int targetIndex = hitTransform.GetSiblingIndex();
+                if (inventory.QuickBar[targetIndex] != null)
+                {
+                    if (multiIndex != invalidMultiIndex)
+                    {
+                        inventory.QuickBar.Swap(multiIndex, targetIndex);
+                    }
+                    else
+                    {
+                        if (index == -1) //Something went wrong
+                            Debug.LogError("Index is -1. Something went wrong");
+
+                        inventory.QuickBar.Swap(index, targetIndex);
+                    }
+                }
+                else
+                {
+                    if (multiIndex != invalidMultiIndex || targetIndex != invalidIndex)
+                    {
+                        inventory.QuickBar.MoveItem(multiIndex, targetIndex);
+                    }
+                }
+            }
             else // outside the grid
             {
-                inventory.Drop(multiIndex.X, multiIndex.Y);
+                if (multiIndex != invalidMultiIndex)
+                    inventory.Drop(multiIndex.X, multiIndex.Y);
+                else
+                {
+                    if (index == -1)
+                        Debug.LogError("Index is -1. Something went wrong");
+
+                    inventory.QuickBar.Drop(index);
+                }
             }
             
             SetRaycastBlock(true);

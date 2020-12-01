@@ -4,7 +4,7 @@ using Utilities;
 
 namespace Core.Player.Systems.Inventory
 {
-    public class ItemMovedEventArgs : EventArgs
+    public class InventoryItemMovedEventArgs : EventArgs
     {
         public Array2D<ItemData> Items { get; }
         public ItemData Item { get; }
@@ -12,7 +12,7 @@ namespace Core.Player.Systems.Inventory
         public int X { get; }
         public int Y { get; }
 
-        public ItemMovedEventArgs(Array2D<ItemData> items, ItemData item, int newX, int newY)
+        public InventoryItemMovedEventArgs(Array2D<ItemData> items, ItemData item, int newX, int newY)
         {
             this.Items = items;
             this.Item = item;

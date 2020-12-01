@@ -20,13 +20,19 @@ namespace Core.UI.Ingame
 
         [SerializeField] private Inventory inventory = null;
         [SerializeField] private GameObject uiItemPrefab = null;
-        [SerializeField] private Transform uiItemsParent = null;
+        [SerializeField] private Transform uiInventoryItemsParent = null;
+        [SerializeField] private Transform uiQuickbarItemsParent = null;
+        
 
-        [Header("Positioning")] [SerializeField]
-        private Vector2 intialGridPosition = Vector2.zero;
-
+        [Header("Inventory positioning")] 
+        [SerializeField] private Vector2 initialGridPosition = Vector2.zero;
         [SerializeField] private Vector2 gridSize = Vector2.zero;
 
+        [Header("Quickbar positioning")] 
+        [SerializeField] private Vector2 initialQuickbarPosition = Vector2.zero;
+        [SerializeField] private Vector2 quickBarItemSize = Vector2.zero;
+
+        
         [Header("Debugging")] [SerializeField] private bool logs = false;
 
 
@@ -50,15 +56,72 @@ namespace Core.UI.Ingame
             droppedItemsManager = DroppedItemsManager.Instance;
             playerMovementTracker = PlayerMovementTracker.Instance;
 
-            inventory.OnRequestRedraw += OnRequestRedraw;
-            inventory.OnItemAmountChanged += OnItemAmountChanged;
-            inventory.OnNewItem += OnNewItem;
-            inventory.OnSwapItems += OnSwapItems;
-            inventory.OnItemMoved += OnItemMoved;
-            inventory.OnItemDropped += OnItemDropped;
+            Debug.Log("Inventory null?: " + inventory == null);
+
+            inventory.OnRequestRedraw += OnInventoryRequestRedraw;
+            inventory.OnItemAmountChanged += OnItemInventoryAmountChanged;
+            inventory.OnNewItem += OnInventoryNewItem;
+            inventory.OnSwapItems += OnInventorySwapItems;
+            inventory.OnItemMoved += OnInventoryItemMoved;
+            inventory.OnItemDropped += OnInventoryItemDropped;
+
+            inventory.InitQuickbar();
+            
+            inventory.QuickBar.OnRequestRedraw += OnQuickbarRequestRedraw;
+            inventory.QuickBar.OnItemAmountChanged += OnQuickbarAmountChanged;
+            inventory.QuickBar.OnSwapItems += OnQuickbarSwapItems;
+            inventory.QuickBar.OnItemMoved += OnQuickbarItemMoved;
+            inventory.QuickBar.OnItemDropped += OnQuickbarItemDropped;
+
+            inventory.QuickBar.RaiseOnRequestRedraw();
+        }
+        
+        private void OnQuickbarRequestRedraw(QuickbarRedrawEventArgs args)
+        {
+            if (logs)
+                Debug.Log("Creating Quickbar");
+
+            foreach (Transform child in uiQuickbarItemsParent)
+                Destroy(child.gameObject);
+            
+            for (int i = 0; i < args.Items.Length; i++)
+            {
+                ItemData data = args.Items[i];
+
+                if (data != null)
+                {
+                    GameObject go = CreateItemQuickbar(data.quickbarIndex, data.ItemID, data.Amount);
+                    data.CurrentGameObject = go;
+
+                    args.Items[data.quickbarIndex] = data;
+                }
+            }
+            
         }
 
-        private void OnItemDropped(ItemChangedEventArgs args)
+        private void OnQuickbarItemDropped(QuickbarItemChangedEventArgs obj)
+        {
+            
+        }
+
+        private void OnQuickbarItemMoved(QuickbarItemMovedEventArgs obj)
+        {
+            
+        }
+
+        private void OnQuickbarSwapItems(QuickbarItemSwappedEventArgs obj)
+        {
+            
+        }
+
+        private void OnQuickbarAmountChanged(QuickbarItemChangedEventArgs obj)
+        {
+            
+        }
+
+        #region Inventory Events
+
+        private void OnInventoryItemDropped(InventoryItemChangedEventArgs args)
         {
             ItemData item = args.Item;
             
@@ -76,41 +139,41 @@ namespace Core.UI.Ingame
             }
         }
 
-        private void OnItemMoved(ItemMovedEventArgs args) // not used
+        private void OnInventoryItemMoved(InventoryItemMovedEventArgs args) // not used
         {
         }
 
-        private void OnSwapItems(ItemSwappedEventArgs args)
+        private void OnInventorySwapItems(InventoryItemSwappedEventArgs args)
         {
             int oldX = args.OldItem.x;
             int oldY = args.OldItem.y;
 
-            args.NewItem.CurrentGameObject.transform.localPosition = CalculatePosition(oldX, oldY);
+            args.NewItem.CurrentGameObject.transform.localPosition = CalculatePositionInventoryGrid(oldX, oldY);
         }
 
-        private void OnNewItem(ItemChangedEventArgs args)
+        private void OnInventoryNewItem(InventoryItemChangedEventArgs args)
         {
             ItemData data = args.Item;
             if (!(data.Amount <= 0 || data.ItemID == (int) BlockUV.Air || data.ItemID == (int) BlockUV.None))
             {
-                GameObject go = CreateItem(data.x, data.y, data.ItemID, data.Amount);
+                GameObject go = CreateItemInventory(data.x, data.y, data.ItemID, data.Amount);
                 data.CurrentGameObject = go;
                 args.Items[data.x, data.y] = data;
             }
         }
 
-        private void OnItemAmountChanged(ItemChangedEventArgs args)
+        private void OnItemInventoryAmountChanged(InventoryItemChangedEventArgs args)
         {
             args.Items[args.Item.x, args.Item.y].CurrentGameObject.transform.GetChild(0).GetComponent<TMP_Text>().text =
                 args.Item.Amount.ToString();
         }
 
-        public void OnRequestRedraw(InventoryRedrawEventArgs args)
+        public void OnInventoryRequestRedraw(InventoryRedrawEventArgs args)
         {
             if (logs)
                 Debug.Log("Creating inventory");
 
-            foreach (Transform child in uiItemsParent)
+            foreach (Transform child in uiInventoryItemsParent)
                 Destroy(child.gameObject);
 
             for (int i = 0; i < args.Items.Length; i++)
@@ -119,19 +182,43 @@ namespace Core.UI.Ingame
 
                 if (data != null)
                 {
-                    GameObject go = CreateItem(data.x, data.y, data.ItemID, data.Amount);
+                    GameObject go = CreateItemInventory(data.x, data.y, data.ItemID, data.Amount);
                     data.CurrentGameObject = go;
 
                     args.Items[data.x, data.y] = data;
                 }
             }
         }
+        
 
-        private GameObject CreateItem(int x, int y, int id, int amount)
+        #endregion
+
+        #region Quickbar Events
+        
+
+        #endregion
+
+        private GameObject CreateItemQuickbar(int index, int id, int amount)
         {
-            Vector3 position = CalculatePosition(x, y);
+            Vector3 position = CalculatePositionQuickbar(index);
 
-            GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, uiItemsParent);
+            GameObject go = Instantiate(uiItemPrefab, Vector2.zero, Quaternion.identity, uiQuickbarItemsParent);
+            go.GetComponent<RectTransform>().localPosition = position;
+
+            Sprite itemSprite = ItemDictionary.GetValue((BlockUV) id);
+            go.GetComponent<Image>().sprite = itemSprite;
+
+            TMP_Text text = go.GetComponentInChildren<TMP_Text>();
+            text.text = amount.ToString();
+
+            return go;
+        }
+        
+        private GameObject CreateItemInventory(int x, int y, int id, int amount)
+        {
+            Vector3 position = CalculatePositionInventoryGrid(x, y);
+
+            GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, uiInventoryItemsParent);
             go.GetComponent<RectTransform>().localPosition = position;
 
             Sprite itemSprite = ItemDictionary.GetValue((BlockUV) id);
@@ -143,11 +230,18 @@ namespace Core.UI.Ingame
             return go;
         }
 
-        private Vector3 CalculatePosition(int x, int y)
+        private Vector3 CalculatePositionInventoryGrid(int x, int y)
         {
             return new Vector3(
-                gridSize.x * x + intialGridPosition.x,
-                -gridSize.y * y + intialGridPosition.y,
+                gridSize.x * x + initialGridPosition.x,
+                -gridSize.y * y + initialGridPosition.y,
+                0f);
+        }
+
+        private Vector3 CalculatePositionQuickbar(int index)
+        {
+            return new Vector3(quickBarItemSize.x * index + initialQuickbarPosition.x,
+                initialQuickbarPosition.y,
                 0f);
         }
 
