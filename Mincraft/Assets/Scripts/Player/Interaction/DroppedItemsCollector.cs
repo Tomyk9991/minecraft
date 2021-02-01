@@ -30,7 +30,7 @@ namespace Core.Player.Interaction
 
                 if (info.IsBlock)
                 {
-                    inventory.AddBlockToInventory(info.Block);
+                    // inventory.AddBlockToInventory(info.Block);
                 }
                 
                 droppedItemsManager.AddToPool(go);
