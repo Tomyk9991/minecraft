@@ -1,77 +1,77 @@
-﻿using Core.Math;
-using Core.Player;
+﻿using Core.Player;
 using Core.Player.Interaction;
-using Core.Player.Systems.Inventory;
-using Core.UI.Ingame;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Core.UI
 {
-    public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler
     {
-        // private CanvasGroup canvasGroup = null;
-        private static int inventoryWidth, inventoryHeight = 0;
+        private Transform root = null;
+        
         private static DroppedItemsManager droppedItemsManager;
         private static PlayerMovementTracker playerMovementTracker;
-        private static InventoryUI inventoryUI;
-        private static Inventory inventory;
-        private Int2 multiIndex;
-        private int index;
+        private Transform originalParent = null;
 
         private void Start()
         {
-            if (inventoryWidth == 0)
-            {
-                inventoryWidth = Inventory.Instance.Width;
-                inventoryHeight = Inventory.Instance.Height;
-            }
-
             if (droppedItemsManager == null) 
                 droppedItemsManager = DroppedItemsManager.Instance;
             
             if (playerMovementTracker == null) 
                 playerMovementTracker = PlayerMovementTracker.Instance;
 
-            if (inventoryUI == null)
-                inventoryUI = InventoryUI.Instance;
-            
-            if (inventory == null) 
-                inventory = Inventory.Instance;
+            root = GameObject.Find("UI").transform;
         }
-        
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            
+        }
+
         public void OnBeginDrag(PointerEventData eventData)
         {
             SetRaycastBlock(false);
+            originalParent = transform.parent;
+            transform.parent = root;
         }
 
         public void OnDrag(PointerEventData eventData)
         {
             this.transform.position = eventData.position;
-            this.transform.SetAsLastSibling();
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            
+            
             bool inventoryGridHitResult = eventData.pointerCurrentRaycast.gameObject != null &&
                                  eventData.pointerCurrentRaycast.gameObject.CompareTag("Inventory Slot");
             bool quickbarHitResult = eventData.pointerCurrentRaycast.gameObject != null &&
                                      eventData.pointerCurrentRaycast.gameObject.CompareTag("Quick Bar Slot");
             
-            if (inventoryGridHitResult) // Hit something, so inside the grid
+            
+            if (inventoryGridHitResult)
             {
-                
+                transform.parent = originalParent;
+                SetRaycastBlock(true);
             }
             else if (quickbarHitResult) // Quick bar
             {
-                
+                // Bind to quick bar
             }
             else // outside the grid
             {
+                //Remove as UI Object
                 
+                //DropAmountDialog
+
+                //Based on selected amount, remove from inventory
+                
+                //Drop the actual object with selected amount
+                
+                Debug.Log("outside the inventory");
             }
-            
-            SetRaycastBlock(true);
         }
 
         private void SetRaycastBlock(bool state)
