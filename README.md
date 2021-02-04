@@ -1,20 +1,6 @@
 # Minecraft
 A minecraft clone using Unity3D
 
-# Update 1 (14 Dec 2019):
----
-Basic terrain generation with bioms:
-
-![](generation.gif)
-
-# Update 2 (4 Jul 2020)
-
-Current state includes __Cross Chunk Structures__ like trees:
-
-Dynamic map allocation:|Trees:
------------------------|-------------------------------
-![](trees.gif)         |<img src="tree.jpg" width="640">
-
 # Update 3 (28 Oct 2020)
 
 - ## Command prompt. 
@@ -62,22 +48,35 @@ private void MovePlayer(int x, int y, int z)
 - Inventory
 
 ```json
-{
-    "items": [
-        {
-            "x": 0,
-            "y": 0,
-            "ItemID": 6,
-            "Amount": 1
-        },
-        {
-            "x": 1,
-            "y": 0,
-            "ItemID": 1,
-            "Amount": 1
-        }]
+"items": [
+    {
+        "x": 0,
+        "y": 0,
+        "ItemID": 6,
+        "Amount": 1
+    },
+    {
+        "x": 1,
+        "y": 0,
+        "ItemID": 1,
+        "Amount": 1
+    }]
 ```
 
  - ## Menu
 
 <img src="mainMenu.gif" width="600">
+
+# Update 2 (4 Jul 2020)
+
+Current state includes __Cross Chunk Structures__ like trees:
+
+Dynamic map allocation:|Trees:
+-----------------------|-------------------------------
+![](trees.gif)         |<img src="tree.jpg" width="640">
+
+# Update 1 (14 Dec 2019):
+---
+Basic terrain generation with bioms:
+
+![](generation.gif)
