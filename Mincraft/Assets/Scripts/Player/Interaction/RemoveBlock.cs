@@ -124,7 +124,7 @@ namespace Core.Player.Interaction
                 GameObject go = droppedItemsManager.GetNextBlock();
                 
                 go.transform.position = placer.latestGlobalClickInt.ToVector3() + littleBlockSpawnOffset;
-                go.GetComponent<DroppedItemInformation>().FromBlock(removedBlock);
+                go.GetComponent<DroppedItemInformation>().FromBlock(removedBlock, 1);
                 
                 droppedItemsManager.AddNewItem(go);
             }

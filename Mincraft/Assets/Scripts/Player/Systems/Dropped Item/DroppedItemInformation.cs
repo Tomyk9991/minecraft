@@ -9,11 +9,13 @@ namespace Core.Player.Interaction
     {
         public bool IsBlock { get; private set; }
         public Block Block { get; set; }
+        public int Amount { get; private set; }
         
-        public void FromBlock(Block block)
+        public void FromBlock(Block block, int amount)
         {
             this.IsBlock = true;
             this.Block = block;
+            this.Amount = amount;
             Mesh mesh = transform.GetChild(0).GetComponent<MeshFilter>().mesh;
             
             Vector2[] uvs = new Vector2[24];

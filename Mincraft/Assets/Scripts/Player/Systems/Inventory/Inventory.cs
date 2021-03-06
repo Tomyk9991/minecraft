@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Core.Builder;
 using Core.Saving;
+using Core.UI.Ingame;
 using Extensions;
 using UnityEngine;
 
@@ -8,12 +10,12 @@ namespace Core.Player.Systems.Inventory
 {
     public class Inventory : SingletonBehaviour<Inventory>
     {
-        public event Action<int> OnCriticalSizeExceeded;
-        public int Width => width;
-        public int Height => height;
+        [Header("References")]
+        [SerializeField] private InventoryUI inventoryUI = null;
         
-        [SerializeField] private int width = 7;
-        [SerializeField] private int height = 8;
+        public event Action<int> OnCriticalSizeExceeded;
+        
+        [Header("Inventory settings")]
         [SerializeField] private int maxStackSize = 128;
         
         public List<ItemData> Items { get; private set; }
@@ -43,6 +45,38 @@ namespace Core.Player.Systems.Inventory
                     }
                 }
             }
+        }
+
+        public void AddBlockToInventory(Block block, int amount)
+        {
+            if (TryFindItem(block, out ItemData data))
+            {
+                data.Amount += amount;
+                inventoryUI.ItemAmountChanged(data);
+            }
+            else
+            {
+                var newItem = new ItemData((int) block.ID, -1, amount, null);
+                Items.Add(newItem);
+                inventoryUI.ItemCreated(newItem);
+            }
+        }
+
+        private bool TryFindItem(Block block, out ItemData data)
+        {
+            bool found = false;
+            data = null;
+
+            foreach (var item in Items)
+            {
+                if (item.ItemID == (int) block.ID)
+                {
+                    found = true;
+                    data = item;
+                }
+            }
+
+            return found;
         }
 
         private void LoadQuickbar()

@@ -132,7 +132,7 @@ namespace Core.Player.Interaction
                 GameObject go = GetNextBlock();
                     
                 go.transform.position = playerPosition.position + playerPosition.forward;
-                go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) itemID));
+                go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) itemID), amount);
                 go.GetComponent<Rigidbody>().AddForce(playerPosition.forward, ForceMode.Impulse);
                 
                 AddNewItem(go);

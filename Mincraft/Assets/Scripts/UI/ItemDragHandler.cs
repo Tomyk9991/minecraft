@@ -8,17 +8,17 @@ namespace Core.UI
     public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler
     {
         private Transform root = null;
-        
+
         private static DroppedItemsManager droppedItemsManager;
         private static PlayerMovementTracker playerMovementTracker;
         private Transform originalParent = null;
 
         private void Start()
         {
-            if (droppedItemsManager == null) 
+            if (droppedItemsManager == null)
                 droppedItemsManager = DroppedItemsManager.Instance;
-            
-            if (playerMovementTracker == null) 
+
+            if (playerMovementTracker == null)
                 playerMovementTracker = PlayerMovementTracker.Instance;
 
             root = GameObject.Find("UI").transform;
@@ -26,7 +26,6 @@ namespace Core.UI
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -43,14 +42,12 @@ namespace Core.UI
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            
-            
             bool inventoryGridHitResult = eventData.pointerCurrentRaycast.gameObject != null &&
-                                 eventData.pointerCurrentRaycast.gameObject.CompareTag("Inventory Slot");
+                                          eventData.pointerCurrentRaycast.gameObject.CompareTag("Inventory Slot");
             bool quickbarHitResult = eventData.pointerCurrentRaycast.gameObject != null &&
                                      eventData.pointerCurrentRaycast.gameObject.CompareTag("Quick Bar Slot");
-            
-            
+
+
             if (inventoryGridHitResult)
             {
                 transform.parent = originalParent;
@@ -63,13 +60,13 @@ namespace Core.UI
             else // outside the grid
             {
                 //Remove as UI Object
-                
+
                 //DropAmountDialog
 
                 //Based on selected amount, remove from inventory
-                
+
                 //Drop the actual object with selected amount
-                
+
                 Debug.Log("outside the inventory");
             }
         }

@@ -14,23 +14,16 @@ namespace Core.UI.Ingame
 {
     public class InventoryUI : SingletonBehaviour<InventoryUI>, IConsoleToggle
     {
-        [Header("References"), SerializeField] private Transform[] inventoryToggleTransforms = null;
+        [Header("References")]
+        [SerializeField] private Transform[] inventoryToggleTransforms = null;
         [SerializeField] private Transform uiInventoryItemsParent = null;
-
-        [Header("Grid calculations"), SerializeField]
-        private Vector2 marginLeftTop = Vector2.zero;
-
-        [SerializeField] private Vector2 gridSize = Vector2.zero;
-
-
-        [Space] [SerializeField] private Inventory inventory = null;
+        
+        [Space] 
+        [SerializeField] private Inventory inventory = null;
         [SerializeField] private GameObject uiItemPrefab = null;
 
         private IFullScreenUIToggle[] disableOnInventoryAppear = null;
         private bool showingInventory = false;
-
-        private DroppedItemsManager droppedItemsManager;
-        private PlayerMovementTracker playerMovementTracker;
 
 
         public bool Enabled
@@ -42,10 +35,18 @@ namespace Core.UI.Ingame
         private void Start()
         {
             disableOnInventoryAppear = FindObjectsOfType<MonoBehaviour>().OfType<IFullScreenUIToggle>().ToArray();
-            droppedItemsManager = DroppedItemsManager.Instance;
-            playerMovementTracker = PlayerMovementTracker.Instance;
-
             InitializeInventoryUI();
+        }
+
+        public void ItemAmountChanged(ItemData data)
+        {
+            data.CurrentGameObject.GetComponentInChildren<TMP_Text>().text = data.Amount.ToString();
+        }
+
+        public void ItemCreated(ItemData data)
+        {
+            GameObject go = CreateItemInventory(data);
+            data.CurrentGameObject = go;
         }
 
         private void InitializeInventoryUI()
@@ -57,6 +58,7 @@ namespace Core.UI.Ingame
                 if (item != null)
                 {
                     GameObject go = CreateItemInventory(item);
+                    item.CurrentGameObject = go;
                 }
             }
         }

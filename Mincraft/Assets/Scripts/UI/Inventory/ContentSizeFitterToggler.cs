@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Core.Player.Systems.Inventory;
-using Extensions;
+﻿using Core.Player.Systems.Inventory;
 using UnityEngine;
 using UnityEngine.UI;
 
