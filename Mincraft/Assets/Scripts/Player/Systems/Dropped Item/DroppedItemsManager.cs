@@ -138,7 +138,6 @@ namespace Core.Player.Interaction
                 AddNewItem(go);
                 AddBoxColliderHandle(go.transform.GetChild(0).GetComponent<BoxCollider>());
             }
-            
         }
     }
 }
