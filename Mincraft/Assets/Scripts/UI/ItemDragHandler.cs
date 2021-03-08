@@ -1,8 +1,10 @@
 ﻿using System.Linq;
+using Core.Builder;
 using Core.Player;
 using Core.Player.Interaction;
 using Core.Player.Systems.Inventory;
 using Core.Saving;
+using Core.UI.Ingame;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,7 +12,7 @@ namespace Core.UI
 {
     public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler
     {
-        private Transform root = null;
+        private static Transform root = null;
 
         private static DroppedItemsManager droppedItemsManager;
         private static PlayerMovementTracker playerMovementTracker;
@@ -18,7 +20,7 @@ namespace Core.UI
         private static QuickBar quickBar = null;
 
 
-        private Transform inventorySlotsParent = null;
+        private static Transform inventorySlotsParent = null;
 
         private void Start()
         {
@@ -27,8 +29,11 @@ namespace Core.UI
             if (inventory == null) inventory = Inventory.Instance;
             if (quickBar == null) quickBar = inventory.QuickBar;
 
-            root = GameObject.Find("UI").transform;
-            inventorySlotsParent = GameObject.Find("Inventory Slots").transform;
+            if(root == null) root = GameObject.Find("UI").transform;
+            if (inventorySlotsParent == null)
+                inventorySlotsParent = Resources.FindObjectsOfTypeAll<GameObject>()
+                    .FirstOrDefault(g => g.name == "Inventory Slots")
+                    .transform; //GameObject.Find("Inventory Slots").transform;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -53,11 +58,16 @@ namespace Core.UI
             bool quickbarHitResult = eventData.pointerCurrentRaycast.gameObject != null &&
                                      eventData.pointerCurrentRaycast.gameObject.CompareTag("Quick Bar Slot");
 
+            ItemData data = inventoryGridHitResult || quickbarHitResult
+                ? gameObject.GetComponent<UIItemDataHolder>().Data : null;
+
 
             if (inventoryGridHitResult)
             {
                 transform.parent = inventorySlotsParent;
                 SetRaycastBlock(true);
+
+                data.QuickbarIndex = -1;
             }
             else if (quickbarHitResult) // Quick bar
             {
@@ -68,18 +78,14 @@ namespace Core.UI
                     //Return back to inventory
                     transform.parent = inventorySlotsParent;
                     SetRaycastBlock(true);
-
                     return;
                 }
                 else
                 {
-                    Debug.Log("Slot was empty");
+                    quickBar[quickbarHitIndex] = data;
+                    data.QuickbarIndex = quickbarHitIndex;
                     
-                    //Get reference for the moving item, either from inventory.Items or quickbar[...]
-                    //ItemData item = inventory.Items.
-                    //quickBar[quickbarHitIndex] = inventory.Items.First(item => item.CurrentGameObject == eventData.pointerCurrentRaycast.gameObject);
-
-                    Debug.Log("quick bar got added an item");
+                    Debug.Log("item ID: added to quickbar" + (BlockUV) data.ItemID);
                 }
 
                 // quickbar

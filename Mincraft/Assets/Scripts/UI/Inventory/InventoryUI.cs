@@ -13,9 +13,10 @@ namespace Core.UI.Ingame
 {
     public class InventoryUI : SingletonBehaviour<InventoryUI>, IConsoleToggle
     {
-        [Header("References")]
+        [Header("References")] 
         [SerializeField] private Transform[] inventoryToggleTransforms = null;
         [SerializeField] private Transform uiInventoryItemsParent = null;
+        [SerializeField] private Transform[] quickbarItems = null;
         
         [Space] 
         [SerializeField] private Inventory inventory = null;
@@ -35,6 +36,7 @@ namespace Core.UI.Ingame
         {
             disableOnInventoryAppear = FindObjectsOfType<MonoBehaviour>().OfType<IFullScreenUIToggle>().ToArray();
             InitializeInventoryUI();
+            InitializeQuickbarUI();
         }
 
         public void ItemAmountChanged(ItemData data)
@@ -44,8 +46,21 @@ namespace Core.UI.Ingame
 
         public void ItemCreated(ItemData data)
         {
-            GameObject go = CreateItemInventory(data);
+            GameObject go = CreateItemInventory(data, uiInventoryItemsParent);
             data.CurrentGameObject = go;
+        }
+
+        private void InitializeQuickbarUI()
+        {
+            for (int i = 0; i < inventory.QuickBar.Items.Length; i++)
+            {
+                if (inventory.QuickBar[i] != null)
+                {
+                    GameObject go = CreateItemInventory(inventory.QuickBar[i], quickbarItems[i]);
+                    go.transform.position = quickbarItems[i].position;
+                    inventory.QuickBar[i].CurrentGameObject = go;
+                }
+            }
         }
 
         private void InitializeInventoryUI()
@@ -54,20 +69,21 @@ namespace Core.UI.Ingame
             {
                 ItemData item = inventory.Items[i];
 
-                if (item != null)
+                if (item != null && item.QuickbarIndex == -1)
                 {
-                    GameObject go = CreateItemInventory(item);
+                    GameObject go = CreateItemInventory(item, uiInventoryItemsParent);
                     item.CurrentGameObject = go;
                 }
             }
         }
 
-        private GameObject CreateItemInventory(ItemData item)
+        private GameObject CreateItemInventory(ItemData item, Transform parent)
         {
-            GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, uiInventoryItemsParent);
+            GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, parent);
 
             Sprite itemSprite = ItemDictionary.GetValue((BlockUV) item.ItemID);
             go.GetComponent<Image>().sprite = itemSprite;
+            go.GetComponent<UIItemDataHolder>().Data = item;
 
             TMP_Text text = go.GetComponentInChildren<TMP_Text>();
             text.text = item.Amount.ToString();

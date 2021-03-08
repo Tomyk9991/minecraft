@@ -95,8 +95,6 @@ namespace Core.Player.Systems.Inventory
         private void OnApplicationQuit()
         {
             ResourceIO.Save<Inventory>(new PlayerSavingContext(Items.ToArray()));
-            // PlayerSavingManager.SaveInventory(Items.ToArray());
-            //PlayerSavingManager.SaveQuickbar(QuickBar.items);
         }
     }
 }
