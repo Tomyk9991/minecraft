@@ -1,34 +1,28 @@
-﻿using System;
-using Core.Math;
-using Core.Saving;
-using Core.UI.Ingame;
-using UnityEngine;
+﻿using Core.Saving;
 
 namespace Core.Player.Systems.Inventory
 {
     public class QuickBar
     {
-        public ItemData[] items;
         private int size;
-
-        public ItemData[] Items => items;
+        public ItemData[] Items;
 
         public QuickBar(int size = 10)
         {
-            this.items = new ItemData[size];
-            this.size = 10;
+            this.Items = new ItemData[size];
+            this.size = size;
         }
 
-        public QuickBar(Inventory inventory, ItemData[] data)
+        public QuickBar(ItemData[] data)
         {
-            this.items = data;
+            this.Items = data;
             this.size = data.Length;
         }
 
         public ItemData this[int index]
         {
-            get => items[index];
-            set => items[index] = value;
+            get => Items[index];
+            set => Items[index] = value;
         }
     }
 }

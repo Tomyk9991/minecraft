@@ -26,7 +26,7 @@ namespace Core.Saving
             File.WriteAllBytes(Path.Combine(Application.persistentDataPath, paths[(int) context.Finder]),
                 Encoding.UTF8.GetBytes(JsonUtility.ToJson(context, true)));
         }
-        
+
         public static void SaveWorldInformation(WorldInformation context, string worldDirectory)
         {
             if (worldDirectory == "")
@@ -110,21 +110,21 @@ namespace Core.Saving
             Directory.CreateDirectory(targetDirectory);
             return null;
         }
-        
-        private static float DirSize(DirectoryInfo d) 
-        {    
-            long size = 0;    
+
+        private static float DirSize(DirectoryInfo d)
+        {
+            long size = 0;
 
             FileInfo[] fis = d.GetFiles();
-            foreach (FileInfo fi in fis) 
-            {      
-                size += fi.Length;    
-            }
-            
-            DirectoryInfo[] dis = d.GetDirectories();
-            foreach (DirectoryInfo di in dis) 
+            foreach (FileInfo fi in fis)
             {
-                size += (long) DirSize(di);   
+                size += fi.Length;
+            }
+
+            DirectoryInfo[] dis = d.GetDirectories();
+            foreach (DirectoryInfo di in dis)
+            {
+                size += (long) DirSize(di);
             }
 
             float result = (float) size / 0x100000;

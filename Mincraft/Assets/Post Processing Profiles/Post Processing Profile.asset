@@ -45,9 +45,9 @@ MonoBehaviour:
     value: 0
   radius:
     overrideState: 1
-    value: 0.93
+    value: 228.33
   quality:
-    overrideState: 1
+    overrideState: 0
     value: 4
 --- !u!114 &-2391368240263221849
 MonoBehaviour:

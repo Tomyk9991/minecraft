@@ -19,7 +19,6 @@ namespace Core.Player.Systems.Inventory
         [SerializeField] private int maxStackSize = 128;
         
         public List<ItemData> Items { get; private set; }
-        
         public QuickBar QuickBar { get; private set; }
         
         private void Start()
@@ -32,8 +31,9 @@ namespace Core.Player.Systems.Inventory
 
         private void LoadInventory()
         {
-            if (PlayerSavingManager.LoadInventory(out ItemData[] itemData))
+            if (ResourceIO.Load<Inventory>(new InventoryFileIdentifier(), out OutputContext context))
             {
+                ItemData[] itemData = ((PlayerSavingManager.Wrapper<ItemData>) context).items;
                 if (itemData != null && itemData.Length != 0)
                 {
                     foreach (var data in itemData)
@@ -81,21 +81,22 @@ namespace Core.Player.Systems.Inventory
 
         private void LoadQuickbar()
         {
-            if (PlayerSavingManager.LoadQuickBar(out ItemData[] quickBarItemData))
+            this.QuickBar = new QuickBar();
+            
+            foreach (var itemData in Items)
             {
-                if (quickBarItemData != null && quickBarItemData.Length != 0)
-                    QuickBar = new QuickBar(this, quickBarItemData);
-                else
-                    QuickBar = new QuickBar();
+                int quickbarIndex = itemData.QuickbarIndex;
+                
+                if (quickbarIndex != -1)
+                    this.QuickBar[quickbarIndex] = itemData;
             }
-            else
-                QuickBar = new QuickBar();
         }
         
         private void OnApplicationQuit()
         {
-            PlayerSavingManager.SaveInventory(Items.ToArray());
-            PlayerSavingManager.SaveQuickbar(QuickBar.items);
+            ResourceIO.Save<Inventory>(new PlayerSavingContext(Items.ToArray()));
+            // PlayerSavingManager.SaveInventory(Items.ToArray());
+            //PlayerSavingManager.SaveQuickbar(QuickBar.items);
         }
     }
 }

@@ -4,7 +4,7 @@ using Core.Builder;
 namespace Core.Saving
 {
     [Serializable]
-    public class ChunkData
+    public class ChunkData : OutputContext
     {
         public Block[] Blocks;
 

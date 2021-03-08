@@ -24,12 +24,15 @@ namespace Core.UI.DeveloperOverlay
         private Transform[] transforms = null;
         private Timer timer;
         private ChunkJobManager jobmanager;
+        private PlayerMovementTracker playerMovementTracker;
 
         private StringBuilder stringbuilder;
 
         private void Start()
         {
             jobmanager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
+            playerMovementTracker = PlayerMovementTracker.Instance;
+            
             stringbuilder = new StringBuilder(50);
             
             List<Transform> t = new List<Transform>();
@@ -56,7 +59,7 @@ namespace Core.UI.DeveloperOverlay
 
             if (showingOverlay && timer.TimeElapsed(Time.deltaTime))
             {
-                playerPositionOutput.text = PlayerMovementTracker.Instance.PlayerPos();
+                playerPositionOutput.text = playerMovementTracker.PlayerPos();
                 chunksLoadedOutput.SetText(GetLoadedChunksAmount());
                 amountNoiseJobsOutput.SetText(GetNoiseJobCount());
                 amountChunkJobsOutput.SetText(GetChunkJobCount());

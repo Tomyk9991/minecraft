@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Core.UI.Ingame
 {
-    public class QuickBarSelectionUI : SingletonBehaviour<QuickBarSelectionUI>, IConsoleToggle, IFullScreenUIToggle
+    public class QuickBarSelectionUI : SingletonBehaviour<QuickBarSelectionUI>, IConsoleToggle/*, IFullScreenUIToggle*/
     {
         [SerializeField] private RectTransform[] slots = null;
         [SerializeField] private RectTransform selectedSlotItem = null;

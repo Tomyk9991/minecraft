@@ -10,7 +10,7 @@ using Utilities;
 
 namespace Core.Chunks
 {
-    public class Chunk
+    public class Chunk : SavingContext
     {
         //References
         public GameObject CurrentGO { get; set; }
@@ -79,7 +79,8 @@ namespace Core.Chunks
         public void AddBlockPersistent(Block block, Int3 pos)
         {
             AddBlock(block, pos);
-            ChunkSavingManager.Save(this);
+            ResourceIO.Save<Chunk>(this);
+            // ChunkSavingManager.Save(this);
         }
         
 
@@ -144,8 +145,10 @@ namespace Core.Chunks
         /// <returns>Returns a state, if the chunk has only air in it, or not</returns>
         public void GenerateBlocks()
         {
-            if (ChunkSavingManager.Load(this.GlobalPosition, out ChunkData chunk))
+            if (ResourceIO.Load<Chunk>(new ChunkFileIdentifier(this.GlobalPosition), out OutputContext c))
             {
+                ChunkData chunk = (ChunkData) c;
+                
                 this.blocks.RawData = chunk.Blocks;
                 loaded = true;
                 return;
