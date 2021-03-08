@@ -63,14 +63,12 @@ private void MovePlayer(int x, int y, int z)
 ```json
 "items": [
     {
-        "x": 0,
-        "y": 0,
+        "QuickbarIndex": -1,
         "ItemID": 6,
         "Amount": 1
     },
     {
-        "x": 1,
-        "y": 0,
+        "QuickbarIndex": 1,
         "ItemID": 1,
         "Amount": 1
     }]
