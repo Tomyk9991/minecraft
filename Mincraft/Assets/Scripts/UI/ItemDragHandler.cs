@@ -45,6 +45,9 @@ namespace Core.UI
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            var data = gameObject.GetComponent<UIItemDataHolder>().Data;
+            ReleaseQuickbarIndexIfDoable(data);
+            
             SetRaycastBlock(false);
             transform.parent = root;
         }
@@ -66,17 +69,9 @@ namespace Core.UI
             {
                 transform.parent = inventorySlotsParent;
                 SetRaycastBlock(true);
-
-                var data = gameObject.GetComponent<UIItemDataHolder>().Data;
-                int prevQuickbarIndex = data.QuickbarIndex; 
                 
-                data.QuickbarIndex = -1;
-
-                if (prevQuickbarIndex != -1)
-                {
-                    quickBar[prevQuickbarIndex] = null;
-                    quickbarHitIndex = -1;
-                }
+                var data = gameObject.GetComponent<UIItemDataHolder>().Data;
+                ReleaseQuickbarIndexIfDoable(data);
             }
             else if (quickbarHitResult) // Quick bar
             {
@@ -103,13 +98,7 @@ namespace Core.UI
             else // outside the grid
             {
                 var data = gameObject.GetComponent<UIItemDataHolder>().Data;
-                int prevQuickbarIndex = data.QuickbarIndex;
-                
-                if (prevQuickbarIndex != -1)
-                {
-                    quickBar[prevQuickbarIndex] = null;
-                    quickbarHitIndex = -1;
-                }
+                ReleaseQuickbarIndexIfDoable(data);
                 
                 Destroy(gameObject);
                 inventory.Items.Remove(data);
@@ -144,6 +133,19 @@ namespace Core.UI
                 {
                     group.blocksRaycasts = state;
                 }
+            }
+        }
+
+        private void ReleaseQuickbarIndexIfDoable(ItemData data)
+        {
+            int prevQuickbarIndex = data.QuickbarIndex; 
+                
+            data.QuickbarIndex = -1;
+
+            if (prevQuickbarIndex != -1)
+            {
+                quickBar[prevQuickbarIndex] = null;
+                quickbarHitIndex = -1;
             }
         }
 
