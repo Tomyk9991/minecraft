@@ -113,8 +113,6 @@ namespace Core.UI
         {
             GameObject go = droppedItemsManager.GetNextBlock();
 
-            Debug.Log(go.name);
-            
             Vector3 playerForward = playerMovementTracker.transform.forward;
             go.transform.position = playerMovementTracker.transform.position + playerForward;
 

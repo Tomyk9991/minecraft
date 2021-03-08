@@ -1,6 +1,19 @@
 # Minecraft
 A minecraft clone using Unity3D
 
+# Update 4 (08 Mar 2021)
+## Inventory Update
+ 
+- Searchable inventory (basically query)
+    - Potentially extandable with query flags
+
+<img src="inventorySearch.gif" width="600">
+
+ - Drag and droppable inventory items. Quickbar and inventory itself is targetable. To remove (drop) an item from the inventory, just drag and drop the item outside of the inventory or quickbar
+
+<img src="inventoryDragDrop.gif" width="600">
+
+
 # Update 3 (28 Oct 2020)
 
 - ## Command prompt. 
