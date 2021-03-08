@@ -18,6 +18,7 @@ namespace Core.UI
         private static PlayerMovementTracker playerMovementTracker;
         private static Inventory inventory = null;
         private static QuickBar quickBar = null;
+        private int quickbarHitIndex = -1;
 
 
         private static Transform inventorySlotsParent = null;
@@ -67,10 +68,16 @@ namespace Core.UI
                 SetRaycastBlock(true);
 
                 gameObject.GetComponent<UIItemDataHolder>().Data.QuickbarIndex = -1;
+
+                if (quickbarHitIndex != -1)
+                {
+                    quickBar[quickbarHitIndex] = null;
+                    quickbarHitIndex = -1;
+                }
             }
             else if (quickbarHitResult) // Quick bar
             {
-                int quickbarHitIndex = eventData.pointerCurrentRaycast.gameObject.transform.GetSiblingIndex();
+                quickbarHitIndex = eventData.pointerCurrentRaycast.gameObject.transform.GetSiblingIndex();
 
                 if (quickBar[quickbarHitIndex] != null)
                 {
@@ -84,6 +91,7 @@ namespace Core.UI
                 data.QuickbarIndex = quickbarHitIndex;
                 
                 this.transform.position = eventData.pointerCurrentRaycast.gameObject.transform.position;
+                ((RectTransform) transform).sizeDelta = new Vector2(70, 70);
                 this.transform.parent = eventData.pointerCurrentRaycast.gameObject.transform;
 
                 SetRaycastBlock(true);
@@ -92,15 +100,9 @@ namespace Core.UI
             else // outside the grid
             {
                 var data = gameObject.GetComponent<UIItemDataHolder>().Data;
-                //Remove as UI Object
                 Destroy(gameObject);
-                //DropAmountDialog
-                //Based on selected amount, remove from inventory
                 inventory.Items.Remove(data);
-                //Drop the actual object with selected amount
                 SpawnItem(data);
-                
-                Debug.Log("outside the inventory");
             }
         }
         

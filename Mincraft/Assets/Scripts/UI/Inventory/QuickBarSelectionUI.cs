@@ -9,7 +9,8 @@ namespace Core.UI.Ingame
     {
         [SerializeField] private RectTransform[] slots = null;
         [SerializeField] private RectTransform selectedSlotItem = null;
-        [SerializeField] private Image image = null;
+        [SerializeField] private bool directionRight = true;
+        
         
         private int slotIndex = 0;
         private GameObject[] items = new GameObject[10];
@@ -23,31 +24,17 @@ namespace Core.UI.Ingame
                     slot.gameObject.SetActive(value);
                 
                 selectedSlotItem.gameObject.SetActive(value);
-                image.enabled = value;
                 this.enabled = value;
             }
         }
 
-        public bool SlotAvailable(int index)
-        {
-            return items[index] == null;
-        }
-
-        public void AddToBar(int index, GameObject go)
-        {
-            items[index] = go;
-
-            RectTransform tr = go.GetComponent<RectTransform>();
-            tr.sizeDelta = new Vector3(30, 30);
-        }
-        
         private void Update()
         {
             float scrollDirection = Input.mouseScrollDelta.y;
 
             if (scrollDirection != 0)
             {
-                slotIndex += System.Math.Sign(scrollDirection);
+                slotIndex += directionRight ? System.Math.Sign(scrollDirection) : -System.Math.Sign(scrollDirection);
                 slotIndex %= slots.Length;
 
                 slotIndex = slotIndex < 0 ? slots.Length - 1 : slotIndex;
