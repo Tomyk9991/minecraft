@@ -63,6 +63,35 @@ namespace Core.UI.Ingame
             }
         }
 
+        //Called from unity
+        public void OnItemSearchValueChanged(string newValue)
+        {
+            if (newValue == "")
+            {
+                foreach (var data in inventory.Items)
+                {
+                    data.CurrentGameObject.SetActive(true);
+                }
+            }
+
+            foreach (var data in inventory.Items)
+            {
+                if (data.QuickbarIndex != -1)
+                {
+                    data.CurrentGameObject.SetActive(true);
+                }
+                else
+                {
+                    string name = ItemDictionary.GetName((BlockUV) data.ItemID);
+                    
+                    string manipulatedName = name.Replace(" ", "").ToLower();
+                    string manipulatedNewValue = newValue.Replace(" ", "").ToLower();
+                    
+                    data.CurrentGameObject.SetActive(manipulatedName.Contains(manipulatedNewValue));
+                }
+            }
+        }
+
         private void InitializeInventoryUI()
         {
             for (int i = 0; i < inventory.Items.Count; i++)

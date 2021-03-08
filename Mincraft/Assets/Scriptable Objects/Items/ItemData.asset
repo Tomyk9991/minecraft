@@ -15,21 +15,31 @@ MonoBehaviour:
   itemInformation:
   - EnumType: 0
     Sprite: {fileID: 0}
+    Name: 
   - EnumType: 1
     Sprite: {fileID: 21300000, guid: 9fd207fc4dd94e34993b4f085618d30f, type: 3}
+    Name: Grass
   - EnumType: 2
     Sprite: {fileID: 21300000, guid: f82b562a795df2c47b52269c79af885b, type: 3}
+    Name: Stone
   - EnumType: 3
     Sprite: {fileID: 21300000, guid: ab2079f365ac0fa4e8a6ff9576ef615d, type: 3}
+    Name: Dirt
   - EnumType: 4
     Sprite: {fileID: 21300000, guid: 828b5c6e7ce455941a95ea180ed14cf1, type: 3}
+    Name: Wood
   - EnumType: 5
     Sprite: {fileID: 21300000, guid: f3334b463cd3cab42ac16bb13f5e6690, type: 3}
+    Name: Wooden Planks
   - EnumType: 6
     Sprite: {fileID: 21300000, guid: cf98adab6fa0b0943a10b703bf406541, type: 3}
+    Name: Leaf
   - EnumType: 7
     Sprite: {fileID: 21300000, guid: e8beffe72cf5b0942972171a9ae711b5, type: 3}
+    Name: Glass
   - EnumType: 8
     Sprite: {fileID: 21300000, guid: 552cec4814b6a4345bf9d9280cf03e68, type: 3}
+    Name: Sand
   - EnumType: 9
     Sprite: {fileID: 21300000, guid: 0d1f8679ac5c5964c8ba3bbf871fc06f, type: 3}
+    Name: Cactus

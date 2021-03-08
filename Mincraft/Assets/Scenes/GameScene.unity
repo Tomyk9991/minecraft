@@ -1714,6 +1714,17 @@ MonoBehaviour:
   - {fileID: 821381555}
   - {fileID: 2024023084}
   uiInventoryItemsParent: {fileID: 2040817293}
+  quickbarItems:
+  - {fileID: 612758002}
+  - {fileID: 1051200065}
+  - {fileID: 678824778}
+  - {fileID: 802634827}
+  - {fileID: 853586001}
+  - {fileID: 1733034285}
+  - {fileID: 806107366}
+  - {fileID: 644236903}
+  - {fileID: 234348292}
+  - {fileID: 1514335635}
   inventory: {fileID: 779844887}
   uiItemPrefab: {fileID: 8235132160585588912, guid: 07d9f4150c5ff884e8b104c068dcba0c,
     type: 3}
@@ -2674,7 +2685,7 @@ MonoBehaviour:
   - {fileID: 234348292}
   - {fileID: 1514335635}
   selectedSlotItem: {fileID: 1120414684}
-  image: {fileID: 0}
+  directionRight: 0
 --- !u!222 &1070572446
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5057,7 +5068,18 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 791852884}
+        m_MethodName: OnItemSearchValueChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnTouchScreenKeyboardStatusChanged:
     m_PersistentCalls:
       m_Calls: []

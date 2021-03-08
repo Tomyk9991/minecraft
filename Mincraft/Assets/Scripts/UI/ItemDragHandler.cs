@@ -67,11 +67,14 @@ namespace Core.UI
                 transform.parent = inventorySlotsParent;
                 SetRaycastBlock(true);
 
-                gameObject.GetComponent<UIItemDataHolder>().Data.QuickbarIndex = -1;
+                var data = gameObject.GetComponent<UIItemDataHolder>().Data;
+                int prevQuickbarIndex = data.QuickbarIndex; 
+                
+                data.QuickbarIndex = -1;
 
-                if (quickbarHitIndex != -1)
+                if (prevQuickbarIndex != -1)
                 {
-                    quickBar[quickbarHitIndex] = null;
+                    quickBar[prevQuickbarIndex] = null;
                     quickbarHitIndex = -1;
                 }
             }
@@ -100,9 +103,20 @@ namespace Core.UI
             else // outside the grid
             {
                 var data = gameObject.GetComponent<UIItemDataHolder>().Data;
+                int prevQuickbarIndex = data.QuickbarIndex;
+                
+                if (prevQuickbarIndex != -1)
+                {
+                    quickBar[prevQuickbarIndex] = null;
+                    quickbarHitIndex = -1;
+                }
+                
                 Destroy(gameObject);
                 inventory.Items.Remove(data);
                 SpawnItem(data);
+                
+                SetRaycastBlock(true);
+                SetRaycastBlock(true, inventorySlotsParent);
             }
         }
         

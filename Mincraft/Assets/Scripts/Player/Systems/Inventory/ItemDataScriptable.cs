@@ -17,5 +17,6 @@ namespace Core.Player.Interaction
     {
         public BlockUV EnumType;
         public Sprite Sprite;
+        public string Name;
     }
 }
