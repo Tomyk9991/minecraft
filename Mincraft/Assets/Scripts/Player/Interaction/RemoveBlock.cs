@@ -52,6 +52,7 @@ namespace Core.Player.Interaction
         private PlaceBlockHelper placer;
         private Timer timer;
         private DroppedItemsManager droppedItemsManager;
+        
 
         private void Start()
         {
@@ -83,6 +84,12 @@ namespace Core.Player.Interaction
                 timer.Reset();
             }
         }
+        
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(hit.point, 0.05f);
+        }
 
         private void DoRaycast()
         {
@@ -95,8 +102,9 @@ namespace Core.Player.Interaction
                     return;
 
                 Chunk currentChunk = holder.Chunk;
+                
 
-                placer.latestGlobalClick = MeshBuilder.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;
+                placer.latestGlobalClick = MathHelper.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;
 
 
                 placer.latestGlobalClickInt.X = (int) placer.latestGlobalClick.x;
@@ -104,7 +112,7 @@ namespace Core.Player.Interaction
                 placer.latestGlobalClickInt.Z = (int) placer.latestGlobalClick.z;
 
                 placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.lp);
-
+                
                 Block removedBlock;
                 if (MathHelper.InChunkSpace(placer.lp))
                 {
@@ -118,7 +126,7 @@ namespace Core.Player.Interaction
 
                     removedBlock = placer.HandleAddBlock(currentChunk, placer.lp);
                 }
-
+                
                 if (droppedItemsManager == null) droppedItemsManager = DroppedItemsManager.Instance;
                 
                 GameObject go = droppedItemsManager.GetNextBlock();

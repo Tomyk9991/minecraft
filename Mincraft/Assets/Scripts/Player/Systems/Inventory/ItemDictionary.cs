@@ -34,8 +34,8 @@ namespace Core.Player.Interaction
 
         public static Sprite GetValue(BlockUV itemId)
         {
-            if (itemId <= 0 || (int) itemId >= Enum.GetNames(typeof(BlockUV)).Length)
-                Debug.LogError("item id kinda strange");
+            if (itemId <= 0 || (int) itemId >= Enum.GetNames(typeof(BlockUV)).Length) 
+                Debug.LogError("item id kinda strange" + itemId);
             
             return spriteDictionary[(int) itemId];
         }

@@ -19,7 +19,7 @@ namespace Core.Saving
             File.WriteAllBytes(chunkPath, Encoding.UTF8.GetBytes(JsonUtility.ToJson(dataToSerialize, false)));
         }
 
-        public override bool Load(FileIdentifier fileIdentifier, out OutputContext chunk)
+        public override bool Load(FileIdentifier fileIdentifier, out OutputContext outputContext)
         {
             Int3 globalPos = ((ChunkFileIdentifier) fileIdentifier).globalPos;
             string chunkPath = Path.Combine(GameManager.CurrentWorldPath, globalPos.ToString());
@@ -39,7 +39,7 @@ namespace Core.Saving
                 {
                     try
                     {
-                        chunk = JsonUtility.FromJson<ChunkData>(json);
+                        outputContext = JsonUtility.FromJson<ChunkData>(json);
                         return true;
                     }
                     catch (Exception)
@@ -49,7 +49,7 @@ namespace Core.Saving
                 }
             }
         
-            chunk = null;
+            outputContext = null;
             return false;
         }
     }

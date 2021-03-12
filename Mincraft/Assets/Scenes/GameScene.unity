@@ -5510,6 +5510,11 @@ PrefabInstance:
       propertyPath: near clip plane
       value: 0.01
       objectReference: {fileID: 0}
+    - target: {fileID: 3399322170821168999, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+        type: 3}
+      propertyPath: m_JumpSpeed
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 3399322171508518115, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: littleBlockPrefab

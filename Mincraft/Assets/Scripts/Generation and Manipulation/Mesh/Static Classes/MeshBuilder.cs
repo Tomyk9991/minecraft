@@ -21,20 +21,8 @@ namespace Core.Builder
         private static int[] tri2 = {0, 1, 2, 2, 1, 3};
         private static int[] tris = {1, 0, 0, 1, 1, 0};
         private static int chunkSize = 0x10;
-
-
-        public static Vector3 CenteredClickPositionOutSide(Vector3 hitPoint, Vector3 hitNormal)
-        {
-            //Hier wird global berechnet.
-            Vector3 blockPos = hitPoint + hitNormal / 2.0f;
-
-            blockPos.x = Mathf.FloorToInt(blockPos.x);
-            blockPos.y = Mathf.FloorToInt(blockPos.y);
-            blockPos.z = Mathf.FloorToInt(blockPos.z);
-
-            return blockPos;
-        }
-
+        
+        
         public static MeshData Combine(Chunk chunk)
         {
             List<Vector3> vertices = new List<Vector3>();

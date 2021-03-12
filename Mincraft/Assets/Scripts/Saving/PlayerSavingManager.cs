@@ -12,14 +12,16 @@ namespace Core.Saving
         public override void Save(SavingContext context)
         {
             ItemData[] items = ((PlayerSavingContext) context).Items;
+            int quickbarIndex = ((PlayerSavingContext) context).SelectedQuickbarIndex;
+            
             string inventoryPath = Path.Combine(GameManager.CurrentWorldPath, "Inventory.json");
 
             ItemData[] itemsToSave = items.Where(i => i != null && i.Amount != 0 && i.ItemID != 0).ToArray();
-            Wrapper<ItemData> data = new Wrapper<ItemData> {items = itemsToSave};
+            Wrapper<ItemData, int> data = new Wrapper<ItemData, int> {items = itemsToSave, additionalData = quickbarIndex };
             File.WriteAllBytes(inventoryPath, Encoding.UTF8.GetBytes(JsonUtility.ToJson(data, true)));
         }
 
-        public override bool Load(FileIdentifier fileIdentifier, out OutputContext items)
+        public override bool Load(FileIdentifier fileIdentifier, out OutputContext outputContext)
         {
             string inventoryPath = Path.Combine(GameManager.CurrentWorldPath, "Inventory.json");
             if (File.Exists(inventoryPath))
@@ -38,11 +40,11 @@ namespace Core.Saving
                 {
                     try
                     {
-                        Wrapper<ItemData> wrapper = JsonUtility.FromJson<Wrapper<ItemData>>(json);
-                        items = wrapper;
+                        Wrapper<ItemData, int> wrapper = JsonUtility.FromJson<Wrapper<ItemData, int>>(json);
+                        outputContext = wrapper;
 
-                        ((Wrapper<ItemData>) items).items = ((Wrapper<ItemData>) items).items.Where(t => t.Amount != 0 && t.ItemID != 0).ToArray();
-
+                        ((Wrapper<ItemData, int>) outputContext).items = ((Wrapper<ItemData, int>) outputContext).items.Where(t => t.Amount != 0 && t.ItemID != 0).ToArray();
+                        ((Wrapper<ItemData, int>) outputContext).additionalData = ((Wrapper<ItemData, int>) outputContext).additionalData;
                         return true;
                     }
                     catch (Exception)
@@ -52,14 +54,15 @@ namespace Core.Saving
                 }
             }
 
-            items = null;
+            outputContext = null;
             return false;
         }
 
         [Serializable]
-        public class Wrapper<T> : OutputContext
+        public class Wrapper<T, K> : OutputContext
         {
             public T[] items;
+            public K additionalData;
         }
     }
 
@@ -71,10 +74,12 @@ namespace Core.Saving
     public class PlayerSavingContext : SavingContext
     {
         public ItemData[] Items { get; set; }
+        public int SelectedQuickbarIndex { get; set; }
 
-        public PlayerSavingContext(ItemData[] items)
+        public PlayerSavingContext(ItemData[] items, int selectedQuickbarIndex)
         {
-            Items = items;
+            this.Items = items;
+            this.SelectedQuickbarIndex = selectedQuickbarIndex;
         }
     }
 }

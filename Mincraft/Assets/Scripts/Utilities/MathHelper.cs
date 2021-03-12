@@ -52,6 +52,18 @@ namespace Core.Math
             => pos.X == -1 || pos.X == 16 ||
                pos.Y == -1 || pos.Y == 16 ||
                pos.Z == -1 || pos.Z == 16;
+        
+        public static Vector3 CenteredClickPositionOutSide(Vector3 hitPoint, Vector3 hitNormal)
+        {
+            //Hier wird global berechnet.
+            Vector3 blockPos = hitPoint + hitNormal / 2.0f;
+
+            blockPos.x = Mathf.FloorToInt(blockPos.x);
+            blockPos.y = Mathf.FloorToInt(blockPos.y);
+            blockPos.z = Mathf.FloorToInt(blockPos.z);
+
+            return blockPos;
+        }
 
         public static Masker8 BorderBlockMasked(in Int3 pos)
         {

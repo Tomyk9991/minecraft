@@ -1,4 +1,5 @@
 ﻿using Core.Builder;
+using Core.Math;
 using Core.UI;
 using UnityEngine;
 
@@ -42,7 +43,7 @@ namespace Core.Player
 
                 rayHit = hitResult.point;
 
-                blockPos = MeshBuilder.CenteredClickPositionOutSide(hitResult.point, hitResult.normal) - hitResult.normal;
+                blockPos = MathHelper.CenteredClickPositionOutSide(hitResult.point, hitResult.normal) - hitResult.normal;
                 transform.position = blockPos + Vector3.one / 2;
             }
             else

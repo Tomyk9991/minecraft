@@ -30,7 +30,6 @@ namespace Utilities
         public Block HandleAddBlock(Chunk currentChunk, Int3 localPos)
         {
             Block removedBlock;
-            if (PlayerMovementTracker.CurrentStandingBlock == latestGlobalClickInt) return Block.Empty();
 
             removedBlock = currentChunk.Blocks[localPos.X, localPos.Y, localPos.Z];
             currentChunk.AddBlockPersistent(currentBlock, localPos);

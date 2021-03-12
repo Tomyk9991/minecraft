@@ -5,10 +5,13 @@ using Core.Chunks;
 using Core.Chunks.Threading;
 using Core.Managers;
 using Core.Math;
+using Core.Player.Systems.Inventory;
 using Core.Saving;
 using Core.UI;
 using UnityEngine;
 using Core.UI.Console;
+using Core.UI.Ingame;
+using Extensions;
 using Utilities;
 
 namespace Core.Player.Interaction
@@ -53,12 +56,13 @@ namespace Core.Player.Interaction
 
         
         private RaycastHit hit;
-
-        private Int3 lp;
-
         private readonly Vector3 centerScreenNormalized = new Vector3(0.5f, 0.5f, 0f);
 
         private PlaceBlockHelper placer;
+        
+        private QuickBarSelectionUI currentSelectionUI;
+        private Inventory inventory;
+
         private Timer timer;
 
         private void Start()
@@ -72,16 +76,25 @@ namespace Core.Player.Interaction
                     ID = blockUV
                 }
             };
+            
+            inventory = Inventory.Instance;
+            currentSelectionUI = QuickBarSelectionUI.Instance;
         }
 
         private void OnValidate()
             => timer.HardReset(timeBetweenRemove);
 
+        private void CalculateQuickbarIndex(int index)
+        {
+            ItemData data = inventory.QuickBar[index];
+            SetBlock(data == null ? BlockUV.Air : (BlockUV) data.ItemID);
+        }
+
         public void SetBlock(BlockUV uv)
         {
             blockUV = uv;
             placer.currentBlock.ID = uv;
-        } 
+        }
 
         private void Update()
         {
@@ -103,13 +116,15 @@ namespace Core.Player.Interaction
 
             if (Physics.Raycast(ray, out hit, RaycastDistance, hitMask))
             {
+                CalculateQuickbarIndex(currentSelectionUI.SelectedIndex);
+                
                 ChunkReferenceHolder holder;
                 if (!hit.transform.TryGetComponent(out holder))
                     return;
 
                 Chunk currentChunk = holder.Chunk;
 
-                placer.latestGlobalClick = MeshBuilder.CenteredClickPositionOutSide(hit.point, hit.normal);
+                placer.latestGlobalClick = MathHelper.CenteredClickPositionOutSide(hit.point, hit.normal);
 
 
                 placer.latestGlobalClickInt.X = (int) placer.latestGlobalClick.x;

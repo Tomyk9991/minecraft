@@ -31,9 +31,9 @@ namespace Core.Player.Systems.Inventory
 
         private void LoadInventory()
         {
-            if (ResourceIO.Load<Inventory>(new InventoryFileIdentifier(), out OutputContext context))
+            if (ResourceIO.LoadCached<Inventory>(new InventoryFileIdentifier(), out OutputContext context))
             {
-                ItemData[] itemData = ((PlayerSavingManager.Wrapper<ItemData>) context).items;
+                ItemData[] itemData = ((PlayerSavingManager.Wrapper<ItemData, int>) context).items;
                 if (itemData != null && itemData.Length != 0)
                 {
                     foreach (var data in itemData)
@@ -94,7 +94,7 @@ namespace Core.Player.Systems.Inventory
         
         private void OnApplicationQuit()
         {
-            ResourceIO.Save<Inventory>(new PlayerSavingContext(Items.ToArray()));
+            ResourceIO.Save<Inventory>(new PlayerSavingContext(Items.ToArray(), QuickBarSelectionUI.Instance.SelectedIndex));
         }
     }
 }
