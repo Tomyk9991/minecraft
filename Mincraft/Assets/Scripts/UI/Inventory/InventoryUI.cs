@@ -122,7 +122,7 @@ namespace Core.UI.Ingame
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Tab))
+            if (!ItemDragHandler.Dragging && Input.GetKeyDown(KeyCode.Tab))
                 SetInventoryWorkability(!showingInventory);
         }
 

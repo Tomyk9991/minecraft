@@ -12,31 +12,40 @@ namespace Core.UI
 {
     public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler
     {
+        public static bool Dragging { get; private set; }
         private static Transform root = null;
 
         private static DroppedItemsManager droppedItemsManager;
         private static PlayerMovementTracker playerMovementTracker;
         private static Inventory inventory = null;
         private static QuickBar quickBar = null;
+        private static SplitManagerUI splitManagerUI = null;
         private int quickbarHitIndex = -1;
 
-
+        private bool leftControlPressed = false;
         private static Transform inventorySlotsParent = null;
-
+        private string latestTransform = "";
+        
         private void Start()
         {
             if (droppedItemsManager == null) droppedItemsManager = DroppedItemsManager.Instance;
             if (playerMovementTracker == null) playerMovementTracker = PlayerMovementTracker.Instance;
             if (inventory == null) inventory = Inventory.Instance;
             if (quickBar == null) quickBar = inventory.QuickBar;
+            if (splitManagerUI == null) splitManagerUI = SplitManagerUI.Instance;
 
             if(root == null) root = GameObject.Find("UI").transform;
             if (inventorySlotsParent == null)
             {
                 inventorySlotsParent = Resources.FindObjectsOfTypeAll<GameObject>()
-                    .FirstOrDefault((GameObject g) => g.name == "Inventory Slots")
+                    .FirstOrDefault(g => g.name == "Inventory Slots")
                     .transform;
             }
+        }
+
+        private void Update()
+        {
+            leftControlPressed = Input.GetKey(KeyCode.LeftControl);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -49,7 +58,9 @@ namespace Core.UI
             ReleaseQuickbarIndexIfDoable(data);
             
             SetRaycastBlock(false);
+            latestTransform = string.Copy(transform.parent.name);
             transform.parent = root;
+            Dragging = true;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -99,14 +110,24 @@ namespace Core.UI
             {
                 var data = gameObject.GetComponent<UIItemDataHolder>().Data;
                 ReleaseQuickbarIndexIfDoable(data);
-                
-                Destroy(gameObject);
-                inventory.Items.Remove(data);
-                SpawnItem(data);
+
+                if (leftControlPressed)
+                {
+                    splitManagerUI.Split(data, transform, GameObject.Find(latestTransform).transform);
+                }
+                else
+                {
+                    Destroy(gameObject);
+                    inventory.Items.Remove(data);
+                    
+                    SpawnItem(data);
+                }
                 
                 SetRaycastBlock(true);
                 SetRaycastBlock(true, inventorySlotsParent);
             }
+
+            Dragging = false;
         }
         
         private void SpawnItem(ItemData data)

@@ -62,9 +62,9 @@ namespace Core.UI.Ingame
             if (scrollDirection != 0)
             {
                 slotIndex += directionRight ? System.Math.Sign(scrollDirection) : -System.Math.Sign(scrollDirection);
-                slotIndex %= slots.Length;
+                slotIndex %= 10;
 
-                slotIndex = slotIndex < 0 ? slots.Length - 1 : slotIndex;
+                slotIndex = slotIndex < 0 ? 9 : slotIndex;
                 SetSelectedSlotPosition(slotIndex);
             }
         }

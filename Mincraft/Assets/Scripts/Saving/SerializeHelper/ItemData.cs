@@ -19,6 +19,15 @@ namespace Core.Saving
             this.CurrentGameObject = go;
         }
 
+        public ItemData(ItemData itemToCopy)
+        {
+            this.ItemID = itemToCopy.ItemID;
+            this.QuickbarIndex = itemToCopy.QuickbarIndex;
+            this.Amount = itemToCopy.Amount;
+            this.CurrentGameObject = itemToCopy.CurrentGameObject;
+        }
+        
+
         public static ItemData Empty => new ItemData(0, 0, 0, null);
     }
 }

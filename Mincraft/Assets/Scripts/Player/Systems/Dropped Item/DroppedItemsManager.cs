@@ -127,17 +127,14 @@ namespace Core.Player.Interaction
                 ? $"Spawning {amount} {(BlockUV) itemID}block"
                 : $"Spawning {amount} {(BlockUV) itemID}blocks");
             
-            for (int i = 0; i < amount; i++)
-            {
-                GameObject go = GetNextBlock();
-                    
-                go.transform.position = playerPosition.position + playerPosition.forward;
-                go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) itemID), amount);
-                go.GetComponent<Rigidbody>().AddForce(playerPosition.forward, ForceMode.Impulse);
+            GameObject go = GetNextBlock();
                 
-                AddNewItem(go);
-                AddBoxColliderHandle(go.transform.GetChild(0).GetComponent<BoxCollider>());
-            }
+            go.transform.position = playerPosition.position + playerPosition.forward;
+            go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) itemID), amount);
+            go.GetComponent<Rigidbody>().AddForce(playerPosition.forward, ForceMode.Impulse);
+            
+            AddNewItem(go);
+            AddBoxColliderHandle(go.transform.GetChild(0).GetComponent<BoxCollider>());
         }
     }
 }
