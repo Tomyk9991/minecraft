@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.Math;
+using Core.Saving;
 using Core.UI.Console;
 using Extensions;
 using UnityEngine;
@@ -8,6 +9,10 @@ namespace Core.Player
 {
     public class PlayerMovementTracker : SingletonBehaviour<PlayerMovementTracker>
     {
+        [Header("References")] 
+        [SerializeField] private Transform cameraTransform = null;
+
+        [Space]
         [SerializeField] private float DistanceThreshold = 16.0f;
         public static event Action<Direction> OnDirectionModified;
 
@@ -24,8 +29,17 @@ namespace Core.Player
 
         private void Start()
         {
-            UpdateLatestPlayerPosition();
+            if (ResourceIO.LoadCached<PlayerMovementTracker>(new PlayerFileIdentifier(), out OutputContext context))
+            {
+                var ctx = (PlayerIOContext) context;
+                
+                this.transform.position = ctx.PlayerPosition;
+                this.transform.rotation = ctx.playerRotation;
+                this.cameraTransform.localRotation = ctx.cameraRotation;
+            }
             
+            UpdateLatestPlayerPosition();
+
             xPlayerPos = latestPlayerPosition.X;
             zPlayerPos = latestPlayerPosition.Z;
 
@@ -84,6 +98,13 @@ namespace Core.Player
             UpdateLatestPlayerPosition();
             transform.position += new Vector3(x, y, z);
             OnDirectionModified?.Invoke(Direction.Teleported);
+        }
+
+        public void OnApplicationQuit()
+        {
+            bool usedGravity = FirstPersonController.Instance.useGravity;
+            var ctx = new PlayerIOContext(transform.position, transform.rotation, cameraTransform.localRotation, usedGravity);
+            ResourceIO.Save<PlayerMovementTracker>(ctx);
         }
     }
 

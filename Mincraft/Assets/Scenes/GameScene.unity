@@ -4919,6 +4919,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1830649928}
   m_CullTransparentMesh: 0
+--- !u!4 &1835283495 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3399322170810967717, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
+    type: 3}
+  m_PrefabInstance: {fileID: 3399322171762488873}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1852468040
 GameObject:
   m_ObjectHideFlags: 0
@@ -6803,6 +6809,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 757827644}
     m_Modifications:
+    - target: {fileID: 961055919, guid: 7ada145dfe0b44a4e8985c27da1d88fb, type: 3}
+      propertyPath: cameraTransform
+      value: 
+      objectReference: {fileID: 1835283495}
     - target: {fileID: 2039295200666249447, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: inventoryUI

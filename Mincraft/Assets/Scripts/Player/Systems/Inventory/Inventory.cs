@@ -33,7 +33,7 @@ namespace Core.Player.Systems.Inventory
         {
             if (ResourceIO.LoadCached<Inventory>(new InventoryFileIdentifier(), out OutputContext context))
             {
-                ItemData[] itemData = ((PlayerSavingManager.Wrapper<ItemData, int>) context).items;
+                ItemData[] itemData = ((InventorySavingManager.InventoryLoadingContext<ItemData, int>) context).items;
                 if (itemData != null && itemData.Length != 0)
                 {
                     foreach (var data in itemData)
@@ -94,7 +94,7 @@ namespace Core.Player.Systems.Inventory
         
         private void OnApplicationQuit()
         {
-            ResourceIO.Save<Inventory>(new PlayerSavingContext(Items.ToArray(), QuickBarSelectionUI.Instance.SelectedIndex));
+            ResourceIO.Save<Inventory>(new InventorySavingContext(Items.ToArray(), QuickBarSelectionUI.Instance.SelectedIndex));
         }
     }
 }

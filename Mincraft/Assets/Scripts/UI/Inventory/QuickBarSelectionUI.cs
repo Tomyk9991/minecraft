@@ -32,7 +32,7 @@ namespace Core.UI.Ingame
         {
             if (ResourceIO.LoadCached<Inventory>(new InventoryFileIdentifier(), out OutputContext context))
             {
-                int selectedIndex = ((PlayerSavingManager.Wrapper<ItemData, int>) context).additionalData;
+                int selectedIndex = ((InventorySavingManager.InventoryLoadingContext<ItemData, int>) context).additionalData;
                 
                 this.slotIndex = selectedIndex;
                 SetSelectedSlotPosition(this.slotIndex);

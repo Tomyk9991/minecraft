@@ -1,3 +1,7 @@
+using System;
+using System.Collections;
+using Core.Player;
+using Core.Saving;
 using Core.UI;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -5,11 +9,12 @@ using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 
 using Core.UI.Console;
+using Extensions;
 using Utilities;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(AudioSource))]
-public class FirstPersonController : MonoBehaviour, IConsoleToggle, IFullScreenUIToggle
+public class FirstPersonController : SingletonBehaviour<FirstPersonController>, IConsoleToggle, IFullScreenUIToggle
 {
     [Header("General information")]
     [SerializeField] private bool m_IsWalking;
@@ -54,7 +59,7 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle, IFullScreenU
     private float m_NextStep;
     private bool m_Jumping;
     private AudioSource m_AudioSource;
-    private bool useGravity = false;
+    [HideInInspector] public bool useGravity = false;
     private Vector3 _desiredMove;
     private RaycastHit _hitInfo;
 
@@ -69,6 +74,13 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle, IFullScreenU
     // Use this for initialization
     private void Start()
     {
+        if (ResourceIO.LoadCached<PlayerMovementTracker>(new PlayerFileIdentifier(), out OutputContext context))
+        {
+            var ctx = (PlayerIOContext) context;
+
+            StartCoroutine(__enableGrav(ctx.UseGravity));
+        }
+        
         m_CharacterController = GetComponent<CharacterController>();
         m_Camera = Camera.main;
         m_OriginalCameraPosition = m_Camera.transform.localPosition;
@@ -81,6 +93,14 @@ public class FirstPersonController : MonoBehaviour, IConsoleToggle, IFullScreenU
         m_MouseLook.Init(transform, m_Camera.transform);
         
         doubleKeypressChecker = new DoubleKeypressChecker(KeyCode.Space);
+    }
+
+    private IEnumerator __enableGrav(bool useGrav)
+    {
+        yield return new WaitForSeconds(1.0f);
+        this.useGravity = useGrav;
+        m_MoveDir.y = 0;
+        m_GravityMultiplier = useGravity ? 3 : 0;
     }
 
 

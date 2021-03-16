@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Core.Chunks;
+using Core.Player;
 using Core.Player.Systems.Inventory;
 using UnityEngine;
 
@@ -16,13 +17,15 @@ namespace Core.Saving
             savingManagers = new Dictionary<Type, SavingManager>
             {
                 {typeof(Chunk), new ChunkSavingManager()},
-                {typeof(Inventory), new PlayerSavingManager()}
+                {typeof(Inventory), new InventorySavingManager()},
+                {typeof(PlayerMovementTracker), new PlayerSavingManager()}
             };
             
             cache = new Dictionary<Type, OutputContext>
             {
                 { typeof(Chunk), null },
-                { typeof(Inventory), null }
+                { typeof(Inventory), null },
+                { typeof(PlayerMovementTracker), null}
             };
         }
         

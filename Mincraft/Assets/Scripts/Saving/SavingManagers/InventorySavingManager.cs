@@ -7,17 +7,17 @@ using UnityEngine;
 
 namespace Core.Saving
 {
-    public class PlayerSavingManager : SavingManager
+    public class InventorySavingManager : SavingManager
     {
         public override void Save(SavingContext context)
         {
-            ItemData[] items = ((PlayerSavingContext) context).Items;
-            int quickbarIndex = ((PlayerSavingContext) context).SelectedQuickbarIndex;
+            ItemData[] items = ((InventorySavingContext) context).Items;
+            int quickbarIndex = ((InventorySavingContext) context).SelectedQuickbarIndex;
             
             string inventoryPath = Path.Combine(GameManager.CurrentWorldPath, "Inventory.json");
 
             ItemData[] itemsToSave = items.Where(i => i != null && i.Amount != 0 && i.ItemID != 0).ToArray();
-            Wrapper<ItemData, int> data = new Wrapper<ItemData, int> {items = itemsToSave, additionalData = quickbarIndex };
+            InventoryLoadingContext<ItemData, int> data = new InventoryLoadingContext<ItemData, int> {items = itemsToSave, additionalData = quickbarIndex };
             File.WriteAllBytes(inventoryPath, Encoding.UTF8.GetBytes(JsonUtility.ToJson(data, true)));
         }
 
@@ -40,11 +40,11 @@ namespace Core.Saving
                 {
                     try
                     {
-                        Wrapper<ItemData, int> wrapper = JsonUtility.FromJson<Wrapper<ItemData, int>>(json);
-                        outputContext = wrapper;
+                        InventoryLoadingContext<ItemData, int> inventoryLoadingContext = JsonUtility.FromJson<InventoryLoadingContext<ItemData, int>>(json);
+                        outputContext = inventoryLoadingContext;
 
-                        ((Wrapper<ItemData, int>) outputContext).items = ((Wrapper<ItemData, int>) outputContext).items.Where(t => t.Amount != 0 && t.ItemID != 0).ToArray();
-                        ((Wrapper<ItemData, int>) outputContext).additionalData = ((Wrapper<ItemData, int>) outputContext).additionalData;
+                        ((InventoryLoadingContext<ItemData, int>) outputContext).items = ((InventoryLoadingContext<ItemData, int>) outputContext).items.Where(t => t.Amount != 0 && t.ItemID != 0).ToArray();
+                        ((InventoryLoadingContext<ItemData, int>) outputContext).additionalData = ((InventoryLoadingContext<ItemData, int>) outputContext).additionalData;
                         return true;
                     }
                     catch (Exception)
@@ -59,7 +59,7 @@ namespace Core.Saving
         }
 
         [Serializable]
-        public class Wrapper<T, K> : OutputContext
+        public class InventoryLoadingContext<T, K> : OutputContext
         {
             public T[] items;
             public K additionalData;
@@ -71,12 +71,12 @@ namespace Core.Saving
         
     }
     
-    public class PlayerSavingContext : SavingContext
+    public class InventorySavingContext : SavingContext
     {
         public ItemData[] Items { get; set; }
         public int SelectedQuickbarIndex { get; set; }
 
-        public PlayerSavingContext(ItemData[] items, int selectedQuickbarIndex)
+        public InventorySavingContext(ItemData[] items, int selectedQuickbarIndex)
         {
             this.Items = items;
             this.SelectedQuickbarIndex = selectedQuickbarIndex;
