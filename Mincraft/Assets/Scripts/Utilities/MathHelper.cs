@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.Remoting.Messaging;
-using System.Security;
+﻿using Core.Builder;
 using UnityEngine;
 using Utilities;
 
@@ -93,5 +91,23 @@ namespace Core.Math
             => pos.X == 0 || pos.X == 15 ||
                pos.Y == 0 || pos.Y == 15 ||
                pos.Z == 0 || pos.Z == 15;
+
+        public static BlockDirection BlockDirectionFromSignedAngle(float angle)
+        {
+            BlockDirection d = BlockDirection.Forward;
+
+            if (angle >= -45.0f && angle < 45.0f)
+                return BlockDirection.Back;
+            if (angle >= -135.0f && angle < -45.0f)
+                return BlockDirection.Left;
+            if (angle >= -180.0f && angle < -135.0f)
+                return BlockDirection.Forward;
+            if (angle >= 135.0f && angle <= 180.0f)
+                return BlockDirection.Forward;
+            if (angle >= 45.0f && angle < 135.0f)
+                return BlockDirection.Right;
+
+            return d;
+        }
     }
 }

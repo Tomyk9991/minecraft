@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 using Core.Math;
+using Random = System.Random;
 
 namespace Extensions
 {
@@ -10,6 +13,13 @@ namespace Extensions
     {
         public static Int3 ToInt3(this Vector3 pos)
             => Int3.ToInt3(pos);
+
+        public static T[] Shuffle<T>(this T[] arr)
+        {
+            Random random = new Random();
+
+            return arr.OrderBy(x => random.Next()).ToArray();
+        }
         
         public static void Clear<T>(this ConcurrentQueue<T> queue)
         {

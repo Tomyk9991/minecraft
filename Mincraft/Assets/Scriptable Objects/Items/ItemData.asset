@@ -43,3 +43,6 @@ MonoBehaviour:
   - EnumType: 9
     Sprite: {fileID: 21300000, guid: 0d1f8679ac5c5964c8ba3bbf871fc06f, type: 3}
     Name: Cactus
+  - EnumType: 10
+    Sprite: {fileID: 21300000, guid: ccc25bc52fbff9c48861d5988de7c8c8, type: 3}
+    Name: Furnace

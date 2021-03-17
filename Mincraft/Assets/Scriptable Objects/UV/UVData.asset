@@ -363,3 +363,38 @@ MonoBehaviour:
     transparencyLevel: 100
     isSolid: 1
     isTransparent: 1
+  - EnumType: 10
+    Forward:
+      TileX: 1
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Back:
+      TileX: 3
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Up:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Down:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Left:
+      TileX: 1
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Right:
+      TileX: 1
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Meshoffset: 0
+    transparencyLevel: 0
+    isSolid: 1
+    isTransparent: 0

@@ -84,12 +84,6 @@ namespace Core.Player.Interaction
                 timer.Reset();
             }
         }
-        
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(hit.point, 0.05f);
-        }
 
         private void DoRaycast()
         {

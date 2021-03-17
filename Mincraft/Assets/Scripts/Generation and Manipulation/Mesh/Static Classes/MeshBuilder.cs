@@ -2,6 +2,7 @@
 using System.Linq;
 using Core.Chunks;
 using Core.Math;
+using Extensions;
 using UnityEngine;
 
 namespace Core.Builder
@@ -76,7 +77,16 @@ namespace Core.Builder
 
                         if (boolNeighbours.Any(state => state == false))
                         {
+                            //Give the UVData in the right Order back
                             UVData[] currentUVData = UVDictionary.GetValue(block.ID);
+
+                            if (block.ID == BlockUV.Furnace)
+                            {
+                                // currentUVData = 
+                                // currentUVData = currentUVData.Shuffle();
+                                //
+                            }
+                            
                             float meshOffset = UVDictionary.MeshOffsetID(block.ID);
 
                             for (int faceIndex = 0; faceIndex < 6; faceIndex++)

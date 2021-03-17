@@ -1,17 +1,12 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using Core.Builder;
+﻿using Core.Builder;
 using Core.Chunks;
-using Core.Chunks.Threading;
 using Core.Managers;
 using Core.Math;
 using Core.Player.Systems.Inventory;
 using Core.Saving;
 using Core.UI;
 using UnityEngine;
-using Core.UI.Console;
 using Core.UI.Ingame;
-using Extensions;
 using Utilities;
 
 namespace Core.Player.Interaction
@@ -113,7 +108,7 @@ namespace Core.Player.Interaction
         private void DoRaycast()
         {
             Ray ray = cameraRef.ViewportPointToRay(centerScreenNormalized);
-
+            
             if (Physics.Raycast(ray, out hit, RaycastDistance, hitMask))
             {
                 CalculateQuickbarIndex(currentSelectionUI.SelectedIndex);
@@ -121,6 +116,15 @@ namespace Core.Player.Interaction
                 ChunkReferenceHolder holder;
                 if (!hit.transform.TryGetComponent(out holder))
                     return;
+
+                
+                Vector3 delta = new Vector3(hit.point.x - ray.origin.x, 0.0f, hit.point.z - ray.origin.z);
+                Vector3 tempRelForward = new Vector3(transform.forward.x, 0.0f, transform.forward.z);
+                
+                BlockDirection blockDirection = MathHelper.BlockDirectionFromSignedAngle(Vector3.SignedAngle(delta, Vector3.forward, Vector3.up));
+
+                placer.currentBlock.Direction = blockDirection;
+
 
                 Chunk currentChunk = holder.Chunk;
 

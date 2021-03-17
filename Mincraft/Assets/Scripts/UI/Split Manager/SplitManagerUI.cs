@@ -26,8 +26,6 @@ namespace Core.UI.Ingame
         [Header("Split references")] 
         [SerializeField] private TMP_Text itemName = null;
         [SerializeField] private TMP_Text splitRatio = null;
-        [SerializeField] private Button acceptButton = null;
-        [SerializeField] private Button closeButton = null;
         [SerializeField] private Slider slider = null;
         
         private IFullScreenUIToggle[] disableOnInventoryAppear = null;
@@ -54,9 +52,9 @@ namespace Core.UI.Ingame
         {
             int splitAmount = (int) slider.value;
 
-            if (splitAmount == data.Amount) // All items got selected, remove em all
+            if (splitAmount == data.Amount) // All items got selected, remove them all
             {
-                Destroy(targetObject.transform);
+                Destroy(targetObject.gameObject);
                 inventory.Items.Remove(data);
             }
             else
@@ -100,6 +98,7 @@ namespace Core.UI.Ingame
             
             slider.minValue = 1;
             slider.maxValue = data.Amount;
+            slider.value = 1.0f;
             
             splitRatio.SetText((int) slider.value + " / " + data.Amount);
         }

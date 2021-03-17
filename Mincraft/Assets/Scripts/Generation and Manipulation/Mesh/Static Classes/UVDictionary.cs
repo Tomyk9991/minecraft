@@ -19,7 +19,7 @@ namespace Core.Builder
             new UVData(7f / 16f, 1f / 16f, 1f / 16f, 1f / 16f),
         };
 
-        private static Array2D<UVData[]> dictionary;
+        private static Array2D<UVData[]> uvDataInformation;
         
         private static bool[] isSolidInformation;
         private static bool[] isTransparentInformation;
@@ -29,7 +29,7 @@ namespace Core.Builder
         private void Awake()
         {
             var data = scriptable.blockInformation;
-            dictionary = new Array2D<UVData[]>(data.Count);
+            uvDataInformation = new Array2D<UVData[]>(data.Count);
             isSolidInformation = new bool[data.Count];
             isTransparentInformation = new bool[data.Count];
             meshOffsetInformation = new float[data.Count];
@@ -37,7 +37,7 @@ namespace Core.Builder
 
             for (int i = 0; i < data.Count; i++)
             {
-                dictionary[(int)data[i].EnumType] = new []
+                uvDataInformation[(int)data[i].EnumType] = new []
                 {
                     new UVData(data[i].Forward.TileX / 16f, data[i].Forward.TileY / 16f, data[i].Forward.SizeX / 16f, data[i].Forward.SizeY / 16f),
                     new UVData(data[i].Back.TileX / 16f, data[i].Back.TileY / 16f, data[i].Back.SizeX / 16f, data[i].Back.SizeY / 16f),
@@ -64,15 +64,15 @@ namespace Core.Builder
 
         public static void Clear()
         {
-            dictionary = null;
+            uvDataInformation = null;
         }
 
         public static UVData[] GetValue(in BlockUV id)
         {
-            if (id < 0 || (int) id > dictionary.Length - 1)
+            if (id < 0 || (int) id > uvDataInformation.Length - 1)
                 return notFoundData;
 
-            return dictionary[(int) id];
+            return uvDataInformation[(int) id];
         }
 
         public static float MeshOffsetID(in BlockUV id)
