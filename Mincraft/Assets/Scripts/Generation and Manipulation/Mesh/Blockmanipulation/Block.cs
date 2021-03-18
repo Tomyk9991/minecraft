@@ -34,7 +34,7 @@ namespace Core.Builder
     {
         Forward = 0,
         Back = 1,
-        Left = 2,
-        Right = 4
+        Left = 4,
+        Right = 5
     }
 }

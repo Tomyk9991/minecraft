@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Core.Chunks;
 using Core.Math;
 using Extensions;
@@ -22,8 +24,8 @@ namespace Core.Builder
         private static int[] tri2 = {0, 1, 2, 2, 1, 3};
         private static int[] tris = {1, 0, 0, 1, 1, 0};
         private static int chunkSize = 0x10;
-        
-        
+
+
         public static MeshData Combine(Chunk chunk)
         {
             List<Vector3> vertices = new List<Vector3>();
@@ -77,16 +79,8 @@ namespace Core.Builder
 
                         if (boolNeighbours.Any(state => state == false))
                         {
-                            //Give the UVData in the right Order back
                             UVData[] currentUVData = UVDictionary.GetValue(block.ID);
 
-                            if (block.ID == BlockUV.Furnace)
-                            {
-                                // currentUVData = 
-                                // currentUVData = currentUVData.Shuffle();
-                                //
-                            }
-                            
                             float meshOffset = UVDictionary.MeshOffsetID(block.ID);
 
                             for (int faceIndex = 0; faceIndex < 6; faceIndex++)
@@ -166,7 +160,11 @@ namespace Core.Builder
                                     }
 
                                     //UVS
-                                    UVData uvdata = currentUVData[faceIndex];
+                                    int orientedFaceIndex = block.Direction == BlockDirection.Forward
+                                        ? faceIndex
+                                        : CalculateOrientedFaceIndex(faceIndex, block.Direction);
+                                    
+                                    UVData uvdata = currentUVData[orientedFaceIndex];
                                     uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
                                     uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
                                     uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
@@ -181,15 +179,40 @@ namespace Core.Builder
             return new MeshData(vertices, triangles, transparentTriangles, uvs, chunk.CurrentGO);
         }
 
+        private static int[] forwardMasks = {0, 0, 0, 0, 1, 0};
+        private static int[] backMasks = {0, 0, 0, 0, 1, 1};
+        private static int[] sideWaysMasks = {0, 0, 0, 0, 0, 0};
+
+        private static int CalculateOrientedFaceIndex(int actualDirection, BlockDirection direction)
+        {
+            if (actualDirection == (int) direction)
+                return 0;
+
+            if (direction == BlockDirection.Forward)
+                return actualDirection;
+
+            switch (actualDirection)
+            {
+                case 0: //Forward
+                    return (int) direction ^ actualDirection ^ forwardMasks[(int) direction];
+                case 1: // Back
+                    return (int) direction ^ actualDirection ^ backMasks[(int) direction];
+                case 4: // Left
+                    return (int) direction ^ actualDirection ^ sideWaysMasks[(int) direction];
+                case 5: // Right
+                    return (int) direction ^ actualDirection ^ sideWaysMasks[(int) direction];
+            }
+
+            return actualDirection;
+        }
+
         public static MeshData CombineBlock(Block block)
         {
             List<Vector3> vertices = new List<Vector3>();
-            
+
             List<int> triangles = new List<int>();
             List<int> transparentTriangles = new List<int>();
-            
             List<Vector2> uvs = new List<Vector2>();
-            
             List<Vector3> normals = new List<Vector3>();
 
 
@@ -218,7 +241,7 @@ namespace Core.Builder
                         vertices.Add(dir + off1 + blockPos - meshOffsetForwardBack);
                         vertices.Add(dir + off2 + blockPos - meshOffsetForwardBack);
                         vertices.Add(dir + off1 + off2 + blockPos - meshOffsetForwardBack);
-                        
+
                         normals.Add(Vector3.forward);
                         normals.Add(Vector3.forward);
                         normals.Add(Vector3.forward);
@@ -229,7 +252,7 @@ namespace Core.Builder
                         vertices.Add(dir + off1 + blockPos + meshOffsetForwardBack);
                         vertices.Add(dir + off2 + blockPos + meshOffsetForwardBack);
                         vertices.Add(dir + off1 + off2 + blockPos + meshOffsetForwardBack);
-                        
+
                         normals.Add(Vector3.back);
                         normals.Add(Vector3.back);
                         normals.Add(Vector3.back);
@@ -240,7 +263,7 @@ namespace Core.Builder
                         vertices.Add(dir + off1 + blockPos);
                         vertices.Add(dir + off2 + blockPos);
                         vertices.Add(dir + off1 + off2 + blockPos);
-                        
+
                         normals.Add(Vector3.up);
                         normals.Add(Vector3.up);
                         normals.Add(Vector3.up);
@@ -251,7 +274,7 @@ namespace Core.Builder
                         vertices.Add(dir + off1 + blockPos);
                         vertices.Add(dir + off2 + blockPos);
                         vertices.Add(dir + off1 + off2 + blockPos);
-                        
+
                         normals.Add(Vector3.down);
                         normals.Add(Vector3.down);
                         normals.Add(Vector3.down);
@@ -262,7 +285,7 @@ namespace Core.Builder
                         vertices.Add(dir + off1 + blockPos + meshOffsetLeftRight);
                         vertices.Add(dir + off2 + blockPos + meshOffsetLeftRight);
                         vertices.Add(dir + off1 + off2 + blockPos + meshOffsetLeftRight);
-                        
+
                         normals.Add(Vector3.left);
                         normals.Add(Vector3.left);
                         normals.Add(Vector3.left);
@@ -273,7 +296,7 @@ namespace Core.Builder
                         vertices.Add(dir + off1 + blockPos - meshOffsetLeftRight);
                         vertices.Add(dir + off2 + blockPos - meshOffsetLeftRight);
                         vertices.Add(dir + off1 + off2 + blockPos - meshOffsetLeftRight);
-                        
+
                         normals.Add(Vector3.right);
                         normals.Add(Vector3.right);
                         normals.Add(Vector3.right);

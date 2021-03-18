@@ -365,12 +365,12 @@ MonoBehaviour:
     isTransparent: 1
   - EnumType: 10
     Forward:
-      TileX: 1
+      TileX: 3
       TileY: 14
       SizeX: 1
       SizeY: 1
     Back:
-      TileX: 3
+      TileX: 1
       TileY: 14
       SizeX: 1
       SizeY: 1

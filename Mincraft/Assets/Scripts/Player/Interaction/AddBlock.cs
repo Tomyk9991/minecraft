@@ -122,10 +122,8 @@ namespace Core.Player.Interaction
                 Vector3 tempRelForward = new Vector3(transform.forward.x, 0.0f, transform.forward.z);
                 
                 BlockDirection blockDirection = MathHelper.BlockDirectionFromSignedAngle(Vector3.SignedAngle(delta, Vector3.forward, Vector3.up));
-
                 placer.currentBlock.Direction = blockDirection;
-
-
+                
                 Chunk currentChunk = holder.Chunk;
 
                 placer.latestGlobalClick = MathHelper.CenteredClickPositionOutSide(hit.point, hit.normal);
