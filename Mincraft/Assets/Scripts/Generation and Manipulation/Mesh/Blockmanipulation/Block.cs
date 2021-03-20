@@ -24,6 +24,9 @@ namespace Core.Builder
 
         public bool IsTransparent() => UVDictionary.IsTransparentID(this.ID);
         public bool IsSolid() => UVDictionary.IsSolidID(this.ID);
+        public bool CanFaceInDifferentDirections() => UVDictionary.CanFaceInDifferentDirections(this.ID);
+        public bool Is3DSprite() => UVDictionary.Is3DSprite(this.ID);
+        
         public float MeshOffset() => UVDictionary.MeshOffsetID(this.ID);
         public float TransparencyLevel() => UVDictionary.TransparencyLevelID(this.ID);
 

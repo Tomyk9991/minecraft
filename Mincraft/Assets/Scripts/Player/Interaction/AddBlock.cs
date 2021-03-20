@@ -117,12 +117,13 @@ namespace Core.Player.Interaction
                 if (!hit.transform.TryGetComponent(out holder))
                     return;
 
-                
-                Vector3 delta = new Vector3(hit.point.x - ray.origin.x, 0.0f, hit.point.z - ray.origin.z);
-                Vector3 tempRelForward = new Vector3(transform.forward.x, 0.0f, transform.forward.z);
-                
-                BlockDirection blockDirection = MathHelper.BlockDirectionFromSignedAngle(Vector3.SignedAngle(delta, Vector3.forward, Vector3.up));
-                placer.currentBlock.Direction = blockDirection;
+
+                if (placer.currentBlock.CanFaceInDifferentDirections())
+                {
+                    Vector3 delta = new Vector3(hit.point.x - ray.origin.x, 0.0f, hit.point.z - ray.origin.z);
+                    BlockDirection blockDirection = MathHelper.BlockDirectionFromSignedAngle(Vector3.SignedAngle(delta, Vector3.forward, Vector3.up));
+                    placer.currentBlock.Direction = blockDirection;
+                }
                 
                 Chunk currentChunk = holder.Chunk;
 

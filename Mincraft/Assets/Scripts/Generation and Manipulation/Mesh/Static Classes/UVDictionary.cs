@@ -23,6 +23,8 @@ namespace Core.Builder
         
         private static bool[] isSolidInformation;
         private static bool[] isTransparentInformation;
+        private static bool[] canFaceDifferentDirectionsInformation;
+        private static bool[] is3DSprite;
         private static float[] meshOffsetInformation;
         private static float[] transparancyLevel;
 
@@ -30,8 +32,12 @@ namespace Core.Builder
         {
             var data = scriptable.blockInformation;
             uvDataInformation = new Array2D<UVData[]>(data.Count);
+            
             isSolidInformation = new bool[data.Count];
             isTransparentInformation = new bool[data.Count];
+            canFaceDifferentDirectionsInformation = new bool[data.Count];
+            is3DSprite = new bool[data.Count];
+            
             meshOffsetInformation = new float[data.Count];
             transparancyLevel = new float[data.Count];
 
@@ -48,8 +54,11 @@ namespace Core.Builder
                     new UVData(data[i].Right.TileX / 16f, data[i].Right.TileY / 16f, data[i].Right.SizeX / 16f, data[i].Right.SizeY / 16f),
                 };
 
+                canFaceDifferentDirectionsInformation[(int) data[i].EnumType] = data[i].CanFaceDifferentDirections;
                 isSolidInformation[(int) data[i].EnumType] = data[i].isSolid;
                 isTransparentInformation[(int) data[i].EnumType] = data[i].isTransparent;
+                is3DSprite[(int) data[i].EnumType] = data[i].Is3DSprite;
+                
                 meshOffsetInformation[(int)data[i].EnumType] = data[i].Meshoffset;
                 transparancyLevel[(int)data[i].EnumType] = data[i].transparencyLevel;
             }
@@ -65,6 +74,28 @@ namespace Core.Builder
         public static void Clear()
         {
             uvDataInformation = null;
+        }
+
+        public static bool Is3DSprite(in BlockUV id)
+        {
+            if (id < 0 || (int) id > is3DSprite.Length - 1)
+            {
+                Debug.LogWarning("Rotation information not found");
+                return false;
+            }
+
+            return is3DSprite[(int) id];
+        }
+
+        public static bool CanFaceInDifferentDirections(in BlockUV id)
+        {
+            if (id < 0 || (int) id > canFaceDifferentDirectionsInformation.Length - 1)
+            {
+                Debug.LogWarning("Rotation information not found");
+                return false;
+            }
+
+            return canFaceDifferentDirectionsInformation[(int) id];
         }
 
         public static UVData[] GetValue(in BlockUV id)
@@ -115,5 +146,7 @@ namespace Core.Builder
 
         public bool isSolid; // Bestimmt, ob es für den Collider relevant ist
         public bool isTransparent; // Bestimmt, ob es eine Transparent durch den Block gibt
+        public bool CanFaceDifferentDirections; //Bestimmt  ob Objekt drehbar ist oder nicht (Ofen)
+        public bool Is3DSprite;
     }
 }

@@ -43,5 +43,11 @@ namespace Core.Builder.Generation
         public BlockUV treeLeafBlock;
         [Range(0f, 1f)] public float treeProbability = 0.11f;
         public float treeZoomLevel = 1.08f;
+
+        [Header("Vegetation layer")] 
+        public BlockUV vegetationBlock;
+        public BlockUV[] accentBlocks;
+        [Range(0f, 1f)] public float vegetationProbability = 0.11f;
+        public float vegetationZoomLevel = 1.08f;
     }
 }

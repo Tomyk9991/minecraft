@@ -11,6 +11,10 @@ namespace Core.Builder
 {
     public static class MeshBuilder
     {
+        private static int[] forwardMasks = {0, 0, 0, 0, 1, 0};
+        private static int[] backMasks = {0, 0, 0, 0, 1, 1};
+        private static int[] sideWaysMasks = {0, 0, 0, 0, 0, 0};
+
         private static Vector3[] directions =
             {Vector3.forward, Vector3.zero, Vector3.up, Vector3.zero, Vector3.zero, Vector3.right};
 
@@ -80,96 +84,193 @@ namespace Core.Builder
                         if (boolNeighbours.Any(state => state == false))
                         {
                             UVData[] currentUVData = UVDictionary.GetValue(block.ID);
-
                             float meshOffset = UVDictionary.MeshOffsetID(block.ID);
-
-                            for (int faceIndex = 0; faceIndex < 6; faceIndex++)
+                            bool isBlock = !UVDictionary.Is3DSprite(block.ID);
+                            
+                            if (isBlock)
                             {
-                                if (boolNeighbours[faceIndex] == false)
+                                for (int faceIndex = 0; faceIndex < 6; faceIndex++)
                                 {
-                                    int vc = vertices.Count;
-
-                                    //Vertices
-
-                                    #region Meshoffsets
-
-                                    Vector3 dir = directions[faceIndex];
-                                    Vector3 off1 = offset1[faceIndex];
-                                    Vector3 off2 = offset2[faceIndex];
-
-                                    Vector3 meshOffsetForwardBack = new Vector3(0f, 0f, meshOffset);
-                                    Vector3 meshOffsetLeftRight = new Vector3(meshOffset, 0f, 0f);
-
-                                    switch (faceIndex)
+                                    if (boolNeighbours[faceIndex] == false)
                                     {
-                                        case 0: //Forward
-                                            vertices.Add(dir + blockPos - meshOffsetForwardBack);
-                                            vertices.Add(dir + off1 + blockPos - meshOffsetForwardBack);
-                                            vertices.Add(dir + off2 + blockPos - meshOffsetForwardBack);
-                                            vertices.Add(dir + off1 + off2 + blockPos - meshOffsetForwardBack);
-                                            break;
-                                        case 1: //Back
-                                            vertices.Add(dir + blockPos + meshOffsetForwardBack);
-                                            vertices.Add(dir + off1 + blockPos + meshOffsetForwardBack);
-                                            vertices.Add(dir + off2 + blockPos + meshOffsetForwardBack);
-                                            vertices.Add(dir + off1 + off2 + blockPos + meshOffsetForwardBack);
-                                            break;
-                                        case 2: //Up
-                                            vertices.Add(dir + blockPos);
-                                            vertices.Add(dir + off1 + blockPos);
-                                            vertices.Add(dir + off2 + blockPos);
-                                            vertices.Add(dir + off1 + off2 + blockPos);
-                                            break;
-                                        case 3: // Down
-                                            vertices.Add(dir + blockPos);
-                                            vertices.Add(dir + off1 + blockPos);
-                                            vertices.Add(dir + off2 + blockPos);
-                                            vertices.Add(dir + off1 + off2 + blockPos);
-                                            break;
-                                        case 4: //Left
-                                            vertices.Add(dir + blockPos + meshOffsetLeftRight);
-                                            vertices.Add(dir + off1 + blockPos + meshOffsetLeftRight);
-                                            vertices.Add(dir + off2 + blockPos + meshOffsetLeftRight);
-                                            vertices.Add(dir + off1 + off2 + blockPos + meshOffsetLeftRight);
-                                            break;
-                                        case 5: //Right
-                                            vertices.Add(dir + blockPos - meshOffsetLeftRight);
-                                            vertices.Add(dir + off1 + blockPos - meshOffsetLeftRight);
-                                            vertices.Add(dir + off2 + blockPos - meshOffsetLeftRight);
-                                            vertices.Add(dir + off1 + off2 + blockPos - meshOffsetLeftRight);
-                                            break;
-                                    }
+                                        int vc = vertices.Count;
 
-                                    #endregion
+                                        #region Meshoffsets
 
+                                        Vector3 dir = directions[faceIndex];
+                                        Vector3 off1 = offset1[faceIndex];
+                                        Vector3 off2 = offset2[faceIndex];
 
-                                    //Triangles
-                                    if (!transparent)
-                                    {
-                                        for (int k = 0; k < 6; k++)
+                                        Vector3 meshOffsetForwardBack = new Vector3(0f, 0f, meshOffset);
+                                        Vector3 meshOffsetLeftRight = new Vector3(meshOffset, 0f, 0f);
+
+                                        switch (faceIndex)
                                         {
-                                            triangles.Add(vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
+                                            case 0: //Forward
+                                                vertices.Add(dir + blockPos - meshOffsetForwardBack);
+                                                vertices.Add(dir + off1 + blockPos - meshOffsetForwardBack);
+                                                vertices.Add(dir + off2 + blockPos - meshOffsetForwardBack);
+                                                vertices.Add(dir + off1 + off2 + blockPos - meshOffsetForwardBack);
+                                                break;
+                                            case 1: //Back
+                                                vertices.Add(dir + blockPos + meshOffsetForwardBack);
+                                                vertices.Add(dir + off1 + blockPos + meshOffsetForwardBack);
+                                                vertices.Add(dir + off2 + blockPos + meshOffsetForwardBack);
+                                                vertices.Add(dir + off1 + off2 + blockPos + meshOffsetForwardBack);
+                                                break;
+                                            case 2: //Up
+                                                vertices.Add(dir + blockPos);
+                                                vertices.Add(dir + off1 + blockPos);
+                                                vertices.Add(dir + off2 + blockPos);
+                                                vertices.Add(dir + off1 + off2 + blockPos);
+                                                break;
+                                            case 3: // Down
+                                                vertices.Add(dir + blockPos);
+                                                vertices.Add(dir + off1 + blockPos);
+                                                vertices.Add(dir + off2 + blockPos);
+                                                vertices.Add(dir + off1 + off2 + blockPos);
+                                                break;
+                                            case 4: //Left
+                                                vertices.Add(dir + blockPos + meshOffsetLeftRight);
+                                                vertices.Add(dir + off1 + blockPos + meshOffsetLeftRight);
+                                                vertices.Add(dir + off2 + blockPos + meshOffsetLeftRight);
+                                                vertices.Add(dir + off1 + off2 + blockPos + meshOffsetLeftRight);
+                                                break;
+                                            case 5: //Right
+                                                vertices.Add(dir + blockPos - meshOffsetLeftRight);
+                                                vertices.Add(dir + off1 + blockPos - meshOffsetLeftRight);
+                                                vertices.Add(dir + off2 + blockPos - meshOffsetLeftRight);
+                                                vertices.Add(dir + off1 + off2 + blockPos - meshOffsetLeftRight);
+                                                break;
                                         }
-                                    }
-                                    else
-                                    {
-                                        for (int k = 0; k < 6; k++)
-                                        {
-                                            transparentTriangles.Add(vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
-                                        }
-                                    }
 
-                                    //UVS
-                                    int orientedFaceIndex = block.Direction == BlockDirection.Forward
-                                        ? faceIndex
-                                        : CalculateOrientedFaceIndex(faceIndex, block.Direction);
-                                    
-                                    UVData uvdata = currentUVData[orientedFaceIndex];
-                                    uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
-                                    uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
-                                    uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
-                                    uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY + uvdata.SizeY));
+                                        #endregion
+
+
+                                        if (!transparent)
+                                        {
+                                            for (int k = 0; k < 6; k++)
+                                            {
+                                                triangles.Add(vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
+                                            }
+                                        }
+                                        else
+                                        {
+                                            for (int k = 0; k < 6; k++)
+                                            {
+                                                transparentTriangles.Add(
+                                                    vc + (tris[faceIndex] == 0 ? tri1[k] : tri2[k]));
+                                            }
+                                        }
+
+
+                                        int orientedFaceIndex = block.Direction == BlockDirection.Forward
+                                            ? faceIndex
+                                            : CalculateOrientedFaceIndex(faceIndex, block.Direction);
+
+                                        UVData uvdata = currentUVData[orientedFaceIndex];
+
+                                        Vector2 zero = new Vector2(uvdata.TileX, uvdata.TileY);
+                                        Vector2 one = new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY);
+                                        Vector2 two = new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY);
+                                        Vector2 three = new Vector2(uvdata.TileX + uvdata.SizeX,
+                                            uvdata.TileY + uvdata.SizeY);
+
+                                        #region Add UV
+
+                                        switch (faceIndex)
+                                        {
+                                            case 2:
+                                            case 3:
+                                                switch (block.Direction)
+                                                {
+                                                    case BlockDirection.Forward:
+                                                        uvs.Add(zero);
+                                                        uvs.Add(one);
+                                                        uvs.Add(two);
+                                                        uvs.Add(three);
+                                                        break;
+                                                    case BlockDirection.Back:
+                                                        uvs.Add(three);
+                                                        uvs.Add(two);
+                                                        uvs.Add(one);
+                                                        uvs.Add(zero);
+                                                        break;
+                                                    case BlockDirection.Left:
+                                                        uvs.Add(two);
+                                                        uvs.Add(zero);
+                                                        uvs.Add(three);
+                                                        uvs.Add(one);
+                                                        break;
+                                                    case BlockDirection.Right:
+                                                        uvs.Add(one);
+                                                        uvs.Add(three);
+                                                        uvs.Add(zero);
+                                                        uvs.Add(two);
+                                                        break;
+                                                    default:
+                                                        uvs.Add(zero);
+                                                        uvs.Add(one);
+                                                        uvs.Add(two);
+                                                        uvs.Add(three);
+                                                        break;
+                                                }
+
+                                                break;
+                                            default:
+                                                uvs.Add(zero);
+                                                uvs.Add(one);
+                                                uvs.Add(two);
+                                                uvs.Add(three);
+                                                break;
+                                        }
+
+                                        #endregion
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                int vc = vertices.Count;
+                                
+                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y, blockPos.z + 0.146447f));
+                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y, blockPos.z + 0.853553f));
+                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y + 1, blockPos.z + 0.853553f));
+                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y + 1, blockPos.z + 0.146447f));
+                                
+                                if (!transparent)
+                                {
+                                    triangles.Add(vc + 0);
+                                    triangles.Add(vc + 1);
+                                    triangles.Add(vc + 3);
+                                    
+                                    triangles.Add(vc + 1);
+                                    triangles.Add(vc + 2); 
+                                    triangles.Add(vc + 3);
+                                }
+                                else
+                                {
+                                    transparentTriangles.Add(vc + 0);
+                                    transparentTriangles.Add(vc + 1);
+                                    transparentTriangles.Add(vc + 3);
+                                    
+                                    transparentTriangles.Add(vc + 1);
+                                    transparentTriangles.Add(vc + 2); 
+                                    transparentTriangles.Add(vc + 3);
+                                }
+                                
+                                UVData uvdata = currentUVData[0];
+
+                                Vector2 zero = new Vector2(uvdata.TileX, uvdata.TileY);
+                                Vector2 one = new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY);
+                                Vector2 two = new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY);
+                                Vector2 three = new Vector2(uvdata.TileX + uvdata.SizeX,
+                                    uvdata.TileY + uvdata.SizeY);
+                                
+                                uvs.Add(zero);
+                                uvs.Add(one);
+                                uvs.Add(two);
+                                uvs.Add(three);
                             }
                         }
                     }
@@ -178,10 +279,6 @@ namespace Core.Builder
 
             return new MeshData(vertices, triangles, transparentTriangles, uvs, chunk.CurrentGO);
         }
-
-        private static int[] forwardMasks = {0, 0, 0, 0, 1, 0};
-        private static int[] backMasks = {0, 0, 0, 0, 1, 1};
-        private static int[] sideWaysMasks = {0, 0, 0, 0, 0, 0};
 
         private static int CalculateOrientedFaceIndex(int actualDirection, BlockDirection direction)
         {

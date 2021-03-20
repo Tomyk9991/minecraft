@@ -37,6 +37,10 @@ MonoBehaviour:
     treeLeafBlock: 6
     treeProbability: 0.11
     treeZoomLevel: 1.08
+    vegetationBlock: 12
+    accentBlocks: 0b000b00
+    vegetationProbability: 0.25
+    vegetationZoomLevel: 1.5
   - Name: Sand
     minValue: 0
     maxValue: 1
@@ -61,3 +65,7 @@ MonoBehaviour:
     treeLeafBlock: 0
     treeProbability: 0.04
     treeZoomLevel: 1.08
+    vegetationBlock: 0
+    accentBlocks: 
+    vegetationProbability: 0.11
+    vegetationZoomLevel: 1.08

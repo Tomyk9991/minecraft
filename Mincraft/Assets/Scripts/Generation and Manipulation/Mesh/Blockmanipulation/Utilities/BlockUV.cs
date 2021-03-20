@@ -16,6 +16,8 @@ namespace Core.Builder
         Glass = 7,
         Sand = 8,
         Cactus = 9,
-        Furnace = 10
+        Furnace = 10,
+        RedFlower = 11,
+        Lawn = 12
     }
 }

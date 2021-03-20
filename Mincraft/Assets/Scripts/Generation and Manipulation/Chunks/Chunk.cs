@@ -34,9 +34,10 @@ namespace Core.Chunks
         private static int chunkSize;
 
         //Structure Building
-        private IStructureBuilder[] builders =
+        private StructureBuilder[] builders =
         {
-            new TreeBuilder()
+            new TreeBuilder(),
+            new LawnRemover()
         };
 
 
@@ -93,7 +94,7 @@ namespace Core.Chunks
         public bool IsNotEmpty(int x, int y, int z)
         {
             Block currentBlock = blocks[x, y, z];
-            return currentBlock.ID != BlockUV.Air && currentBlock.ID != BlockUV.None;
+            return currentBlock.ID != BlockUV.Air && currentBlock.ID != BlockUV.None && currentBlock.IsSolid();
         }
 
         /// <summary>
@@ -190,9 +191,14 @@ namespace Core.Chunks
             topHeight += GetNoise(x, 10, z, biom.topLayerNoise, biom.topLayerNoiseHeight);
 
             int caveSize = biom.caveSize;
+            
             float treeZoomLevel = biom.treeZoomLevel;
             float treeValue = Mathf.PerlinNoise((x + seed) * treeZoomLevel, (z + seed) * treeZoomLevel);
 
+            float vegetationZoomLevel = biom.vegetationZoomLevel;
+            float vegetationValue =
+                Mathf.PerlinNoise((x + seed) * vegetationZoomLevel, (z + seed) * vegetationZoomLevel);
+            
 
             for (int y = GlobalPosition.Y - 1; y < GlobalPosition.Y + chunkSize + 1; y++)
             {
@@ -239,6 +245,18 @@ namespace Core.Chunks
                     Int3 origin = new Int3(pos.X, pos.Y, pos.Z);
                     builders[0].StructureOrigin.Enqueue((origin, biom));
                 }
+
+                if (vegetationValue > 1f - biom.vegetationProbability && y == topHeight + 1)
+                {
+                    Int3 pos = new Int3(x - GlobalPosition.X, y - GlobalPosition.Y, z - GlobalPosition.Z);
+
+                    Block block = new Block();
+                    block.SetID(biom.vegetationBlock);
+                    
+                    AddBlock(block, pos);
+                    Int3 origin = new Int3(pos.X, pos.Y, pos.Z);
+                    builders[1].StructureOrigin.Enqueue((origin, biom));
+                }
             }
         }
 
@@ -259,13 +277,6 @@ namespace Core.Chunks
 
         public static int GetNoise(int x, int y, int z, float scale, int max)
             => Mathf.FloorToInt((noise.GetSimplexFractal(x * scale, y * scale, z * scale) + 1f) * (max / 2f));
-
-
-        public void LoadChunk(Chunk chunk)
-        {
-            this.LocalPosition = chunk.LocalPosition;
-            this.blocks = chunk.blocks;
-        }
         
         public override string ToString()
             => GlobalPosition.ToString();
