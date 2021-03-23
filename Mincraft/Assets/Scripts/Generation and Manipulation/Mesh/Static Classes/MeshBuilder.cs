@@ -231,46 +231,53 @@ namespace Core.Builder
                             }
                             else
                             {
+                                
+                                //add variance
                                 int vc = vertices.Count;
                                 
                                 vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y, blockPos.z + 0.146447f));
                                 vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y, blockPos.z + 0.853553f));
-                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y + 1, blockPos.z + 0.853553f));
-                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y + 1, blockPos.z + 0.146447f));
+                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y + 0.8f, blockPos.z + 0.853553f));
+                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y + 0.8f, blockPos.z + 0.146447f));
                                 
-                                if (!transparent)
-                                {
-                                    triangles.Add(vc + 0);
-                                    triangles.Add(vc + 1);
-                                    triangles.Add(vc + 3);
-                                    
-                                    triangles.Add(vc + 1);
-                                    triangles.Add(vc + 2); 
-                                    triangles.Add(vc + 3);
-                                }
-                                else
-                                {
-                                    transparentTriangles.Add(vc + 0);
-                                    transparentTriangles.Add(vc + 1);
-                                    transparentTriangles.Add(vc + 3);
-                                    
-                                    transparentTriangles.Add(vc + 1);
-                                    transparentTriangles.Add(vc + 2); 
-                                    transparentTriangles.Add(vc + 3);
-                                }
+                                transparentTriangles.Add(vc + 0);
+                                transparentTriangles.Add(vc + 1);
+                                transparentTriangles.Add(vc + 3);
+                                
+                                transparentTriangles.Add(vc + 1);
+                                transparentTriangles.Add(vc + 2); 
+                                transparentTriangles.Add(vc + 3);
+
+                                vc += 4;
+                                
+                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y, blockPos.z + 0.146447f));
+                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y, blockPos.z + 0.853553f));
+                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y + 0.8f, blockPos.z + 0.853553f));
+                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y + 0.8f, blockPos.z + 0.146447f));
+                                
+                                transparentTriangles.Add(vc + 0);
+                                transparentTriangles.Add(vc + 3);
+                                transparentTriangles.Add(vc + 1);
+                                
+                                transparentTriangles.Add(vc + 1);
+                                transparentTriangles.Add(vc + 3); 
+                                transparentTriangles.Add(vc + 2);
+                                
                                 
                                 UVData uvdata = currentUVData[0];
 
-                                Vector2 zero = new Vector2(uvdata.TileX, uvdata.TileY);
-                                Vector2 one = new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY);
-                                Vector2 two = new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY);
-                                Vector2 three = new Vector2(uvdata.TileX + uvdata.SizeX,
-                                    uvdata.TileY + uvdata.SizeY);
                                 
-                                uvs.Add(zero);
-                                uvs.Add(one);
-                                uvs.Add(two);
-                                uvs.Add(three);
+                                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
+                                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
+                                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
+                                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX,
+                                    uvdata.TileY + uvdata.SizeY));
+                                
+                                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
+                                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
+                                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
+                                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX,
+                                    uvdata.TileY + uvdata.SizeY));
                             }
                         }
                     }
