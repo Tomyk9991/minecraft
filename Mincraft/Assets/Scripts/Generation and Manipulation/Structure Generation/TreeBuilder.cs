@@ -2,6 +2,7 @@ using Core.Builder;
 using Core.Builder.Generation;
 using Core.Chunks;
 using Core.Math;
+using UnityEngine;
 
 namespace Core.StructureGeneration
 {

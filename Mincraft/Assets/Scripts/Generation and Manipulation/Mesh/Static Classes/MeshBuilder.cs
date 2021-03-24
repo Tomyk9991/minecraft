@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using Core.Chunks;
 using Core.Math;
-using Extensions;
 using UnityEngine;
 
 namespace Core.Builder
@@ -231,53 +228,8 @@ namespace Core.Builder
                             }
                             else
                             {
-                                
-                                //add variance
-                                int vc = vertices.Count;
-                                
-                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y, blockPos.z + 0.146447f));
-                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y, blockPos.z + 0.853553f));
-                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y + 0.8f, blockPos.z + 0.853553f));
-                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y + 0.8f, blockPos.z + 0.146447f));
-                                
-                                transparentTriangles.Add(vc + 0);
-                                transparentTriangles.Add(vc + 1);
-                                transparentTriangles.Add(vc + 3);
-                                
-                                transparentTriangles.Add(vc + 1);
-                                transparentTriangles.Add(vc + 2); 
-                                transparentTriangles.Add(vc + 3);
-
-                                vc += 4;
-                                
-                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y, blockPos.z + 0.146447f));
-                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y, blockPos.z + 0.853553f));
-                                vertices.Add(new Vector3(blockPos.x + 0.853553f, blockPos.y + 0.8f, blockPos.z + 0.853553f));
-                                vertices.Add(new Vector3(blockPos.x + 0.146447f, blockPos.y + 0.8f, blockPos.z + 0.146447f));
-                                
-                                transparentTriangles.Add(vc + 0);
-                                transparentTriangles.Add(vc + 3);
-                                transparentTriangles.Add(vc + 1);
-                                
-                                transparentTriangles.Add(vc + 1);
-                                transparentTriangles.Add(vc + 3); 
-                                transparentTriangles.Add(vc + 2);
-                                
-                                
-                                UVData uvdata = currentUVData[0];
-
-                                
-                                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
-                                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
-                                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
-                                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX,
-                                    uvdata.TileY + uvdata.SizeY));
-                                
-                                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
-                                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
-                                uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
-                                uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX,
-                                    uvdata.TileY + uvdata.SizeY));
+                                AddGrassNorthSouth(blockPos, vertices, transparentTriangles, uvs, currentUVData);
+                                AddGrassWestEast(blockPos, vertices, transparentTriangles, uvs, currentUVData);
                             }
                         }
                     }
@@ -285,6 +237,110 @@ namespace Core.Builder
             }
 
             return new MeshData(vertices, triangles, transparentTriangles, uvs, chunk.CurrentGO);
+        }
+
+        private static void AddGrassWestEast(in Vector3 blockPos, List<Vector3> vertices, List<int> transparentTriangles, List<Vector2> uvs, UVData[] currentUVData)
+        {
+            int vc = vertices.Count;
+
+            float offset = 0.146447f;
+            float offsetMinusOne = 0.853553f;
+            
+            vertices.Add(new Vector3(blockPos.x + offset, blockPos.y, blockPos.z + offsetMinusOne));
+            vertices.Add(new Vector3(blockPos.x + offsetMinusOne, blockPos.y, blockPos.z + offset));
+            vertices.Add(new Vector3(blockPos.x + offsetMinusOne, blockPos.y + 0.8f, blockPos.z + offset));
+            vertices.Add(new Vector3(blockPos.x + offset, blockPos.y + 0.8f, blockPos.z + offsetMinusOne));
+            
+            transparentTriangles.Add(vc + 0);
+            transparentTriangles.Add(vc + 1);
+            transparentTriangles.Add(vc + 3);
+            
+            transparentTriangles.Add(vc + 1);
+            transparentTriangles.Add(vc + 2); 
+            transparentTriangles.Add(vc + 3);
+
+            vc += 4;
+            
+            vertices.Add(new Vector3(blockPos.x + offset, blockPos.y, blockPos.z + offsetMinusOne));
+            vertices.Add(new Vector3(blockPos.x + offsetMinusOne, blockPos.y, blockPos.z + offset));
+            vertices.Add(new Vector3(blockPos.x + offsetMinusOne, blockPos.y + 0.8f, blockPos.z + offset));
+            vertices.Add(new Vector3(blockPos.x + offset, blockPos.y + 0.8f, blockPos.z + offsetMinusOne));
+            
+            transparentTriangles.Add(vc + 0);
+            transparentTriangles.Add(vc + 3);
+            transparentTriangles.Add(vc + 1);
+            
+            transparentTriangles.Add(vc + 1);
+            transparentTriangles.Add(vc + 3); 
+            transparentTriangles.Add(vc + 2);
+            
+            
+            UVData uvdata = currentUVData[0];
+
+            
+            uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
+            uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
+            uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
+            uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX,
+                uvdata.TileY + uvdata.SizeY));
+            
+            uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
+            uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
+            uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
+            uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX,
+                uvdata.TileY + uvdata.SizeY));
+        }
+
+        private static void AddGrassNorthSouth(in Vector3 blockPos, List<Vector3> vertices, List<int> transparentTriangles, List<Vector2> uvs, UVData[] currentUVData)
+        {
+            int vc = vertices.Count;
+
+            float offset = 0.146447f;
+            float offsetMinusOne = 0.853553f;
+            
+            vertices.Add(new Vector3(blockPos.x + offset, blockPos.y, blockPos.z + offset));
+            vertices.Add(new Vector3(blockPos.x + offsetMinusOne, blockPos.y, blockPos.z + offsetMinusOne));
+            vertices.Add(new Vector3(blockPos.x + offsetMinusOne, blockPos.y + 0.8f, blockPos.z + offsetMinusOne));
+            vertices.Add(new Vector3(blockPos.x + offset, blockPos.y + 0.8f, blockPos.z + offset));
+            
+            transparentTriangles.Add(vc + 0);
+            transparentTriangles.Add(vc + 1);
+            transparentTriangles.Add(vc + 3);
+            
+            transparentTriangles.Add(vc + 1);
+            transparentTriangles.Add(vc + 2); 
+            transparentTriangles.Add(vc + 3);
+
+            vc += 4;
+            
+            vertices.Add(new Vector3(blockPos.x + offset, blockPos.y, blockPos.z + offset));
+            vertices.Add(new Vector3(blockPos.x + offsetMinusOne, blockPos.y, blockPos.z + offsetMinusOne));
+            vertices.Add(new Vector3(blockPos.x + offsetMinusOne, blockPos.y + 0.8f, blockPos.z + offsetMinusOne));
+            vertices.Add(new Vector3(blockPos.x + offset, blockPos.y + 0.8f, blockPos.z + offset));
+            
+            transparentTriangles.Add(vc + 0);
+            transparentTriangles.Add(vc + 3);
+            transparentTriangles.Add(vc + 1);
+            
+            transparentTriangles.Add(vc + 1);
+            transparentTriangles.Add(vc + 3); 
+            transparentTriangles.Add(vc + 2);
+            
+            
+            UVData uvdata = currentUVData[0];
+
+            
+            uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
+            uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
+            uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
+            uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX,
+                uvdata.TileY + uvdata.SizeY));
+            
+            uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX, uvdata.TileY));
+            uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY));
+            uvs.Add(new Vector2(uvdata.TileX, uvdata.TileY + uvdata.SizeY));
+            uvs.Add(new Vector2(uvdata.TileX + uvdata.SizeX,
+                uvdata.TileY + uvdata.SizeY));
         }
 
         private static int CalculateOrientedFaceIndex(int actualDirection, BlockDirection direction)

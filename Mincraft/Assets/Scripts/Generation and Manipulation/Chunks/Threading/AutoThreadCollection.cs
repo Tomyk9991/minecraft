@@ -232,18 +232,51 @@ namespace Core.Chunks.Threading
                 }
             }
         }
+        
+        public void Add(MeshJob job, bool runWithNoise = true)
+        {
+            if (passOpen)
+            {
+                IJobCollection<MeshJob> noiseJob = new GenerateNoiseJob(job);
+                IJobCollection<MeshJob> structureJob = new GenerateStructuresJob(job);
+                IJobCollection<MeshJob> meshJob = new MeshBuilderJob(job);
+                IJobCollection<MeshJob> greedyJob = new ReduceColliderJob(job);
+
+                if (runWithNoise)
+                {
+                    //Noisejob
+                    var noiseJobContainer = new JobCollectionItemContainer(1, 0);
+                    noiseJobContainer.RunSequentially(noiseJob);
+                    noisePass.Add(noiseJobContainer);
+                }
+
+                //Structurejob
+                var structureJobContainer = new JobCollectionItemContainer(1, 0);
+                structureJobContainer.RunSequentially(structureJob);
+
+                structurePass.Add(structureJobContainer);
+
+                //Meshjob
+                var meshJobContainer = new JobCollectionItemContainer(0, 2);
+                meshJobContainer.RunParallelized(meshJob, greedyJob);
+                meshPass.Add(meshJobContainer);
+            }
+        }
 
         public void RecalculateChunk(Chunk item, ChunkJobPriority priority)
         {
             MeshJob job = new MeshJob(item);
+            // PassBegin();
+            // Add(job, false);
+            // PassEnd();
 
             IJobCollection<MeshJob> meshJob = new MeshBuilderJob(job);
             IJobCollection<MeshJob> greedyJob = new ReduceColliderJob(job);
-
+            
             //Meshjob
             var meshJobContainer = new JobCollectionItemContainer(0, 2);
             meshJobContainer.RunParallelized(meshJob, greedyJob);
-
+            
             IJobCollection<MeshJob>[] par = meshJobContainer.ParallelizedCollection;
             for (int i = 0; i < par.Length; i++)
             {
