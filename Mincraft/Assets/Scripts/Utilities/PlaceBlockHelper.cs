@@ -2,7 +2,6 @@
 using Core.Chunks;
 using Core.Chunks.Threading;
 using Core.Math;
-using Core.Player;
 using UnityEngine;
 
 namespace Utilities
@@ -32,6 +31,7 @@ namespace Utilities
             Block removedBlock;
 
             removedBlock = currentChunk.Blocks[localPos.X, localPos.Y, localPos.Z];
+            
             currentChunk.AddBlockPersistent(currentBlock, localPos);
 
             if (MathHelper.BorderBlock(localPos))
@@ -43,6 +43,7 @@ namespace Utilities
                     Chunk neighbourChunk =
                         currentChunk.ChunkNeighbour(dir.X == -1 ? Chunk.Directions[4] : Chunk.Directions[5]);
                     RelativeToLocalBlockMinusOneX(localPos, ref blockPos);
+
                     neighbourChunk.AddBlockPersistent(currentBlock, blockPos);
                     chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }
@@ -52,6 +53,7 @@ namespace Utilities
                     Chunk neighbourChunk =
                         currentChunk.ChunkNeighbour(dir.Y == -1 ? Chunk.Directions[3] : Chunk.Directions[2]);
                     RelativeToLocalBlockMinusOneY(localPos, ref blockPos);
+                    
                     neighbourChunk.AddBlockPersistent(currentBlock, blockPos);
                     chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }
@@ -61,6 +63,7 @@ namespace Utilities
                     Chunk neighbourChunk =
                         currentChunk.ChunkNeighbour(dir.Z == -1 ? Chunk.Directions[1] : Chunk.Directions[0]);
                     RelativeToLocalBlockMinusOneZ(localPos, ref blockPos);
+
                     neighbourChunk.AddBlockPersistent(currentBlock, blockPos);
                     chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }

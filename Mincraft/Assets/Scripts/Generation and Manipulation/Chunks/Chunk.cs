@@ -34,10 +34,12 @@ namespace Core.Chunks
         private static int chunkSize;
 
         //Structure Building
-        private StructureBuilder[] Builders =>
-        new StructureBuilder [] {
+        public StructureBuilder[] Builders => builders;
+        
+        private StructureBuilder[] builders =
+        {
             new TreeBuilder(),
-            new LawnRemover()
+            new LawnRemover(),
         };
 
 
@@ -81,7 +83,6 @@ namespace Core.Chunks
         {
             AddBlock(block, pos);
             ResourceIO.Save<Chunk>(this);
-            // ChunkSavingManager.Save(this);
         }
         
 
@@ -236,14 +237,12 @@ namespace Core.Chunks
                 {
                     Int3 pos = new Int3(x - GlobalPosition.X, y - GlobalPosition.Y, z - GlobalPosition.Z);
 
-                    //if (!MathHelper.InChunkSpace(pos)) continue;
-
                     Block block = new Block();
                     block.SetID(biom.treeTrunkBlock);
 
                     AddBlock(block, pos);
                     Int3 origin = new Int3(pos.X, pos.Y, pos.Z);
-                    Builders[0].StructureOrigin.Enqueue((origin, biom));
+                    builders[0].StructureOrigin.Enqueue((origin, biom));
                 }
 
                 if (vegetationValue > 1f - biom.vegetationProbability && y == topHeight + 1)
@@ -255,7 +254,7 @@ namespace Core.Chunks
                     
                     AddBlock(block, pos);
                     Int3 origin = new Int3(pos.X, pos.Y, pos.Z);
-                    Builders[1].StructureOrigin.Enqueue((origin, biom));
+                    builders[1].StructureOrigin.Enqueue((origin, biom));
                 }
             }
         }
@@ -264,7 +263,7 @@ namespace Core.Chunks
         {
             if (loaded == false)
             {
-                foreach (var builder in Builders)
+                foreach (var builder in builders)
                 {
                     while (builder.StructureOrigin.Count > 0)
                     {

@@ -19,5 +19,4 @@ public class GenerateStructuresJob : IJobCollection<MeshJob>
     {
         Target.Chunk.GenerateStructures();
     }
-
 }

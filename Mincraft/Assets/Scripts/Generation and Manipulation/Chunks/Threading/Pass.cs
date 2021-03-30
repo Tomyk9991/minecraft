@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Security.Cryptography;
 using Core.Chunks.Threading.Jobs;
 
 namespace Core.Chunks.Threading
@@ -7,7 +6,7 @@ namespace Core.Chunks.Threading
     public class Pass
     {
         public ConcurrentQueue<JobCollectionItemContainer> Jobs { get; set; }
-        public string Name { get; set; }
+        public ChunkJobPriority Priority { get; set; }
         public int Count => Jobs.Count;
 
         public Pass()

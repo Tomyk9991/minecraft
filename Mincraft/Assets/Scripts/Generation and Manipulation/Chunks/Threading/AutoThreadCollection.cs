@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Core.Chunks.Threading.Jobs;
 using Core.Math;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Core.Chunks.Threading
@@ -269,7 +270,7 @@ namespace Core.Chunks.Threading
             // PassBegin();
             // Add(job, false);
             // PassEnd();
-
+            
             IJobCollection<MeshJob> meshJob = new MeshBuilderJob(job);
             IJobCollection<MeshJob> greedyJob = new ReduceColliderJob(job);
             
@@ -278,10 +279,10 @@ namespace Core.Chunks.Threading
             meshJobContainer.RunParallelized(meshJob, greedyJob);
             
             IJobCollection<MeshJob>[] par = meshJobContainer.ParallelizedCollection;
-            for (int i = 0; i < par.Length; i++)
+            foreach (IJobCollection<MeshJob> t in par)
             {
-                par[i].OtherJobs = par;
-                ScheduleMeshJob(par[i], priority);
+                t.OtherJobs = par;
+                ScheduleMeshJob(t, priority);
             }
         }
 
