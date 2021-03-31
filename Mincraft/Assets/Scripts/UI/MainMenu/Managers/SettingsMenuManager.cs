@@ -1,5 +1,4 @@
-﻿using System;
-using Core.Saving;
+﻿using Core.Saving;
 using UnityEngine;
 using UnityEngine.UI;
 

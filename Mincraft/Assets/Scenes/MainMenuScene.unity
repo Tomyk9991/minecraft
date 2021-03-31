@@ -1157,9 +1157,6 @@ MonoBehaviour:
   subTitleFontSize: 13
   itemPrefab: {fileID: 1790403865880435663, guid: 54d4df21138759f4d9f968264b5ae5a5,
     type: 3}
-  visibilityThreshold: 3
-  scrollRect: {fileID: 1870077507}
-  slidingArea: {fileID: 1026901856}
   contentHeightAdjustable: {fileID: 1745362868}
   toggleCreateGameDialog: {fileID: 1895073258}
   createGameButtonText: {fileID: 1939957597}
@@ -3787,6 +3784,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Backbutton
       objectReference: {fileID: 0}
+    - target: {fileID: 256117706872698697, guid: dab92edd184515c47ba313698177b988,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3601969998676590863, guid: dab92edd184515c47ba313698177b988,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -5714,7 +5716,7 @@ PrefabInstance:
     - target: {fileID: 6943772686483708903, guid: 364bf6f0232bcdc4d8dac10ea46504e4,
         type: 3}
       propertyPath: m_MaxValue
-      value: 12
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7400741162660420031, guid: 364bf6f0232bcdc4d8dac10ea46504e4,
         type: 3}

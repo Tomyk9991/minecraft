@@ -14,7 +14,7 @@ public class MouseLook
     public float MaximumX = 90F;
     public bool smooth;
     public float smoothTime = 5f;
-    public bool lockCursor = true;
+    // public bool lockCursor = true;
 
 
     private Quaternion m_CharacterTargetRot;

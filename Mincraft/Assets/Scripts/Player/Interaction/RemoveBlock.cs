@@ -121,8 +121,6 @@ namespace Core.Player.Interaction
                     removedBlock = placer.HandleAddBlock(currentChunk, placer.lp);
                 }
                 
-                Debug.Log("Removed Global: " + placer.latestGlobalClick + " local: " + placer.lp);
-
                 if (droppedItemsManager == null) droppedItemsManager = DroppedItemsManager.Instance;
                 
                 GameObject go = droppedItemsManager.GetNextBlock();
@@ -134,8 +132,6 @@ namespace Core.Player.Interaction
                 
                 // Remove lawn if needed
                 RemoveLawn(holder);
-                
-                Debug.Log("Removed Global + 1: " + placer.latestGlobalClick + " local + 1: " + placer.lp);
             }
         }
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Core.Managers;
+using Core.UI.Ingame;
 using Extensions;
 using TMPro;
 using UnityEngine;
@@ -29,7 +30,7 @@ namespace Core.UI.Console
         private int tabCounter = 0;
         private int inputHistoryClickCounter = 0;
         private int lineCounter = 0;
-        private bool showingConsole = false;
+        public static bool showingConsole = false;
 
         private string inputHistory;
         
@@ -247,7 +248,7 @@ namespace Core.UI.Console
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F1))
+            if (!EscapeMenuManager.showingEscapeMenu && Input.GetKeyDown(KeyCode.F1))
                 ToggleConsole();
 
             if (showingConsole && Input.GetKeyDown(KeyCode.Tab))

@@ -16,5 +16,10 @@ namespace Core.Saving
             this.fovSlider = fovSlider;
             this.renderDistance = renderDistance;
         }
+
+        public override string ToString()
+        {
+            return "FOV-Value: " + this.fovSlider + "\nRenderdistance: " + this.renderDistance;
+        }
     }
 }

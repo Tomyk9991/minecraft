@@ -23,7 +23,7 @@ namespace Core.UI.Ingame
         [SerializeField] private GameObject uiItemPrefab = null;
 
         private IFullScreenUIToggle[] disableOnInventoryAppear = null;
-        private bool showingInventory = false;
+        public static bool showingInventory = false;
 
 
         public bool Enabled
@@ -122,7 +122,7 @@ namespace Core.UI.Ingame
 
         private void Update()
         {
-            if (!ItemDragHandler.Dragging && Input.GetKeyDown(KeyCode.Tab))
+            if (!EscapeMenuManager.showingEscapeMenu && !ItemDragHandler.Dragging && Input.GetKeyDown(KeyCode.Tab))
                 SetInventoryWorkability(!showingInventory);
         }
 

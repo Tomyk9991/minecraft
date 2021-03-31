@@ -22,9 +22,6 @@ namespace Core.Player
         [Space] private Int3 latestPlayerPosition;
         private Int3 prevLatestPlayerPosition;
 
-        private static Int3 latestStandingBlock;
-        public static Int3 CurrentStandingBlock => latestStandingBlock;
-
         private Int3 deltaResult;
 
         private void Start()
@@ -69,11 +66,6 @@ namespace Core.Player
 
         private void UpdateLatestPlayerPosition()
         {
-            latestStandingBlock.X = (int) transform.position.x;
-            latestStandingBlock.Y = (int) transform.position.y;
-            latestStandingBlock.Z = (int) transform.position.z;
-
-
             latestPlayerPosition.X = Mathf.RoundToInt(transform.position.x);
             latestPlayerPosition.Y = Mathf.RoundToInt(transform.position.y);
             latestPlayerPosition.Z = Mathf.RoundToInt(transform.position.z);
@@ -99,7 +91,7 @@ namespace Core.Player
             transform.position += new Vector3(x, y, z);
             OnDirectionModified?.Invoke(Direction.Teleported);
         }
-
+        
         public void OnApplicationQuit()
         {
             bool usedGravity = FirstPersonController.Instance.useGravity;

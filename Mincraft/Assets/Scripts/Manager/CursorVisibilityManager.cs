@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Extensions;
+﻿using Extensions;
 using UnityEngine;
 
 namespace Core.Managers
@@ -11,14 +9,6 @@ namespace Core.Managers
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyUp(KeyCode.Escape))
-            {
-                ToggleMouseVisibility();
-            }
         }
 
         public void ToggleMouseVisibility()

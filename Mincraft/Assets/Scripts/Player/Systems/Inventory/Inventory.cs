@@ -92,7 +92,7 @@ namespace Core.Player.Systems.Inventory
             }
         }
         
-        private void OnApplicationQuit()
+        public void OnApplicationQuit()
         {
             ResourceIO.Save<Inventory>(new InventorySavingContext(Items.ToArray(), QuickBarSelectionUI.Instance.SelectedIndex));
         }

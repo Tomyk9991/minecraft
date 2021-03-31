@@ -4,6 +4,7 @@ using Core.Chunks.Threading;
 using Core.Managers;
 using Core.Math;
 using Core.Player;
+using Core.Saving;
 using Extensions;
 using UnityEngine;
 using Timer = Utilities.Timer;
@@ -34,10 +35,14 @@ namespace Core.Chunks
 
         private void Start()
         {
+            drawDistanceInChunks = MainMenuSavingManager.LoadSettings().renderDistance;
+            
             chunkSize = 0x10;
             
             xPlayerPos = MathHelper.MultipleFloor(PlayerMovementTracker.Instance.xPlayerPos, chunkSize);
             zPlayerPos = MathHelper.MultipleFloor(PlayerMovementTracker.Instance.zPlayerPos, chunkSize);
+            
+            Debug.Log("Chunk building position:\n(x: " + xPlayerPos + " | z: " + zPlayerPos + ")");
             
             PlayerMovementTracker.OnDirectionModified += DirectionModified;
 
