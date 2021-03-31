@@ -26,12 +26,15 @@ namespace Utilities
             chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
         }
         
-        public Block HandleAddBlock(Chunk currentChunk, Int3 localPos)
+        public Block HandleAddBlock(Chunk currentChunk, Int3 localPos, BlockUV acceptance = BlockUV.None)
         {
             Block removedBlock;
 
             removedBlock = currentChunk.Blocks[localPos.X, localPos.Y, localPos.Z];
-            
+
+            if (removedBlock.ID != acceptance && acceptance != BlockUV.None)
+                return removedBlock;
+
             currentChunk.AddBlockPersistent(currentBlock, localPos);
 
             if (MathHelper.BorderBlock(localPos))
@@ -53,7 +56,7 @@ namespace Utilities
                     Chunk neighbourChunk =
                         currentChunk.ChunkNeighbour(dir.Y == -1 ? Chunk.Directions[3] : Chunk.Directions[2]);
                     RelativeToLocalBlockMinusOneY(localPos, ref blockPos);
-                    
+
                     neighbourChunk.AddBlockPersistent(currentBlock, blockPos);
                     chunkJobManager.RecalculateChunk(neighbourChunk, ChunkJobPriority.High);
                 }

@@ -121,6 +121,8 @@ namespace Core.Player.Interaction
                     removedBlock = placer.HandleAddBlock(currentChunk, placer.lp);
                 }
                 
+                Debug.Log("Removed Global: " + placer.latestGlobalClick + " local: " + placer.lp);
+
                 if (droppedItemsManager == null) droppedItemsManager = DroppedItemsManager.Instance;
                 
                 GameObject go = droppedItemsManager.GetNextBlock();
@@ -129,6 +131,40 @@ namespace Core.Player.Interaction
                 go.GetComponent<DroppedItemInformation>().FromBlock(removedBlock, 1);
                 
                 droppedItemsManager.AddNewItem(go);
+                
+                // Remove lawn if needed
+                RemoveLawn(holder);
+                
+                Debug.Log("Removed Global + 1: " + placer.latestGlobalClick + " local + 1: " + placer.lp);
+            }
+        }
+
+        private void RemoveLawn(ChunkReferenceHolder holder)
+        {
+            Chunk currentChunk = holder.Chunk;
+            
+            placer.latestGlobalClick = MathHelper.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;
+
+            placer.latestGlobalClick.y += 1;
+            
+            placer.latestGlobalClickInt.X = (int) placer.latestGlobalClick.x;
+            placer.latestGlobalClickInt.Y = (int) placer.latestGlobalClick.y;
+            placer.latestGlobalClickInt.Z = (int) placer.latestGlobalClick.z;
+
+            placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.lp);
+                
+            Block removedBlock;
+            if (MathHelper.InChunkSpace(placer.lp))
+            {
+                removedBlock = placer.HandleAddBlock(currentChunk, placer.lp, BlockUV.Lawn);
+            }
+            else
+            {
+                placer.GetDirectionPlusOne(placer.lp, ref placer.dirPlusOne);
+                currentChunk = currentChunk.ChunkNeighbour(placer.dirPlusOne);
+                placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.lp);
+
+                removedBlock = placer.HandleAddBlock(currentChunk, placer.lp, BlockUV.Lawn);
             }
         }
     }
