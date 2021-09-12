@@ -11,6 +11,9 @@ public class PlayerSavingManager : SavingManager
     {
         PlayerIOContext ctx = ((PlayerIOContext) context);
 
+        if (!Directory.Exists(GameManager.CurrentWorldPath))
+            Directory.CreateDirectory(GameManager.CurrentWorldPath);
+        
         string playerPath = Path.Combine(GameManager.CurrentWorldPath, "PlayerTransform.json");
         File.WriteAllBytes(playerPath, Encoding.UTF8.GetBytes(JsonUtility.ToJson(ctx, true)));
     }
