@@ -42,8 +42,6 @@ namespace Core.Chunks
             xPlayerPos = MathHelper.MultipleFloor(PlayerMovementTracker.Instance.xPlayerPos, chunkSize);
             zPlayerPos = MathHelper.MultipleFloor(PlayerMovementTracker.Instance.zPlayerPos, chunkSize);
             
-            Debug.Log("Chunk building position:\n(x: " + xPlayerPos + " | z: " + zPlayerPos + ")");
-            
             PlayerMovementTracker.OnDirectionModified += DirectionModified;
 
             Int2 minMaxYHeight = WorldSettings.MinMaxYHeight;

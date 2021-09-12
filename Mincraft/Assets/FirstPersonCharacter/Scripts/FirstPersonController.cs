@@ -274,8 +274,8 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
     private void GetInput(out float speed)
     {
         // Read input
-        float horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
-        float vertical = CrossPlatformInputManager.GetAxis("Vertical");
+        float horizontal = CrossPlatformInputManager.GetAxisRaw("Horizontal");
+        float vertical = CrossPlatformInputManager.GetAxisRaw("Vertical");
 
         bool waswalking = m_IsWalking;
 
