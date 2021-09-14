@@ -16,6 +16,7 @@ using Utilities;
 [RequireComponent(typeof(AudioSource))]
 public class FirstPersonController : SingletonBehaviour<FirstPersonController>, IConsoleToggle, IFullScreenUIToggle
 {
+    public MouseLook MouseBehaviour => this.m_MouseLook;
     [Header("General information")]
     [SerializeField] private bool m_IsWalking;
     [Header("Movement settings")]
@@ -77,9 +78,12 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
         if (ResourceIO.LoadCached<PlayerMovementTracker>(new PlayerFileIdentifier(), out OutputContext context))
         {
             var ctx = (PlayerIOContext) context;
-
             StartCoroutine(__enableGrav(ctx.UseGravity));
         }
+
+        float sens = MainMenuSavingManager.LoadSettings().mouseSensitivity;
+        m_MouseLook.XSensitivity = sens;
+        m_MouseLook.YSensitivity = sens;
         
         m_CharacterController = GetComponent<CharacterController>();
         m_Camera = Camera.main;

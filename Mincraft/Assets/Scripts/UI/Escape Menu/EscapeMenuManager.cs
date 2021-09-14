@@ -25,20 +25,33 @@ namespace Core.UI.Ingame
         [Header("Settings")] 
         [SerializeField] private Transform settingsTransformParent = null;
         
-        [Header("Settings references")] 
+        [Header("Settings references")]
+        [Header("Field of View")]
         [SerializeField] private Camera cameraRef = null;
         [SerializeField] private Slider fovSlider = null;
 
+        [Header("Player mouse sensitivity")] 
+        [SerializeField] private FirstPersonController playerController = null;
+        [SerializeField] private Slider mouseSensitivitySlider = null;
+        
+
+        [Space]
         public static bool showingEscapeMenu = false;
         private IConsoleToggle[] disableOnInventoryAppear = null;
 
         private void Start()
         {
-            disableOnInventoryAppear = FindObjectsOfType<MonoBehaviour>().OfType<IConsoleToggle>().Where(t => t != this).ToArray();
+            disableOnInventoryAppear = FindObjectsOfType<MonoBehaviour>().OfType<IConsoleToggle>().Where(t => (object)t != this).ToArray();
             
             fovSlider.onValueChanged.AddListener((float value) =>
             {
                 cameraRef.fieldOfView = value;
+            });
+            
+            mouseSensitivitySlider.onValueChanged.AddListener((float value) =>
+            {
+                playerController.MouseBehaviour.YSensitivity = value;
+                playerController.MouseBehaviour.XSensitivity = value;
             });
         }
 
@@ -84,9 +97,6 @@ namespace Core.UI.Ingame
                 child.gameObject.SetActive(true);
             }
         }
-        
-        
-        
         
         private void Update()
         {

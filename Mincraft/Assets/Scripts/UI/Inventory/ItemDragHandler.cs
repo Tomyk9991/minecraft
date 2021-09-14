@@ -59,7 +59,8 @@ namespace Core.UI
             
             SetRaycastBlock(false);
             latestTransform = string.Copy(transform.parent.name);
-            transform.parent = root;
+            transform.SetParent(root);
+            // transform.parent = root;
             Dragging = true;
         }
 
@@ -78,7 +79,8 @@ namespace Core.UI
 
             if (inventoryGridHitResult) // Inventory
             {
-                transform.parent = inventorySlotsParent;
+                transform.SetParent(inventorySlotsParent);
+                //transform.parent = inventorySlotsParent;
                 SetRaycastBlock(true);
                 
                 var data = gameObject.GetComponent<UIItemDataHolder>().Data;
@@ -101,7 +103,9 @@ namespace Core.UI
                 
                 this.transform.position = eventData.pointerCurrentRaycast.gameObject.transform.position;
                 ((RectTransform) transform).sizeDelta = new Vector2(70, 70);
-                this.transform.parent = eventData.pointerCurrentRaycast.gameObject.transform;
+
+                transform.SetParent(eventData.pointerCurrentRaycast.gameObject.transform);
+                // this.transform.parent = eventData.pointerCurrentRaycast.gameObject.transform;
 
                 SetRaycastBlock(true);
                 SetRaycastBlock(true, inventorySlotsParent);

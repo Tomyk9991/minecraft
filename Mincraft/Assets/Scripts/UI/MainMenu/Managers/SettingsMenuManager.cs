@@ -12,12 +12,16 @@ namespace Core.UI.MainMenu
         [Header("UI Elements")]
         [SerializeField] private Slider fovSlider = null;
         [SerializeField] private Slider renderDistanceSlider = null;
+        [SerializeField] private Slider mouseSensitivity = null;
+        
 
         private void Start()
         {
             SettingsData data = MainMenuSavingManager.LoadSettings();
+            
             this.fovSlider.value = data.fovSlider;
             this.renderDistanceSlider.value = data.renderDistance;
+            this.mouseSensitivity.value = data.mouseSensitivity;
         }
 
         //Called from Unity
@@ -30,7 +34,11 @@ namespace Core.UI.MainMenu
 
         private void Save()
         {
-            MainMenuSavingManager.SaveSettings(new SettingsData((int) fovSlider.value, (int) renderDistanceSlider.value));
+            MainMenuSavingManager.SaveSettings(new SettingsData(
+                (int) fovSlider.value, 
+                (int) renderDistanceSlider.value, 
+                mouseSensitivity.value)
+            );
         }
     }
 }

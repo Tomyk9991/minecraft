@@ -15,8 +15,6 @@ namespace Core.Player.Systems.Inventory
         
         public event Action<int> OnCriticalSizeExceeded;
         
-        [Header("Inventory settings")]
-        [SerializeField] private int maxStackSize = 128;
         
         public List<ItemData> Items { get; private set; }
         public QuickBar QuickBar { get; private set; }

@@ -52,7 +52,7 @@ namespace Core.Saving
             catch (FileNotFoundException e)
             {
                 Debug.Log(e);
-                return new SettingsData(60, 5);
+                return new SettingsData(60, 5, 2.0f);
             }
             return JsonUtility.FromJson<SettingsData>(json);
         }
@@ -77,6 +77,9 @@ namespace Core.Saving
 
                 foreach (string directory in directories)
                 {
+                    if (directory.EndsWith("_debug_world_")) 
+                        continue;
+                    
                     string json = "";
                     try
                     {

@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using ArithmeticParser;
 using Core.Managers;
 using Core.UI.Ingame;
 using Extensions;
@@ -141,13 +142,13 @@ namespace Core.UI.Console
                 try
                 {
                     currentMessage = currentMessage.TrimStart('=');
-                    var loDataTable = new DataTable();
-                    var loDataColumn = new DataColumn("Eval", typeof (double), currentMessage); 
-                    loDataTable.Columns.Add(loDataColumn);
-                    loDataTable.Rows.Add(0); 
-                    double d = (double) loDataTable.Rows[0]["Eval"];
+                    currentMessage.Trim();
+                    Compiler compiler = new Compiler(currentMessage);
+                    double d = compiler.Evaluate();
                     previewText.gameObject.SetActive(true);
-                    Write(currentMessage + " = " + d);
+                    Write(new StringBuilder("    ").Append(currentMessage).Append(" = ").Append(d).ToString());
+
+                    Write(compiler.SyntaxTree.TreeView());
                 }
                 catch (Exception e)
                 {

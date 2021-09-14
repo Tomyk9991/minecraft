@@ -37,7 +37,7 @@ namespace Core.Managers
         [SerializeField] public float smoothness = 40;
 
         [Header("Main Menu Settings")]
-        [SerializeField] private Camera camera = null;
+        [SerializeField] private Camera _camera = null;
 
 
 
@@ -54,7 +54,7 @@ namespace Core.Managers
                 return;
             }
 
-            camera.fieldOfView = MainMenuSavingManager.LoadSettings().fovSlider;
+            _camera.fieldOfView = MainMenuSavingManager.LoadSettings().fovSlider;
 
             Debug.Log("No world selected");
             if (seed == -1)
