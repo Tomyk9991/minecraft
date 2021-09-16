@@ -5022,12 +5022,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1288670794}
   m_CullTransparentMesh: 0
---- !u!20 &1300324373 stripped
-Camera:
-  m_CorrespondingSourceObject: {fileID: 1300324373, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
-    type: 3}
-  m_PrefabInstance: {fileID: 3399322171762488873}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1339239634
 GameObject:
   m_ObjectHideFlags: 0
@@ -5528,83 +5522,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1476669101}
   m_CullTransparentMesh: 0
---- !u!1 &1486096559 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1486096559, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
-    type: 3}
-  m_PrefabInstance: {fileID: 3399322171762488873}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1486096561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1486096559}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fb88f589811f0e4daae89e18e38c186, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fadeInPosition: {x: 1.15, y: -1.25, z: 1.78}
-  fadeOutPosition: {x: 1.15, y: -1.8, z: 1.78}
-  animationSpeed: 0.8
-  distanceThreshold: 0.005
-  useHandBob: 1
-  bobCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 6.0289097
-      outSlope: 6.0289097
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.28935724
-    - serializedVersion: 3
-      time: 0.25
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.5
-      value: 0
-      inSlope: -5.4020777
-      outSlope: -5.4020777
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.49052405
-    - serializedVersion: 3
-      time: 0.75
-      value: -1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 5.904254
-      outSlope: 5.904254
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.400553
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 1
-    m_RotationOrder: 4
-  virtualCamera: {fileID: 1300324373}
-  deltaHeight: 0.1
-  stepInterval: 1.2
 --- !u!1 &1488239986
 GameObject:
   m_ObjectHideFlags: 0
@@ -8975,18 +8892,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 757827644}
     m_Modifications:
-    - target: {fileID: 1300324373, guid: 7ada145dfe0b44a4e8985c27da1d88fb, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1486096562, guid: 7ada145dfe0b44a4e8985c27da1d88fb, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: a2a080302a595fb43a1d5c3da227c371, type: 2}
-    - target: {fileID: 1486096563, guid: 7ada145dfe0b44a4e8985c27da1d88fb, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 4300000, guid: e4803ecfde8ad4a469f1fae8801d39fb, type: 2}
     - target: {fileID: 2039295200666249447, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: inventoryUI
@@ -9050,11 +8955,6 @@ PrefabInstance:
     - target: {fileID: 3399322170810967719, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3399322170821168999, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
-        type: 3}
-      propertyPath: m_UseHeadBob
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
