@@ -46,3 +46,18 @@ MonoBehaviour:
   - EnumType: 10
     Sprite: {fileID: 21300000, guid: ccc25bc52fbff9c48861d5988de7c8c8, type: 3}
     Name: Furnace
+  - EnumType: 11
+    Sprite: {fileID: 21300000, guid: b05cd3998dbf0f241863760df8c0d14e, type: 3}
+    Name: Red Flower
+  - EnumType: 12
+    Sprite: {fileID: 21300000, guid: 309c3d3191e3f61479ad7a80178e354c, type: 3}
+    Name: Lawn
+  - EnumType: 13
+    Sprite: {fileID: 21300000, guid: 8bc18a7525a93b6409fc8d2c4a0b9c1f, type: 3}
+    Name: '&-Gate'
+  - EnumType: 14
+    Sprite: {fileID: 21300000, guid: fb9686bce45fc9e40a46da2ead9c383c, type: 3}
+    Name: '>=1-Gate'
+  - EnumType: 15
+    Sprite: {fileID: 21300000, guid: aa109e229272f3442b33660a6142160e, type: 3}
+    Name: '!-Gate'

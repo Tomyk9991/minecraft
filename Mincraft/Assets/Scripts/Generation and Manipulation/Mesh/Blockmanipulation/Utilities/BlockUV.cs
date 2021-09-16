@@ -18,6 +18,9 @@ namespace Core.Builder
         Cactus = 9,
         Furnace = 10,
         RedFlower = 11,
-        Lawn = 12
+        Lawn = 12,
+        AndGate = 13,
+        OrGate = 14,
+        NotGate = 15
     }
 }

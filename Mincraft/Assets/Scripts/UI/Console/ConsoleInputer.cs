@@ -147,8 +147,6 @@ namespace Core.UI.Console
                     double d = compiler.Evaluate();
                     previewText.gameObject.SetActive(true);
                     Write(new StringBuilder("    ").Append(currentMessage).Append(" = ").Append(d).ToString());
-
-                    Write(compiler.SyntaxTree.TreeView());
                 }
                 catch (Exception e)
                 {

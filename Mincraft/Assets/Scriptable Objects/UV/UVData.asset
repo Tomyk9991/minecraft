@@ -494,3 +494,114 @@ MonoBehaviour:
     isTransparent: 1
     CanFaceDifferentDirections: 0
     Is3DSprite: 1
+  - EnumType: 13
+    Forward:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Back:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Up:
+      TileX: 0
+      TileY: 13
+      SizeX: 1
+      SizeY: 1
+    Down:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Left:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Right:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Meshoffset: 0
+    transparencyLevel: 0
+    isSolid: 1
+    isTransparent: 0
+    CanFaceDifferentDirections: 1
+    Is3DSprite: 0
+  - EnumType: 14
+    Forward:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Back:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Up:
+      TileX: 1
+      TileY: 13
+      SizeX: 1
+      SizeY: 1
+    Down:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Left:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Right:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Meshoffset: 0
+    transparencyLevel: 0
+    isSolid: 1
+    isTransparent: 0
+    CanFaceDifferentDirections: 1
+    Is3DSprite: 0
+  - EnumType: 15
+    Forward:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Back:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Up:
+      TileX: 2
+      TileY: 13
+      SizeX: 1
+      SizeY: 1
+    Down:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Left:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Right:
+      TileX: 0
+      TileY: 14
+      SizeX: 1
+      SizeY: 1
+    Meshoffset: 0
+    transparencyLevel: 0
+    isSolid: 1
+    isTransparent: 0
+    CanFaceDifferentDirections: 1
+    Is3DSprite: 0
