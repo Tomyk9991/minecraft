@@ -13,7 +13,6 @@ namespace Core.Player.Interaction
         private void Awake()
         {
             var data = scriptable.itemInformation;
-            Debug.Log(data.Count);
 
             spriteDictionary = new Sprite[data.Count];
             nameDictionary = new string[data.Count];

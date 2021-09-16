@@ -43,15 +43,15 @@ namespace Core.UI.Ingame
                 this.slotIndex = selectedIndex;
             }
             
-            Debug.Log(this.slotIndex);
+            //TODO make it possible without invoke
             Invoke(nameof(SetSelected), 0.05f);
-
         }
 
         void SetSelected()
         {
             SetSelectedSlotPosition(this.slotIndex);
         }
+        
         private void Update()
         {
             if (Input.anyKeyDown)
@@ -60,6 +60,7 @@ namespace Core.UI.Ingame
                 {
                     slotIndex = 9;
                 }
+                
                 if(Input.GetKeyDown(KeyCode.Alpha1)) { slotIndex = 0; SetSelectedSlotPosition(slotIndex); }
                 if(Input.GetKeyDown(KeyCode.Alpha2)) { slotIndex = 1; SetSelectedSlotPosition(slotIndex); }
                 if(Input.GetKeyDown(KeyCode.Alpha3)) { slotIndex = 2; SetSelectedSlotPosition(slotIndex); }

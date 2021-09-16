@@ -16,7 +16,6 @@ using Utilities;
 [RequireComponent(typeof(AudioSource))]
 public class FirstPersonController : SingletonBehaviour<FirstPersonController>, IConsoleToggle, IFullScreenUIToggle
 {
-    public MouseLook MouseBehaviour => this.m_MouseLook;
     [Header("General information")]
     [SerializeField] private bool m_IsWalking;
     [Header("Movement settings")]
@@ -63,9 +62,14 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
     [HideInInspector] public bool useGravity = false;
     private Vector3 _desiredMove;
     private RaycastHit _hitInfo;
-
+    
     private DoubleKeypressChecker doubleKeypressChecker;
 
+    public MouseLook MouseBehaviour => this.m_MouseLook;
+    public CharacterController CharacterController => this.m_CharacterController;
+    public float Speed { get; private set; }
+    public float BobSpeed { get; private set; }
+    
     public bool Enabled
     {
         get => this.enabled;
@@ -111,8 +115,7 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
     // Update is called once per frame
     private void Update()
     {
-        float speed;
-        GetInput(out speed);
+        this.Speed = GetInput();
         // always move along the camera forward as it is the direction that it being aimed at
         _desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
 
@@ -121,8 +124,8 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
             m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
         _desiredMove = Vector3.ProjectOnPlane(_desiredMove, _hitInfo.normal).normalized;
 
-        m_MoveDir.x = _desiredMove.x * speed;
-        m_MoveDir.z = _desiredMove.z * speed;
+        m_MoveDir.x = _desiredMove.x * this.Speed;
+        m_MoveDir.z = _desiredMove.z * this.Speed;
 
 
         if (m_CharacterController.isGrounded)
@@ -144,8 +147,8 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
 
         m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.deltaTime);
 
-        ProgressStepCycle(speed);
-        UpdateCameraPosition(speed);
+        ProgressStepCycle(this.Speed);
+        UpdateCameraPosition(this.Speed);
 
 
         RotateView();
@@ -230,6 +233,11 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
         PlayFootStepAudio();
     }
 
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(100, 0, 100, 100), this.BobSpeed.ToString());
+    }
+
 
     private void PlayFootStepAudio()
     {
@@ -252,12 +260,24 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
     private void UpdateCameraPosition(float speed)
     {
         Vector3 newCameraPosition;
+        float magnitude = m_CharacterController.velocity.magnitude;
+
+        if (magnitude > 0 && m_CharacterController.isGrounded)
+        {
+            this.BobSpeed = m_CharacterController.velocity.magnitude +
+                            (speed * (m_IsWalking ? 1f : m_RunstepLenghten));
+        }
+        else
+        {
+            this.BobSpeed = 0.0f;
+        }
+
         if (!m_UseHeadBob)
         {
             return;
         }
 
-        if (m_CharacterController.velocity.magnitude > 0 && m_CharacterController.isGrounded)
+        if (magnitude > 0 && m_CharacterController.isGrounded)
         {
             m_Camera.transform.localPosition =
                 m_HeadBob.DoHeadBob(m_CharacterController.velocity.magnitude +
@@ -275,8 +295,9 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
     }
 
 
-    private void GetInput(out float speed)
+    private float GetInput()
     {
+        float speed = 0.0f;
         // Read input
         float horizontal = CrossPlatformInputManager.GetAxisRaw("Horizontal");
         float vertical = CrossPlatformInputManager.GetAxisRaw("Vertical");
@@ -305,6 +326,9 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
             StopAllCoroutines();
             StartCoroutine(!m_IsWalking ? m_FovKick.FOVKickUp() : m_FovKick.FOVKickDown());
         }
+
+
+        return speed;
     }
 
 
