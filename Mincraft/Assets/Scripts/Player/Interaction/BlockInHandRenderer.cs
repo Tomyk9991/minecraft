@@ -40,6 +40,7 @@ namespace Core.Player
         private float inAnimationTimer = 0.0f;
         private float outAnimationTimer = 0.0f;
         private WaitForEndOfFrame endOfFrame = new WaitForEndOfFrame();
+        private Vector2[] uvBuffer = new Vector2[24];
 
         private void Start()
         {
@@ -115,19 +116,18 @@ namespace Core.Player
 
         private void SetUVFromBlockUV(BlockUV block)
         {
-            Vector2[] uvs = new Vector2[24];
             UVData[] currentUVData = UVDictionary.GetValue(block);
 
             for (int i = 0; i < 24; i += 4)
             {
                 UVData uvData = currentUVData[i / 4];
-                uvs[i + 0] = new Vector2(uvData.TileX, uvData.TileY);
-                uvs[i + 1] = new Vector2(uvData.TileX + uvData.SizeX, uvData.TileY);
-                uvs[i + 2] = new Vector2(uvData.TileX, uvData.TileY + uvData.SizeY);
-                uvs[i + 3] = new Vector2(uvData.TileX + uvData.SizeX, uvData.TileY + uvData.SizeY);
+                uvBuffer[i + 0] = new Vector2(uvData.TileX, uvData.TileY);
+                uvBuffer[i + 1] = new Vector2(uvData.TileX + uvData.SizeX, uvData.TileY);
+                uvBuffer[i + 2] = new Vector2(uvData.TileX, uvData.TileY + uvData.SizeY);
+                uvBuffer[i + 3] = new Vector2(uvData.TileX + uvData.SizeX, uvData.TileY + uvData.SizeY);
             }
 
-            mesh.SetUVs(0, uvs);
+            mesh.SetUVs(0, uvBuffer);
         }
         
 
