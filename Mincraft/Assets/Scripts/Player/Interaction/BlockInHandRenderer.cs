@@ -12,12 +12,11 @@ namespace Core.Player
         [Header("Positions")] 
         [SerializeField] private Vector3 fadeInPosition = Vector3.zero;
         [SerializeField] private Vector3 fadeOutPosition = Vector3.zero;
-        [Header("Settings")]
-        [SerializeField] private float animationSpeed = 1.0f;
-        [SerializeField] private float distanceThreshold = 0.005f;
+        [Header("Settings")] 
+        [SerializeField] private float fadeAnimationSpeed = 0.8f;
+        
         [Header("Bobbing")] 
         [SerializeField] private bool useHandBob = true;
-        
         [DrawIfTrue(nameof(useHandBob)), SerializeField] private AnimationCurve bobCurve = new AnimationCurve();
         [DrawIfTrue(nameof(useHandBob)), SerializeField] private Camera virtualCamera = null;
         [DrawIfTrue(nameof(useHandBob)), SerializeField] private float deltaHeight = 1.0f;
@@ -30,23 +29,24 @@ namespace Core.Player
 
         private float initialLocalXPosition = 0.0f;
         private float turnTimer = 0.0f;
-        
+
         private FirstPersonController playerController;
         private float evaluationValue = 0.0f;
-        
+
         private Mesh mesh = null;
         private BlockUV previousBlock = BlockUV.Air;
-        
-        private float inAnimationTimer = 0.0f;
-        private float outAnimationTimer = 0.0f;
-        private WaitForEndOfFrame endOfFrame = new WaitForEndOfFrame();
-        private Vector2[] uvBuffer = new Vector2[24];
+
+        private const float distanceThreshold = 0.005f;
+
+        private readonly WaitForEndOfFrame endOfFrame = new WaitForEndOfFrame();
+        private readonly Vector2[] uvBuffer = new Vector2[24];
 
         private void Start()
         {
             this.initialLocalXPosition = transform.localPosition.x;
             playerController = FirstPersonController.Instance;
             mesh = GetComponentInChildren<MeshFilter>().sharedMesh;
+
             QuickBarSelectionUI.Instance.OnSelectionChanged += SetBlock;
         }
 
@@ -64,15 +64,17 @@ namespace Core.Player
             float deltaMouseX = Input.GetAxis("Mouse X");
             float clampLimit = 10.0f;
             deltaMouseX = Mathf.Clamp(deltaMouseX, -clampLimit, clampLimit);
-            
+
 
             Vector3 finalLocalPosition = transform.localPosition;
 
-            finalLocalPosition.x = Mathf.SmoothDamp(transform.localPosition.x,
-                this.initialLocalXPosition - MathHelper.Map(deltaMouseX, -clampLimit, clampLimit, -this.localPositionOffset, this.localPositionOffset),
+            finalLocalPosition.x = Mathf.SmoothDamp(
+                transform.localPosition.x,
+                this.initialLocalXPosition - MathHelper.Map(deltaMouseX, -clampLimit, clampLimit,
+                    -this.localPositionOffset, this.localPositionOffset),
                 ref turnTimer, rapidTurnAnimationSpeed);
 
-            
+
             transform.localPosition = finalLocalPosition;
         }
 
@@ -81,13 +83,14 @@ namespace Core.Player
             if (!this.useHandBob)
                 return;
 
-            if (playerController.CharacterController.velocity.magnitude > 0 && playerController.CharacterController.isGrounded)
+            if (playerController.CharacterController.velocity.magnitude > 0 &&
+                playerController.CharacterController.isGrounded)
             {
                 evaluationValue += Time.deltaTime * stepInterval;
                 evaluationValue %= 1.0f;
                 Vector3 localPos = virtualCamera.transform.localPosition;
                 localPos.y = bobCurve.Evaluate(evaluationValue) * deltaHeight;
-                
+
                 virtualCamera.transform.localPosition = localPos;
             }
         }
@@ -129,7 +132,7 @@ namespace Core.Player
 
             mesh.SetUVs(0, uvBuffer);
         }
-        
+
 
         private IEnumerator FadeInFadeOutAnimation(BlockUV block)
         {
@@ -140,36 +143,35 @@ namespace Core.Player
             yield return FadeInAnimation();
         }
 
+
         private IEnumerator FadeOutAnimation()
         {
+            float timer = 0.0f;
             while ((this.fadeOutPosition - this.transform.localPosition).sqrMagnitude > distanceThreshold)
             {
-                this.outAnimationTimer += Time.deltaTime;
-                this.outAnimationTimer /= this.animationSpeed;
-                this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, this.fadeOutPosition,
-                    this.outAnimationTimer);
+                timer += Time.deltaTime;
+                timer /= this.fadeAnimationSpeed;
+                this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, this.fadeOutPosition, timer);
                 yield return endOfFrame;
             }
 
             this.transform.localPosition = this.fadeOutPosition;
-            this.outAnimationTimer = 0.0f;
 
             yield return endOfFrame;
         }
 
         private IEnumerator FadeInAnimation()
         {
+            float timer = 0.0f;
             while ((this.fadeInPosition - this.transform.localPosition).sqrMagnitude > distanceThreshold)
             {
-                this.inAnimationTimer += Time.deltaTime;
-                this.inAnimationTimer /= this.animationSpeed;
-                this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, this.fadeInPosition,
-                    this.inAnimationTimer);
+                timer += Time.deltaTime;
+                timer /= this.fadeAnimationSpeed;
+                this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, this.fadeInPosition, timer);
                 yield return endOfFrame;
             }
 
             this.transform.localPosition = this.fadeInPosition;
-            this.inAnimationTimer = 0.0f;
 
             yield return endOfFrame;
         }
