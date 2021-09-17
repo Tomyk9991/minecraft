@@ -1,4 +1,5 @@
-﻿using Core.Builder;
+﻿using System;
+using Core.Builder;
 using Core.Chunks;
 using Core.Managers;
 using Core.Math;
@@ -13,6 +14,7 @@ namespace Core.Player.Interaction
 {
     public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle, IFullScreenUIToggle
     {
+        public static event Action OnAdd;
         public float DesiredTimeUntilAction
         {
             get => timeBetweenRemove;
@@ -111,6 +113,7 @@ namespace Core.Player.Interaction
             
             if (Physics.Raycast(ray, out hit, RaycastDistance, hitMask))
             {
+                OnAdd?.Invoke();
                 CalculateQuickbarIndex(currentSelectionUI.SelectedIndex);
                 
                 ChunkReferenceHolder holder;

@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using Attributes;
 using Core.Builder;
+using Core.Math;
 using Core.UI.Ingame;
 using UnityEngine;
-using UnityStandardAssets.Utility;
 
 namespace Core.Player
 {
@@ -17,11 +17,19 @@ namespace Core.Player
         [SerializeField] private float distanceThreshold = 0.005f;
         [Header("Bobbing")] 
         [SerializeField] private bool useHandBob = true;
-
+        
         [DrawIfTrue(nameof(useHandBob)), SerializeField] private AnimationCurve bobCurve = new AnimationCurve();
         [DrawIfTrue(nameof(useHandBob)), SerializeField] private Camera virtualCamera = null;
         [DrawIfTrue(nameof(useHandBob)), SerializeField] private float deltaHeight = 1.0f;
         [DrawIfTrue(nameof(useHandBob)), SerializeField] private float stepInterval = 3.0f;
+
+        [Header("Rapid turns")] 
+        [SerializeField] private bool useRapidTurns = true;
+        [DrawIfTrue(nameof(useRapidTurns)), SerializeField] private float localPositionOffset = 0.0f;
+        [DrawIfTrue(nameof(useRapidTurns)), SerializeField] private float rapidTurnAnimationSpeed = 0.0f;
+
+        private float initialLocalXPosition = 0.0f;
+        private float turnTimer = 0.0f;
         
         private FirstPersonController playerController;
         private float evaluationValue = 0.0f;
@@ -35,14 +43,36 @@ namespace Core.Player
 
         private void Start()
         {
+            this.initialLocalXPosition = transform.localPosition.x;
             playerController = FirstPersonController.Instance;
-            mesh = GetComponent<MeshFilter>().sharedMesh;
+            mesh = GetComponentInChildren<MeshFilter>().sharedMesh;
             QuickBarSelectionUI.Instance.OnSelectionChanged += SetBlock;
         }
 
         private void Update()
         {
             UpdateCameraBobbing();
+            UpdateRapidTurnAnimation();
+        }
+
+        private void UpdateRapidTurnAnimation()
+        {
+            if (!this.useRapidTurns)
+                return;
+
+            float deltaMouseX = Input.GetAxis("Mouse X");
+            float clampLimit = 10.0f;
+            deltaMouseX = Mathf.Clamp(deltaMouseX, -clampLimit, clampLimit);
+            
+
+            Vector3 finalLocalPosition = transform.localPosition;
+
+            finalLocalPosition.x = Mathf.SmoothDamp(transform.localPosition.x,
+                this.initialLocalXPosition - MathHelper.Map(deltaMouseX, -clampLimit, clampLimit, -this.localPositionOffset, this.localPositionOffset),
+                ref turnTimer, rapidTurnAnimationSpeed);
+
+            
+            transform.localPosition = finalLocalPosition;
         }
 
         private void UpdateCameraBobbing()
@@ -50,7 +80,7 @@ namespace Core.Player
             if (!this.useHandBob)
                 return;
 
-            if (playerController.CharacterController.velocity.magnitude > 0)
+            if (playerController.CharacterController.velocity.magnitude > 0 && playerController.CharacterController.isGrounded)
             {
                 evaluationValue += Time.deltaTime * stepInterval;
                 evaluationValue %= 1.0f;

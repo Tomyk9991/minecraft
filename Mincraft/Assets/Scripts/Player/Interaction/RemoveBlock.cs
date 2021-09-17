@@ -1,4 +1,5 @@
-﻿using Core.Builder;
+﻿using System;
+using Core.Builder;
 using Core.Chunks;
 using Core.Math;
 using Core.UI;
@@ -9,6 +10,7 @@ namespace Core.Player.Interaction
 {
     public class RemoveBlock : MonoBehaviour, IMouseUsable, IConsoleToggle, IFullScreenUIToggle
     {
+        public static event Action OnRemove;
         private int chunkSize;
 
         public float DesiredTimeUntilAction
@@ -95,6 +97,7 @@ namespace Core.Player.Interaction
                 if (!hit.transform.TryGetComponent(out holder))
                     return;
 
+                OnRemove?.Invoke();
                 Chunk currentChunk = holder.Chunk;
                 
 

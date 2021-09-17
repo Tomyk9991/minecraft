@@ -233,12 +233,6 @@ public class FirstPersonController : SingletonBehaviour<FirstPersonController>, 
         PlayFootStepAudio();
     }
 
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(100, 0, 100, 100), this.BobSpeed.ToString());
-    }
-
-
     private void PlayFootStepAudio()
     {
         if (!m_CharacterController.isGrounded)

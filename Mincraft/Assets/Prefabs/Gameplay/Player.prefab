@@ -59,7 +59,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3399322170810967717}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &1300324373
 Camera:
@@ -115,7 +115,7 @@ GameObject:
   - component: {fileID: 1486096560}
   - component: {fileID: 1486096563}
   - component: {fileID: 1486096562}
-  - component: {fileID: 1486096561}
+  - component: {fileID: 1896443830}
   m_Layer: 12
   m_Name: Current Block
   m_TagString: Untagged
@@ -130,13 +130,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1486096559}
-  m_LocalRotation: {x: 0, y: -0.3987491, z: 0, w: 0.91706014}
-  m_LocalPosition: {x: 1.15, y: -1.25, z: 1.78}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 3399322170810967717}
+  m_Father: {fileID: 4424203038597495746}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -47, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1486096563
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -184,77 +184,25 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &1486096561
-MonoBehaviour:
+--- !u!95 &1896443830
+Animator:
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1486096559}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fb88f589811f0e4daae89e18e38c186, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fadeInPosition: {x: 1.15, y: -1.25, z: 1.78}
-  fadeOutPosition: {x: 1.15, y: -1.8, z: 1.78}
-  animationSpeed: 0.8
-  distanceThreshold: 0.005
-  useHandBob: 1
-  bobCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 6.0289097
-      outSlope: 6.0289097
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.28935724
-    - serializedVersion: 3
-      time: 0.25
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.5
-      value: 0
-      inSlope: -5.4020777
-      outSlope: -5.4020777
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.49052405
-    - serializedVersion: 3
-      time: 0.75
-      value: -1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 5.904254
-      outSlope: 5.904254
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.400553
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 1
-    m_RotationOrder: 4
-  virtualCamera: {fileID: 1300324373}
-  deltaHeight: 0.1
-  stepInterval: 1.2
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: efaa20224529766469d26a53d006f36f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &3399322170810940037
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,8 +236,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1486096560}
   - {fileID: 1300324371}
+  - {fileID: 4424203038597495746}
   m_Father: {fileID: 3399322170810967719}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -949,3 +897,109 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &4157680008418682264
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4424203038597495746}
+  - component: {fileID: 8680730234183700990}
+  m_Layer: 8
+  m_Name: Parent Block
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4424203038597495746
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4157680008418682264}
+  m_LocalRotation: {x: -0, y: -0.3987491, z: -0, w: 0.91706014}
+  m_LocalPosition: {x: 1.15, y: -1.25, z: 1.78}
+  m_LocalScale: {x: 0.8000001, y: 0.8, z: 0.8000001}
+  m_Children:
+  - {fileID: 1486096560}
+  m_Father: {fileID: 3399322170810967717}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: -47, z: 0}
+--- !u!114 &8680730234183700990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4157680008418682264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fb88f589811f0e4daae89e18e38c186, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeInPosition: {x: 1.15, y: -1.25, z: 1.78}
+  fadeOutPosition: {x: 1.15, y: -1.8, z: 1.78}
+  animationSpeed: 0.8
+  distanceThreshold: 0.005
+  useHandBob: 1
+  bobCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 6.0289097
+      outSlope: 6.0289097
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.28935724
+    - serializedVersion: 3
+      time: 0.25
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0
+      inSlope: -5.4020777
+      outSlope: -5.4020777
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.49052405
+    - serializedVersion: 3
+      time: 0.75
+      value: -1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 5.904254
+      outSlope: 5.904254
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.400553
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 1
+    m_RotationOrder: 4
+  virtualCamera: {fileID: 1300324373}
+  deltaHeight: 0.1
+  stepInterval: 1.2
+  useRapidTurns: 1
+  localPositionOffset: 1
+  rapidTurnAnimationSpeed: 0.1
