@@ -14,7 +14,7 @@ namespace Utilities
         public Block currentBlock;
         private ChunkJobManager chunkJobManager;
         
-        public Int3 lp;
+        public Int3 LocalPosition;
         public Int3 dirPlusOne;
 
         public Vector3 latestGlobalClick;

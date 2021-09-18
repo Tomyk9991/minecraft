@@ -15,6 +15,7 @@ namespace Core.Player.Interaction
     public class AddBlock : MonoBehaviour, IMouseUsable, IConsoleToggle, IFullScreenUIToggle
     {
         public static event Action OnAdd;
+        public static event Action<BlockUV> OnAddBlock;
         public float DesiredTimeUntilAction
         {
             get => timeBetweenRemove;
@@ -120,6 +121,8 @@ namespace Core.Player.Interaction
                 if (!hit.transform.TryGetComponent(out holder))
                     return;
 
+                OnAddBlock?.Invoke(blockUV);
+
 
                 if (placer.currentBlock.CanFaceInDifferentDirections())
                 {
@@ -137,19 +140,19 @@ namespace Core.Player.Interaction
                 placer.latestGlobalClickInt.Y = (int) placer.latestGlobalClick.y;
                 placer.latestGlobalClickInt.Z = (int) placer.latestGlobalClick.z;
 
-                placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.lp);
+                placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.LocalPosition);
 
-                if (MathHelper.InChunkSpace(placer.lp))
+                if (MathHelper.InChunkSpace(placer.LocalPosition))
                 {
-                    placer.HandleAddBlock(currentChunk, placer.lp);
+                    placer.HandleAddBlock(currentChunk, placer.LocalPosition);
                 }
                 else
                 {
-                    placer.GetDirectionPlusOne(placer.lp, ref placer.dirPlusOne);
+                    placer.GetDirectionPlusOne(placer.LocalPosition, ref placer.dirPlusOne);
                     currentChunk = currentChunk.ChunkNeighbour(placer.dirPlusOne);
-                    placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.lp);
+                    placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.LocalPosition);
 
-                    placer.HandleAddBlock(currentChunk, placer.lp);
+                    placer.HandleAddBlock(currentChunk, placer.LocalPosition);
                 }
             }
         }

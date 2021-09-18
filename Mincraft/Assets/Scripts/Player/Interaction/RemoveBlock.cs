@@ -11,6 +11,8 @@ namespace Core.Player.Interaction
     public class RemoveBlock : MonoBehaviour, IMouseUsable, IConsoleToggle, IFullScreenUIToggle
     {
         public static event Action OnRemove;
+        public static event Action<BlockUV> OnRemoveBlock;
+        
         private int chunkSize;
 
         public float DesiredTimeUntilAction
@@ -108,21 +110,23 @@ namespace Core.Player.Interaction
                 placer.latestGlobalClickInt.Y = (int) placer.latestGlobalClick.y;
                 placer.latestGlobalClickInt.Z = (int) placer.latestGlobalClick.z;
 
-                placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.lp);
+                placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.LocalPosition);
                 
                 Block removedBlock;
-                if (MathHelper.InChunkSpace(placer.lp))
+                if (MathHelper.InChunkSpace(placer.LocalPosition))
                 {
-                    removedBlock = placer.HandleAddBlock(currentChunk, placer.lp);
+                    removedBlock = placer.HandleAddBlock(currentChunk, placer.LocalPosition);
                 }
                 else
                 {
-                    placer.GetDirectionPlusOne(placer.lp, ref placer.dirPlusOne);
+                    placer.GetDirectionPlusOne(placer.LocalPosition, ref placer.dirPlusOne);
                     currentChunk = currentChunk.ChunkNeighbour(placer.dirPlusOne);
-                    placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.lp);
+                    placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.LocalPosition);
 
-                    removedBlock = placer.HandleAddBlock(currentChunk, placer.lp);
+                    removedBlock = placer.HandleAddBlock(currentChunk, placer.LocalPosition);
                 }
+
+                OnRemoveBlock?.Invoke(removedBlock.ID);
                 
                 if (droppedItemsManager == null) droppedItemsManager = DroppedItemsManager.Instance;
                 
@@ -150,20 +154,20 @@ namespace Core.Player.Interaction
             placer.latestGlobalClickInt.Y = (int) placer.latestGlobalClick.y;
             placer.latestGlobalClickInt.Z = (int) placer.latestGlobalClick.z;
 
-            placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.lp);
+            placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.LocalPosition);
                 
             Block removedBlock;
-            if (MathHelper.InChunkSpace(placer.lp))
+            if (MathHelper.InChunkSpace(placer.LocalPosition))
             {
-                removedBlock = placer.HandleAddBlock(currentChunk, placer.lp, BlockUV.Lawn);
+                removedBlock = placer.HandleAddBlock(currentChunk, placer.LocalPosition, BlockUV.Lawn);
             }
             else
             {
-                placer.GetDirectionPlusOne(placer.lp, ref placer.dirPlusOne);
+                placer.GetDirectionPlusOne(placer.LocalPosition, ref placer.dirPlusOne);
                 currentChunk = currentChunk.ChunkNeighbour(placer.dirPlusOne);
-                placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.lp);
+                placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.LocalPosition);
 
-                removedBlock = placer.HandleAddBlock(currentChunk, placer.lp, BlockUV.Lawn);
+                removedBlock = placer.HandleAddBlock(currentChunk, placer.LocalPosition, BlockUV.Lawn);
             }
         }
     }

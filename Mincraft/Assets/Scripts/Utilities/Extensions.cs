@@ -14,6 +14,43 @@ namespace Extensions
         public static Int3 ToInt3(this Vector3 pos)
             => Int3.ToInt3(pos);
 
+        public static int AddPoint(this LineRenderer renderer, Vector3 position)
+        {
+            int count = renderer.positionCount;
+            renderer.positionCount += 1;
+
+            renderer.SetPosition(count, position);
+
+            return count;
+        }
+
+        public static void InsertPoint(this LineRenderer renderer, int index, Vector3 position)
+        {
+            Vector3[] currentPositions = new Vector3[renderer.positionCount];
+            renderer.GetPositions(currentPositions);
+            
+            Vector3[] newPositions = new Vector3[currentPositions.Length + 1];
+
+            for (int i = 0; i < newPositions.Length; i++)
+            {
+                if (i < index)
+                {
+                    newPositions[i] = currentPositions[i];
+                }
+                else if (i == index)
+                {
+                    newPositions[i] = position;
+                }
+                else
+                {
+                    newPositions[i] = currentPositions[i - 1];
+                }
+            }
+
+            renderer.positionCount += 1;
+            renderer.SetPositions(newPositions);
+        }
+
         public static T[] Shuffle<T>(this T[] arr)
         {
             Random random = new Random();
