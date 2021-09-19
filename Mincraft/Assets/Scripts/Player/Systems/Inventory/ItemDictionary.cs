@@ -1,5 +1,4 @@
-﻿using System;
-using Core.Builder;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Core.Player.Interaction
@@ -7,37 +6,26 @@ namespace Core.Player.Interaction
     public class ItemDictionary : MonoBehaviour
     {
         [SerializeField] private ItemDataScriptable scriptable = null;
-        private static Sprite[] spriteDictionary;
-        private static string[] nameDictionary;
+
+        private static Dictionary<int, ItemInformation> itemDictionary = new Dictionary<int, ItemInformation>();
+        
 
         private void Awake()
         {
             var data = scriptable.itemInformation;
+            itemDictionary = new Dictionary<int, ItemInformation>(data.Count);
 
-            spriteDictionary = new Sprite[data.Count];
-            nameDictionary = new string[data.Count];
-            
             for (int i = 0; i < data.Count; i++)
             {
-                nameDictionary[(int) data[i].EnumType] = data[i].Name;
-                spriteDictionary[(int) data[i].EnumType] = data[i].Sprite;
+                int index = data[i].IsBlock ? (int) data[i].BlockID : short.MaxValue + 1 + data[i].ItemID;
+                itemDictionary.Add(index, data[i]);
             }
         }
 
-        public static string GetName(BlockUV itemID)
-        {
-            if (itemID <= 0 || (int) itemID >= Enum.GetNames(typeof(BlockUV)).Length)
-                Debug.LogError("item id kinda strange");
-        
-            return nameDictionary[(int) itemID];
-        }
+        public static string GetName(int itemID)
+            => itemDictionary.ContainsKey(itemID) ? itemDictionary[itemID].Name : "";
 
-        public static Sprite GetValue(BlockUV itemId)
-        {
-            if (itemId <= 0 || (int) itemId >= Enum.GetNames(typeof(BlockUV)).Length) 
-                Debug.LogError("item id kinda strange" + itemId);
-            
-            return spriteDictionary[(int) itemId];
-        }
+        public static Sprite GetValue(int itemID)
+            => itemDictionary.ContainsKey(itemID) ? itemDictionary[itemID].Sprite : null;
     }
 }

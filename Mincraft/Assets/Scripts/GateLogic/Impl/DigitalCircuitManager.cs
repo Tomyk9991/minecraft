@@ -29,7 +29,7 @@ namespace GateLogic.Impl
             set => this.enabled = value;
         }
         
-        private readonly List<BlockUV> circuitBlocks = new List<BlockUV>
+        public static readonly List<BlockUV> CircuitBlocks = new List<BlockUV>
         {
             BlockUV.AndGate,
             BlockUV.OrGate,
@@ -47,12 +47,12 @@ namespace GateLogic.Impl
 
         private void OnRemoveBlock(BlockUV block)
         {
-            if (!circuitBlocks.Contains(block)) return;
+            if (!CircuitBlocks.Contains(block)) return;
         }
 
         private void OnAddBlock(BlockUV block)
         {
-            if (!circuitBlocks.Contains(block)) return;
+            if (!CircuitBlocks.Contains(block)) return;
             Debug.Log("Add digital block");
         }
 

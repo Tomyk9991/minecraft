@@ -74,7 +74,7 @@ namespace Core.UI.Ingame
                 }
             }
 
-            foreach (var data in inventory.Items)
+            foreach (ItemData data in inventory.Items)
             {
                 if (data.QuickbarIndex != -1)
                 {
@@ -82,7 +82,7 @@ namespace Core.UI.Ingame
                 }
                 else
                 {
-                    string name = ItemDictionary.GetName((BlockUV) data.ItemID);
+                    string name = ItemDictionary.GetName(data.ItemID);
                     
                     string manipulatedName = name.Replace(" ", "").ToLower();
                     string manipulatedNewValue = newValue.Replace(" ", "").ToLower();
@@ -110,7 +110,8 @@ namespace Core.UI.Ingame
         {
             GameObject go = Instantiate(uiItemPrefab, Vector3.zero, Quaternion.identity, parent);
 
-            Sprite itemSprite = ItemDictionary.GetValue((BlockUV) item.ItemID);
+            Sprite itemSprite = ItemDictionary.GetValue(item.ItemID);
+            
             go.GetComponent<Image>().sprite = itemSprite;
             go.GetComponent<UIItemDataHolder>().Data = item;
 

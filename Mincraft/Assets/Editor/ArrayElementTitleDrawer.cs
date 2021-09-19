@@ -27,6 +27,9 @@ public class ArrayElementTitleDrawer : PropertyDrawer
 
     private string GetTitle()
     {
+        if (TitleNameProp == null)
+            return "";
+        
         switch (TitleNameProp.propertyType)
         {
             case SerializedPropertyType.Generic:
@@ -66,6 +69,20 @@ public class ArrayElementTitleDrawer : PropertyDrawer
             case SerializedPropertyType.Gradient:
                 break;
             case SerializedPropertyType.Quaternion:
+                break;
+            case SerializedPropertyType.ExposedReference:
+                break;
+            case SerializedPropertyType.FixedBufferSize:
+                break;
+            case SerializedPropertyType.Vector2Int:
+                break;
+            case SerializedPropertyType.Vector3Int:
+                break;
+            case SerializedPropertyType.RectInt:
+                break;
+            case SerializedPropertyType.BoundsInt:
+                break;
+            case SerializedPropertyType.ManagedReference:
                 break;
             default:
                 break;

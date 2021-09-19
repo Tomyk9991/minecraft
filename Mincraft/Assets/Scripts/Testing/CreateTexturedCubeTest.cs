@@ -2,6 +2,7 @@
 using System.Collections;
 using System.IO;
 using Core.Builder;
+using GateLogic.Impl;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,8 +13,14 @@ namespace Core.Testing
         [SerializeField] private int width = 128;
         [SerializeField] private int height = 128;
     
+        private Quaternion standardRotation = Quaternion.identity;
+        private Quaternion inverseRotation = Quaternion.identity;
+        
         public void Start()
         {
+            standardRotation = transform.rotation;
+            inverseRotation = Quaternion.Inverse(Quaternion.Inverse(standardRotation));
+            
             foreach(BlockUV uv in Enum.GetValues(typeof(BlockUV)))
             {
                 if (uv == BlockUV.Air || uv == BlockUV.None) continue;
@@ -21,22 +28,25 @@ namespace Core.Testing
             }
         }
     
-        private void CreateChunkWith(BlockUV blockID)
+        private void CreateChunkWith(BlockUV block)
         {
-            MeshData data = MeshBuilder.CombineBlock(new Block(blockID));
+            MeshData data = MeshBuilder.CombineBlock(new Block(block));
             
             Mesh mesh = new Mesh();
             
             GetComponent<MeshFilter>().mesh = mesh;
+
+            transform.rotation = DigitalCircuitManager.CircuitBlocks.Contains(block) ? inverseRotation : standardRotation;
+            
             mesh.subMeshCount = 2;
             mesh.SetVertices(data.Vertices);
             mesh.SetTriangles(data.Triangles, 0);
             mesh.SetTriangles(data.TransparentTriangles, 1);
             mesh.SetNormals(data.Normals);
             mesh.SetUVs(0, data.UVs);
-            
+
             byte[] itemBytes = CreateUnitIcon().texture.EncodeToPNG();
-            File.WriteAllBytes(Application.dataPath + $"/Imports/Sprites/UI/Inventory/InventorySprites/Inventory{blockID.ToString()}.png", itemBytes);
+            File.WriteAllBytes(Application.dataPath + $"/Imports/Sprites/UI/Inventory/InventorySprites/Inventory{block.ToString()}.png", itemBytes);
     
     #if UNITY_EDITOR
             AssetDatabase.Refresh();

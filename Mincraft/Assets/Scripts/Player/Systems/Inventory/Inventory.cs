@@ -32,6 +32,7 @@ namespace Core.Player.Systems.Inventory
             if (ResourceIO.LoadCached<Inventory>(new InventoryFileIdentifier(), out OutputContext context))
             {
                 ItemData[] itemData = ((InventorySavingManager.InventoryLoadingContext<ItemData, int>) context).items;
+                
                 if (itemData != null && itemData.Length != 0)
                 {
                     foreach (var data in itemData)
