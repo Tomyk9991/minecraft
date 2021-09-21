@@ -27,5 +27,8 @@ namespace Core.Player.Interaction
 
         public static Sprite GetValue(int itemID)
             => itemDictionary.ContainsKey(itemID) ? itemDictionary[itemID].Sprite : null;
+
+        public static MeshMaterialPair GetMeshMaterialPair(int itemID)
+            => itemDictionary.ContainsKey(itemID) ? itemDictionary[itemID].MeshMaterialPair : null;
     }
 }

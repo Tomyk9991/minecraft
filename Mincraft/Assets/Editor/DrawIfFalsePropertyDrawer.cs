@@ -22,7 +22,7 @@ public class DrawIfFalsePropertyDrawer : PropertyDrawer
         bool show = ActivateProperty(a, property);
         if (show == true)
         {
-            return base.GetPropertyHeight(property, label);
+            return base.GetPropertyHeight(property, label) + 30;
         }
         return 0f;
     }

@@ -14,87 +14,138 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemInformation:
   - IsBlock: 1
-    BlockID: 0
-    ItemID: 0
     Sprite: {fileID: 0}
     Name: Air
-  - IsBlock: 1
-    BlockID: 1
-    ItemID: 1
-    Sprite: {fileID: 21300000, guid: 9fd207fc4dd94e34993b4f085618d30f, type: 3}
-    Name: Grass
-  - IsBlock: 1
-    BlockID: 2
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: f82b562a795df2c47b52269c79af885b, type: 3}
-    Name: Stone
-  - IsBlock: 1
-    BlockID: 3
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: ab2079f365ac0fa4e8a6ff9576ef615d, type: 3}
-    Name: Dirt
-  - IsBlock: 1
-    BlockID: 4
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: 828b5c6e7ce455941a95ea180ed14cf1, type: 3}
-    Name: Wood
-  - IsBlock: 1
-    BlockID: 5
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: f3334b463cd3cab42ac16bb13f5e6690, type: 3}
-    Name: Processed Wood
-  - IsBlock: 1
-    BlockID: 6
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: cf98adab6fa0b0943a10b703bf406541, type: 3}
-    Name: Leaf
-  - IsBlock: 1
-    BlockID: 7
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: e8beffe72cf5b0942972171a9ae711b5, type: 3}
-    Name: Glass
-  - IsBlock: 1
-    BlockID: 8
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: 552cec4814b6a4345bf9d9280cf03e68, type: 3}
-    Name: Sand
-  - IsBlock: 1
-    BlockID: 9
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: 0d1f8679ac5c5964c8ba3bbf871fc06f, type: 3}
-    Name: Cactus
-  - IsBlock: 1
-    BlockID: 10
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: ccc25bc52fbff9c48861d5988de7c8c8, type: 3}
-    Name: Furnace
-  - IsBlock: 1
-    BlockID: 11
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: b05cd3998dbf0f241863760df8c0d14e, type: 3}
-    Name: Red Flower
-  - IsBlock: 1
-    BlockID: 12
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: 309c3d3191e3f61479ad7a80178e354c, type: 3}
-    Name: Lawn
-  - IsBlock: 1
-    BlockID: 13
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: 8bc18a7525a93b6409fc8d2c4a0b9c1f, type: 3}
-    Name: And Gate
-  - IsBlock: 1
-    BlockID: 14
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: fb9686bce45fc9e40a46da2ead9c383c, type: 3}
-    Name: Or Gate
-  - IsBlock: 1
-    BlockID: 15
-    ItemID: 0
-    Sprite: {fileID: 21300000, guid: aa109e229272f3442b33660a6142160e, type: 3}
-    Name: Not Gate
-  - IsBlock: 0
     BlockID: 0
     ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: 9fd207fc4dd94e34993b4f085618d30f, type: 3}
+    Name: Grass
+    BlockID: 1
+    ItemID: 1
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: f82b562a795df2c47b52269c79af885b, type: 3}
+    Name: Stone
+    BlockID: 2
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: ab2079f365ac0fa4e8a6ff9576ef615d, type: 3}
+    Name: Dirt
+    BlockID: 3
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: 828b5c6e7ce455941a95ea180ed14cf1, type: 3}
+    Name: Wood
+    BlockID: 4
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: f3334b463cd3cab42ac16bb13f5e6690, type: 3}
+    Name: Processed Wood
+    BlockID: 5
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: cf98adab6fa0b0943a10b703bf406541, type: 3}
+    Name: Leaf
+    BlockID: 6
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: e8beffe72cf5b0942972171a9ae711b5, type: 3}
+    Name: Glass
+    BlockID: 7
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: 552cec4814b6a4345bf9d9280cf03e68, type: 3}
+    Name: Sand
+    BlockID: 8
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: 0d1f8679ac5c5964c8ba3bbf871fc06f, type: 3}
+    Name: Cactus
+    BlockID: 9
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: ccc25bc52fbff9c48861d5988de7c8c8, type: 3}
+    Name: Furnace
+    BlockID: 10
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: b05cd3998dbf0f241863760df8c0d14e, type: 3}
+    Name: Red Flower
+    BlockID: 11
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: 309c3d3191e3f61479ad7a80178e354c, type: 3}
+    Name: Lawn
+    BlockID: 12
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: 8bc18a7525a93b6409fc8d2c4a0b9c1f, type: 3}
+    Name: And Gate
+    BlockID: 13
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: fb9686bce45fc9e40a46da2ead9c383c, type: 3}
+    Name: Or Gate
+    BlockID: 14
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 1
+    Sprite: {fileID: 21300000, guid: aa109e229272f3442b33660a6142160e, type: 3}
+    Name: Not Gate
+    BlockID: 15
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 0}
+      Material: {fileID: 0}
+  - IsBlock: 0
     Sprite: {fileID: 21300000, guid: 99fbdbe58c4bb3a4189318a74782d2f7, type: 3}
     Name: Cable
+    BlockID: 0
+    ItemID: 0
+    MeshMaterialPair:
+      Mesh: {fileID: 4300000, guid: d09e4f0fc6f2e3045bf7c2d26097c63c, type: 2}
+      Material: {fileID: 2100000, guid: 6c7030a13dddd3a4797b11992d15ed77, type: 2}

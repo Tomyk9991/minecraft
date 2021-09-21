@@ -141,11 +141,12 @@ namespace Core.UI
             Vector3 playerForward = playerMovementTracker.transform.forward;
             go.transform.position = playerMovementTracker.transform.position + playerForward;
 
-            go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) data.ItemID), data.Amount);
+            GameObject handle = go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) data.ItemID), data.Amount);
             go.GetComponent<Rigidbody>().AddForce(playerForward, ForceMode.Impulse);
             
-            droppedItemsManager.AddNewItem(go);
-            droppedItemsManager.AddBoxColliderHandle(go.transform.GetChild(0).GetComponent<BoxCollider>());
+            
+            droppedItemsManager.AddNewItem(go, handle);
+            droppedItemsManager.AddBoxColliderHandle(handle.GetComponent<BoxCollider>());
         }
         
         private void SetRaycastBlock(bool state)

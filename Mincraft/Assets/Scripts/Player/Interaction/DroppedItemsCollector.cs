@@ -29,11 +29,8 @@ namespace Core.Player.Interaction
                 DroppedItemInformation info = go.GetComponent<DroppedItemInformation>();
                 
                 // TODO Check if this kind of dropped item is still collectible (so check if the maxStackSize is exceeded)
-                if (info.IsBlock)
-                {
-                    inventory.AddBlockToInventory(info.Block, info.Amount);
-                }
                 
+                inventory.AddItemToInventory(info.ItemID, info.Amount);
                 droppedItemsManager.AddToPool(go);
             }
         }

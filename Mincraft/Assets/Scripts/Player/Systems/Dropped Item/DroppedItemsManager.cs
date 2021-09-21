@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Core.Builder;
 using Core.UI.Console;
 using Extensions;
+using Player.Systems.Inventory;
 using UnityEngine;
 using Utilities;
 
@@ -82,10 +83,10 @@ namespace Core.Player.Interaction
             boxColliderEnablers.Add(new BoxColliderEnabler(boxCollider));
         }
 
-        public void AddNewItem(GameObject go)
+        public void AddNewItem(GameObject go, GameObject handle)
         {
             droppedItems.Add(go);
-            childTransforms.Add(go.transform.GetChild(0).transform);
+            childTransforms.Add(handle.transform);
         }
 
         public GameObject GetNextBlock()
@@ -99,6 +100,17 @@ namespace Core.Player.Interaction
         public void AddToPool(GameObject t)
         {
             t.SetActive(false);
+            Transform handle;
+            foreach (Transform child in t.transform)
+            {
+                if (child.gameObject.activeSelf)
+                {
+                    handle = child;
+                    childTransforms.Remove(handle);
+                    break;
+                }
+            }
+            
             droppedBlocksPool.Add(t);
         }
         
@@ -117,24 +129,43 @@ namespace Core.Player.Interaction
         [ConsoleMethod(nameof(SpawnItem), "Spawns an item with the given id")]
         private void SpawnItem(int itemID, int amount)
         {
-            if (itemID <= 0 || itemID >= Enum.GetValues(typeof(BlockUV)).Length || amount <= 0)
+            if (itemID <= 0)
             {
                 ConsoleInputer.WriteToOutput("not valid arguments");
                 return;
             }
-            
-            ConsoleInputer.WriteToOutput(amount == 1
-                ? $"Spawning {amount} {(BlockUV) itemID}block"
-                : $"Spawning {amount} {(BlockUV) itemID}blocks");
+
+            bool isBlock = true;
+            if (itemID > short.MaxValue)
+            {
+                ConsoleInputer.WriteToOutput(amount == 1
+                    ? $"Spawning {amount} {(CraftedItems) itemID}block"
+                    : $"Spawning {amount} {(CraftedItems) itemID}blocks");
+
+                isBlock = false;
+            }
+            else
+            {
+                ConsoleInputer.WriteToOutput(amount == 1
+                    ? $"Spawning {amount} {(BlockUV) itemID}block"
+                    : $"Spawning {amount} {(BlockUV) itemID}blocks");
+            }
             
             GameObject go = GetNextBlock();
-                
-            go.transform.position = playerPosition.position + playerPosition.forward;
-            go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) itemID), amount);
-            go.GetComponent<Rigidbody>().AddForce(playerPosition.forward, ForceMode.Impulse);
             
-            AddNewItem(go);
-            AddBoxColliderHandle(go.transform.GetChild(0).GetComponent<BoxCollider>());
+            
+            go.transform.position = playerPosition.position + playerPosition.forward;
+
+            GameObject handle;
+            if (isBlock)
+                handle = go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) itemID), amount);
+            else
+                handle = go.GetComponent<DroppedItemInformation>().FromItem(itemID, amount);
+            
+            go.GetComponent<Rigidbody>().AddForce(playerPosition.forward, ForceMode.Impulse);
+
+            AddNewItem(go, handle);
+            AddBoxColliderHandle(handle.GetComponent<BoxCollider>());
         }
     }
 }

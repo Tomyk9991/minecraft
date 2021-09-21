@@ -60,7 +60,7 @@ namespace Core.UI.Ingame
             else
             {
                 //Object must be in inventory, so you can just add negative amount to decrease the amount of items in the inventory
-                inventory.AddBlockToInventory(new Block((BlockUV) data.ItemID), -splitAmount);
+                inventory.AddItemToInventory(data.ItemID, -splitAmount);
                 targetObject.parent = latestParent;
                 targetObject.position = latestParent.position;
             }
@@ -126,11 +126,11 @@ namespace Core.UI.Ingame
             Vector3 playerForward = playerMovementTracker.transform.forward;
             go.transform.position = playerMovementTracker.transform.position + playerForward;
 
-            go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) data.ItemID), amount);
+            GameObject handle = go.GetComponent<DroppedItemInformation>().FromBlock(new Block((BlockUV) data.ItemID), amount);
             go.GetComponent<Rigidbody>().AddForce(playerForward, ForceMode.Impulse);
             
-            droppedItemsManager.AddNewItem(go);
-            droppedItemsManager.AddBoxColliderHandle(go.transform.GetChild(0).GetComponent<BoxCollider>());
+            droppedItemsManager.AddNewItem(go, handle);
+            droppedItemsManager.AddBoxColliderHandle(handle.GetComponent<BoxCollider>());
         }
     }
 }

@@ -7,16 +7,43 @@ namespace Core.Player.Interaction
 {
     public class DroppedItemInformation : MonoBehaviour
     {
-        public bool IsBlock { get; private set; }
-        public Block Block { get; set; }
-        public int Amount { get; private set; }
+        [SerializeField] private GameObject blockGFX = null;
+        [SerializeField] private GameObject itemGFX = null;
         
-        public void FromBlock(Block block, int amount)
+        public bool IsBlock { get; private set; }
+        public int ItemID { get; set; }
+        public int Amount { get; private set; }
+
+        
+        public GameObject FromItem(int itemID, int amount)
+        {
+            this.IsBlock = false;
+            this.ItemID = itemID;
+            this.Amount = amount;
+            
+            blockGFX.SetActive(false);
+            itemGFX.SetActive(true);
+
+            MeshMaterialPair pair = ItemDictionary.GetMeshMaterialPair(itemID);
+            
+            
+            itemGFX.GetComponent<MeshFilter>().mesh = pair.Mesh;
+            itemGFX.GetComponent<MeshRenderer>().material = pair.Material;
+
+            return itemGFX;
+        }
+        
+        public GameObject FromBlock(Block block, int amount)
         {
             this.IsBlock = true;
-            this.Block = block;
+            this.ItemID = (int) block.ID;
             this.Amount = amount;
-            Mesh mesh = transform.GetChild(0).GetComponent<MeshFilter>().mesh;
+
+            blockGFX.SetActive(true);
+            itemGFX.SetActive(false);
+            
+            
+            Mesh mesh = blockGFX.GetComponent<MeshFilter>().mesh;
             
             Vector2[] uvs = new Vector2[24];
             UVData[] currentUVData = UVDictionary.GetValue(block.ID);
@@ -31,6 +58,8 @@ namespace Core.Player.Interaction
             }
             
             mesh.SetUVs(0, uvs);
+
+            return blockGFX;
         }
     }
 }

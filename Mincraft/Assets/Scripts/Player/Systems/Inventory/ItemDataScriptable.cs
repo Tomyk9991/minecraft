@@ -16,9 +16,19 @@ namespace Core.Player.Interaction
     public struct ItemInformation
     {
         public bool IsBlock;
-        [DrawIfTrue(nameof(IsBlock))] public BlockUV BlockID;
-        [DrawIfFalse(nameof(IsBlock))] public int ItemID;
         public Sprite Sprite;
         public string Name;
+        
+        [DrawIfTrue(nameof(IsBlock))] public BlockUV BlockID;
+        [DrawIfFalse(nameof(IsBlock))] public int ItemID;
+        [DrawIfFalse(nameof(IsBlock))] public MeshMaterialPair MeshMaterialPair;
+        
+    }
+
+    [Serializable]
+    public class MeshMaterialPair
+    {
+        public Mesh Mesh;
+        public Material Material;
     }
 }

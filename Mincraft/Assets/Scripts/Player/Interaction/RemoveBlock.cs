@@ -133,9 +133,9 @@ namespace Core.Player.Interaction
                 GameObject go = droppedItemsManager.GetNextBlock();
                 
                 go.transform.position = placer.latestGlobalClickInt.ToVector3() + littleBlockSpawnOffset;
-                go.GetComponent<DroppedItemInformation>().FromBlock(removedBlock, 1);
+                GameObject handle = go.GetComponent<DroppedItemInformation>().FromBlock(removedBlock, 1);
                 
-                droppedItemsManager.AddNewItem(go);
+                droppedItemsManager.AddNewItem(go, handle);
                 
                 // Remove lawn if needed
                 RemoveLawn(holder);

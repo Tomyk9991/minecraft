@@ -46,29 +46,29 @@ namespace Core.Player.Systems.Inventory
             }
         }
 
-        public void AddBlockToInventory(Block block, int amount)
+        public void AddItemToInventory(int itemID, int amount)
         {
-            if (TryFindItem(block, out ItemData data))
+            if (TryFindItem(itemID, out ItemData data))
             {
                 data.Amount += amount;
                 inventoryUI.ItemAmountChanged(data);
             }
             else
             {
-                var newItem = new ItemData((int) block.ID, -1, amount, null);
+                var newItem = new ItemData(itemID, -1, amount, null);
                 Items.Add(newItem);
                 inventoryUI.ItemCreated(newItem);
             }
         }
 
-        private bool TryFindItem(Block block, out ItemData data)
+        private bool TryFindItem(int itemID, out ItemData data)
         {
             bool found = false;
             data = null;
 
             foreach (var item in Items)
             {
-                if (item.ItemID == (int) block.ID)
+                if (item.ItemID == itemID)
                 {
                     found = true;
                     data = item;
