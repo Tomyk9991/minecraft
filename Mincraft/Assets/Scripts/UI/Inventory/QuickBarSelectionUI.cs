@@ -10,7 +10,7 @@ namespace Core.UI.Ingame
     public class QuickBarSelectionUI : SingletonBehaviour<QuickBarSelectionUI>, IConsoleToggle
     {
         public int SelectedIndex => slotIndex;
-        public event Action<BlockUV> OnSelectionChanged;
+        public event Action<int> OnSelectionChanged;
 
         [SerializeField] private RectTransform[] slots = null;
         [SerializeField] private RectTransform selectedSlotItem = null;
@@ -89,7 +89,8 @@ namespace Core.UI.Ingame
             selectedSlotItem.position = slots[pos].position;
 
             ItemData data = inventory.QuickBar[slotIndex];
-            OnSelectionChanged?.Invoke(data == null ? BlockUV.Air : (BlockUV) data.ItemID);
+
+            OnSelectionChanged?.Invoke(data?.ItemID ?? -1);
         }
     }
 }

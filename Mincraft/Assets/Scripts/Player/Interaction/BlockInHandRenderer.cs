@@ -2,6 +2,7 @@
 using Attributes;
 using Core.Builder;
 using Core.Math;
+using Core.Player.Interaction;
 using Core.UI.Ingame;
 using UnityEngine;
 
@@ -15,6 +16,11 @@ namespace Core.Player
         [Header("Settings")] 
         [SerializeField] private float fadeAnimationSpeed = 0.8f;
         
+        [Header("Block mesh settings")] 
+        [SerializeField] private Mesh blockMesh = null;
+        [SerializeField] private Material blockMaterial = null;
+        
+
         [Header("Bobbing")] 
         [SerializeField] private bool useHandBob = true;
         [DrawIfTrue(nameof(useHandBob)), SerializeField] private AnimationCurve bobCurve = new AnimationCurve();
@@ -34,7 +40,11 @@ namespace Core.Player
         private float evaluationValue = 0.0f;
 
         private Mesh mesh = null;
-        private BlockUV previousBlock = BlockUV.Air;
+        private int previousItem = 0;
+        private bool isPreviousItemBlock = false;
+
+        private MeshRenderer meshRenderer;
+        private MeshFilter meshFilter;
 
         private const float distanceThreshold = 0.005f;
 
@@ -45,7 +55,11 @@ namespace Core.Player
         {
             this.initialLocalXPosition = transform.localPosition.x;
             playerController = FirstPersonController.Instance;
-            mesh = GetComponentInChildren<MeshFilter>().sharedMesh;
+            
+            meshFilter = GetComponentInChildren<MeshFilter>();
+            meshRenderer = GetComponentInChildren<MeshRenderer>();
+            
+            mesh = meshFilter.sharedMesh;
 
             QuickBarSelectionUI.Instance.OnSelectionChanged += SetBlock;
         }
@@ -95,30 +109,46 @@ namespace Core.Player
             }
         }
 
-        private void SetBlock(BlockUV block)
+        private void SetBlock(int item)
         {
-            if (block == BlockUV.Air)
+            bool isBlock = item <= short.MaxValue;
+            
+            if (item == -1)
             {
                 StartCoroutine(FadeOutAnimation());
                 return;
             }
 
-            if (previousBlock == BlockUV.Air)
+            if (previousItem == -1)
             {
-                SetUVFromBlockUV(block);
-
+                FindProperMeshMaterialPair(item);
                 StartCoroutine(FadeInAnimation());
             }
             else
             {
-                StartCoroutine(nameof(FadeInFadeOutAnimation), block);
+                StartCoroutine(nameof(FadeInFadeOutAnimation), item);
             }
 
-            this.previousBlock = block;
+            this.previousItem = item;
+            this.isPreviousItemBlock = isBlock;
+        }
+
+        private void FindProperMeshMaterialPair(int item)
+        {
+            bool isBlock = item <= short.MaxValue;
+            BlockUV blockUV = isBlock ? (BlockUV) item : BlockUV.Air;
+            
+            if (isBlock)
+                SetUVFromBlockUV(blockUV);
+            else
+                SetMeshFromItemMesh(item);
         }
 
         private void SetUVFromBlockUV(BlockUV block)
         {
+            // if (!isPreviousItemBlock)
+                SetMeshAndMaterial(blockMesh, blockMaterial);
+            
             UVData[] currentUVData = UVDictionary.GetValue(block);
 
             for (int i = 0; i < 24; i += 4)
@@ -133,17 +163,31 @@ namespace Core.Player
             mesh.SetUVs(0, uvBuffer);
         }
 
-
-        private IEnumerator FadeInFadeOutAnimation(BlockUV block)
+        private void SetMeshFromItemMesh(int item)
         {
-            yield return FadeOutAnimation();
-
-            SetUVFromBlockUV(block);
-
-            yield return FadeInAnimation();
+            MeshMaterialPair pair = ItemDictionary.GetMeshMaterialPair(item);
+            
+            // if (isPreviousItemBlock)
+                SetMeshAndMaterial(pair.Mesh, pair.Material);
         }
 
 
+        private void SetMeshAndMaterial(Mesh mesh, Material material)
+        {
+            this.meshFilter.mesh = mesh;
+            this.meshRenderer.material = material;
+        }
+
+
+        private IEnumerator FadeInFadeOutAnimation(int item)
+        {
+            yield return FadeOutAnimation();
+
+            FindProperMeshMaterialPair(item);
+
+            yield return FadeInAnimation();
+        }
+        
         private IEnumerator FadeOutAnimation()
         {
             float timer = 0.0f;
