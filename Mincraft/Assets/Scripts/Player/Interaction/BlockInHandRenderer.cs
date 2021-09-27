@@ -174,7 +174,8 @@ namespace Core.Player
 
         private void SetMeshAndMaterial(Mesh mesh, Material material)
         {
-            this.meshFilter.mesh = mesh;
+            this.meshFilter.sharedMesh = mesh;
+            // this.meshFilter.mesh = mesh;
             this.meshRenderer.material = material;
         }
 
