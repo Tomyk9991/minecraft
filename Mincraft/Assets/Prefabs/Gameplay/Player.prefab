@@ -192,7 +192,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1486096559}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: efaa20224529766469d26a53d006f36f, type: 2}
   m_CullingMode: 0
@@ -403,7 +403,7 @@ GameObject:
   - component: {fileID: 3399322170815418183}
   - component: {fileID: 3399322170821168999}
   - component: {fileID: 3399322170809590631}
-  - component: {fileID: 3399322171508518116}
+  - component: {fileID: 2137031617}
   - component: {fileID: 3399322171508518115}
   - component: {fileID: 961055919}
   - component: {fileID: 2039295200666249447}
@@ -670,7 +670,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &3399322171508518116
+--- !u!114 &2137031617
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -679,7 +679,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3399322170810940039}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a32d8cc602256b4cbfa41b6b1211930, type: 3}
+  m_Script: {fileID: 11500000, guid: eeb59eef1f96423fb3436062a6bcee98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cameraRef: {fileID: 3399322170811529383}
@@ -689,7 +689,7 @@ MonoBehaviour:
   hitMask:
     serializedVersion: 2
     m_Bits: 1024
-  blockUV: 2
+  itemID: -1
 --- !u!114 &3399322171508518115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,6 +907,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4424203038597495746}
   - component: {fileID: 8680730234183700990}
+  - component: {fileID: 2062493189}
   m_Layer: 8
   m_Name: Parent Block
   m_TagString: Untagged
@@ -943,8 +944,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadeInPosition: {x: 1.15, y: -1.25, z: 1.78}
   fadeOutPosition: {x: 1.15, y: -1.8, z: 1.78}
-  animationSpeed: 0.8
-  distanceThreshold: 0.005
+  fadeAnimationSpeed: 0.8
+  blockMesh: {fileID: 4300000, guid: e4803ecfde8ad4a469f1fae8801d39fb, type: 2}
+  blockMaterial: {fileID: 2100000, guid: a2a080302a595fb43a1d5c3da227c371, type: 2}
+  blockPosition: {x: 1.15, y: -1.25, z: 1.78}
+  blockRotation: {x: 0, y: -47, z: 0}
+  itemPosition: {x: 1.15, y: -1, z: 1.78}
+  itemRotation: {x: 0, y: -125, z: 0}
   useHandBob: 1
   bobCurve:
     serializedVersion: 2
@@ -1003,3 +1009,16 @@ MonoBehaviour:
   useRapidTurns: 1
   localPositionOffset: 1
   rapidTurnAnimationSpeed: 0.1
+--- !u!114 &2062493189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4157680008418682264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 653214043e374c64bb38fdfd2be8318f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationController: {fileID: 1896443830}

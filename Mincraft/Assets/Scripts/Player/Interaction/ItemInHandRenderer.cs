@@ -66,7 +66,7 @@ namespace Core.Player
             
             mesh = meshFilter.sharedMesh;
 
-            QuickBarSelectionUI.Instance.OnSelectionChanged += SetBlock;
+            QuickBarSelectionUI.Instance.OnSelectionChanged += SetItem;
         }
 
         private void Update()
@@ -114,7 +114,7 @@ namespace Core.Player
             }
         }
 
-        private void SetBlock(int item)
+        private void SetItem(int item)
         {
             StopAllCoroutines();
             

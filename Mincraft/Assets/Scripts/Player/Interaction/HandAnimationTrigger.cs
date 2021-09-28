@@ -1,4 +1,6 @@
 ﻿using Core.Player.Interaction;
+using Core.Player.Interaction.ItemWorldAdder;
+using Player.Interaction.ItemWorldAdder;
 using UnityEngine;
 
 public class HandAnimationTrigger : MonoBehaviour
@@ -9,7 +11,7 @@ public class HandAnimationTrigger : MonoBehaviour
 
     private void Start()
     {
-        AddBlock.OnAdd += () => animationController.SetTrigger(triggerHash);
+        Adder.OnPlace += () => animationController.SetTrigger(triggerHash);
         RemoveBlock.OnRemove += () => animationController.SetTrigger(triggerHash);
     }
 }

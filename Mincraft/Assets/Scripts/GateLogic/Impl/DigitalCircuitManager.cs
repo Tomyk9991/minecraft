@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Core.Builder;
 using Core.Player.Interaction;
+using Core.Player.Interaction.ItemWorldAdder;
 using Core.UI;
 using Extensions;
 using UnityEngine;
@@ -40,7 +41,7 @@ namespace GateLogic.Impl
         
         private void Start()
         {
-            AddBlock.OnAddBlock += OnAddBlock;
+            BlockAdder.OnAddBlock += OnAddBlock;
             RemoveBlock.OnRemoveBlock += OnRemoveBlock;
             raycaster = new CenterMouseRaycaster(cameraRef, RayDistance, hitMask);
         }
@@ -55,15 +56,11 @@ namespace GateLogic.Impl
             if (!CircuitBlocks.Contains(block)) return;
             Debug.Log("Add digital block");
         }
-
-
         
-        //TODO make sure, it works with the current inventory system. ATM only blocks are supported
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
-
                 if (raycaster.Raycast())
                 {
                     if (!this.currentLineRenderer)
