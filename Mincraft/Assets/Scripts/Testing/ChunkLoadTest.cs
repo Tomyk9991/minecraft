@@ -53,7 +53,10 @@ namespace Core.Testing
         
         public bool Load(out ChunkData chunk)
         {
-            string chunkPath = Path.Combine(AssetDatabase.GetAssetPath(obj));
+            string chunkPath = "";
+#if UNITY_EDITOR
+            chunkPath = Path.Combine(AssetDatabase.GetAssetPath(obj));
+#endif
             if (File.Exists(chunkPath))
             {
                 string json = "";

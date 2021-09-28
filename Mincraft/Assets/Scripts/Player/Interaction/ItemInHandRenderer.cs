@@ -8,19 +8,25 @@ using UnityEngine;
 
 namespace Core.Player
 {
-    public class BlockInHandRenderer : MonoBehaviour
+    public class ItemInHandRenderer : MonoBehaviour
     {
         [Header("Positions")] 
         [SerializeField] private Vector3 fadeInPosition = Vector3.zero;
         [SerializeField] private Vector3 fadeOutPosition = Vector3.zero;
+        
         [Header("Settings")] 
         [SerializeField] private float fadeAnimationSpeed = 0.8f;
         
-        [Header("Block mesh settings")] 
+        [Header("Custom mesh settings")] 
         [SerializeField] private Mesh blockMesh = null;
         [SerializeField] private Material blockMaterial = null;
+        [Space(10)]
+        [SerializeField] private Vector3 blockPosition = Vector3.zero;
+        [SerializeField] private Vector3 blockRotation = Vector3.zero;
+        [Space(10)]
+        [SerializeField] private Vector3 itemPosition = Vector3.zero;
+        [SerializeField] private Vector3 itemRotation = Vector3.zero;
         
-
         [Header("Bobbing")] 
         [SerializeField] private bool useHandBob = true;
         [DrawIfTrue(nameof(useHandBob)), SerializeField] private AnimationCurve bobCurve = new AnimationCurve();
@@ -41,7 +47,6 @@ namespace Core.Player
 
         private Mesh mesh = null;
         private int previousItem = 0;
-        private bool isPreviousItemBlock = false;
 
         private MeshRenderer meshRenderer;
         private MeshFilter meshFilter;
@@ -111,7 +116,7 @@ namespace Core.Player
 
         private void SetBlock(int item)
         {
-            bool isBlock = item <= short.MaxValue;
+            StopAllCoroutines();
             
             if (item == -1)
             {
@@ -130,7 +135,6 @@ namespace Core.Player
             }
 
             this.previousItem = item;
-            this.isPreviousItemBlock = isBlock;
         }
 
         private void FindProperMeshMaterialPair(int item)
@@ -146,8 +150,13 @@ namespace Core.Player
 
         private void SetUVFromBlockUV(BlockUV block)
         {
-            // if (!isPreviousItemBlock)
-                SetMeshAndMaterial(blockMesh, blockMaterial);
+            bool isPreviousItemBlock = previousItem <= short.MaxValue;
+
+            if (isPreviousItemBlock)
+            {
+                UpdateMeshSettings(blockMesh, blockMaterial);
+                UpdateTransform(this.blockPosition, this.blockRotation);
+            }
             
             UVData[] currentUVData = UVDictionary.GetValue(block);
 
@@ -167,16 +176,24 @@ namespace Core.Player
         {
             MeshMaterialPair pair = ItemDictionary.GetMeshMaterialPair(item);
             
-            // if (isPreviousItemBlock)
-                SetMeshAndMaterial(pair.Mesh, pair.Material);
+            // Must be set every time its called. If the item type changes the mesh must still be upgraded 
+            UpdateMeshSettings(pair.Mesh, pair.Material);
+            this.UpdateTransform(this.itemPosition, this.itemRotation);
         }
 
 
-        private void SetMeshAndMaterial(Mesh mesh, Material material)
+        private void UpdateMeshSettings(Mesh mesh, Material material)
         {
             this.meshFilter.sharedMesh = mesh;
-            // this.meshFilter.mesh = mesh;
             this.meshRenderer.material = material;
+        }
+
+        private void UpdateTransform(Vector3 targetPos, Vector3 targetRotation)
+        {
+            this.transform.localPosition = targetPos;
+            this.transform.localRotation = Quaternion.Euler(targetRotation);
+
+            this.fadeInPosition.y = targetPos.y;
         }
 
 

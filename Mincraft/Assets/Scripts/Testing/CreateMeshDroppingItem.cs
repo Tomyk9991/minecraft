@@ -135,9 +135,9 @@ public class CreateMeshDroppingItem : MonoBehaviour
         mesh.SetIndices(quads, MeshTopology.Quads, 0);
         GetComponent<MeshFilter>().sharedMesh = mesh;
         
-        AssetDatabase.CreateAsset(mesh, $"Assets/Imports/Meshes/Dropping Items/DroppingItem-{MeshName}.asset");
     
 #if UNITY_EDITOR
+        AssetDatabase.CreateAsset(mesh, $"Assets/Imports/Meshes/Dropping Items/DroppingItem-{MeshName}.asset");
         AssetDatabase.Refresh();
 #endif
         
