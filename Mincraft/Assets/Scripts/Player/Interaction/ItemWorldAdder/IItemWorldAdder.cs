@@ -6,8 +6,8 @@ namespace Player.Interaction.ItemWorldAdder
 {
     public interface IItemWorldAdder
     {
-        Vector2 ItemRange { get; }
-        void Initialize();
+        Vector2Int ItemRange { get; }
+        void Initialize(ScriptableObject initializer);
         void OnPlace(int itemID, ChunkReferenceHolder holder, Ray ray, RaycastHit hit);
     }
 }

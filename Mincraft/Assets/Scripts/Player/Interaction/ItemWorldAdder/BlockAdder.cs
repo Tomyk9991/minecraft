@@ -13,9 +13,9 @@ namespace Core.Player.Interaction.ItemWorldAdder
         public static event Action<BlockUV> OnAddBlock;
         
         private PlaceBlockHelper placer;
-        public Vector2 ItemRange => new Vector2(0, short.MaxValue);
+        public Vector2Int ItemRange => new Vector2Int(0, short.MaxValue);
 
-        public void Initialize()
+        public void Initialize(ScriptableObject initializer)
         {
             placer = new PlaceBlockHelper
             {

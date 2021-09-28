@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using Core.Builder;
 using Core.Player.Interaction;
 using Core.Player.Interaction.ItemWorldAdder;
 using Core.UI;
-using Extensions;
 using UnityEngine;
 using Utilities;
 
@@ -20,7 +20,6 @@ namespace GateLogic.Impl
         [SerializeField] private LayerMask hitMask;
         private CenterMouseRaycaster raycaster;
         
-        private LineRenderer currentLineRenderer;
         private int handIndex = 0;
         
         
@@ -30,7 +29,7 @@ namespace GateLogic.Impl
             set => this.enabled = value;
         }
         
-        public static readonly List<BlockUV> CircuitBlocks = new List<BlockUV>
+        public static readonly BlockUV[] CircuitBlocks = new BlockUV[]
         {
             BlockUV.AndGate,
             BlockUV.OrGate,
@@ -55,38 +54,6 @@ namespace GateLogic.Impl
         {
             if (!CircuitBlocks.Contains(block)) return;
             Debug.Log("Add digital block");
-        }
-        
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                if (raycaster.Raycast())
-                {
-                    if (!this.currentLineRenderer)
-                    {
-                        GameObject go = Instantiate(lineRendererPrefab);
-                        this.currentLineRenderer = go.GetComponent<LineRenderer>();
-                    }
-                    
-                    if (currentLineRenderer.positionCount == 0)
-                    {
-                        currentLineRenderer.AddPoint(raycaster.RayCastHit.point);
-                        handIndex = currentLineRenderer.AddPoint(handPosition.position);
-                    }
-                    else
-                    {
-                        currentLineRenderer.InsertPoint(currentLineRenderer.positionCount - 1,
-                            raycaster.RayCastHit.point);
-                        handIndex++;
-                    }
-                }
-            }
-
-            if (this.currentLineRenderer)
-            {
-                currentLineRenderer.SetPosition(handIndex, handPosition.position);
-            }
         }
     }
 }

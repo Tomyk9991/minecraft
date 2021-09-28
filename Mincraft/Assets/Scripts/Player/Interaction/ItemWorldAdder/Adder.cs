@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Core.Chunks;
 using Core.Managers;
 using Core.UI;
@@ -38,9 +39,12 @@ namespace Core.Player.Interaction.ItemWorldAdder
         }
         
         [Header("Add behaviours")] 
+        [SerializeField] private ScriptableObject[] initializers = null;
+        
         private IItemWorldAdder[] adders =
         {
-            new BlockAdder()
+            new BlockAdder(),
+            new CableAdder()
         };
 
         [Header("References")] 
@@ -71,7 +75,7 @@ namespace Core.Player.Interaction.ItemWorldAdder
 
 
             for (int i = 0; i < this.adders.Length; i++)
-                this.adders[i].Initialize();
+                this.adders[i].Initialize(initializers[i]);
         }
 
         private void OnValidate()
@@ -108,25 +112,10 @@ namespace Core.Player.Interaction.ItemWorldAdder
                 if (!hit.transform.TryGetComponent(out holder))
                     return;
 
-                IItemWorldAdder adder = null;
+                IItemWorldAdder adder = this.adders.
+                    FirstOrDefault(t => t.ItemRange.x <= itemID && itemID <= t.ItemRange.y);
 
-                for (int i = 0; i < this.adders.Length; i++)
-                {
-                    if (this.adders[i].ItemRange.x <= itemID && itemID <= this.adders[i].ItemRange.y)
-                    {
-                        adder = this.adders[i];
-                        break;
-                    }
-                }
-
-                if (adder != null)
-                {
-                    adder.OnPlace(itemID, holder, ray, hit);
-                }
-                else
-                {
-                    Debug.Log("Adder not found");
-                }
+                adder?.OnPlace(itemID, holder, ray, hit);
             }
         }
     }
