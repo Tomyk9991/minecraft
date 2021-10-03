@@ -5431,14 +5431,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c50987da65194ffdabaa9d0cd5ec65d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineRendererPrefab: {fileID: 4514752052877378843, guid: 8f53471068155d344b0ec68fd2f6d218,
-    type: 3}
-  cameraRef: {fileID: 3399322171762488874}
-  handPosition: {fileID: 2062493187}
-  RayDistance: 7
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 1024
 --- !u!114 &1427752158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6309,6 +6301,21 @@ PrefabInstance:
         type: 3}
       propertyPath: layerMask.m_Bits
       value: 1024
+      objectReference: {fileID: 0}
+    - target: {fileID: 7879117001816977829, guid: e743fa6fe1a9bc448ae6ed4eae259852,
+        type: 3}
+      propertyPath: digitalCircuitColor.b
+      value: 0.14244394
+      objectReference: {fileID: 0}
+    - target: {fileID: 7879117001816977829, guid: e743fa6fe1a9bc448ae6ed4eae259852,
+        type: 3}
+      propertyPath: digitalCircuitColor.g
+      value: 0.59455234
+      objectReference: {fileID: 0}
+    - target: {fileID: 7879117001816977829, guid: e743fa6fe1a9bc448ae6ed4eae259852,
+        type: 3}
+      propertyPath: digitalCircuitColor.r
+      value: 0.9150943
       objectReference: {fileID: 0}
     - target: {fileID: 7879117001816977829, guid: e743fa6fe1a9bc448ae6ed4eae259852,
         type: 3}
@@ -7647,12 +7654,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2057781832}
   m_CullTransparentMesh: 0
---- !u!4 &2062493187 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4424203038597495746, guid: 7ada145dfe0b44a4e8985c27da1d88fb,
-    type: 3}
-  m_PrefabInstance: {fileID: 3399322171762488873}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2092072122
 GameObject:
   m_ObjectHideFlags: 0

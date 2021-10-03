@@ -5,24 +5,11 @@ using Core.Player.Interaction;
 using Core.Player.Interaction.ItemWorldAdder;
 using Core.UI;
 using UnityEngine;
-using Utilities;
 
 namespace GateLogic.Impl
 {
     public class DigitalCircuitManager : MonoBehaviour, IConsoleToggle, IFullScreenUIToggle
     {
-        [SerializeField] private GameObject lineRendererPrefab = null;
-        [SerializeField] private Camera cameraRef = null;
-        [SerializeField] private Transform handPosition = null;
-        
-
-        [SerializeField] private float RayDistance = 7.0f;
-        [SerializeField] private LayerMask hitMask;
-        private CenterMouseRaycaster raycaster;
-        
-        private int handIndex = 0;
-        
-        
         public bool Enabled
         {
             get => this.enabled;
@@ -42,8 +29,10 @@ namespace GateLogic.Impl
         {
             BlockAdder.OnAddBlock += OnAddBlock;
             RemoveBlock.OnRemoveBlock += OnRemoveBlock;
-            raycaster = new CenterMouseRaycaster(cameraRef, RayDistance, hitMask);
         }
+        
+        public static bool IsCircuitBlock(BlockUV block)
+            => CircuitBlocks.Contains(block);
 
         private void OnRemoveBlock(BlockUV block)
         {

@@ -25,6 +25,11 @@ namespace Utilities
         {
             chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
         }
+
+        public Block BlockAt(Chunk currentChunk, Int3 localPos)
+        {
+            return currentChunk.Blocks[localPos.X, localPos.Y, localPos.Z];
+        }
         
         public Block HandleAddBlock(Chunk currentChunk, Int3 localPos, BlockUV acceptance = BlockUV.None)
         {
