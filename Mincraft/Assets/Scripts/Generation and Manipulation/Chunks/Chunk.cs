@@ -1,10 +1,12 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Core.Builder;
 using Core.Builder.Generation;
 using Core.Managers;
 using Core.Math;
 using Core.Saving;
 using Core.StructureGeneration;
+using Extensions;
+using GateLogic.Impl;
 using UnityEngine;
 using Utilities;
 
@@ -22,6 +24,7 @@ namespace Core.Chunks
 
         //Chunkdata
         private ExtendedArray3D<Block> blocks;
+        private DigitalCircuitManager circuitManager;
         
         /// <summary>
         /// Determines, if the current chunk is generated or loaded from the disk
@@ -57,6 +60,18 @@ namespace Core.Chunks
             Int3.Right // 5
         };
 
+        public ExtendedArray3D<Block> Blocks
+        {
+            get => blocks;
+            set => blocks = value;
+        }
+
+        public DigitalCircuitManager DigitalCircuitManager
+        {
+            get => circuitManager;
+            set => circuitManager = value;
+        }
+        
         private static FastNoise noise;
 
         public Chunk()
@@ -73,23 +88,20 @@ namespace Core.Chunks
             }
             
             blocks = BlockArrayPool.GetNext();
+            circuitManager = new DigitalCircuitManager();
+
             blockNeighbours = new Block[6];
         }
 
         public void AddBlock(Block block, Int3 pos)
-            => blocks[pos.X, pos.Y, pos.Z] = block;
+        {
+            blocks[pos.X, pos.Y, pos.Z] = block;
+        }
 
         public void AddBlockPersistent(Block block, Int3 pos)
         {
             AddBlock(block, pos);
             ResourceIO.Save<Chunk>(this);
-        }
-        
-
-        public ExtendedArray3D<Block> Blocks
-        {
-            get => blocks;
-            set => blocks = value;
         }
 
         public bool IsNotEmpty(int x, int y, int z)
@@ -121,7 +133,7 @@ namespace Core.Chunks
         /// <param name="index">Lookup index for the normalized 6 directions</param>
         /// <param name="local">Local block position</param>
         /// <returns>Block</returns>
-        private Block GetBlockNeigbourAt(int index, Int3 local)
+        private Block GetBlockNeighbourAt(int index, Int3 local)
         {
             Int3 direction = Directions[index];
             Int3 newBlockPos = local + direction;
@@ -131,12 +143,12 @@ namespace Core.Chunks
 
         public Block[] GetBlockNeighbours(Int3 blockPos)
         {
-            blockNeighbours[0] = GetBlockNeigbourAt(0, blockPos);
-            blockNeighbours[1] = GetBlockNeigbourAt(1, blockPos);
-            blockNeighbours[2] = GetBlockNeigbourAt(2, blockPos);
-            blockNeighbours[3] = GetBlockNeigbourAt(3, blockPos);
-            blockNeighbours[4] = GetBlockNeigbourAt(4, blockPos);
-            blockNeighbours[5] = GetBlockNeigbourAt(5, blockPos);
+            blockNeighbours[0] = GetBlockNeighbourAt(0, blockPos);
+            blockNeighbours[1] = GetBlockNeighbourAt(1, blockPos);
+            blockNeighbours[2] = GetBlockNeighbourAt(2, blockPos);
+            blockNeighbours[3] = GetBlockNeighbourAt(3, blockPos);
+            blockNeighbours[4] = GetBlockNeighbourAt(4, blockPos);
+            blockNeighbours[5] = GetBlockNeighbourAt(5, blockPos);
 
             return blockNeighbours;
         }

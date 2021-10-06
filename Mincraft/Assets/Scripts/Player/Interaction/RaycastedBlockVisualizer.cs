@@ -2,6 +2,7 @@
 using Core.Chunks;
 using Core.Math;
 using Core.UI;
+using Extensions;
 using GateLogic.Impl;
 using UnityEngine;
 using Utilities;
@@ -76,7 +77,7 @@ namespace Core.Player
                 
                 BlockUV hitBlock = ClickedBlock(hitResult, holder.Chunk);
                     
-                this.isColoredNormal = DigitalCircuitManager.IsCircuitBlock(hitBlock) 
+                this.isColoredNormal = hitBlock.IsCircuitBlock() 
                     ? ChangeOutlineColor(digitalCircuitColor, false, this.isColoredNormal) 
                     : ChangeOutlineColor(normalColor, true, this.isColoredNormal);
             }

@@ -3,6 +3,7 @@ using Core.Builder;
 using Core.Chunks;
 using Core.Math;
 using Core.UI;
+using Extensions;
 using UnityEngine;
 using Utilities;
 
@@ -11,7 +12,7 @@ namespace Core.Player.Interaction
     public class RemoveBlock : MonoBehaviour, IMouseUsable, IConsoleToggle, IFullScreenUIToggle
     {
         public static event Action OnRemove;
-        public static event Action<BlockUV> OnRemoveBlock;
+        public static event Action<BlockUV, Vector3> OnRemoveBlock;
         
         private int chunkSize;
 
@@ -126,7 +127,7 @@ namespace Core.Player.Interaction
                     removedBlock = placer.HandleAddBlock(currentChunk, placer.LocalPosition);
                 }
 
-                OnRemoveBlock?.Invoke(removedBlock.ID);
+                OnRemoveBlock?.Invoke(removedBlock.ID, placer.latestGlobalClickInt + new Vector3(0.5f, 0.5f, 0.5f));
                 
                 if (droppedItemsManager == null) droppedItemsManager = DroppedItemsManager.Instance;
                 

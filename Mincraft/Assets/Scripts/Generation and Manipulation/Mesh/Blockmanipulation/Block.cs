@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using Core.Math;
 using Core.Player;
+using GateLogic;
+using GateLogic.Impl;
 
 namespace Core.Builder
 {
@@ -17,11 +21,13 @@ namespace Core.Builder
             this.Direction = BlockDirection.Forward;
         }
 
+
         public void SetID(BlockUV id)
         {
             this.ID = id;
         }
 
+        public bool IsCircuitBlock() => DigitalCircuitManager.CircuitBlocks.Contains(this.ID);
         public bool IsTransparent() => UVDictionary.IsTransparentID(this.ID);
         public bool IsSolid() => UVDictionary.IsSolidID(this.ID);
         public bool CanFaceInDifferentDirections() => UVDictionary.CanFaceInDifferentDirections(this.ID);
@@ -31,6 +37,22 @@ namespace Core.Builder
         public float TransparencyLevel() => UVDictionary.TransparencyLevelID(this.ID);
 
         public static Block Empty() => emptyBlock;
+
+        public IGate ToGate()
+        {
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+            switch (this.ID)
+            {
+                case BlockUV.AndGate:
+                    return new AndGate();
+                case BlockUV.OrGate:
+                    return new OrGate();
+                case BlockUV.NotGate:
+                    return new NotGate();
+                default:
+                    return null;
+            }
+        }
     }
     
     public enum BlockDirection : short

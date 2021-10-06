@@ -34,6 +34,25 @@ namespace Core.Math
 
             return target1;
         }
+        
+        
+        public static Vector3 operator -(Int3 target1, Vector3 target2)
+        {
+            target2.x = target1.X - target2.x;
+            target2.y = target1.Y - target2.y;
+            target2.z = target1.Z - target2.z;
+
+            return target2;
+        }
+        
+        public static Vector3 operator +(Int3 target1, Vector3 target2)
+        {
+            target2.x = target1.X + target2.x;
+            target2.y = target1.Y + target2.y;
+            target2.z = target1.Z + target2.z;
+
+            return target2;
+        }
 
         public static bool operator ==(Int3 target1, Int3 target2)
             => target1.X == target2.X &&

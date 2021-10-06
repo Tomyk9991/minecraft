@@ -2,7 +2,7 @@ using Core.Builder;
 using Core.Chunks;
 using Core.Math;
 using Extensions;
-using GateLogic.Impl;
+using GateLogic;
 using Player.Interaction.ItemWorldAdder.Initializers;
 using Player.Systems.Inventory;
 using UnityEngine;
@@ -19,6 +19,10 @@ namespace Player.Interaction.ItemWorldAdder
         private LineRenderer currentLineRenderer = null;
         private PlaceBlockHelper placer;
 
+        private IGate g1;
+        private Chunk gateOwner;
+        private IGate g2;
+        
         public void Initialize(ScriptableObject initializer)
         {
             placer = new PlaceBlockHelper
@@ -37,16 +41,27 @@ namespace Player.Interaction.ItemWorldAdder
                 this.currentLineRenderer = go.GetComponent<LineRenderer>();
             }
 
-            BlockUV hitBlock = ClickedBlock(hit, holder.Chunk);
+            Block hitBlock = ClickedBlock(hit, holder.Chunk);
             
-
-            if (DigitalCircuitManager.IsCircuitBlock(hitBlock))
+            if (hitBlock.IsCircuitBlock())
             {
-                currentLineRenderer.AddPoint(hit.point + hit.normal * 0.05f);
+                int index = currentLineRenderer.AddPoint(hit.point + hit.normal * 0.05f);
+
+                if (index == 0)
+                {
+                    g1 = hitBlock.ToGate();
+                    gateOwner = holder.Chunk;
+                }
+                
+                if (index == 1)
+                {
+                    g2 = hitBlock.ToGate();
+                    gateOwner.DigitalCircuitManager.AddConnection(g1, g2);
+                }
             }
         }
 
-        private BlockUV ClickedBlock(in RaycastHit hit, Chunk currentChunk)
+        private Block ClickedBlock(in RaycastHit hit, Chunk currentChunk)
         {
             placer.latestGlobalClick = MathHelper.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;
 
@@ -71,7 +86,7 @@ namespace Player.Interaction.ItemWorldAdder
             }
 
 
-            return removedBlock.ID;
+            return removedBlock;
         }
     }
 }

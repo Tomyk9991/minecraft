@@ -10,7 +10,7 @@ namespace Core.Player.Interaction.ItemWorldAdder
 {
     public class BlockAdder : IItemWorldAdder
     {
-        public static event Action<BlockUV> OnAddBlock;
+        public static event Action<BlockUV, Vector3> OnAddBlock;
         
         private PlaceBlockHelper placer;
         public Vector2Int ItemRange => new Vector2Int(0, short.MaxValue);
@@ -30,7 +30,6 @@ namespace Core.Player.Interaction.ItemWorldAdder
         {
             placer.currentBlock.ID = (BlockUV) itemID;
             
-            OnAddBlock?.Invoke((BlockUV) itemID);
 
             if (placer.currentBlock.CanFaceInDifferentDirections())
             {
@@ -47,6 +46,8 @@ namespace Core.Player.Interaction.ItemWorldAdder
             placer.latestGlobalClickInt.X = (int) placer.latestGlobalClick.x;
             placer.latestGlobalClickInt.Y = (int) placer.latestGlobalClick.y;
             placer.latestGlobalClickInt.Z = (int) placer.latestGlobalClick.z;
+            
+            OnAddBlock?.Invoke((BlockUV) itemID, placer.latestGlobalClickInt + new Vector3(0.5f, 0.5f, 0.5f));
 
             placer.GlobalToRelativeBlock(placer.latestGlobalClick, currentChunk.GlobalPosition, ref placer.LocalPosition);
 

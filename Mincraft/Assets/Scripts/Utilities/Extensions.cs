@@ -2,9 +2,11 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Builder;
 using UnityEngine;
 
 using Core.Math;
+using GateLogic.Impl;
 using Random = System.Random;
 
 namespace Extensions
@@ -14,6 +16,8 @@ namespace Extensions
         public static Int3 ToInt3(this Vector3 pos)
             => Int3.ToInt3(pos);
 
+        public static bool IsCircuitBlock(this BlockUV id) => DigitalCircuitManager.CircuitBlocks.Contains(id);
+        
         public static int AddPoint(this LineRenderer renderer, Vector3 position)
         {
             int count = renderer.positionCount;
@@ -66,6 +70,30 @@ namespace Extensions
             }
         }
 
+        public static void AddSorted<T>(this List<T> @this, T item) where T : IComparable<T>
+        {
+            if (@this.Count == 0)
+            {
+                @this.Add(item);
+                return;
+            }
+            if (@this[@this.Count-1].CompareTo(item) <= 0)
+            {
+                @this.Add(item);
+                return;
+            }
+            if (@this[0].CompareTo(item) >= 0)
+            {
+                @this.Insert(0, item);
+                return;
+            }
+            int index = @this.BinarySearch(item);
+            if (index < 0) 
+                index = ~index;
+            
+            @this.Insert(index, item);
+        }
+        
         public static T RemoveAndGet<T>(this IList<T> list, int index)
         {
             T result = list[index];
