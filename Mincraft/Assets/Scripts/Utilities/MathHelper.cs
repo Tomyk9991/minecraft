@@ -33,10 +33,6 @@ namespace Core.Math
 
         public static int MultipleFloor(int n, int x)
             => Mathf.FloorToInt(n / (float) x) * x;
-        
-        public static bool V3Equal(this Vector3 a, in Vector3 b, float threshold = 0.0001f){
-            return Vector3.SqrMagnitude(a - b) < threshold;
-        }
 
         /// <summary>
         /// Maps n from a range of [istart, istop] to [ostart, ostop]

@@ -104,15 +104,32 @@ namespace Core.Chunks
                 {
                     Matrix4x4 matrix = Matrix4x4.TRS(
                         chunk.GlobalPosition + localPosition.ToVector3() + renderer.LocalOffset,
-                        Quaternion.identity,
-                        renderer.LocalScale
+                        BlockDirectionToQuaternion(block.Direction),
+                    renderer.LocalScale
                     );
 
                     renderer.AddUnique(matrix);
                 }
             }
         }
-        
+
+        private Quaternion BlockDirectionToQuaternion(BlockDirection direction)
+        {
+            Debug.Log(direction);
+            switch (direction)
+            {
+                case BlockDirection.Left:
+                    return Quaternion.Euler(Vector3.up * 0.0f);
+                case BlockDirection.Forward:
+                    return Quaternion.Euler(Vector3.up * 90.0f);
+                case BlockDirection.Right:
+                    return Quaternion.Euler(Vector3.up * 180.0f);
+                case BlockDirection.Back:
+                    return Quaternion.Euler(Vector3.up * 270.0f);
+            }
+
+            return Quaternion.identity;
+        }
     }
 
     [Serializable]

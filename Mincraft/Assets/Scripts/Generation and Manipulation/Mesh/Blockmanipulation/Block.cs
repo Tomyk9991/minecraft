@@ -1,10 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using Core.Math;
-using Core.Player;
-
-namespace Core.Builder
+﻿namespace Core.Builder
 {
     [System.Serializable]
     public struct Block

@@ -58,12 +58,8 @@ namespace Core.Rendering
                 }
             }
 
-            Debug.Log("Removed: " + index);
-            
             if (index != -1)
                 matrices.RemoveAt(index);
-            
-            Debug.Log("Length: " + matrices.Count);
         }
     }
 }
