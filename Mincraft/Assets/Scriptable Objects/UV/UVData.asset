@@ -494,3 +494,40 @@ MonoBehaviour:
     isTransparent: 1
     CanFaceDifferentDirections: 0
     RenderingTechnique: 1
+  - EnumType: 13
+    Forward:
+      TileX: 6
+      TileY: 15
+      SizeX: 1
+      SizeY: 1
+    Back:
+      TileX: 6
+      TileY: 15
+      SizeX: 1
+      SizeY: 1
+    Up:
+      TileX: 6
+      TileY: 15
+      SizeX: 1
+      SizeY: 1
+    Down:
+      TileX: 6
+      TileY: 15
+      SizeX: 1
+      SizeY: 1
+    Left:
+      TileX: 6
+      TileY: 15
+      SizeX: 1
+      SizeY: 1
+    Right:
+      TileX: 6
+      TileY: 15
+      SizeX: 1
+      SizeY: 1
+    Meshoffset: 0
+    transparencyLevel: 0
+    isSolid: 1
+    isTransparent: 1
+    CanFaceDifferentDirections: 1
+    RenderingTechnique: 2

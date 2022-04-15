@@ -19,5 +19,6 @@ namespace Core.Builder
         Furnace = 10,
         RedFlower = 11,
         Lawn = 12,
+        BeltForward = 13,
     }
 }

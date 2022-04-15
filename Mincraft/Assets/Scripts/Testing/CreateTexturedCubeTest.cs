@@ -14,21 +14,21 @@ namespace Core.Testing
         public void Start()
         {
             
-            foreach(BlockUV uv in Enum.GetValues(typeof(BlockUV)))
-            {
-                if (uv == BlockUV.Air || uv == BlockUV.None) continue;
-                CreateChunkWith(uv);
-            }
+            // foreach(BlockUV uv in Enum.GetValues(typeof(BlockUV)))
+            // {
+            //     if (uv == BlockUV.Air || uv == BlockUV.None) continue;
+            //     CreateChunkWith(uv);
+            // }
+            
+            CreateChunkWith(BlockUV.BeltForward);
         }
     
         private void CreateChunkWith(BlockUV block)
         {
             MeshData data = MeshBuilder.CombineBlock(new Block(block));
-            
             Mesh mesh = new Mesh();
-            
             GetComponent<MeshFilter>().mesh = mesh;
-
+            
             mesh.subMeshCount = 2;
             mesh.SetVertices(data.Vertices);
             mesh.SetTriangles(data.Triangles, 0);

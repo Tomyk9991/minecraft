@@ -17,7 +17,7 @@ namespace Core.Player.Interaction
 
             for (int i = 0; i < data.Count; i++)
             {
-                int index = data[i].IsBlock ? (int) data[i].BlockID : short.MaxValue + 1 + data[i].ItemID;
+                int index = data[i].IsBlock ? (int) data[i].BlockID : data[i].ItemID;
                 itemDictionary.Add(index, data[i]);
             }
         }

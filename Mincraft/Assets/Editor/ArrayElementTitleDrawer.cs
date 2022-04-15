@@ -55,7 +55,7 @@ public class ArrayElementTitleDrawer : PropertyDrawer
                 {
                     return TitleNameProp.enumNames[TitleNameProp.enumValueIndex];
                 }
-                catch(Exception _)
+                catch(Exception)
                 {
                 }
 

@@ -33,12 +33,7 @@ namespace Utilities
 
         public T GetNext()
         {
-            if (pool.Count <= 0)
-            {
-                return _newInstanceInstantiateFunc();
-            }
-
-            return pool.Dequeue();
+            return pool.Count <= 0 ? _newInstanceInstantiateFunc() : pool.Dequeue();
         }
 
         public void Clear() => pool.Clear();

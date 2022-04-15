@@ -117,3 +117,12 @@ MonoBehaviour:
     MeshMaterialPair:
       Mesh: {fileID: 0}
       Material: {fileID: 0}
+  - IsBlock: 0
+    Sprite: {fileID: 21300000, guid: 63c15bc07a3d5d14e9ca4484293764c9, type: 3}
+    Name: Belt - Forward
+    BlockID: 12
+    ItemID: 13
+    MeshMaterialPair:
+      Mesh: {fileID: -2432090755550338912, guid: 8bbede8c32b940f47b2a13661a540597,
+        type: 3}
+      Material: {fileID: 2100000, guid: 1fefb17609d7995438ce5d78d25e36cb, type: 2}

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Core.Builder;
+using Core.Math;
 
 [Serializable]
 public class Array3D<T>
@@ -38,6 +40,32 @@ public class ExtendedArray3D<T> : Array3D<T>
     { }
     public ExtendedArray3D(int sizeD, int extension) : base(sizeD + (extension * 2))
     { }
+
+    public List<(Int3, T)> Where(Func<T, bool> func)
+    {
+        List<(Int3, T)> values = new List<(Int3, T)>();
+        
+        Int3 pos = new Int3();
+        for (int x = -1; x < this.width - 1; x++)
+        {
+            for (int y = -1; y < this.width - 1; y++)
+            {
+                for (int z = -1; z < this.width - 1; z++)
+                {
+                    pos.X = x;
+                    pos.Y = y;
+                    pos.Z = z;
+
+                    T current = this[x, y, z];
+                    
+                    if (func.Invoke(current))
+                        values.Add((pos, current));
+                }
+            }
+        }
+
+        return values;
+    }
 
     public new T this[int x, int y, int z]
     {

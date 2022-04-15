@@ -1,5 +1,4 @@
 using System;
-using Attributes;
 using UnityEngine;
 using Utilities;
 
@@ -80,7 +79,7 @@ namespace Core.Builder
         {
             if (id < 0 || (int) id > renderingTechnique.Length - 1)
             {
-                Debug.LogWarning("Rendering technique information not found");
+                Debug.LogWarning($"Rendering technique information not found: {(int) id}");
                 return Builder.RenderingTechnique.Block;
             }
 
@@ -153,6 +152,7 @@ namespace Core.Builder
     public enum RenderingTechnique
     {
         Block = 0,
-        Sprite3D = 1
+        Sprite3D = 1,
+        CustomMesh = 2
     }
 }

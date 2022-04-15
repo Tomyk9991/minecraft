@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using Core.Chunks;
 using Core.Math;
-using Extensions;
 using UnityEngine;
 
 namespace Core.Builder
@@ -91,8 +88,9 @@ namespace Core.Builder
                                 BlockPos = blockPos,
                                 Transparent = transparent
                             };
-                                
-                            meshAdders[(int) renderingTechnique].AddMesh(parameters);
+
+                            if ((int)renderingTechnique >= 0 && (int)renderingTechnique < meshAdders.Length)
+                                meshAdders[(int) renderingTechnique].AddMesh(parameters);
                         }
                     }
                 }

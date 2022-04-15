@@ -1,31 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Attributes;
+using Core.Builder;
 using UnityEngine;
 using Extensions;
+using Utilities;
 
 
 namespace Core.Chunks
 {
     public class ChunkGameObjectPool : SingletonBehaviour<ChunkGameObjectPool>
     {
-        [Header("Chunk GameObject instantiation settings")]
-        [SerializeField] private GameObject chunkPrefab = null;
+        [Header("Chunk Pool settings")]
         [Range(1, 10000)]
         [SerializeField] private int chunksToInstantiate = 210;
+        [SerializeField] private GameObject chunkPrefab = null;
         [SerializeField, ShowOnly] private int gameobjectCount;
         
-        private Queue<GameObject> gameObjectChunks;
-        private Queue<GameObject> objectsToRelease;
+        private Pool<GameObject> chunkPool = null;
+        private Queue<GameObject> objectsToRelease; // Support for multi threaded calls. That's why they are two queues
+        
         
         private void Start()
         {
             objectsToRelease = new Queue<GameObject>();
-            gameObjectChunks = new Queue<GameObject>();
-            
-            for (int i = 0; i < chunksToInstantiate; i++)
-            {
-                gameObjectChunks.Enqueue(InstantiateChunkGameObject());
-            }
+            chunkPool = new Pool<GameObject>(chunksToInstantiate, InstantiateChunkGameObject);
         }
 
         private void Update()
@@ -35,9 +34,7 @@ namespace Core.Chunks
                 GameObject go = objectsToRelease.Dequeue();
 
                 if (go != null)
-                {
-                    gameObjectChunks.Enqueue(go);
-                }
+                    chunkPool.Add(go);
             }
         }
 
@@ -48,15 +45,11 @@ namespace Core.Chunks
         /// <returns></returns>
         public GameObject GetNextUnusedChunk()
         {
-            if (gameObjectChunks.Count == 0)
-            {
-                return InstantiateChunkGameObject();
-            }
-
+            GameObject g = chunkPool.GetNext();
             gameobjectCount = transform.childCount;
-            return gameObjectChunks.Dequeue();
+            return g;
         }
-
+        
         private GameObject InstantiateChunkGameObject()
         {
             GameObject g = Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, transform);
@@ -72,10 +65,10 @@ namespace Core.Chunks
             gameobjectCount = transform.childCount;
             return g;
         }
-
+        
         public void SetGameObjectToUnused(GameObject go)
         {
-            objectsToRelease.Enqueue(go);
+            chunkPool.Add(go);
             gameobjectCount = transform.childCount;
         }
     }

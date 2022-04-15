@@ -3126,9 +3126,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8b061d7cc7c7d7469acb45f4df69dd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chunksToInstantiate: 300
   chunkPrefab: {fileID: 4515187503092839614, guid: c3cce87b456a61148a0b25526be6fb68,
     type: 3}
-  chunksToInstantiate: 300
   gameobjectCount: 0
 --- !u!114 &787175600
 MonoBehaviour:
@@ -3143,6 +3143,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drawsPerFrame: 30
+  customMeshes:
+  - Mesh: {fileID: -2432090755550338912, guid: bde887c3bb00fb5439840ad203b1b662, type: 3}
+    Material: {fileID: 2100000, guid: 1fefb17609d7995438ce5d78d25e36cb, type: 2}
+    BlockUV: 13
+    LocalPositionOffset: {fileID: 4625384788637134316, guid: 7ca0d24a3979f4f4eae1c4eef27f07b3,
+      type: 3}
+  - Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    Material: {fileID: 2100000, guid: 965b806c2f9ccd54981cda977f9cc604, type: 2}
+    BlockUV: 13
+    LocalPositionOffset: {fileID: 4939548588474358757, guid: 3126491320faf624b84fca8b81a8e33c,
+      type: 3}
 --- !u!114 &787175601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6273,6 +6284,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Outline
+      objectReference: {fileID: 0}
+    - target: {fileID: 7879117001816977826, guid: e743fa6fe1a9bc448ae6ed4eae259852,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7879117001816977829, guid: e743fa6fe1a9bc448ae6ed4eae259852,
         type: 3}

@@ -28,12 +28,18 @@ namespace Core.Builder
         public bool IsTransparent() => UVDictionary.IsTransparentID(this.ID);
         public bool IsSolid() => UVDictionary.IsSolidID(this.ID);
         public bool CanFaceInDifferentDirections() => UVDictionary.CanFaceInDifferentDirections(this.ID);
-        public bool Is3DSprite() => UVDictionary.RenderingTechnique(this.ID) == RenderingTechnique.Sprite3D;
+        public bool Is3DSprite() => UVDictionary.RenderingTechnique(this.ID) == Builder.RenderingTechnique.Sprite3D;
+        public RenderingTechnique RenderingTechnique() => UVDictionary.RenderingTechnique(this.ID);
         
         public float MeshOffset() => UVDictionary.MeshOffsetID(this.ID);
         public float TransparencyLevel() => UVDictionary.TransparencyLevelID(this.ID);
 
         public static Block Empty() => emptyBlock;
+
+        public override string ToString()
+        {
+            return $"Block: {{ID: {this.ID.ToString()}}}";
+        }
     }
     
     public enum BlockDirection : short

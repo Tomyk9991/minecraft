@@ -141,10 +141,11 @@ namespace Core.Player
         {
             bool isBlock = item <= short.MaxValue;
             BlockUV blockUV = isBlock ? (BlockUV) item : BlockUV.Air;
-            
-            if (isBlock)
+            var technique = UVDictionary.RenderingTechnique(blockUV);
+
+            if (technique == RenderingTechnique.Block)
                 SetUVFromBlockUV(blockUV);
-            else
+            else if (technique == RenderingTechnique.CustomMesh) 
                 SetMeshFromItemMesh(item);
         }
 
