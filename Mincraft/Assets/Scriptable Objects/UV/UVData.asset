@@ -49,7 +49,7 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 1
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 1
     Forward:
       TileX: 3
@@ -86,7 +86,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 2
     Forward:
       TileX: 1
@@ -123,7 +123,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 3
     Forward:
       TileX: 2
@@ -160,7 +160,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 4
     Forward:
       TileX: 4
@@ -197,7 +197,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 5
     Forward:
       TileX: 4
@@ -234,7 +234,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 6
     Forward:
       TileX: 11
@@ -271,7 +271,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 7
     Forward:
       TileX: 1
@@ -308,7 +308,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 8
     Forward:
       TileX: 2
@@ -345,7 +345,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 9
     Forward:
       TileX: 6
@@ -382,7 +382,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 1
     CanFaceDifferentDirections: 0
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 10
     Forward:
       TileX: 3
@@ -419,7 +419,7 @@ MonoBehaviour:
     isSolid: 1
     isTransparent: 0
     CanFaceDifferentDirections: 1
-    Is3DSprite: 0
+    RenderingTechnique: 0
   - EnumType: 11
     Forward:
       TileX: 5
@@ -456,7 +456,7 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 1
     CanFaceDifferentDirections: 0
-    Is3DSprite: 1
+    RenderingTechnique: 1
   - EnumType: 12
     Forward:
       TileX: 6
@@ -493,115 +493,4 @@ MonoBehaviour:
     isSolid: 0
     isTransparent: 1
     CanFaceDifferentDirections: 0
-    Is3DSprite: 1
-  - EnumType: 13
-    Forward:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 0
-      TileY: 13
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 1
-    isTransparent: 0
-    CanFaceDifferentDirections: 1
-    Is3DSprite: 0
-  - EnumType: 14
-    Forward:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 1
-      TileY: 13
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 1
-    isTransparent: 0
-    CanFaceDifferentDirections: 1
-    Is3DSprite: 0
-  - EnumType: 15
-    Forward:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Back:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Up:
-      TileX: 2
-      TileY: 13
-      SizeX: 1
-      SizeY: 1
-    Down:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Left:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Right:
-      TileX: 0
-      TileY: 14
-      SizeX: 1
-      SizeY: 1
-    Meshoffset: 0
-    transparencyLevel: 0
-    isSolid: 1
-    isTransparent: 0
-    CanFaceDifferentDirections: 1
-    Is3DSprite: 0
+    RenderingTechnique: 1

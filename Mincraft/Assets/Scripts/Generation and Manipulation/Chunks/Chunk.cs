@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using Core.Builder;
+﻿using Core.Builder;
 using Core.Builder.Generation;
 using Core.Managers;
 using Core.Math;
 using Core.Saving;
 using Core.StructureGeneration;
-using Extensions;
-using GateLogic.Impl;
 using UnityEngine;
 using Utilities;
 
@@ -24,7 +21,6 @@ namespace Core.Chunks
 
         //Chunkdata
         private ExtendedArray3D<Block> blocks;
-        private DigitalCircuitManager circuitManager;
         
         /// <summary>
         /// Determines, if the current chunk is generated or loaded from the disk
@@ -66,12 +62,6 @@ namespace Core.Chunks
             set => blocks = value;
         }
 
-        public DigitalCircuitManager DigitalCircuitManager
-        {
-            get => circuitManager;
-            set => circuitManager = value;
-        }
-        
         private static FastNoise noise;
 
         public Chunk()
@@ -88,7 +78,6 @@ namespace Core.Chunks
             }
             
             blocks = BlockArrayPool.GetNext();
-            circuitManager = new DigitalCircuitManager();
 
             blockNeighbours = new Block[6];
         }

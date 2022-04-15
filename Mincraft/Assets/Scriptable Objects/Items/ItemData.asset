@@ -117,35 +117,3 @@ MonoBehaviour:
     MeshMaterialPair:
       Mesh: {fileID: 0}
       Material: {fileID: 0}
-  - IsBlock: 1
-    Sprite: {fileID: 21300000, guid: 8bc18a7525a93b6409fc8d2c4a0b9c1f, type: 3}
-    Name: And Gate
-    BlockID: 13
-    ItemID: 0
-    MeshMaterialPair:
-      Mesh: {fileID: 0}
-      Material: {fileID: 0}
-  - IsBlock: 1
-    Sprite: {fileID: 21300000, guid: fb9686bce45fc9e40a46da2ead9c383c, type: 3}
-    Name: Or Gate
-    BlockID: 14
-    ItemID: 0
-    MeshMaterialPair:
-      Mesh: {fileID: 0}
-      Material: {fileID: 0}
-  - IsBlock: 1
-    Sprite: {fileID: 21300000, guid: aa109e229272f3442b33660a6142160e, type: 3}
-    Name: Not Gate
-    BlockID: 15
-    ItemID: 0
-    MeshMaterialPair:
-      Mesh: {fileID: 0}
-      Material: {fileID: 0}
-  - IsBlock: 0
-    Sprite: {fileID: 21300000, guid: 99fbdbe58c4bb3a4189318a74782d2f7, type: 3}
-    Name: Cable
-    BlockID: 0
-    ItemID: 0
-    MeshMaterialPair:
-      Mesh: {fileID: 4300000, guid: d09e4f0fc6f2e3045bf7c2d26097c63c, type: 2}
-      Material: {fileID: 2100000, guid: 6c7030a13dddd3a4797b11992d15ed77, type: 2}

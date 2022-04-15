@@ -24,7 +24,7 @@ namespace Core.Builder
         private static bool[] isSolidInformation;
         private static bool[] isTransparentInformation;
         private static bool[] canFaceDifferentDirectionsInformation;
-        private static bool[] is3DSprite;
+        private static RenderingTechnique[] renderingTechnique;
         private static float[] meshOffsetInformation;
         private static float[] transparancyLevel;
 
@@ -36,7 +36,7 @@ namespace Core.Builder
             isSolidInformation = new bool[data.Count];
             isTransparentInformation = new bool[data.Count];
             canFaceDifferentDirectionsInformation = new bool[data.Count];
-            is3DSprite = new bool[data.Count];
+            renderingTechnique = new RenderingTechnique[data.Count];
             
             meshOffsetInformation = new float[data.Count];
             transparancyLevel = new float[data.Count];
@@ -57,7 +57,7 @@ namespace Core.Builder
                 canFaceDifferentDirectionsInformation[(int) data[i].EnumType] = data[i].CanFaceDifferentDirections;
                 isSolidInformation[(int) data[i].EnumType] = data[i].isSolid;
                 isTransparentInformation[(int) data[i].EnumType] = data[i].isTransparent;
-                is3DSprite[(int) data[i].EnumType] = data[i].Is3DSprite;
+                renderingTechnique[(int) data[i].EnumType] = data[i].RenderingTechnique;
                 
                 meshOffsetInformation[(int)data[i].EnumType] = data[i].Meshoffset;
                 transparancyLevel[(int)data[i].EnumType] = data[i].transparencyLevel;
@@ -76,15 +76,15 @@ namespace Core.Builder
             uvDataInformation = null;
         }
 
-        public static bool Is3DSprite(in BlockUV id)
+        public static RenderingTechnique RenderingTechnique(in BlockUV id)
         {
-            if (id < 0 || (int) id > is3DSprite.Length - 1)
+            if (id < 0 || (int) id > renderingTechnique.Length - 1)
             {
-                Debug.LogWarning("Rotation information not found");
-                return false;
+                Debug.LogWarning("Rendering technique information not found");
+                return Builder.RenderingTechnique.Block;
             }
 
-            return is3DSprite[(int) id];
+            return renderingTechnique[(int) id];
         }
 
         public static bool CanFaceInDifferentDirections(in BlockUV id)
@@ -147,6 +147,12 @@ namespace Core.Builder
         public bool isSolid; // Bestimmt, ob es für den Collider relevant ist
         public bool isTransparent; // Bestimmt, ob es eine Transparent durch den Block gibt
         public bool CanFaceDifferentDirections; //Bestimmt  ob Objekt drehbar ist oder nicht (Ofen)
-        public bool Is3DSprite;
+        public RenderingTechnique RenderingTechnique;
+    }
+
+    public enum RenderingTechnique
+    {
+        Block = 0,
+        Sprite3D = 1
     }
 }

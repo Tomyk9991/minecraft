@@ -6,7 +6,6 @@ using Core.Builder;
 using UnityEngine;
 
 using Core.Math;
-using GateLogic.Impl;
 using Random = System.Random;
 
 namespace Extensions
@@ -16,8 +15,6 @@ namespace Extensions
         public static Int3 ToInt3(this Vector3 pos)
             => Int3.ToInt3(pos);
 
-        public static bool IsCircuitBlock(this BlockUV id) => DigitalCircuitManager.CircuitBlocks.Contains(id);
-        
         public static int AddPoint(this LineRenderer renderer, Vector3 position)
         {
             int count = renderer.positionCount;

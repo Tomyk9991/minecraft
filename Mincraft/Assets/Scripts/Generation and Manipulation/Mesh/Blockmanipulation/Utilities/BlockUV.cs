@@ -19,8 +19,5 @@ namespace Core.Builder
         Furnace = 10,
         RedFlower = 11,
         Lawn = 12,
-        AndGate = 13,
-        OrGate = 14,
-        NotGate = 15
     }
 }

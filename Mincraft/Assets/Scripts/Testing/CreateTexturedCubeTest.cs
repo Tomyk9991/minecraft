@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using Core.Builder;
-using GateLogic.Impl;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,14 +10,9 @@ namespace Core.Testing
     {
         [SerializeField] private int width = 128;
         [SerializeField] private int height = 128;
-    
-        private Quaternion standardRotation = Quaternion.identity;
-        private Quaternion inverseRotation = Quaternion.identity;
         
         public void Start()
         {
-            standardRotation = transform.rotation;
-            inverseRotation = Quaternion.Inverse(Quaternion.Inverse(standardRotation));
             
             foreach(BlockUV uv in Enum.GetValues(typeof(BlockUV)))
             {
@@ -36,8 +29,6 @@ namespace Core.Testing
             
             GetComponent<MeshFilter>().mesh = mesh;
 
-            transform.rotation = DigitalCircuitManager.CircuitBlocks.Contains(block) ? inverseRotation : standardRotation;
-            
             mesh.subMeshCount = 2;
             mesh.SetVertices(data.Vertices);
             mesh.SetTriangles(data.Triangles, 0);

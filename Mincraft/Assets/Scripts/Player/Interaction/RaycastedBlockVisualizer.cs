@@ -3,7 +3,6 @@ using Core.Chunks;
 using Core.Math;
 using Core.UI;
 using Extensions;
-using GateLogic.Impl;
 using UnityEngine;
 using Utilities;
 
@@ -16,13 +15,7 @@ namespace Core.Player
 
         [SerializeField] private GameObject[] outlineGameGameObjects = null;
         [SerializeField] private LayerMask layerMask = 0;
-        
-        
-        [Header("Colors")] 
-        [SerializeField] private Color normalColor = Color.white;
-        [SerializeField] private Color digitalCircuitColor = Color.white;
 
-        private bool isColoredNormal = true;
         private SpriteRenderer[] outlineSpriteRenderers = null;
         
         public float RaycastDistance
@@ -76,10 +69,6 @@ namespace Core.Player
                 if (!hitResult.transform.TryGetComponent(out ChunkReferenceHolder holder)) return;
                 
                 BlockUV hitBlock = ClickedBlock(hitResult, holder.Chunk);
-                    
-                this.isColoredNormal = hitBlock.IsCircuitBlock() 
-                    ? ChangeOutlineColor(digitalCircuitColor, false, this.isColoredNormal) 
-                    : ChangeOutlineColor(normalColor, true, this.isColoredNormal);
             }
             else
             {
@@ -88,18 +77,7 @@ namespace Core.Player
             }
         }
 
-        private bool ChangeOutlineColor(in Color targetColor, bool targetIsColorNormalState, bool currentIsColorNormalState)
-        {
-            if (targetIsColorNormalState != currentIsColorNormalState)
-            {
-                for (int i = 0; i < outlineGameGameObjects.Length; i++)
-                    this.outlineSpriteRenderers[i].color = targetColor;
-            }
 
-            return targetIsColorNormalState;
-        }
-        
-        
         private BlockUV ClickedBlock(in RaycastHit hit, Chunk currentChunk)
         {
             placer.latestGlobalClick = MathHelper.CenteredClickPositionOutSide(hit.point, hit.normal) - hit.normal;

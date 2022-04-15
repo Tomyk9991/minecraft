@@ -1,4 +1,5 @@
-﻿using Attributes;
+﻿using System;
+using Attributes;
 using UnityEditor;
 using UnityEngine;
 
@@ -49,7 +50,18 @@ public class ArrayElementTitleDrawer : PropertyDrawer
             case SerializedPropertyType.LayerMask:
                 break;
             case SerializedPropertyType.Enum:
-                return TitleNameProp.enumNames[TitleNameProp.enumValueIndex];
+            {
+                try
+                {
+                    return TitleNameProp.enumNames[TitleNameProp.enumValueIndex];
+                }
+                catch(Exception _)
+                {
+                }
+
+                return "Not found";
+            }
+            
             case SerializedPropertyType.Vector2:
                 return TitleNameProp.vector2Value.ToString();
             case SerializedPropertyType.Vector3:

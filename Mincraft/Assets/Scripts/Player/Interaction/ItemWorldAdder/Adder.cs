@@ -44,7 +44,6 @@ namespace Core.Player.Interaction.ItemWorldAdder
         private IItemWorldAdder[] adders =
         {
             new BlockAdder(),
-            new CableAdder()
         };
 
         [Header("References")] 

@@ -35,5 +35,9 @@ MonoBehaviour:
     caveSize: 20
     treeTrunkBlock: 4
     treeLeafBlock: 6
-    treeProbability: 0.11
+    treeProbability: 0
     treeZoomLevel: 1.08
+    vegetationBlock: 12
+    accentBlocks: 
+    vegetationProbability: 0.1
+    vegetationZoomLevel: 1.08
