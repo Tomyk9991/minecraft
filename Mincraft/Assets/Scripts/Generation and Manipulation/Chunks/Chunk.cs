@@ -1,4 +1,6 @@
-﻿using Core.Builder;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Core.Builder;
 using Core.Builder.Generation;
 using Core.Managers;
 using Core.Math;
@@ -61,6 +63,8 @@ namespace Core.Chunks
             get => blocks;
             set => blocks = value;
         }
+        
+        public List<PositionedBlock> SpecialRenderingBlocks { get; set; }
 
         private static FastNoise noise;
 
@@ -78,6 +82,7 @@ namespace Core.Chunks
             }
             
             blocks = BlockArrayPool.GetNext();
+            SpecialRenderingBlocks = new List<PositionedBlock>();
 
             blockNeighbours = new Block[6];
         }
@@ -90,7 +95,25 @@ namespace Core.Chunks
         public void AddBlockPersistent(Block block, Int3 pos)
         {
             AddBlock(block, pos);
+            HandleSpecialBlock(block, pos);
             ResourceIO.Save<Chunk>(this);
+        }
+
+        private void HandleSpecialBlock(Block block, Int3 pos)
+        {
+            if (block.ID == BlockUV.None)
+            {
+                var index = SpecialRenderingBlocks.FindIndex(pb => pb.LocalPosition == pos);
+
+                if (index != -1)
+                {
+                    SpecialRenderingBlocks.RemoveAt(index);
+                    return;
+                }
+            }
+
+            if (block.RenderingTechnique() == RenderingTechnique.CustomMesh)
+                SpecialRenderingBlocks.Add(new PositionedBlock(block, pos));
         }
 
         public bool IsNotEmpty(int x, int y, int z)
@@ -150,9 +173,25 @@ namespace Core.Chunks
         {
             if (ResourceIO.Load<Chunk>(new ChunkFileIdentifier(this.GlobalPosition), out OutputContext c))
             {
-                ChunkData chunk = (ChunkData) c;
-                
+                ChunkData chunk = (ChunkData)c;
+
                 this.blocks.RawData = chunk.Blocks;
+
+                for (int x = -1; x < chunkSize - 1; x++)
+                {
+                    for (int y = -1; y < chunkSize - 1; y++)
+                    {
+                        for (int z = -1; z < chunkSize - 1; z++)
+                        {
+                            if (this.Blocks[x, y, z].RenderingTechnique() == RenderingTechnique.CustomMesh)
+                            {
+                                this.SpecialRenderingBlocks.Add(new PositionedBlock(this.Blocks[x, y, z],
+                                    new Int3(x, y, z)));
+                            }
+                        }
+                    }
+                }
+
                 loaded = true;
                 return;
             }

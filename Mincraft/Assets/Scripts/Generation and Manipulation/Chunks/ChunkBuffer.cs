@@ -1,4 +1,5 @@
-﻿using Core.Math;
+﻿using System;
+using Core.Math;
 using Core.Chunks.Threading;
 using Core.Player;
 using Utilities;
@@ -7,6 +8,7 @@ namespace Core.Chunks
 {
     public static class ChunkBuffer
     {
+        public static event Action<Chunk> OnRemoveChunk;
         public static bool UsingChunkBuffer { get; set; } = true;
 
         private static Array2D<ChunkColumn> data;
@@ -300,6 +302,7 @@ namespace Core.Chunks
                     for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
                     {
                         data[x, deleteHorizontal][localy].ReleaseGameObject();
+                        OnRemoveChunk?.Invoke(data[x, deleteHorizontal][localy]);
                     }
                 }
             }
@@ -310,6 +313,7 @@ namespace Core.Chunks
                     for (int h = minHeight, localy = 0; h < maxHeight; h += 16, localy++)
                     {
                         data[deleteVertical, y][localy].ReleaseGameObject();
+                        OnRemoveChunk?.Invoke(data[deleteVertical, y][localy]);
                     }
                 }
             }

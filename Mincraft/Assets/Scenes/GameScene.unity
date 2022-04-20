@@ -870,7 +870,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &234348291
 GameObject:
@@ -3143,17 +3143,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   drawsPerFrame: 30
-  customMeshes:
-  - Mesh: {fileID: -2432090755550338912, guid: bde887c3bb00fb5439840ad203b1b662, type: 3}
-    Material: {fileID: 2100000, guid: 1fefb17609d7995438ce5d78d25e36cb, type: 2}
-    BlockUV: 13
-    LocalPositionOffset: {fileID: 4625384788637134316, guid: 7ca0d24a3979f4f4eae1c4eef27f07b3,
-      type: 3}
-  - Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    Material: {fileID: 2100000, guid: 965b806c2f9ccd54981cda977f9cc604, type: 2}
-    BlockUV: 13
-    LocalPositionOffset: {fileID: 4939548588474358757, guid: 3126491320faf624b84fca8b81a8e33c,
-      type: 3}
+  renderer:
+    customMeshes:
+    - Mesh: {fileID: -2432090755550338912, guid: bde887c3bb00fb5439840ad203b1b662,
+        type: 3}
+      Material: {fileID: 2100000, guid: 1fefb17609d7995438ce5d78d25e36cb, type: 2}
+      BeltID: 1
+      LocalPositionOffset: {fileID: 4625384788637134316, guid: 7ca0d24a3979f4f4eae1c4eef27f07b3,
+        type: 3}
+    - Mesh: {fileID: 4300000, guid: e4803ecfde8ad4a469f1fae8801d39fb, type: 2}
+      Material: {fileID: 2100000, guid: 965b806c2f9ccd54981cda977f9cc604, type: 2}
+      BeltID: 1
+      LocalPositionOffset: {fileID: 4939548588474358757, guid: 3126491320faf624b84fca8b81a8e33c,
+        type: 3}
 --- !u!114 &787175601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6358,7 +6360,7 @@ PrefabInstance:
     - target: {fileID: 7879117001816977830, guid: e743fa6fe1a9bc448ae6ed4eae259852,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7879117001816977830, guid: e743fa6fe1a9bc448ae6ed4eae259852,
         type: 3}

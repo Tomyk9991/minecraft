@@ -15,6 +15,9 @@ namespace Extensions
         public static Int3 ToInt3(this Vector3 pos)
             => Int3.ToInt3(pos);
 
+        public static BlockUV ToBlockUV(this BeltID beltID)
+            => BlockUV.Belt;
+        
         public static int AddPoint(this LineRenderer renderer, Vector3 position)
         {
             int count = renderer.positionCount;

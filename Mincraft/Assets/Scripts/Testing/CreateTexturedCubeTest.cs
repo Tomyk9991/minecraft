@@ -20,7 +20,7 @@ namespace Core.Testing
             //     CreateChunkWith(uv);
             // }
             
-            CreateChunkWith(BlockUV.BeltForward);
+            CreateChunkWith(BlockUV.Belt);
         }
     
         private void CreateChunkWith(BlockUV block)

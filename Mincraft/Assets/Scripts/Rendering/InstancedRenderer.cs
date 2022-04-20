@@ -1,45 +1,23 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Core.Builder;
-using Core.Math;
 using UnityEngine;
 
 namespace Core.Rendering
 {
-    public class InstancedRenderer
+    public abstract class InstancedRenderer
     {
-        private List<Matrix4x4> matrices;
-        private Mesh mesh;
-        private Material material;
-
-        public BlockUV BlockType { get; set; }
-        public Vector3 LocalOffset { get; set; }
-        public Vector3 LocalScale { get; set; }
-        
-        public InstancedRenderer(Mesh mesh, Material material, BlockUV blockType, in Vector3 localOffset, in Vector3 localScale)
-        {
-            this.mesh = mesh;
-            this.material = material;
-            this.matrices = new List<Matrix4x4>();
-            
-            this.BlockType = blockType;
-            this.LocalOffset = localOffset;
-            this.LocalScale = localScale;
-        }
+        protected List<Matrix4x4> matrices;
+        protected Mesh mesh;
+        protected Material material;
 
         public void AddUnique(in Matrix4x4 matrix)
         {
             if (!matrices.Contains(matrix))
+            {
                 matrices.Add(matrix);
+            }
         }
-
-        public void Render()
-        {
-            // TODO: Not more than 1023 objects are possible to draw in on batch.
-            // Split the DrawMeshInstanced Call in multiple, if needed
-            Graphics.DrawMeshInstanced(mesh, 0, material, matrices);
-        }
-
+        
         public void RemoveWithPosition(Vector3 globalPosition)
         {
             float closest = float.MaxValue;
@@ -60,6 +38,23 @@ namespace Core.Rendering
 
             if (index != -1)
                 matrices.RemoveAt(index);
+        }
+
+        public virtual void Render()
+        {
+            int index = 0;
+            while (true)
+            {
+                int countedElements = System.Math.Min(matrices.Count, 1023);
+                
+                List<Matrix4x4> segment = matrices.GetRange(index, countedElements);
+                Graphics.DrawMeshInstanced(mesh, 0, material, segment);
+
+                index += countedElements + 1;
+
+                if (matrices.Count <= index)
+                    break;
+            }
         }
     }
 }

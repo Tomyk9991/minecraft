@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Attributes;
-using Core.Builder;
+﻿using Core.Builder;
 using Core.Chunks.Threading;
-using Core.Math;
-using Core.Player.Interaction;
-using Core.Rendering;
 using Extensions;
 using UnityEngine;
 
@@ -16,11 +10,7 @@ namespace Core.Chunks
         public ChunkGameObjectPool GoPool { get; set; }
 
         [SerializeField] private int drawsPerFrame = 0;
-
-        [SerializeField, ArrayElementTitle("BlockUV")]
-        private List<InstancedMeshMaterialPair> customMeshes = null;
-
-        private List<InstancedRenderer> renderers;
+        [SerializeField] private BeltRenderer renderer = null;
 
 
         private ChunkJobManager _chunkJobManager;
@@ -31,27 +21,8 @@ namespace Core.Chunks
         {
             GoPool = ChunkGameObjectPool.Instance;
             _chunkJobManager = ChunkJobManager.ChunkJobManagerUpdaterInstance;
-
-            renderers = new List<InstancedRenderer>();
-
-            foreach (var mmp in customMeshes)
-            {
-                var ir = new InstancedRenderer(mmp.Mesh, mmp.Material, mmp.BlockUV,
-                    mmp.LocalPositionOffset.localPosition, mmp.LocalPositionOffset.localScale);
-                renderers.Add(ir);
-            }
             
-            RemoveBlock.OnRemoveBlock += OnRemoveBlock;
-        }
-
-        private void OnRemoveBlock(BlockUV blockUV, Vector3 globalPosition)
-        {
-            List<InstancedRenderer> tempRenderers = renderers.FindAll(r => r.BlockType == blockUV);
-
-            foreach (InstancedRenderer renderer in tempRenderers)
-            {
-                renderer.RemoveWithPosition(globalPosition);
-            }
+            renderer.Init();
         }
 
         private void Update()
@@ -67,7 +38,7 @@ namespace Core.Chunks
             }
 
             jobsDoneInFrame = 0;
-            DrawCustomMeshes();
+            renderer.DrawCustomMeshes();
         }
 
         private void RenderCall(MeshJob task)
@@ -82,60 +53,8 @@ namespace Core.Chunks
                 drawingChunk.CurrentGO.GetComponent<ChunkReferenceHolder>().Chunk = drawingChunk;
             }
 
-            HandleCustomMeshes(drawingChunk, drawingChunk.Blocks.Where(block 
-                => block.RenderingTechnique() == RenderingTechnique.CustomMesh)
-            );
+            renderer.HandleCustomMeshes(drawingChunk, drawingChunk.SpecialRenderingBlocks);
             MeshModifier.SetMesh(drawingChunk.CurrentGO, task.MeshData, task.ColliderData);
         }
-
-        private void DrawCustomMeshes()
-        {
-            foreach (var pair in renderers)
-                pair.Render();
-        }
-
-        private void HandleCustomMeshes(Chunk chunk, List<(Int3, Block)> blockSubSet)
-        {
-            foreach ((Int3 localPosition, Block block) in blockSubSet)
-            {
-                List<InstancedRenderer> tempRenderers = renderers.FindAll(r => r.BlockType == block.ID);
-
-                foreach (InstancedRenderer renderer in tempRenderers)
-                {
-                    Matrix4x4 matrix = Matrix4x4.TRS(
-                        chunk.GlobalPosition + localPosition.ToVector3() + renderer.LocalOffset,
-                        BlockDirectionToQuaternion(block.Direction),
-                    renderer.LocalScale
-                    );
-
-                    renderer.AddUnique(matrix);
-                }
-            }
-        }
-
-        private Quaternion BlockDirectionToQuaternion(BlockDirection direction)
-        {
-            Debug.Log(direction);
-            switch (direction)
-            {
-                case BlockDirection.Left:
-                    return Quaternion.Euler(Vector3.up * 0.0f);
-                case BlockDirection.Forward:
-                    return Quaternion.Euler(Vector3.up * 90.0f);
-                case BlockDirection.Right:
-                    return Quaternion.Euler(Vector3.up * 180.0f);
-                case BlockDirection.Back:
-                    return Quaternion.Euler(Vector3.up * 270.0f);
-            }
-
-            return Quaternion.identity;
-        }
-    }
-
-    [Serializable]
-    public class InstancedMeshMaterialPair : MeshMaterialPair
-    {
-        public BlockUV BlockUV;
-        public Transform LocalPositionOffset;
     }
 }

@@ -19,6 +19,17 @@ namespace Core.Builder
         Furnace = 10,
         RedFlower = 11,
         Lawn = 12,
-        BeltForward = 13,
+        Belt = 13,
+    }
+
+    [Flags]
+    public enum BeltID : short
+    {
+        Forward = 1,
+        Back = 2,
+        Left = 4,
+        Right = 8,
+        All = Forward | Back | Left | Right,
+        
     }
 }

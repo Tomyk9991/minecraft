@@ -1,5 +1,19 @@
-﻿namespace Core.Builder
+﻿using Core.Math;
+
+namespace Core.Builder
 {
+    public struct PositionedBlock
+    {
+        public Block Block { get; set; }
+        public Int3 LocalPosition { get; set; }
+
+        public PositionedBlock(Block block, Int3 localPosition)
+        {
+            Block = block;
+            LocalPosition = localPosition;
+        }
+    }
+    
     [System.Serializable]
     public struct Block
     {
